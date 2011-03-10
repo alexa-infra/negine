@@ -227,7 +227,7 @@ public:
     inline float Dot (const Vector3& v) const { 
         return (x * v.x + y * v.y + z * v.z); 
     }
-}
+
 };
 
 class Vector4 {
@@ -252,6 +252,96 @@ public:
     inline void set(const float* v) { set(v[0], v[1], v[2], v[3]); }
     inline void set(float v) { x = v; y = v; z = v; w = v; }
 
+    inline Vector4& operator= (const Vector4& v) {
+        x = v.x; y = v.y; z = v.z; w = v.w;
+        return *this; 
+    }
+    inline Vector4& operator+= (const Vector4& v) { 
+        x += v.x; y += v.y; z += v.z; w = v.w;
+        return *this; 
+    }
+    inline Vector4& operator-= (const Vector4& v) { 
+        x -= v.x; y -= v.y; z -= v.z; w = v.w;
+        return *this;
+    }
+    inline Vector4& operator*= (const Vector4& v) { 
+        x *= v.x; y *= v.y; z *= v.z; w = v.w;
+        return *this; 
+    }
+    inline Vector4& operator*= (const float v) { 
+        x *= v; y *= v; z *= v; w *= v;
+        return *this; 
+    }
+    inline Vector4& operator/= (const Vector3& v) { 
+        x /= v.x; y /= v.y; z /= v.z; w /= v.w;
+        return *this;
+    }
+    inline Vector4& operator/= (const float v) { 
+        x /= v; y /= v; z /= v; w /= v;
+        return *this;
+    }
+    inline Vector4 operator+ (const Vector4& v) const { 
+        return Vector4(x + v.x, y + v.y, z + v.z, w + v.w); 
+    }
+    inline Vector4 operator- (const Vector4& v) const { 
+        return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); 
+    }
+    inline Vector4 operator* (const Vector4& v) const { 
+        return Vector4(x * v.x, y * v.y, z * v.z, w * v.w); 
+    }
+    inline Vector4 operator* (const float v) const { 
+        return Vector4(x * v, y * v, z * v, w *v); 
+    }
+    inline Vector4 operator/ (const Vector4& v) const { 
+        return Vector4(x / v.x, y / v.y, z / v.z, w / v.w); 
+    }
+    inline Vector4 operator/ (const float v) const { 
+        return Vector4(x / v, y / v, z / v, w / v); 
+    }
+    inline Vector4 operator- () const { 
+        return Vector3( -x, -y -z, -w ); 
+    }
+    inline float& operator[] (const int i) { 
+        return array[i]; 
+    }
+    inline const float& operator[] (const int i) const { 
+        return array[i]; 
+    }
+    inline bool operator== (const Vector4& v) const { 
+        return (x == v.x && y == v.y && z == v.z && w = v.w); 
+    }
+    inline bool operator!= (const Vector4& v) const { 
+        return (x != v.x || y != v.y || z != v.z || w != v.w); 
+    }
+    inline bool Equal (const Vector4& v) const { 
+        return *this == v;
+    }
+    inline bool Valid() const { 
+        return true; 
+    }
+    inline float Length2() const { 
+        return x * x + y * y + z * z + w * w; 
+    }
+    inline float Length () const {
+        return sqrt(Length2());
+    }
+    inline void SetLength(float len) {
+        float magnitude = Length() / len;
+        if (magnitude == 0.f)
+            return;
+        *this /= magnitude;
+    }
+    inline Vector3& Normalize () {
+        SetLength(1.0f);
+    }
+    inline Vector4 Normalized () const {
+        Vector4 normalized(x, y);
+        normalized.Normalize();
+        return normalized;
+    }
+    inline float Dot (const Vector4& v) const { 
+        return (x * v.x + y * v.y + z * v.z + w * v.w); 
+    }
 };
 
 Vector2::Vector2(const Vector3& v) {
