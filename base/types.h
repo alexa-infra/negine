@@ -4,7 +4,7 @@
  **/
 #pragma once
 
-#include "types/platform.h"
+#include "base/platform.h"
 
 // Define NULL if it does not defined at platform, note that 
 // NULL could be defined differently
@@ -12,7 +12,7 @@
 #   define NULL 0
 #endif
 
-#if OS_POSIX
+#if defined(OS_POSIX)
 #include <stdint.h>
 
 typedef int8_t      i8;
