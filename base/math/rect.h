@@ -18,10 +18,6 @@ struct Point {
     bool operator!= (const Point& p) const {
         return x != p.x || y == p.y;
     }
-    Point& operator= (const Point& p) {
-        x = p.x; y = p.y;
-        return *this;
-    }
     static Point init(i32 x, i32 y) {
         Point p;
         p.x = x; p.y = y;
@@ -37,17 +33,13 @@ struct Size {
         Width = w; Height = h;
     }
     void set(i32 hw) {
-        Wigth = hw; Height = hw;
+        Width = hw; Height = hw;
     }
     bool operator== (const Size& s) const {
         return Width == s.Width && Height == s.Height;
     }
     bool operator!= (const Size& s) const {
         return Width != s.Width || Height != s.Height;
-    }
-    Size& operator= (const Size& s) {
-        Width = s.Width; Height = s.Height;
-        return *this;
     }
 };
 
@@ -96,7 +88,7 @@ public:
         return Point::init(Left(), Bottom());
     }
     Point RightBottomCorner() const {
-        return Point::init(Rigth(), Bottom());
+        return Point::init(Right(), Bottom());
     }
     Point Center() const {
         return Point::init(x + Width/2, y + Height/2);
