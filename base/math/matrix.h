@@ -1,8 +1,8 @@
 #pragma once
 
 #include "base/types.h"
-#include "base/vector.h"
-#include "base/plane.h"
+#include "base/math/vector.h"
+#include "base/math/plane.h"
 
 namespace base {
 namespace math {

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "base/matrix.h"
+#include "base/math/matrix.h"
 
 TEST(math, matrix4)
 {
