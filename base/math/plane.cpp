@@ -37,7 +37,7 @@ f32 Plane::Distance(const Vector3& point) const {
 
 void Plane::Normalize() {
     f32 len = normal_.Length();
-    if (len == 0.)
+    if (len < eps)
         return;
     normal_.x /= len;
     normal_.y /= len;

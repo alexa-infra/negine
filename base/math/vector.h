@@ -1,7 +1,6 @@
 #pragma once
 
-#include "base/types.h"
-#include <math.h>
+#include "base/math/mathlib.h"
 
 namespace base {
 namespace math {
@@ -105,7 +104,7 @@ public:
     }
     inline void SetLength(f32 len) {
         f32 magnitude = Length() / len;
-        if (magnitude == 0.)
+        if (magnitude < eps)
             return;
         *this /= magnitude;
     }
@@ -220,7 +219,7 @@ public:
     }
     inline void SetLength(f32 len) {
         f32 magnitude = Length() / len;
-        if (magnitude == 0.f)
+        if (magnitude < eps)
             return;
         *this /= magnitude;
     }
@@ -335,7 +334,7 @@ public:
     }
     inline void SetLength(f32 len) {
         f32 magnitude = Length() / len;
-        if (magnitude == 0.f)
+        if (magnitude == eps)
             return;
         *this /= magnitude;
     }
