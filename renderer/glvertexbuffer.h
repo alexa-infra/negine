@@ -1,6 +1,7 @@
 #pragma once
 
 namespace ext {
+namespace opengl {
 
 //! wraps Vertex Buffer Object 
 class GLVertexBuffer {
@@ -26,8 +27,7 @@ public:
     void GetSubData(u32 offset, u32 size, void* data_ptr);
 
     void Clear();
-
-    static bool IsSupported();
 };
 
+}
 }

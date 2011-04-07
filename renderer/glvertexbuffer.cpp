@@ -47,9 +47,5 @@ void GLVertexBuffer::Clear() {
     glBufferData(target, 0, NULL, 0);
 }
 
-bool GLVertexBuffer::IsSupported() {
-    return GLEW_ARB_vertex_buffer_object;
-}
-
 
 }

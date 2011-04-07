@@ -17,16 +17,21 @@ private:
     u32 count_;
 
 public:
-    BufferDescription() : stride_(0), count_(0) {}
+    BufferDescription() 
+        : stride_(0)
+        , count_(0) 
+    {
+    }
 
     explicit BufferDescription(const BufferElementList& elements)
-        : elements_(elements), stride_(0), count_(0)
+        : elements_(elements)
+        , stride_(0)
+        , count_(0)
     {
         Update();
     }
 
-    void AddElement(u32 type, u32 size, u32 count = 1)
-    {
+    void AddElement(u32 type, u32 size, u32 count = 1) {
         BufferElement element;
         element.Type = type;
         element.Size = size;
@@ -37,13 +42,14 @@ public:
     }
 
     template<typename TT>
-    void AddElement(u32 type, u32 count = 1)
-    {
+    void AddElement(u32 type, u32 count = 1) {
         AddElement(type, sizeof(TT), count);
     }
 
     const BufferElementList& getElements() const { return elements_; }
-    void setElements(const BufferElementList& list) { elements_ = list; Update(); }
+    void setElements(const BufferElementList& list) { 
+        elements_ = list; Update(); 
+    }
 
     u32 getStride() const { return stride_; }
 
@@ -53,8 +59,7 @@ public:
     u32 getFullSize() const { return count_ * stride; }
 
 private:
-    void Update()
-    {
+    void Update() {
         u32 offset = 0;
         for (BufferElementList::iterator it = elements_.begin();
             it != elements_.end();

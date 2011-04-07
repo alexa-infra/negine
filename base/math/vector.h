@@ -10,7 +10,7 @@ class Vector3;
 class Vector4;
 
 class Vector2 {
-public:
+ public:
     union {
         struct {
             f32 x, y;
@@ -25,81 +25,94 @@ public:
     explicit Vector2(const f32* v) { set(v); }
     explicit Vector2(f32 v) { set(v); }
 
-    inline void set(f32 vx, f32 vy) { x = vx; y = vy; }
+    inline void set(f32 vx, f32 vy) {
+        x = vx;
+        y = vy;
+    }
     inline void set(const f32* v) { set(v[0], v[1]); }
-    inline void set(f32 v) { x = v; y = v; }
+    inline void set(f32 v) {
+        x = v;
+        y = v;
+    }
 
     inline Vector2& operator= (const Vector2& v) {
-        x = v.x; y = v.y;
-        return *this; 
-    }
-    inline Vector2& operator+= (const Vector2& v) { 
-        x += v.x; y += v.y;
-        return *this; 
-    }
-    inline Vector2& operator-= (const Vector2& v) { 
-        x -= v.x; y -= v.y; 
+        x = v.x;
+        y = v.y;
         return *this;
     }
-    inline Vector2& operator*= (const Vector2& v) { 
-        x *= v.x; y *= v.y; 
-        return *this; 
-    }
-    inline Vector2& operator*= (const f32 v) { 
-        x *= v; y *= v; 
-        return *this; 
-    }
-    inline Vector2& operator/= (const Vector2& v) { 
-        x /= v.x; y /= v.y; 
+    inline Vector2& operator+= (const Vector2& v) {
+        x += v.x;
+        y += v.y;
         return *this;
     }
-    inline Vector2& operator/= (const f32 v) { 
-        x /= v; y /= v; 
+    inline Vector2& operator-= (const Vector2& v) {
+        x -= v.x;
+        y -= v.y;
         return *this;
     }
-    inline Vector2 operator+ (const Vector2& v) const { 
-        return Vector2(x + v.x, y + v.y); 
+    inline Vector2& operator*= (const Vector2& v) {
+        x *= v.x;
+        y *= v.y;
+        return *this;
     }
-    inline Vector2 operator- (const Vector2& v) const { 
-        return Vector2(x - v.x, y - v.y); 
+    inline Vector2& operator*= (const f32 v) {
+        x *= v;
+        y *= v;
+        return *this;
     }
-    inline Vector2 operator* (const Vector2& v) const { 
-        return Vector2(x * v.x, y * v.y); 
+    inline Vector2& operator/= (const Vector2& v) {
+        x /= v.x;
+        y /= v.y;
+        return *this;
     }
-    inline Vector2 operator* (const f32 v) const { 
-        return Vector2(x * v, y * v); 
+    inline Vector2& operator/= (const f32 v) {
+        x /= v;
+        y /= v;
+        return *this;
     }
-    inline Vector2 operator/ (const Vector2& v) const { 
-        return Vector2(x / v.x, y / v.y); 
+    inline Vector2 operator+ (const Vector2& v) const {
+        return Vector2(x + v.x, y + v.y);
     }
-    inline Vector2 operator/ (const f32 v) const { 
-        return Vector2(x / v, y / v); 
+    inline Vector2 operator- (const Vector2& v) const {
+        return Vector2(x - v.x, y - v.y);
     }
-    inline Vector2 operator- () const { 
-        return Vector2( -x, -y ); 
+    inline Vector2 operator* (const Vector2& v) const {
+        return Vector2(x * v.x, y * v.y);
     }
-    inline f32& operator[] (const int i) { 
-        return array[i]; 
+    inline Vector2 operator* (const f32 v) const {
+        return Vector2(x * v, y * v);
     }
-    inline const f32& operator[] (const int i) const { 
-        return array[i]; 
+    inline Vector2 operator/ (const Vector2& v) const {
+        return Vector2(x / v.x, y / v.y);
     }
-    inline bool operator== (const Vector2& v) const { 
-        return (x == v.x && y == v.y); 
+    inline Vector2 operator/ (const f32 v) const {
+        return Vector2(x / v, y / v);
     }
-    inline bool operator!= (const Vector2& v) const { 
-        return (x != v.x || y != v.y); 
+    inline Vector2 operator- () const {
+        return Vector2( -x, -y );
     }
-    inline bool Equal (const Vector2& v) const { 
+    inline f32& operator[] (const int i) {
+        return array[i];
+    }
+    inline const f32& operator[] (const int i) const {
+        return array[i];
+    }
+    inline bool operator== (const Vector2& v) const {
+        return (x == v.x && y == v.y);
+    }
+    inline bool operator!= (const Vector2& v) const {
+        return (x != v.x || y != v.y);
+    }
+    inline bool Equal(const Vector2& v) const {
         return *this == v;
     }
-    inline bool Valid() const { 
-        return true; 
+    inline bool Valid() const {
+        return true;
     }
-    inline f32 Length2() const { 
-        return x * x + y * y; 
+    inline f32 Length2() const {
+        return x * x + y * y;
     }
-    inline f32 Length () const {
+    inline f32 Length() const {
         return sqrt(Length2());
     }
     inline void SetLength(f32 len) {
@@ -108,21 +121,21 @@ public:
             return;
         *this /= magnitude;
     }
-    inline Vector2& Normalize () {         
+    inline Vector2& Normalize() {
         SetLength(1.0);
     }
-    inline Vector2 Normalized () const {
+    inline Vector2 Normalized() const {
         Vector2 normalized(x, y);
         normalized.Normalize();
         return normalized;
     }
-    inline f32 Dot (const Vector2& v) const { 
-        return (x * v.x + y * v.y); 
+    inline f32 Dot(const Vector2& v) const {
+        return (x * v.x + y * v.y);
     }
 };
 
 class Vector3 {
-public:
+ public:
     union {
         f32 x, y, z;
         struct {
@@ -137,84 +150,106 @@ public:
     explicit Vector3(const f32* v) { set(v); }
     explicit Vector3(f32 v) { set(v); }
 
-    inline void set(f32 vx, f32 vy, f32 vz) { x = vx; y = vy; z = vz; }
+    inline void set(f32 vx, f32 vy, f32 vz) {
+        x = vx;
+        y = vy;
+        z = vz;
+    }
     inline void set(const f32* v) { set(v[0], v[1], v[2]); }
-    inline void set(f32 v) { x = v; y = v; z = v; }
+    inline void set(f32 v) {
+        x = v;
+        y = v;
+        z = v;
+    }
 
     inline Vector3& operator= (const Vector3& v) {
-        x = v.x; y = v.y; z = v.z;
-        return *this; 
-    }
-    inline Vector3& operator+= (const Vector3& v) { 
-        x += v.x; y += v.y; z += v.z;
-        return *this; 
-    }
-    inline Vector3& operator-= (const Vector3& v) { 
-        x -= v.x; y -= v.y; z -= v.z;
+        x = v.x;
+        y = v.y;
+        z = v.z;
         return *this;
     }
-    inline Vector3& operator*= (const Vector3& v) { 
-        x *= v.x; y *= v.y; z *= v.z;
-        return *this; 
-    }
-    inline Vector3& operator*= (const f32 v) { 
-        x *= v; y *= v; z *= v;
-        return *this; 
-    }
-    inline Vector3& operator/= (const Vector3& v) { 
-        x /= v.x; y /= v.y; z /= v.z;
+    inline Vector3& operator+= (const Vector3& v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
         return *this;
     }
-    inline Vector3& operator/= (const f32 v) { 
-        x /= v; y /= v; z /= v;
+    inline Vector3& operator-= (const Vector3& v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
         return *this;
     }
-    inline Vector3 operator+ (const Vector3& v) const { 
-        return Vector3(x + v.x, y + v.y, z + v.z); 
+    inline Vector3& operator*= (const Vector3& v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+        return *this;
     }
-    inline Vector3 operator- (const Vector3& v) const { 
-        return Vector3(x - v.x, y - v.y, z - v.z); 
+    inline Vector3& operator*= (const f32 v) {
+        x *= v;
+        y *= v;
+        z *= v;
+        return *this;
     }
-    inline Vector3 operator* (const Vector3& v) const { 
-        return Vector3(x * v.x, y * v.y, z * v.z); 
+    inline Vector3& operator/= (const Vector3& v) {
+        x /= v.x;
+        y /= v.y;
+        z /= v.z;
+        return *this;
     }
-    inline Vector3 operator* (const f32 v) const { 
-        return Vector3(x * v, y * v, z * v); 
+    inline Vector3& operator/= (const f32 v) {
+        x /= v;
+        y /= v;
+        z /= v;
+        return *this;
     }
-    inline Vector3 operator/ (const Vector3& v) const { 
-        return Vector3(x / v.x, y / v.y, z / v.z); 
+    inline Vector3 operator+ (const Vector3& v) const {
+        return Vector3(x + v.x, y + v.y, z + v.z);
     }
-    inline Vector3 operator/ (const f32 v) const { 
-        return Vector3(x / v, y / v, z / v); 
+    inline Vector3 operator- (const Vector3& v) const {
+        return Vector3(x - v.x, y - v.y, z - v.z);
     }
-    inline Vector3 operator- () const { 
-        return Vector3( -x, -y, -z ); 
+    inline Vector3 operator* (const Vector3& v) const {
+        return Vector3(x * v.x, y * v.y, z * v.z);
     }
-    inline Vector3 operator ^ (const Vector3& v) const { 
-        return Vector3(y*v.z - z*v.y,  z*v.x - x*v.z, x*v.y - y*v.x); 
+    inline Vector3 operator* (const f32 v) const {
+        return Vector3(x * v, y * v, z * v);
     }
-    inline f32& operator[] (const int i) { 
-        return array[i]; 
+    inline Vector3 operator/ (const Vector3& v) const {
+        return Vector3(x / v.x, y / v.y, z / v.z);
     }
-    inline const f32& operator[] (const int i) const { 
-        return array[i]; 
+    inline Vector3 operator/ (const f32 v) const {
+        return Vector3(x / v, y / v, z / v);
     }
-    inline bool operator== (const Vector3& v) const { 
-        return (x == v.x && y == v.y && z == v.z); 
+    inline Vector3 operator- () const {
+        return Vector3( -x, -y, -z );
     }
-    inline bool operator!= (const Vector3& v) const { 
-        return (x != v.x || y != v.y || z != v.z); 
+    inline Vector3 operator ^ (const Vector3& v) const {
+        return Vector3(y*v.z - z*v.y,  z*v.x - x*v.z, x*v.y - y*v.x);
     }
-    inline bool Equal (const Vector3& v) const { 
+    inline f32& operator[] (const int i) {
+        return array[i];
+    }
+    inline const f32& operator[] (const int i) const {
+        return array[i];
+    }
+    inline bool operator== (const Vector3& v) const {
+        return (x == v.x && y == v.y && z == v.z);
+    }
+    inline bool operator!= (const Vector3& v) const {
+        return (x != v.x || y != v.y || z != v.z);
+    }
+    inline bool Equal(const Vector3& v) const {
         return *this == v;
     }
-    inline bool Valid() const { 
-        return true; 
+    inline bool Valid() const {
+        return true;
     }
-    inline f32 Length2() const { 
-        return x * x + y * y + z * z; 
+    inline f32 Length2() const {
+        return x * x + y * y + z * z;
     }
-    inline f32 Length () const {
+    inline f32 Length() const {
         return sqrt(Length2());
     }
     inline void SetLength(f32 len) {
@@ -223,22 +258,21 @@ public:
             return;
         *this /= magnitude;
     }
-    inline Vector3& Normalize () {         
+    inline Vector3& Normalize() {
         SetLength(1.0f);
     }
-    inline Vector3 Normalized () const {
+    inline Vector3 Normalized() const {
         Vector3 normalized(x, y, z);
         normalized.Normalize();
         return normalized;
     }
-    inline f32 Dot (const Vector3& v) const { 
-        return (x * v.x + y * v.y + z * v.z); 
+    inline f32 Dot(const Vector3& v) const {
+        return (x * v.x + y * v.y + z * v.z);
     }
-
 };
 
 class Vector4 {
-public:
+ public:
     union {
         f32 x, y, z, w;
         struct {
@@ -253,83 +287,112 @@ public:
     explicit Vector4(const f32* v) { set(v); }
     explicit Vector4(f32 v) { set(v); }
 
-    inline void set(f32 vx, f32 vy, f32 vz, f32 vw) { 
-        x = vx; y = vy; z = vz; w = vw;
+    inline void set(f32 vx, f32 vy, f32 vz, f32 vw) {
+        x = vx;
+        y = vy;
+        z = vz;
+        w = vw;
     }
     inline void set(const f32* v) { set(v[0], v[1], v[2], v[3]); }
-    inline void set(f32 v) { x = v; y = v; z = v; w = v; }
+    inline void set(f32 v) {
+        x = v;
+        y = v;
+        z = v;
+        w = v;
+    }
 
     inline Vector4& operator= (const Vector4& v) {
-        x = v.x; y = v.y; z = v.z; w = v.w;
-        return *this; 
-    }
-    inline Vector4& operator+= (const Vector4& v) { 
-        x += v.x; y += v.y; z += v.z; w = v.w;
-        return *this; 
-    }
-    inline Vector4& operator-= (const Vector4& v) { 
-        x -= v.x; y -= v.y; z -= v.z; w = v.w;
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = v.w;
         return *this;
     }
-    inline Vector4& operator*= (const Vector4& v) { 
-        x *= v.x; y *= v.y; z *= v.z; w = v.w;
-        return *this; 
-    }
-    inline Vector4& operator*= (const f32 v) { 
-        x *= v; y *= v; z *= v; w *= v;
-        return *this; 
-    }
-    inline Vector4& operator/= (const Vector4& v) { 
-        x /= v.x; y /= v.y; z /= v.z; w /= v.w;
+    inline Vector4& operator+= (const Vector4& v) {
+        x += v.x;
+        y += v.y;
+        z += v.z;
+        w += v.w;
         return *this;
     }
-    inline Vector4& operator/= (const f32 v) { 
-        x /= v; y /= v; z /= v; w /= v;
+    inline Vector4& operator-= (const Vector4& v) {
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
+        w -= v.w;
         return *this;
     }
-    inline Vector4 operator+ (const Vector4& v) const { 
-        return Vector4(x + v.x, y + v.y, z + v.z, w + v.w); 
+    inline Vector4& operator*= (const Vector4& v) {
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
+        w *= v.w;
+        return *this;
     }
-    inline Vector4 operator- (const Vector4& v) const { 
-        return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); 
+    inline Vector4& operator*= (const f32 v) {
+        x *= v;
+        y *= v;
+        z *= v;
+        w *= v;
+        return *this;
     }
-    inline Vector4 operator* (const Vector4& v) const { 
-        return Vector4(x * v.x, y * v.y, z * v.z, w * v.w); 
+    inline Vector4& operator/= (const Vector4& v) {
+        x /= v.x;
+        y /= v.y;
+        z /= v.z;
+        w /= v.w;
+        return *this;
     }
-    inline Vector4 operator* (const f32 v) const { 
-        return Vector4(x * v, y * v, z * v, w *v); 
+    inline Vector4& operator/= (const f32 v) {
+        x /= v;
+        y /= v;
+        z /= v;
+        w /= v;
+        return *this;
     }
-    inline Vector4 operator/ (const Vector4& v) const { 
-        return Vector4(x / v.x, y / v.y, z / v.z, w / v.w); 
+    inline Vector4 operator+ (const Vector4& v) const {
+        return Vector4(x + v.x, y + v.y, z + v.z, w + v.w);
     }
-    inline Vector4 operator/ (const f32 v) const { 
-        return Vector4(x / v, y / v, z / v, w / v); 
+    inline Vector4 operator- (const Vector4& v) const {
+        return Vector4(x - v.x, y - v.y, z - v.z, w - v.w);
     }
-    inline Vector4 operator- () const { 
-        return Vector4( -x, -y, -z, -w ); 
+    inline Vector4 operator* (const Vector4& v) const {
+        return Vector4(x * v.x, y * v.y, z * v.z, w * v.w);
     }
-    inline f32& operator[] (const int i) { 
-        return array[i]; 
+    inline Vector4 operator* (const f32 v) const {
+        return Vector4(x * v, y * v, z * v, w *v);
     }
-    inline const f32& operator[] (const int i) const { 
-        return array[i]; 
+    inline Vector4 operator/ (const Vector4& v) const {
+        return Vector4(x / v.x, y / v.y, z / v.z, w / v.w);
     }
-    inline bool operator== (const Vector4& v) const { 
-        return (x == v.x && y == v.y && z == v.z && w == v.w); 
+    inline Vector4 operator/ (const f32 v) const {
+        return Vector4(x / v, y / v, z / v, w / v);
     }
-    inline bool operator!= (const Vector4& v) const { 
-        return (x != v.x || y != v.y || z != v.z || w != v.w); 
+    inline Vector4 operator- () const {
+        return Vector4( -x, -y, -z, -w );
     }
-    inline bool Equal (const Vector4& v) const { 
+    inline f32& operator[] (const int i) {
+        return array[i];
+    }
+    inline const f32& operator[] (const int i) const {
+        return array[i];
+    }
+    inline bool operator== (const Vector4& v) const {
+        return (x == v.x && y == v.y && z == v.z && w == v.w);
+    }
+    inline bool operator!= (const Vector4& v) const {
+        return (x != v.x || y != v.y || z != v.z || w != v.w);
+    }
+    inline bool Equal(const Vector4& v) const {
         return *this == v;
     }
-    inline bool Valid() const { 
-        return true; 
+    inline bool Valid() const {
+        return true;
     }
-    inline f32 Length2() const { 
-        return x * x + y * y + z * z + w * w; 
+    inline f32 Length2() const {
+        return x * x + y * y + z * z + w * w;
     }
-    inline f32 Length () const {
+    inline f32 Length() const {
         return sqrt(Length2());
     }
     inline void SetLength(f32 len) {
@@ -338,18 +401,17 @@ public:
             return;
         *this /= magnitude;
     }
-    inline Vector3& Normalize () {
+    inline Vector3& Normalize() {
         SetLength(1.0f);
     }
-    inline Vector4 Normalized () const {
+    inline Vector4 Normalized() const {
         Vector4 normalized(x, y, z, w);
         normalized.Normalize();
         return normalized;
     }
-    inline f32 Dot (const Vector4& v) const { 
-        return (x * v.x + y * v.y + z * v.z + w * v.w); 
+    inline f32 Dot(const Vector4& v) const {
+        return (x * v.x + y * v.y + z * v.z + w * v.w);
     }
 };
-
 }
 }

@@ -7,9 +7,8 @@
 namespace base {
 namespace math {
 
-class Matrix4
-{
-public:
+class Matrix4 {
+ public:
     union {
         f32 array1d[16];
         f32 array2d[4][4];
@@ -25,10 +24,13 @@ public:
         };
     };
 
-public:
+ public:
     Matrix4();
-    Matrix4(const f32* matrix);
-    Matrix4(f32 vxx, f32 vxy, f32 vxz, f32 vxw, f32 vyx, f32 vyy, f32 vyz, f32 vyw, f32 vzx, f32 vzy, f32 vzz, f32 vzw, f32 vwx, f32 vwy, f32 vwz, f32 vww);
+    explicit Matrix4(const f32* matrix);
+    Matrix4(f32 vxx, f32 vxy, f32 vxz, f32 vxw,
+            f32 vyx, f32 vyy, f32 vyz, f32 vyw,
+            f32 vzx, f32 vzy, f32 vzz, f32 vzw,
+            f32 vwx, f32 vwy, f32 vwz, f32 vww);
 
     void SetIdentity();
 
@@ -40,13 +42,13 @@ public:
     void RotateY(const f32& angle);
     void RotateZ(const f32& angle);
 
-	void Project(const Plane& plane);
+    void Project(const Plane& plane);
     void Reflect(const Plane& plane);
 
     void Transpose();
     void Invert();
 
-public:
+ public:
     Matrix4& operator = (const Matrix4& m);
     Matrix4& operator *= (const Matrix4& m);
     Matrix4 operator * (const Matrix4& m) const;
@@ -54,7 +56,7 @@ public:
     Vector3 operator * (const Vector3& v) const;
     Vector4 operator * (const Vector4& v) const;
 
-public:
+ public:
     static const Matrix4 Identity;
     static const Matrix4 Zero;
 
@@ -66,9 +68,8 @@ public:
     static Matrix4 GetRotationY(const f32& angle);
     static Matrix4 GetRotationZ(const f32& angle);
 
-	static Matrix4 GetProjection(const Plane& plane);
-	static Matrix4 GetReflection(const Plane& plane);
+    static Matrix4 GetProjection(const Plane& plane);
+    static Matrix4 GetReflection(const Plane& plane);
 };
-
 }
 }

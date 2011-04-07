@@ -1,6 +1,7 @@
 #pragma once
 
 namespace ext {
+namespace opengl {
 
 class GLShader {
 private:
@@ -20,4 +21,5 @@ public:
     bool Compile(const std::string& source, std::string& status);
 };
 
+}
 }

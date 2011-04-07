@@ -7,12 +7,12 @@ namespace base {
 namespace math {
 
 class Plane {
-private:
+ private:
     Vector3 normal_;
     f32 distance_;
-public:
+ public:
     Plane();
-    Plane(const Vector3* points) {
+    explicit Plane(const Vector3* points) {
         set(points[0], points[1], points[2]);
     }
     Plane(const Vector3& p1, const Vector3& p2, const Vector3& p3) {
@@ -24,7 +24,7 @@ public:
     Plane(const f32& a, const f32& b, const f32& c, const f32& d) {
         set(a, b, c, d);
     }
-    
+
     void set(const Vector3* points);
     void set(const Vector3& p1, const Vector3& p2, const Vector3& p3);
     void set(const Vector3& normal, const Vector3& planePoint);
@@ -39,9 +39,8 @@ public:
 
     f32 Distance(const Vector3& point) const;
     Vector3 Projection(const Vector3& point) const;
-private:
+ private:
     void Normalize();
 };
-
 }
 }

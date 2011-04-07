@@ -44,6 +44,5 @@ void Plane::Normalize() {
     normal_.z /= len;
     distance_ /= len;
 }
-
 }
 }

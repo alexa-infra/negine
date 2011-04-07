@@ -18,10 +18,10 @@ namespace PixelTypes {
 namespace TextureTypes {
     GLenum GetGLType(TextureType type) {
         switch (type) {
-            case 1D:    return GL_TEXTURE_1D;
-            case 2D:    return GL_TEXTURE_2D;
-            case 3D:    return GL_TEXTURE_3D;
-            case Cube:  return GL_TEXTURE_CUBE;
+            case Texture1D:    return GL_TEXTURE_1D;
+            case Texture2D:    return GL_TEXTURE_2D;
+            case Texture3D:    return GL_TEXTURE_3D;
+            case TextureCube:  return GL_TEXTURE_CUBE;
         }
         return 0;
     }
@@ -30,12 +30,12 @@ namespace TextureTypes {
 namespace TextureMinFilters {
     GLenum GetGLType(TextureMinFilter filter) {
         switch (filter) {
-            case NEAREST: return GL_NEAREST;
-            case LINEAR: return GL_LINEAR;
-            case NEAREST_MIPMAP_NEAREST: return GL_NEAREST_MIPMAP_NEAREST;
-            case LINEAR_MIPMAP_NEAREST: return GL_LINEAR_MIPMAP_NEAREST;
-            case NEAREST_MIPMAP_LINEAR: return GL_NEAREST_MIPMAP_LINEAR;
-            case LINEAR_MIPMAP_LINEAR: return GL_LINEAR_MIPMAP_LINEAR;
+            case NEAREST:                   return GL_NEAREST;
+            case LINEAR:                    return GL_LINEAR;
+            case NEAREST_MIPMAP_NEAREST:    return GL_NEAREST_MIPMAP_NEAREST;
+            case LINEAR_MIPMAP_NEAREST:     return GL_LINEAR_MIPMAP_NEAREST;
+            case NEAREST_MIPMAP_LINEAR:     return GL_NEAREST_MIPMAP_LINEAR;
+            case LINEAR_MIPMAP_LINEAR:      return GL_LINEAR_MIPMAP_LINEAR;
         }
         return 0;
     }

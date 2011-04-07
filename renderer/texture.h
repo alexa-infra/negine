@@ -34,10 +34,10 @@ typedef TextureUsages::TextureUsage TextureUsage;
 namespace TextureTypes {
     //! Texture type
     enum TextureType {
-        1D, 
-        2D, 
-        3D, 
-        Cube
+        Texture1D, 
+        Texture2D, 
+        Texture3D, 
+        TextureCube
     };
     GLenum GetGLType(TextureType type);
 };

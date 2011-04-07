@@ -10,7 +10,8 @@ struct Point {
     i32 y;
 
     void set(i32 _x, i32 _y) {
-        x = _x; y = _y;
+        x = _x;
+        y = _y;
     }
     bool operator== (const Point& p) const {
         return x == p.x && y == p.y;
@@ -20,7 +21,8 @@ struct Point {
     }
     static Point init(i32 x, i32 y) {
         Point p;
-        p.x = x; p.y = y;
+        p.x = x;
+        p.y = y;
         return p;
     }
 };
@@ -28,12 +30,14 @@ struct Point {
 struct Size {
     i32 Width;
     i32 Height;
-    
+
     void set(i32 w, i32 h) {
-        Width = w; Height = h;
+        Width = w;
+        Height = h;
     }
     void set(i32 hw) {
-        Width = hw; Height = hw;
+        Width = hw;
+        Height = hw;
     }
     bool operator== (const Size& s) const {
         return Width == s.Width && Height == s.Height;
@@ -44,7 +48,7 @@ struct Size {
 };
 
 class Rect {
-public:
+ public:
     union {
         struct {
             i32 x;
@@ -58,7 +62,7 @@ public:
         };
     };
     Rect() : x(0), y(0), Width(0), Height(0) {}
-    Rect(i32 _x, i32 _y, i32 _w, i32 _h) 
+    Rect(i32 _x, i32 _y, i32 _w, i32 _h)
         : x(_x), y(_y), Width(_w), Height(_h) {}
     Rect(const Point& p, const Size& s) {
         Position = p;
@@ -71,8 +75,8 @@ public:
     i32 Left() const { return x; }
     i32 Top() const { return y; }
 
-    void SetBottom(i32 bottom) { 
-        Width = bottom - y; 
+    void SetBottom(i32 bottom) {
+        Width = bottom - y;
     }
     void SetRight(i32 right) {
         Height = right - x;
@@ -122,7 +126,9 @@ public:
         return Contains(Point::init(x, y));
     }
     bool Contains(const Rect& rect) const {
-        return rect.x >= x && rect.y >= y && rect.Right() < Right() && rect.Bottom() < Bottom();
+        return rect.x >= x && rect.y >= y
+            && rect.Right() < Right()
+            && rect.Bottom() < Bottom();
     }
     bool Intersec(const Rect& rect) const {
         if (Contains(rect))
@@ -130,19 +136,17 @@ public:
         if (rect.Contains(*this))
             return true;
 
-        if (Contains(rect.LeftTopCorner())) 
+        if (Contains(rect.LeftTopCorner()))
             return true;
-        if (Contains(rect.RightTopCorner())) 
+        if (Contains(rect.RightTopCorner()))
             return true;
-        if (Contains(rect.LeftBottomCorner())) 
+        if (Contains(rect.LeftBottomCorner()))
             return true;
-        if (Contains(rect.RightBottomCorner())) 
+        if (Contains(rect.RightBottomCorner()))
             return true;
-        
         return false;
     }
-    Rect Union(const Rect& rect) const
-    {
+    Rect Union(const Rect& rect) const {
         Rect ret;
         ret.x = (x > rect.x) ? x : rect.x;
         ret.y = (y > rect.y) ? y : rect.y;
@@ -150,8 +154,7 @@ public:
         ret.SetBottom((Bottom() < rect.Bottom()) ? Bottom() : rect.Bottom());
         return ret;
     }
-    Rect Combine(const Rect& rect) const
-    {
+    Rect Combine(const Rect& rect) const {
         Rect ret;
         ret.x = (x < rect.x) ? x : rect.x;
         ret.y = (y < rect.y) ? y : rect.y;
@@ -160,6 +163,5 @@ public:
         return ret;
     }
 };
-
 }
 }

@@ -2,8 +2,8 @@
 
 class BufferDescription;
 
-class Buffer 
-{
+class Buffer {
+protected:
     BufferDescription desc;
 public:
     explicit Buffer(const BufferDesription& desc);
