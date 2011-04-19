@@ -14,6 +14,6 @@ include_directories(
     ${TOOLS_PATH}
     ${SRC_PATH}
 )
-add_executable(Tests ${TESTS_SRC})
+add_executable(tests ${TESTS_SRC})
 
-target_link_libraries(Tests pthread)
+target_link_libraries(tests pthread)
