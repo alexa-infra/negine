@@ -21,45 +21,22 @@ namespace PixelTypes {
     }
 }
 
-namespace TextureMipmaps {
-    u32 CalcMipmap(u32 width, u32 height) {
-        u32 count = 0;
-        do {
-            if (width > 1)
-                width = width/2;
-            if (height > 1) height = height/2;
-                count += 1;
-        } while (width > 1 && height > 1);
-        return count;
-    }
-    u32 CalcMipmap(u32 width, u32 height, u32 depth) {
-        u32 count = 0;
-        do {
-            if (width > 1)
-                width = width/2;
-            if (height > 1) 
-                height = height/2;
-            if (depth > 1)
-                depth = depth/2;
-            count += 1;
-        } while (width > 1 && height > 1 && depth > 1);
-        return count;
-    }
-}
-
 TextureInfo::TextureInfo()
     : WrapT(TextureWraps::REPEAT)
     , WrapS(TextureWraps::REPEAT)
     , WrapR(TextureWraps::REPEAT)
-    , NumMipmaps(TextureMipmaps::MaxMipmaps)
     , MinFilter(TextureMinFilters::NEAREST_MIPMAP_LINEAR)
     , MagFilter(TextureMagFilters::LINEAR)
-    , Type(TextureTypes::Texture2D) {
+    , Type(TextureTypes::Texture2D)
+    , Pixel(PixelTypes::RGBA)
+    , GenerateMipmap(true) {
 }
 
 
 Texture::Texture() 
-    : image_(NULL) {
+    : image_(NULL)
+    , id_(0) {
+    glGenTextures(1, &id_);
 }
 
 Texture::~Texture() {
@@ -71,17 +48,24 @@ void Texture::Bind() {
 }
 
 void Texture::Generate() {
+    
+    if (!info_.GenerateMipmap)
+    {
+        assert(info_.MinFilter == TextureMinFilters::LINEAR
+            || info_.MinFilter == TextureMinFilters::NEAREST);
+    }
 
     image_ = stbi_load(info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.Depth, 0);
 
     if(image_ == NULL)
     {   
+        std::cout << stbi_failure_reason() << std::endl;
         assert(false);
     }
-    glEnable(GL_TEXTURE_2D);
 
-    glGenTextures(1, &id_);
-    glBindTexture(GL_TEXTURE_2D, id_);
+    glEnable(info_.Type);
+
+    glBindTexture(info_.Type, id_);
     glTexParameteri(info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter);
     glTexParameteri(info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter);
     glTexParameteri(info_.Type, GL_TEXTURE_WRAP_S, info_.WrapS);
@@ -97,7 +81,11 @@ void Texture::Generate() {
             GL_RGB,
             GL_UNSIGNED_BYTE, 
             image_);
-    std::cout << "loaded: " << info_.Filename << " at " << info_.Width << "x" << info_.Height << std::endl;
+
+    if (info_.GenerateMipmap)
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+    std::cout << "loaded: " << info_.Filename << " at " << info_.Width << "x" << info_.Height << " texture id: " << id_ << std::endl;
 
     stbi_image_free(image_);
 }

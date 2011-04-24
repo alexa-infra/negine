@@ -20,17 +20,18 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glViewport(0, 0, width, height); 
 
     glMatrixMode(GL_PROJECTION);
-    glOrtho(-10.0, 10.0, -10.0, 10.0, -5.0, 100.0);
+    glOrtho(-2.0, 2.0, -2.0, 2.0, -2.0, 100.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glRotatef(60, 1, 1, 1);
-    glColor4f(1.0, 0.0, 0.0, 1.0);
+//    glRotatef(60, 1, 1, 1);
+//    glColor4f(1.0, 0.0, 0.0, 1.0);
 
-    glEnable(GL_TEXTURE_2D);
     texture_ = new ext::opengl::Texture;
-    texture_->info().Filename = "texture1.jpg";
+    texture_->info().Filename = "texture.png";
+    texture_->info().MinFilter = ext::opengl::TextureMinFilters::LINEAR;
+    texture_->info().GenerateMipmap = true;
     texture_->Generate();
 
     glEnable(GL_LIGHTING);
@@ -53,9 +54,9 @@ void GlutSampleWindow::OnDisplay(void) {
     glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, emission );
     glMateriali( GL_FRONT_AND_BACK, GL_SHININESS, 64 );*/
 
-    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture_->id());
-    glutSolidTeapot(5);
+
+    glutSolidTeapot(1.f);
 
     GLenum glstatus = glGetError();
     if (glstatus != GL_NO_ERROR) 

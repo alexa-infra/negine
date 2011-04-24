@@ -45,14 +45,6 @@ namespace TextureTypes {
 };
 typedef TextureTypes::TextureType TextureType;
 
-namespace TextureMipmaps {
-    const u32 MaxMipmaps = 0xffff;  //!< Maximum number of mipmaps, 
-                                    //!< if used then choose max number of 
-                                    //!< mipmaps for width/height
-    u32 CalcMipmap(u32 width, u32 height);
-    u32 CalcMipmap(u32 width, u32 height, u32 depth);
-}
-
 namespace TextureMinFilters {
     //! Texture minifying function is used whenever the pixel being textured 
     //! maps to an area greater than one texture element.
@@ -116,15 +108,16 @@ typedef TextureWraps::TextureWrap TextureWrap;
 struct TextureInfo {
     TextureUsage Usage;
     TextureType Type;
-    u32 NumMipmaps;
     TextureMagFilter MagFilter;
     TextureMinFilter MinFilter;
     TextureWrap WrapT, WrapS, WrapR;
+    bool GenerateMipmap;
     
     std::string Filename;
     i32 Width;
     i32 Height;
     i32 Depth;
+    PixelType Pixel;
     
     TextureInfo();
 };
