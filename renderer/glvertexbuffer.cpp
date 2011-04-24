@@ -1,6 +1,7 @@
 #include "renderer/glvertexbuffer.h"
 
 namespace ext {
+namespace opengl {
 
 GLVertexBuffer::GLVertexBuffer() 
     : id_(0)
@@ -44,8 +45,9 @@ void GLVertexBuffer::GetSubData(u32 offset, u32 size, void* data_ptr) {
 }
 
 void GLVertexBuffer::Clear() {
-    glBufferData(target, 0, NULL, 0);
+    glBufferData(target_, 0, NULL, 0);
 }
 
 
+}
 }

@@ -33,7 +33,7 @@ public:
 	GlutWindow(u32 flags, i32 width = 640, i32 height = 480); 
 	virtual ~GlutWindow();
 	void Run();
-protected:
+private:
 	virtual void OnDisplay(void) {}
 	virtual void OnReshape(i32 width, i32 height) {}
 	virtual void OnKeyboard(u8 key, i32 x, i32 y) {}
@@ -41,15 +41,5 @@ protected:
 	virtual void OnMotion(i32 x, i32 y) {}
 	virtual void OnPassiveMotion(i32 x, i32 y) {}
 	virtual void OnVisibility(i32 state) {}
-};
-
-class GlutSampleWindow : public GlutWindow {
-public:
-	GlutSampleWindow(i32 width = 640, i32 height = 480); 
-	virtual ~GlutSampleWindow();
-protected:
-	virtual void OnDisplay(void);
-	virtual void OnReshape(i32 width, i32 height);
-	virtual void OnMotion(i32 x, i32 y);
 };
 

@@ -3,7 +3,7 @@
 namespace ext {
 namespace opengl {
 
-GLShader::GLShader(GLenum type) 
+Shader::Shader(GLenum type) 
     : id_(0)
     , is_ok_(false)
     , compiled_(false)
@@ -12,12 +12,12 @@ GLShader::GLShader(GLenum type)
     is_ok_ = (glIsShader(id_) == GL_TRUE);
 }
 
-GLShader::~GLShader() {
+Shader::~Shader() {
     if (is_ok_)
         glDeleteShader(id_);
 }
 
-bool GLShader::Compile(const std::string& source, std::string& status) {
+bool Shader::Compile(const std::string& source, std::string& status) {
     if (!is_ok_)
         return false;
     const char* shader_source = source.c_str();
@@ -34,7 +34,7 @@ bool GLShader::Compile(const std::string& source, std::string& status) {
         return false;
     status.resize(static_cast<u32>(log_size));
     char* buffer = const_cast<char*>(status.c_str());
-    glGetInfoLog(id_, log_size, NULL, buffer);
+    glGetInfoLogARB(id_, log_size, NULL, buffer);
     return false;
 }
 

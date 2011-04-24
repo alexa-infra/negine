@@ -1,5 +1,8 @@
 #pragma once
 
+#include "base/types.h"
+#include "renderer/glcontext.h"
+
 namespace ext {
 namespace opengl {
 
@@ -20,7 +23,7 @@ public:
     void Unbind();
 
     void* Map(GLenum access_type);
-    void Unmap();
+    bool Unmap();
 
     void SetData(u32 size, void* data_ptr, GLenum usage);
     void SetSubData(u32 offset, u32 size, const void* data_ptr);

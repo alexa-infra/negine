@@ -1,17 +1,19 @@
 #pragma once
 
+#include "renderer/glcontext.h"
+
 namespace ext {
 namespace opengl {
 
-class GLShader {
+class Shader {
 private:
     u32 id_;
     bool is_ok_;
     bool compiled_;
     GLenum shader_type_;
 public:
-    GLShader(GLenum type);
-    ~GLShader();
+    Shader(GLenum type);
+    ~Shader();
 
     u32 id() const { return id_; }
     bool is_ok() const { return is_ok_; }
