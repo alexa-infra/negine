@@ -11,6 +11,7 @@ private:
     bool is_ok_;
     bool compiled_;
     GLenum shader_type_;
+    std::string status_;
 public:
     Shader(GLenum type);
     ~Shader();
@@ -19,8 +20,9 @@ public:
     bool is_ok() const { return is_ok_; }
     bool compiled() const { return compiled_; }
     GLenum shader_type() const { return shader_type_; }
+    const std::string& status() const { return status_; }
 
-    bool Compile(const std::string& source, std::string& status);
+    bool Compile(const std::string& source);
 };
 
 }

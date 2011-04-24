@@ -2,10 +2,12 @@
 
 #include "app/glutapp.h"
 #include "renderer/gltexture.h"
+#include "renderer/glprogram.h"
 
 class GlutSampleWindow : public GlutWindow {
 private:
     ext::opengl::Texture* texture_;
+    ext::opengl::Program* program_;
 public:
 	GlutSampleWindow(i32 width = 640, i32 height = 480); 
 	virtual ~GlutSampleWindow();

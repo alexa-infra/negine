@@ -8,9 +8,39 @@
 
 #include <GL/glut.h>
 
+#include <fstream>
+
+std::string read_file(const std::string& filename) {
+    int length;
+    char* buffer;
+
+    std::ifstream is;
+    is.open(filename.c_str());
+    if (!is.good())
+        return "";
+
+    // get length of file:
+    is.seekg(0, std::ios::end);
+    length = is.tellg();
+    is.seekg(0, std::ios::beg);
+
+    // allocate memory:
+    buffer = new char[length];
+
+    // read data as a block:
+    is.read(buffer,length);
+    is.close();
+
+    std::string ret(buffer, length);
+    delete[] buffer;
+    return ret;
+}
+
 GlutSampleWindow::GlutSampleWindow(i32 width, i32 height) 
     : GlutWindow(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE, 
-                 width, height) 
+                 width, height)
+    , texture_(NULL)
+    , program_(NULL)
 {
     GLenum err = glewInit();
     if (GLEW_OK != err) 
@@ -34,6 +64,9 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     texture_->info().GenerateMipmap = true;
     texture_->Generate();
 
+    program_ = ext::opengl::Program::Create(read_file("shader.ps"), read_file("shader.fs"));
+    if (program_ != NULL)
+        program_->Bind();
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 }

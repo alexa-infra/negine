@@ -1,5 +1,8 @@
 #include "renderer/glprogram.h"
 #include <assert.h>
+#include <iostream>
+#include "base/math/vector.h"
+#include "base/math/matrix.h"
 
 namespace ext {
 namespace opengl {
@@ -8,8 +11,37 @@ Program::Program()
     : program_id_(0)
     , pixel_shader_(NULL)
     , vertex_shader_(NULL)
-    , linked_(false) {
+    , linked_(false)
+    , is_ok_(false) {
     program_id_ = glCreateProgram();
+}
+
+Program* Program::Create(const std::string& vs, const std::string& fs) {
+    Shader* pvs = new Shader(GL_VERTEX_SHADER);
+    Shader* pfs = new Shader(GL_FRAGMENT_SHADER);
+    Program* pr = new Program;
+    bool failed = false;
+    if (!pvs->Compile(vs)) {
+        std::cout << pvs->status() << std::endl;
+        failed = true;
+    } else {
+        pr->set_vertex_shader(pvs);
+    }
+    if (!pfs->Compile(fs)) {
+        std::cout << pfs->status() << std::endl;
+        failed = true;
+    } else {
+        pr->set_pixel_shader(pfs);
+    }
+    pr->Link();
+    if (!pr->is_ok()) {
+        std::cout << pr->status() << std::endl;
+        delete pr;
+        delete pfs;
+        delete pvs;
+        return NULL;
+    }
+    return pr;
 }
 
 Program::~Program() {
@@ -35,15 +67,18 @@ void Program::Link() {
 
     GLint status;
     glGetProgramiv(program_id_, GL_LINK_STATUS, &status);
-    if (status != GL_FALSE)
+    if (status != GL_FALSE) {
+        is_ok_ = true;
         return;
+    }
     
     GLint len;
     glGetProgramiv(program_id_, GL_INFO_LOG_LENGTH, &len);
-    char* buf = new char[len];
+    status_.resize(len);
+    char* buf = const_cast<char*>(status_.c_str());
     glGetProgramInfoLog(program_id_, len, NULL, buf);
-    assert(false);
-    delete[] buf;
+    is_ok_ = false;
+    return;
 }
 
 void Program::Unlink() {
@@ -54,6 +89,14 @@ void Program::Unlink() {
     param_list_.clear();
     linked_ = false;
 }
+
+void Program::SetParam(const std::string& name, const Vector2& v) {
+} 
+void Program::SetParam(const std::string& name, const Vector3& v) {}
+void Program::SetParam(const std::string& name, const Vector4& v) {}
+void Program::SetParam(const std::string& name, const Matrix2& m) {}
+void Program::SetParam(const std::string& name, const Matrix3& m) {} 
+void Program::SetParam(const std::string& name, const Matrix4& m) {} 
 
 }
 }

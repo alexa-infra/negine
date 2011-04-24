@@ -17,7 +17,7 @@ Shader::~Shader() {
         glDeleteShader(id_);
 }
 
-bool Shader::Compile(const std::string& source, std::string& status) {
+bool Shader::Compile(const std::string& source) {
     if (!is_ok_)
         return false;
     const char* shader_source = source.c_str();
@@ -32,8 +32,8 @@ bool Shader::Compile(const std::string& source, std::string& status) {
     glGetShaderiv(id_, GL_INFO_LOG_LENGTH, &log_size);
     if (log_size == 0)
         return false;
-    status.resize(static_cast<u32>(log_size));
-    char* buffer = const_cast<char*>(status.c_str());
+    status_.resize(static_cast<u32>(log_size));
+    char* buffer = const_cast<char*>(status_.c_str());
     glGetInfoLogARB(id_, log_size, NULL, buffer);
     return false;
 }
