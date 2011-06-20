@@ -14,6 +14,10 @@
 
 #if defined(OS_POSIX)
 #include <stdint.h>
+#elif defined(OS_WIN)
+#include "stdint/stdint.h"
+#else
+#error Include stdint.h
 
 typedef int8_t      i8;
 typedef uint8_t     u8;
@@ -24,8 +28,6 @@ typedef uint32_t    u32;
 typedef int64_t     i64;
 typedef uint64_t    u64;
 
-#else
-#error Include stdint.h
 #endif
 
 typedef float       f32;
