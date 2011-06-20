@@ -1,4 +1,4 @@
-set(SRC_PATH ${nengine_SOURCE_DIR})
+set(SRC_PATH ${negine_SOURCE_DIR})
 set(BASE_PATH ${SRC_PATH}/base)
 set(TOOLS_PATH ${SRC_PATH}/thirdparty)
 set(APP_PATH ${SRC_PATH}/app)
