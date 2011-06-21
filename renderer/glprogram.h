@@ -2,48 +2,44 @@
 
 #include "renderer/glcontext.h"
 #include "renderer/glshader.h"
+#include "base/param.h"
 #include <map>
-
-namespace base {
-namespace math {
-    class Vector2;
-    class Vector3;
-    class Vector4;
-    class Matrix2;
-    class Matrix3;
-    class Matrix4;
-}
-}
+#include <string>
 
 namespace ext {
 namespace opengl {
 
-    using namespace base::math;
-
-namespace ProgramParamTypes {
-    enum ProgramParamType {
-        Uniform,
-        Attribute
-    };
-}
-typedef ProgramParamTypes::ProgramParamType ProgramParamType;
-
-struct ProgramParam {
+class Attribute {
+public:
     u32 Location;
-    u32 TextureUnit;
-    ProgramParamType Type;
+    GLenum Type;
 };
-typedef std::map<std::string, ProgramParam> ProgramParamList; 
+typedef std::map<std::string, Attribute> AttributeList;
+
+class Uniform {
+public:
+    u32 Location;
+    GLenum Type;
+    i32 Index;
+};
+typedef std::map<std::string, Uniform> UniformList;
 
 class Program {
 protected:
     GLuint program_id_;
-    ProgramParamList param_list_;
+    
+    UniformList uniforms_;
+    AttributeList attributes_;
+
     Shader* pixel_shader_;
     Shader* vertex_shader_;
+
     bool linked_;
     std::string status_;
     bool is_ok_;
+
+    bool own_pixel_shader_;
+    bool own_vertex_shader_;
 public:
     Program();
     ~Program();
@@ -53,6 +49,8 @@ public:
     
     void set_pixel_shader(Shader* shader) { 
         if (linked_) Unlink();
+        if (own_pixel_shader_) delete pixel_shader_;
+        own_pixel_shader_ = false;
         pixel_shader_ = shader; 
     }
     const Shader* pixel_shader() const { 
@@ -60,33 +58,31 @@ public:
     }
     void set_vertex_shader(Shader* shader) { 
         if (linked_) Unlink();
+        if (own_vertex_shader_) delete vertex_shader_;
+        own_vertex_shader_ = false;
         vertex_shader_ = shader; 
     }
     const Shader* vertex_shader() const { 
         return vertex_shader_; 
     }
-    const ProgramParamList& param_list() {
-        if (!linked_) Link();
-        return param_list_;
-    }
 
     void Bind();
     void Unbind();
 
-    void SetParam(const std::string& name, i32 val);
-    void SetParam(const std::string& name, f32 val);
-    void SetParam(const std::string& name, const Vector2& v);
-    void SetParam(const std::string& name, const Vector3& v);
-    void SetParam(const std::string& name, const Vector4& v);
-    void SetParam(const std::string& name, const Matrix2& m);
-    void SetParam(const std::string& name, const Matrix3& m);
-    void SetParam(const std::string& name, const Matrix4& m);
+    const AttributeList& get_attributes() {
+        if (!linked_) Link();
+        return attributes_;
+    }
+
+    void set_uniform(const std::string& name, const param& p);
 
     static Program* Create(const std::string& vs, const std::string& fs);
 protected:
     void Link();
     void Unlink();
+    void get_uniforms_list(UniformList& uniforms);
+    void get_attributes_list(AttributeList& attributes);
 };
 
-}
-}
+} // namespace opengl
+} // namespace ext

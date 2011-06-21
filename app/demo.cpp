@@ -1,7 +1,7 @@
 #include "app/demo.h"
 
-#include <iostream>
 #include <string>
+#include <iostream>
 
 #include "GL/glew.h"
 #include <GL/gl.h>
@@ -64,7 +64,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     texture_->info().GenerateMipmap = true;
     texture_->Generate();
 
-    program_ = ext::opengl::Program::Create(read_file("shader.ps"), read_file("shader.fs"));
+    program_ = ext::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"));
     if (program_ != NULL)
         program_->Bind();
     glEnable(GL_LIGHTING);
