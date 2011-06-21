@@ -28,6 +28,6 @@ public:
 template<> inline Type class_info<i32>::type() { return Types::I32; }
 template<> inline Type class_info<u32>::type() { return Types::U32; }
 
-template<> inline Type class_info<opengl::Texture>::type() { return Types::Texture; }
+template<> inline Type class_info<opengl::Texture*>::type() { return Types::Texture; }
 
 }

@@ -110,10 +110,12 @@ void Program::set_uniform(const std::string& name, const param& p) {
         {
             Texture* t = p.get<Texture*>();
             t->Bind();
-            glUniform1i(uniform.Location, uniform.Index);
+            glUniform1iARB(uniform.Location, uniform.Index);
         }
         break;
         default:
+        {
+        }
         break;
     }    
 } 
@@ -153,6 +155,29 @@ void Program::get_uniforms_list(UniformList& uniforms) {
 }
 
 void Program::get_attributes_list(AttributeList& attributes) {
+    GLint attrib_count, max_name_len = 0;
+    glGetObjectParameterivARB(program_id_, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, &attrib_count);
+    glGetObjectParameterivARB(program_id_, GL_OBJECT_ACTIVE_ATTRIBUTE_MAX_LENGTH_ARB, &max_name_len);
+
+    if (attrib_count == 0 || max_name_len == 0) return;
+
+    char* attrName = new char[max_name_len];
+    for (i32 i = 0; i < attrib_count; ++i)
+    {
+        GLsizei attrNameLen = 0;
+        i32 attrSize = 0;
+        GLenum attrGLType = 0;
+        glGetActiveAttribARB(program_id_, i, max_name_len, &attrNameLen, &attrSize, &attrGLType, attrName);
+                
+        std::string name(attrName);
+        i32 location = glGetAttribLocationARB(program_id_, attrName);
+        Attribute attr;
+        attr.Location = location;
+        attr.Type = attrGLType;
+        attributes[name] = attr;
+    }
+
+    delete [] attrName;
 }
 
 

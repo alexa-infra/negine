@@ -50,7 +50,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glViewport(0, 0, width, height); 
 
     glMatrixMode(GL_PROJECTION);
-    glOrtho(-2.0, 2.0, -2.0, 2.0, -2.0, 100.0);
+    glOrtho(-4.0, 4.0, -4.0, 4.0, -4.0, 100.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -61,12 +61,13 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     texture_ = new ext::opengl::Texture;
     texture_->info().Filename = "texture.png";
     texture_->info().MinFilter = ext::opengl::TextureMinFilters::LINEAR;
-    texture_->info().GenerateMipmap = true;
+    texture_->info().GenerateMipmap = false;
     texture_->Generate();
 
     program_ = ext::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"));
     if (program_ != NULL)
         program_->Bind();
+
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 }
@@ -89,7 +90,32 @@ void GlutSampleWindow::OnDisplay(void) {
 
     glBindTexture(GL_TEXTURE_2D, texture_->id());
 
-    glutSolidTeapot(1.f);
+//    glutSolidTeapot(1.f);
+    i32 pos = program_->get_attributes()["position"].Location;
+    i32 tex = program_->get_attributes()["tex"].Location;
+    i32 color = program_->get_attributes()["color"].Location;
+
+    ext::generic_param<ext::opengl::Texture*> p;
+    p.Value = texture_;
+    program_->set_uniform("diffuse", p);
+
+    glBegin(GL_QUADS);
+        glVertexAttrib2f(pos, -0.5f, 0.5f);
+        glVertexAttrib2f(tex, 0.f, 0.f);
+        glVertexAttrib4f(color, 0.f, 0.0f, 1.f, 1.f);
+
+        glVertexAttrib2f(pos, 0.5f, 0.5f);
+        glVertexAttrib2f(tex, 1.f, 0.f);
+        glVertexAttrib4f(color, 0.f, 1.0f, 1.f, 1.f);
+
+        glVertexAttrib2f(pos, 0.5f, -0.5f);
+        glVertexAttrib2f(tex, 1.f, 1.f);
+        glVertexAttrib4f(color, 0.f, 0.0f, 1.f, 1.f);
+
+        glVertexAttrib2f(pos, -0.5f, -0.5f);
+        glVertexAttrib2f(tex, 0.f, 1.f);
+        glVertexAttrib4f(color, 1.f, 0.0f, 1.f, 1.f);
+    glEnd();
 
     GLenum glstatus = glGetError();
     if (glstatus != GL_NO_ERROR) 

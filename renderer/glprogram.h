@@ -69,7 +69,7 @@ public:
     void Bind();
     void Unbind();
 
-    const AttributeList& get_attributes() {
+    AttributeList& get_attributes() {
         if (!linked_) Link();
         return attributes_;
     }
