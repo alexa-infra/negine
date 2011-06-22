@@ -137,7 +137,9 @@ class Vector2 {
 class Vector3 {
  public:
     union {
-        f32 x, y, z;
+        struct {
+            f32 x, y, z;
+        };
         struct {
             f32 array[3];
         };
@@ -260,6 +262,7 @@ class Vector3 {
     }
     inline Vector3& Normalize() {
         SetLength(1.0f);
+        return *this;
     }
     inline Vector3 Normalized() const {
         Vector3 normalized(x, y, z);
@@ -274,7 +277,9 @@ class Vector3 {
 class Vector4 {
  public:
     union {
-        f32 x, y, z, w;
+        struct {
+            f32 x, y, z, w;
+        };
         struct {
             f32 array[4];
         };

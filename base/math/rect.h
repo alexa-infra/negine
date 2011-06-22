@@ -111,12 +111,12 @@ class Rect {
     }
 
     void Scale(f32 k) {
-        Width = Width * k;
-        Height = Height * k;
+        Width = (i32)(Width * k);
+        Height = (i32)(Height * k);
     }
     void Scale(f32 kw, f32 kh) {
-        Width = Width * kw;
-        Height = Height * kh;
+        Width = (i32)(Width * kw);
+        Height = (i32)(Height * kh);
     }
 
     bool Contains(const Point& p) const {

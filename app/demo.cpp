@@ -88,7 +88,7 @@ void GlutSampleWindow::OnDisplay(void) {
     glMaterialfv( GL_FRONT_AND_BACK, GL_EMISSION, emission );
     glMateriali( GL_FRONT_AND_BACK, GL_SHININESS, 64 );*/
 
-    glBindTexture(GL_TEXTURE_2D, texture_->id());
+//    glBindTexture(GL_TEXTURE_2D, texture_->id());
 
 //    glutSolidTeapot(1.f);
     i32 pos = program_->get_attributes()["position"].Location;

@@ -12,10 +12,12 @@ class Matrix4 {
     union {
         f32 array1d[16];
         f32 array2d[4][4];
-        f32 xx, xy, xz, xw,
-            yx, yy, yz, yw,
-            zx, zy, zz, zw,
-            wx, wy, wz, ww;
+        struct {
+            f32 xx, xy, xz, xw,
+                yx, yy, yz, yw,
+                zx, zy, zz, zw,
+                wx, wy, wz, ww;
+        };
         struct {
             f32 x[4];
             f32 y[4];

@@ -16,4 +16,6 @@ include_directories(
 )
 add_executable(tests ${TESTS_SRC})
 
-target_link_libraries(tests pthread)
+if(UNIX)
+  target_link_libraries(tests pthread)
+endif(UNIX)

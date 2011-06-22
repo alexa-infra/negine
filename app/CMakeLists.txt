@@ -18,4 +18,9 @@ include_directories(
 )
 add_executable(app ${SRC})
 
-target_link_libraries(app pthread glut GL)
+if(WIN32)
+  target_link_libraries(app glut32 OpenGL32)
+endif(WIN32)
+if(UNIX)
+  target_link_libraries(app pthread glut GL)
+endif(UNIX)
