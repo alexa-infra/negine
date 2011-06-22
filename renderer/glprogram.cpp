@@ -6,7 +6,7 @@
 #include "renderer/gltexture.h"
 #include <memory>
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 Program::Program()

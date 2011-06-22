@@ -58,13 +58,13 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
 //    glRotatef(60, 1, 1, 1);
 //    glColor4f(1.0, 0.0, 0.0, 1.0);
 
-    texture_ = new ext::opengl::Texture;
+    texture_ = new base::opengl::Texture;
     texture_->info().Filename = "texture.png";
-    texture_->info().MinFilter = ext::opengl::TextureMinFilters::LINEAR;
+    texture_->info().MinFilter = base::opengl::TextureMinFilters::LINEAR;
     texture_->info().GenerateMipmap = false;
     texture_->Generate();
 
-    program_ = ext::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"));
+    program_ = base::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"));
     if (program_ != NULL)
         program_->Bind();
 
@@ -95,7 +95,7 @@ void GlutSampleWindow::OnDisplay(void) {
     i32 tex = program_->get_attributes()["tex"].Location;
     i32 color = program_->get_attributes()["color"].Location;
 
-    ext::generic_param<ext::opengl::Texture*> p;
+    base::generic_param<base::opengl::Texture*> p;
     p.Value = texture_;
     program_->set_uniform("diffuse", p);
 

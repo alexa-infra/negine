@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 class Attribute {
@@ -85,4 +85,4 @@ protected:
 };
 
 } // namespace opengl
-} // namespace ext
+} // namespace base

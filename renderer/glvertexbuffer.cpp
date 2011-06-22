@@ -1,6 +1,6 @@
 #include "renderer/glvertexbuffer.h"
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 GLVertexBuffer::GLVertexBuffer() 

@@ -3,7 +3,7 @@
 #include <typeinfo>
 #include "base/types.h"
 
-namespace ext {
+namespace base {
 
 namespace opengl { class Texture; }
 

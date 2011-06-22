@@ -3,7 +3,7 @@
 #include "base/types.h"
 #include "renderer/glcontext.h"
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 namespace PixelTypes {

@@ -1,6 +1,6 @@
 #include "renderer/glshader.h"
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 Shader::Shader(GLenum type) 

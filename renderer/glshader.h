@@ -2,7 +2,7 @@
 
 #include "renderer/glcontext.h"
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 class Shader {

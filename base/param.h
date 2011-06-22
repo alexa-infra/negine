@@ -2,7 +2,7 @@
 
 #include "base/classtypes.h"
 
-namespace ext {
+namespace base {
 
 template<typename T> class generic_param;
 
@@ -30,4 +30,4 @@ public:
     Type get_type() const { return class_info<T>::type(); }
 };
 
-} // namespace ext
+} // namespace base

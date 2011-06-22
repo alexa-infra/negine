@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace ext {
+namespace base {
 namespace opengl {
 
 namespace PixelTypes {
