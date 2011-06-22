@@ -113,6 +113,11 @@ void Program::set_uniform(const std::string& name, const param& p) {
             glUniform1iARB(uniform.Location, uniform.Index);
         }
         break;
+        case Types::Matrix4:
+        {
+            math::Matrix4 const& m = p.get<math::Matrix4>();
+            glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, m.array1d);
+        }
         default:
         {
         }

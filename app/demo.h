@@ -3,11 +3,14 @@
 #include "app/glutapp.h"
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
+#include "base/math/matrix.h"
 
 class GlutSampleWindow : public GlutWindow {
 private:
     base::opengl::Texture* texture_;
     base::opengl::Program* program_;
+    base::math::Matrix4 projection_;
+    base::math::Matrix4 modelview_;
 public:
 	GlutSampleWindow(i32 width = 640, i32 height = 480); 
 	virtual ~GlutSampleWindow();
