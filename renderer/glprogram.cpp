@@ -116,7 +116,7 @@ void Program::set_uniform(const std::string& name, const param& p) {
         case Types::Matrix4:
         {
             math::Matrix4 const& m = p.get<math::Matrix4>();
-            glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, m.array1d);
+            glUniformMatrix4fv(uniform.Location, 1, GL_TRUE, m.array1d);
         }
         default:
         {

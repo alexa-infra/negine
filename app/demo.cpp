@@ -38,16 +38,15 @@ std::string read_file(const std::string& filename) {
 
 
 
-base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 _near, f32 _far)
+base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
 {
-    f32 range = _far - _near;
+    f32 range = far - near;
     f32 width = right - left;
     f32 height = top - bottom;
-    base::math::Matrix4 m(2 / width, 0, 0, -(right+left)/width,
-        0, 2 / height, 0, -(top+bottom)/height,
-        0, 0, -2 / range, -(_far+_near)/range,
-        0, 0, 0, -1);
-    m.Transpose();
+    base::math::Matrix4 m(2 / width, 0,          0,          -(right+left)/width,
+                          0,         2 / height, 0,          -(top+bottom)/height,
+                          0,         0,          -2 / range, -(far+near)/range,
+                          0,         0,          0,          1);
     return m;
 }
 
@@ -64,11 +63,8 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
-//    glMatrixMode(GL_PROJECTION);
     projection_ = GetOrtho(-4.0, 4.0, -4.0, 4.0, -4.0, 100.0);
 
-//    glMatrixMode(GL_MODELVIEW);
-    //glLoadIdentity();
     modelview_.SetIdentity();
 
 //    glRotatef(60, 1, 1, 1);

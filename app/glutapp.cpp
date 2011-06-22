@@ -14,8 +14,8 @@ GlutWindow* GlutWindow::window_ = NULL;
 
 GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
     int dummy_argc = 1;
-    char *dummy_argv[] = { "", NULL };
-    glutInit(&dummy_argc, dummy_argv);
+    const char *dummy_argv[] = { "", NULL };
+    glutInit(&dummy_argc, const_cast<char**>(dummy_argv));
 
     glutInitDisplayMode(flags);
     glutInitWindowSize(width, height);
