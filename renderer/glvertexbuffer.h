@@ -46,15 +46,15 @@ namespace BufferAccesses {
 }
 typedef BufferAccesses::BufferAccess BufferAccess;
 
-//! wraps Vertex Buffer Object 
-class GLVertexBuffer {
+//! wraps Buffer Object 
+class GLBufferObject {
 private:
     GLuint id_;     //!< Buffer identifier
     GLenum target_; //!< Currently mapped type format
     bool is_ok_;    //!< Is buffer created
 public:
-    GLVertexBuffer();
-    ~GLVertexBuffer();
+    GLBufferObject();
+    ~GLBufferObject();
 
     GLuint id() const { return id_; }
     bool is_ok() const { return is_ok_; }
