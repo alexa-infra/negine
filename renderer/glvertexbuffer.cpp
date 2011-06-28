@@ -7,7 +7,6 @@ GLVertexBuffer::GLVertexBuffer()
     : id_(0)
     , target_(0)
     , is_ok_(false) {
-
     glGenBuffers(1, &id_);
     is_ok_ = (glIsBuffer(id_) == GL_TRUE);
 }
@@ -17,22 +16,30 @@ GLVertexBuffer::~GLVertexBuffer() {
         glDeleteBuffers(1, &id_);
 }
 
-void GLVertexBuffer::Bind(GLenum format) {
-    glBindBuffer(target_ = format, id_);
+void GLVertexBuffer::Bind(BufferTarget target) {
+    glBindBuffer(target_ = target, id_);
 }
 
 void GLVertexBuffer::Unbind() {
     glBindBuffer(target_, 0);
 }
 
-void* GLVertexBuffer::Map(GLenum access_type) {
+void GLVertexBuffer::BindBase(BufferTarget target, u32 index) {
+    glBindBufferBase(target_ = target, index, id_);
+}
+
+void GLVertexBuffer::BindRange(BufferTarget target, u32 index, void* offset, void* size) {
+    glBindBufferRange(target_ = target, index, id_, (GLintptr)offset, (GLsizeiptr)size);
+}
+
+void* GLVertexBuffer::Map(BufferAccess access_type) {
     return glMapBuffer(target_, access_type);
 }
 bool GLVertexBuffer::Unmap() {
     return (glUnmapBuffer(target_) == GL_TRUE);
 }
 
-void GLVertexBuffer::SetData(u32 size, void* data_ptr, GLenum usage) {
+void GLVertexBuffer::SetData(u32 size, void* data_ptr, BufferUsage usage) {
     glBufferData(target_, size, data_ptr, usage);
 }
 
