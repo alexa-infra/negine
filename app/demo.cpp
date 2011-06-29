@@ -9,6 +9,7 @@
 #include <GL/glut.h>
 
 #include <fstream>
+#include <utility>
 
 std::string read_file(const std::string& filename) {
     int length;
@@ -63,7 +64,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
-    projection_ = GetOrtho(-4.0, 4.0, -4.0, 4.0, -4.0, 100.0);
+    projection_ = GetOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 100.0);
 
     modelview_.SetIdentity();
 
@@ -79,9 +80,39 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     program_ = base::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"));
     if (program_ != NULL)
         program_->Bind();
+
+    base::opengl::Vertex* v = new base::opengl::Vertex[4];
+    v[0].pos.set(-0.5f, 0.5f, 0.0f);
+    v[0].tex.set(0.f, 0.f);
+    v[0].color.set(0.f, 0.0f, 1.f, 1.f);
+
+    v[1].pos.set(0.5f, 0.5f, 0.0f);
+    v[1].tex.set(1.f, 0.f);
+    v[1].color.set(0.f, 1.0f, 1.f, 1.f);
+
+    v[2].pos.set(0.5f, -0.5f, 0.0f);
+    v[2].tex.set(1.f, 1.f);
+    v[2].color.set(0.f, 0.0f, 1.f, 1.f);
+
+    v[3].pos.set(-0.5f, -0.5f, 0.0f);
+    v[3].tex.set(0.f, 1.f);
+    v[3].color.set(1.f, 0.0f, 1.f, 1.f);
+ 
+    base::opengl::Face* f = new base::opengl::Face[2];
+    f[0].index[0] = 0;
+    f[0].index[1] = 1;
+    f[0].index[2] = 2;
+    f[1].index[0] = 2;
+    f[1].index[1] = 3;
+    f[1].index[2] = 0;
+
+    buffer_ = new base::opengl::VertexBuffer(v, 4, f, 2);
+    delete[] f;
+    delete[] v;
 }
 
 GlutSampleWindow::~GlutSampleWindow() {
+    delete buffer_;
     delete texture_;
     delete program_;
 }
@@ -92,6 +123,11 @@ void GlutSampleWindow::OnDisplay(void) {
     i32 pos = program_->get_attributes()["position"].Location;
     i32 tex = program_->get_attributes()["tex"].Location;
     i32 color = program_->get_attributes()["color"].Location;
+
+    base::opengl::AttributeBinding binding;
+    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagPosition, pos));
+    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagTexture, tex));
+    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
 
     base::generic_param<base::opengl::Texture*> p;
     p.Value = texture_;
@@ -105,6 +141,8 @@ void GlutSampleWindow::OnDisplay(void) {
     modv.Value = modelview_;
     program_->set_uniform("modelview_matrix", modv);
 
+    buffer_->Draw(binding);
+/*
     glBegin(GL_QUADS);
         glVertexAttrib2f(pos, -0.5f, 0.5f);
         glVertexAttrib2f(tex, 0.f, 0.f);
@@ -122,7 +160,7 @@ void GlutSampleWindow::OnDisplay(void) {
         glVertexAttrib2f(tex, 0.f, 1.f);
         glVertexAttrib4f(color, 1.f, 0.0f, 1.f, 1.f);
     glEnd();
-
+*/
     GLenum glstatus = glGetError();
     if (glstatus != GL_NO_ERROR) 
         std::cout << "GL Error: " << std::hex << glstatus << std::endl;

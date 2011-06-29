@@ -2,6 +2,8 @@
 
 #include "base/types.h"
 #include "base/math/vector.h"
+#include <list>
+#include <vector>
 
 namespace base {
 namespace opengl {
@@ -10,7 +12,7 @@ using namespace base::math;
 
 struct Vertex
 {
-    Vector4 pos;
+    Vector3 pos;
     Vector3 n;
     Vector2 tex;
     Vector4 color;
@@ -25,7 +27,12 @@ namespace VertexAttrs
         tagTexture,
         tagColor
     };
+    u8 GetOffset(VertexAttr attr);
+    u8 GetComponentCount(VertexAttr attr);
 }
+typedef VertexAttrs::VertexAttr VertexAttr;
+
+typedef std::list< std::pair<VertexAttr, u32> > AttributeBinding;
 
 struct Face
 {

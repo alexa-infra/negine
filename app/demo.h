@@ -4,6 +4,7 @@
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
 #include "base/math/matrix.h"
+#include "renderer/vertexbuffer.h"
 
 class GlutSampleWindow : public GlutWindow {
 private:
@@ -11,6 +12,7 @@ private:
     base::opengl::Program* program_;
     base::math::Matrix4 projection_;
     base::math::Matrix4 modelview_;
+    base::opengl::VertexBuffer* buffer_;
 public:
 	GlutSampleWindow(i32 width = 640, i32 height = 480); 
 	virtual ~GlutSampleWindow();

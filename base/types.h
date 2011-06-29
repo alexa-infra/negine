@@ -32,6 +32,14 @@ typedef uint64_t    u64;
 typedef float       f32;
 typedef double      f64;
 
+#if defined(OS_ARCH_32)
+typedef u32 uptr;
+typedef i32 iptr;
+#elif defined(OS_ARCH_64)
+typedef u64 uptr;
+typedef i64 iptr;
+#endif
+
 #include <string>
 
 // A macro to disallow the copy constructor and operator= functions

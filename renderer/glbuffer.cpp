@@ -1,4 +1,4 @@
-#include "renderer/glvertexbuffer.h"
+#include "renderer/glbuffer.h"
 
 namespace base {
 namespace opengl {
