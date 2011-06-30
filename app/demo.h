@@ -22,6 +22,5 @@ protected:
     virtual void OnDisplay(void);
     virtual void OnReshape(i32 width, i32 height);
     virtual void OnMotion(i32 x, i32 y);
-    virtual void OnIdle(void);
 };
 

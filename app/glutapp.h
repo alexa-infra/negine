@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "base/types.h"
+#include "base/timer.h"
 
 class GlutWindow {
 private:
@@ -32,6 +33,9 @@ private:
     static void OnIdleProc() {
         window_->OnIdle();
     }
+    static void OnTimerProc(int value) {
+        window_->OnTimerCallback(value);
+    }
 public:
     GlutWindow(u32 flags, i32 width = 640, i32 height = 480); 
     virtual ~GlutWindow();
@@ -45,5 +49,12 @@ private:
     virtual void OnPassiveMotion(i32 x, i32 y) {}
     virtual void OnVisibility(i32 state) {}
     virtual void OnIdle(void) {}
+    virtual void OnTimer() {}
+    void OnTimerCallback(u32 time);
+
+    base::Timer timer_;
+
+protected:
+    f32 GetTimer() { return timer_.Reset(); }
 };
 

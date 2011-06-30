@@ -32,6 +32,9 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
     glutPassiveMotionFunc(OnPassiveMotionProc);
     glutVisibilityFunc(OnVisibilityProc);
     glutIdleFunc(OnIdleProc);
+
+    timer_.Reset();
+    glutTimerFunc(1000 / 60, OnTimerProc, 0);
 }
 
 GlutWindow::~GlutWindow() {
@@ -43,3 +46,12 @@ void GlutWindow::Run() {
     glutMainLoop();
 }
 
+void GlutWindow::OnTimerCallback(u32 value) {
+    OnDisplay();
+    f32 elapsed = timer_.Elapsed();
+    if (elapsed > 1000 / 60)
+        elapsed = 0;
+    else
+        elapsed = 1000 / 60 - elapsed;
+    glutTimerFunc(1000 / 60, OnTimerProc, value);
+}

@@ -100,6 +100,8 @@ GlutSampleWindow::~GlutSampleWindow() {
 void GlutSampleWindow::OnDisplay(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    f32 frame_time = GetTimer();
+
     i32 pos = program_->get_attributes()["position"].Location;
     i32 tex = program_->get_attributes()["tex"].Location;
     i32 color = program_->get_attributes()["color"].Location;
@@ -137,10 +139,6 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     modelview_.SetIdentity();
     modelview_.Rotate(base::math::Vector3(1, x, y), 60);
-    OnDisplay();
-}
-
-void GlutSampleWindow::OnIdle(void) {
     OnDisplay();
 }
 
