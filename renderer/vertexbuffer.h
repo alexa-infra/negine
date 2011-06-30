@@ -1,3 +1,5 @@
+#pragma once
+
 #include "renderer/mesh.h"
 #include "renderer/glbuffer.h"
 
@@ -12,6 +14,7 @@ protected:
     GLBufferObject* indexes_;
 
 public:
+    VertexBuffer();
     VertexBuffer(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage = BufferUsages::DynamicDraw); 
 
     void SetData(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage = BufferUsages::DynamicDraw);

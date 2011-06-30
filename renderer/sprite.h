@@ -34,15 +34,17 @@ public:
     }
     u32 init_faces(Face* faces, u32 index) const {
         assert(index % 2 == 0);
-        faces[index + 0].index[0] = index * 3 + 0;
-        faces[index + 0].index[1] = index * 3 + 1;
-        faces[index + 0].index[2] = index * 3 + 2;
-        faces[index + 1].index[0] = index * 3 + 2;
-        faces[index + 1].index[1] = index * 3 + 3;
-        faces[index + 1].index[2] = index * 3 + 0;
+        faces[index + 0].index[0] = index * 2 + 0;
+        faces[index + 0].index[1] = index * 2 + 1;
+        faces[index + 0].index[2] = index * 2 + 2;
+        faces[index + 1].index[0] = index * 2 + 2;
+        faces[index + 1].index[1] = index * 2 + 3;
+        faces[index + 1].index[2] = index * 2 + 0;
         return index + 2;
     }
-    void fill_position(Vertex* vertex, u32 index) const {
+    u32 fill_position(Vertex* vertex, u32 index) const {
+        assert(index % 4 == 0);
+
         Vector2 v[4];
         rectange.Points(v);
 
@@ -50,6 +52,8 @@ public:
         vertex[index + 1].pos = Vector3(v[1]);
         vertex[index + 2].pos = Vector3(v[2]);
         vertex[index + 3].pos = Vector3(v[3]);
+
+        return index + 4;
     }
 };
 

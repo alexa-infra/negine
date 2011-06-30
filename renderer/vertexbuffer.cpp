@@ -3,6 +3,14 @@
 namespace base {
 namespace opengl {
 
+VertexBuffer::VertexBuffer()
+: vertex_count_(0)
+, faces_count_(0)
+{
+    vertexes_ = new GLBufferObject;
+    indexes_ = new GLBufferObject;
+}
+
 VertexBuffer::VertexBuffer(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/)
 : vertex_count_(vcount)
 , faces_count_(fcount)

@@ -81,22 +81,17 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     if (program_ != NULL)
         program_->Bind();
 
-    sprite_ = new base::opengl::Sprite;
+    base::math::Vector4 cc(0, 0, 0, 1);
 
-    base::opengl::Face* f = new base::opengl::Face[2];
-    sprite_->init_faces(f, 0);
-
-    base::opengl::Vertex* v = new base::opengl::Vertex[4];
-    sprite_->init_vertex(v, 0);
-    sprite_->fill_position(v, 0);
-
-    buffer_ = new base::opengl::VertexBuffer(v, 4, f, 2);
-    delete[] f;
-    delete[] v;
+    sg_ = new base::opengl::SpriteGroup(4);
+    sg_->AddSprite(base::math::Vector2(-0.5f, -0.5f), cc, 0.25f, 0.f);
+    sg_->AddSprite(base::math::Vector2(-0.5f, 0.5f), cc, 0.25f, 0.f);
+    sg_->AddSprite(base::math::Vector2(0.5f, 0.5f), cc, 0.25f, 0.f);
+    sg_->AddSprite(base::math::Vector2(0.5f, -0.5f), cc, 0.25f, 0.f);
 }
 
 GlutSampleWindow::~GlutSampleWindow() {
-    delete sprite_;
+    delete sg_;
     delete buffer_;
     delete texture_;
     delete program_;
@@ -126,15 +121,7 @@ void GlutSampleWindow::OnDisplay(void) {
     modv.Value = modelview_;
     program_->set_uniform("modelview_matrix", modv);
 
-    base::opengl::Vertex* vertexes = buffer_->Lock();
-    sprite_->rectange.angle += 0.1;
-    if (sprite_->rectange.angle > 2 * base::math::pi)
-        sprite_->rectange.angle -= 2 * base::math::pi;
-    if (sprite_->rectange.angle < -2 * base::math::pi)
-        sprite_->rectange.angle += 2 * base::math::pi;
-    sprite_->fill_position(vertexes, 0);
-    buffer_->Unlock();
-    buffer_->Draw(binding);
+    sg_->Draw(binding);
 
     GLenum glstatus = glGetError();
     if (glstatus != GL_NO_ERROR) 
