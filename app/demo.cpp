@@ -81,30 +81,14 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     if (program_ != NULL)
         program_->Bind();
 
-    base::opengl::Vertex* v = new base::opengl::Vertex[4];
-    v[0].pos.set(-0.5f, 0.5f, 0.0f);
-    v[0].tex.set(0.f, 0.f);
-    v[0].color.set(0.f, 0.0f, 1.f, 1.f);
+    sprite_ = new base::opengl::Sprite;
 
-    v[1].pos.set(0.5f, 0.5f, 0.0f);
-    v[1].tex.set(1.f, 0.f);
-    v[1].color.set(0.f, 1.0f, 1.f, 1.f);
-
-    v[2].pos.set(0.5f, -0.5f, 0.0f);
-    v[2].tex.set(1.f, 1.f);
-    v[2].color.set(0.f, 0.0f, 1.f, 1.f);
-
-    v[3].pos.set(-0.5f, -0.5f, 0.0f);
-    v[3].tex.set(0.f, 1.f);
-    v[3].color.set(1.f, 0.0f, 1.f, 1.f);
- 
     base::opengl::Face* f = new base::opengl::Face[2];
-    f[0].index[0] = 0;
-    f[0].index[1] = 1;
-    f[0].index[2] = 2;
-    f[1].index[0] = 2;
-    f[1].index[1] = 3;
-    f[1].index[2] = 0;
+    sprite_->init_faces(f, 0);
+
+    base::opengl::Vertex* v = new base::opengl::Vertex[4];
+    sprite_->init_vertex(v, 0);
+    sprite_->fill_position(v, 0);
 
     buffer_ = new base::opengl::VertexBuffer(v, 4, f, 2);
     delete[] f;
@@ -112,6 +96,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
 }
 
 GlutSampleWindow::~GlutSampleWindow() {
+    delete sprite_;
     delete buffer_;
     delete texture_;
     delete program_;
@@ -141,26 +126,16 @@ void GlutSampleWindow::OnDisplay(void) {
     modv.Value = modelview_;
     program_->set_uniform("modelview_matrix", modv);
 
+    base::opengl::Vertex* vertexes = buffer_->Lock();
+    sprite_->rectange.angle += 0.1;
+    if (sprite_->rectange.angle > 2 * base::math::pi)
+        sprite_->rectange.angle -= 2 * base::math::pi;
+    if (sprite_->rectange.angle < -2 * base::math::pi)
+        sprite_->rectange.angle += 2 * base::math::pi;
+    sprite_->fill_position(vertexes, 0);
+    buffer_->Unlock();
     buffer_->Draw(binding);
-/*
-    glBegin(GL_QUADS);
-        glVertexAttrib2f(pos, -0.5f, 0.5f);
-        glVertexAttrib2f(tex, 0.f, 0.f);
-        glVertexAttrib4f(color, 0.f, 0.0f, 1.f, 1.f);
 
-        glVertexAttrib2f(pos, 0.5f, 0.5f);
-        glVertexAttrib2f(tex, 1.f, 0.f);
-        glVertexAttrib4f(color, 0.f, 1.0f, 1.f, 1.f);
-
-        glVertexAttrib2f(pos, 0.5f, -0.5f);
-        glVertexAttrib2f(tex, 1.f, 1.f);
-        glVertexAttrib4f(color, 0.f, 0.0f, 1.f, 1.f);
-
-        glVertexAttrib2f(pos, -0.5f, -0.5f);
-        glVertexAttrib2f(tex, 0.f, 1.f);
-        glVertexAttrib4f(color, 1.f, 0.0f, 1.f, 1.f);
-    glEnd();
-*/
     GLenum glstatus = glGetError();
     if (glstatus != GL_NO_ERROR) 
         std::cout << "GL Error: " << std::hex << glstatus << std::endl;
@@ -175,6 +150,10 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     modelview_.SetIdentity();
     modelview_.Rotate(base::math::Vector3(1, x, y), 60);
+    OnDisplay();
+}
+
+void GlutSampleWindow::OnIdle(void) {
     OnDisplay();
 }
 

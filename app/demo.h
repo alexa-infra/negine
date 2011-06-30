@@ -5,6 +5,7 @@
 #include "renderer/glprogram.h"
 #include "base/math/matrix.h"
 #include "renderer/vertexbuffer.h"
+#include "renderer/sprite.h"
 
 class GlutSampleWindow : public GlutWindow {
 private:
@@ -13,12 +14,14 @@ private:
     base::math::Matrix4 projection_;
     base::math::Matrix4 modelview_;
     base::opengl::VertexBuffer* buffer_;
+    base::opengl::Sprite* sprite_;
 public:
-	GlutSampleWindow(i32 width = 640, i32 height = 480); 
-	virtual ~GlutSampleWindow();
+    GlutSampleWindow(i32 width = 640, i32 height = 480); 
+    virtual ~GlutSampleWindow();
 protected:
-	virtual void OnDisplay(void);
-	virtual void OnReshape(i32 width, i32 height);
-	virtual void OnMotion(i32 x, i32 y);
+    virtual void OnDisplay(void);
+    virtual void OnReshape(i32 width, i32 height);
+    virtual void OnMotion(i32 x, i32 y);
+    virtual void OnIdle(void);
 };
 

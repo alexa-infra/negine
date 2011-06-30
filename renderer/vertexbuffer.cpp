@@ -3,28 +3,38 @@
 namespace base {
 namespace opengl {
 
-VertexBuffer::VertexBuffer(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/) {
-    index_count_ = fcount * 3;
+VertexBuffer::VertexBuffer(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/)
+: vertex_count_(vcount)
+, faces_count_(fcount)
+{
     vertexes_ = new GLBufferObject;
-    vertexes_->Bind(BufferTargets::Array);
-    vertexes_->SetData(sizeof(Vertex)*vcount, (void*)vertexes, usage);
-
     indexes_ = new GLBufferObject;
-    indexes_->Bind(BufferTargets::ElementArray);
-    
-    u8* indexes = new u8[fcount*3];
-    for(u8 i=0; i<fcount; i++) {
-        indexes[3*i+0] = faces[i].index[0];
-        indexes[3*i+1] = faces[i].index[1];
-        indexes[3*i+2] = faces[i].index[2];
-    }
-    indexes_->SetData(sizeof(u8)*fcount*3, (void*)indexes, BufferUsages::StreamDraw);
-    delete[] indexes;
+
+    SetData(vertexes, vcount, faces, fcount, usage);
 }
 
 VertexBuffer::~VertexBuffer() {
     delete vertexes_;
     delete indexes_;
+}
+
+void VertexBuffer::SetData(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/) {
+    vertex_count_ = vcount;
+    faces_count_ = fcount;
+
+    vertexes_->Bind(BufferTargets::Array);
+    vertexes_->SetData(vertex_array_size(), (void*)vertexes, usage);
+
+    u8* indexes = new u8[index_count()];
+    for(u8 i=0; i<faces_count(); i++) {
+        indexes[3*i+0] = faces[i].index[0];
+        indexes[3*i+1] = faces[i].index[1];
+        indexes[3*i+2] = faces[i].index[2];
+    }
+
+    indexes_->Bind(BufferTargets::ElementArray);
+    indexes_->SetData(index_array_size(), (void*)indexes, BufferUsages::StreamDraw);
+    delete[] indexes;
 }
 
 Vertex* VertexBuffer::Lock(BufferAccess access/* = BufferAccesses::ReadWrite*/) {
@@ -38,11 +48,15 @@ void VertexBuffer::Unlock() {
 }
 
 void VertexBuffer::Draw(AttributeBinding& binding) {
+    Draw(binding, /*from_face*/0, /*count_faces*/faces_count());
+}
+
+void VertexBuffer::Draw(AttributeBinding& binding, u32 from_face, u32 count_faces) {
     vertexes_->Bind(BufferTargets::Array);
     BindAttributes(binding);
     {
         indexes_->Bind(BufferTargets::ElementArray);
-        glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_BYTE, 0); 
+        glDrawElements(GL_TRIANGLES, face_to_index(count_faces), GL_UNSIGNED_BYTE, (GLvoid*)face_to_index(from_face)); 
         indexes_->Unbind();
     }
     UnbindAttributes(binding);

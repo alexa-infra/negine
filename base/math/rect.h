@@ -1,6 +1,8 @@
 #pragma once
 
 #include "base/types.h"
+#include "base/math/mathlib.h"
+#include "base/math/vector.h"
 
 namespace base {
 namespace math {
@@ -163,5 +165,51 @@ class Rect {
         return ret;
     }
 };
+
+
+struct RectF {
+    Vector2 position;
+    Vector2 size;
+    f32 angle;
+
+    RectF()
+        : size(1.f)
+        , angle(0.f) {
+    }
+
+    RectF(Vector2& pos_, Vector2& size_, f32 angle_) 
+        : position(pos_)
+        , size(size_)
+        , angle(angle_) {
+    }
+
+    RectF(Vector2& pos_, f32 size_)
+        : position(pos_)
+        , size(size_)
+        , angle(0.f) {
+    }
+
+    void Points(Vector2* v) const {
+        f32 c = cosf(angle);
+        f32 s = sinf(angle);
+
+        v[0] = rotate(point1(), c, s);
+        v[1] = rotate(point2(), c, s);
+        v[2] = rotate(point3(), c, s);
+        v[3] = rotate(point4(), c, s);
+    }
+
+private:
+    Vector2 point1() const { return position + Vector2(-size.x, -size.y); }
+    Vector2 point2() const { return position + Vector2(size.x, -size.y); }
+    Vector2 point3() const { return position + Vector2(size.x, size.y); }
+    Vector2 point4() const { return position + Vector2(-size.x, size.y); }
+
+    Vector2 rotate(Vector2& v, f32 c, f32 s) const {
+        return Vector2(c * v.x - s * v.y, s * v.x + c * v.y);
+    }
+};
+
+
 }
 }

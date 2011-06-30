@@ -123,6 +123,7 @@ class Vector2 {
     }
     inline Vector2& Normalize() {
         SetLength(1.0);
+        return *this;
     }
     inline Vector2 Normalized() const {
         Vector2 normalized(x, y);

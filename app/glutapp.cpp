@@ -31,6 +31,7 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
     glutMotionFunc(OnMotionProc);
     glutPassiveMotionFunc(OnPassiveMotionProc);
     glutVisibilityFunc(OnVisibilityProc);
+    glutIdleFunc(OnIdleProc);
 }
 
 GlutWindow::~GlutWindow() {
