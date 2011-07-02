@@ -72,6 +72,8 @@ class Matrix4 {
 
     static Matrix4 GetProjection(const Plane& plane);
     static Matrix4 GetReflection(const Plane& plane);
+ private:
+    void MatrixSwap(const u8& _a, const u8& _b);
 };
 }
 }

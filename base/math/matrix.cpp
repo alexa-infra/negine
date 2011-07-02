@@ -198,12 +198,12 @@ void Matrix4::Reflect(const Plane &_plane) {
 }
 
 void Matrix4::Transpose() {
-/*  MatrixSwap(0, 1);
+    MatrixSwap(0, 1);
     MatrixSwap(0, 2);
     MatrixSwap(0, 3);
     MatrixSwap(1, 2);
     MatrixSwap(1, 3);
-    MatrixSwap(2, 3);*/
+    MatrixSwap(2, 3);
 }
 
 void Matrix4::Invert() {
@@ -409,9 +409,9 @@ Matrix4& Matrix4::operator = (const Matrix4& m) {
     return *this;
 }
 
-/*
-void Matrix4::MatrixSwap(const int &_a, const int &_b) {
-    MathLib::Swap(&array2d[_a][_b], &array1d[_b][_a]);
-}*/
+void Matrix4::MatrixSwap(const u8& _a, const u8& _b) {
+    Swap(array2d[_a][_b], array2d[_b][_a]);
+}
+
 }
 }

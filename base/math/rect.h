@@ -193,17 +193,17 @@ struct RectF {
         f32 c = cosf(angle);
         f32 s = sinf(angle);
 
-        v[0] = rotate(point1(), c, s);
-        v[1] = rotate(point2(), c, s);
-        v[2] = rotate(point3(), c, s);
-        v[3] = rotate(point4(), c, s);
+        v[0] = position + rotate(point1(), c, s);
+        v[1] = position + rotate(point2(), c, s);
+        v[2] = position + rotate(point3(), c, s);
+        v[3] = position + rotate(point4(), c, s);
     }
 
 private:
-    Vector2 point1() const { return position + Vector2(-size.x, -size.y); }
-    Vector2 point2() const { return position + Vector2(size.x, -size.y); }
-    Vector2 point3() const { return position + Vector2(size.x, size.y); }
-    Vector2 point4() const { return position + Vector2(-size.x, size.y); }
+    Vector2 point1() const { return Vector2(-size.x, size.y); }
+    Vector2 point2() const { return Vector2(size.x, size.y); }
+    Vector2 point3() const { return Vector2(size.x, -size.y); }
+    Vector2 point4() const { return Vector2(-size.x, -size.y); }
 
     Vector2 rotate(Vector2 const& v, f32 c, f32 s) const {
         return Vector2(c * v.x - s * v.y, s * v.x + c * v.y);
