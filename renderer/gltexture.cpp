@@ -85,8 +85,6 @@ void Texture::Generate() {
     if (info_.GenerateMipmap)
         glGenerateMipmap(GL_TEXTURE_2D);
 
-    std::cout << "loaded: " << info_.Filename << " at " << info_.Width << "x" << info_.Height << " texture id: " << id_ << std::endl;
-
     stbi_image_free(image_);
 }
 

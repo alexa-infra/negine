@@ -23,6 +23,9 @@ public:
     const std::string& status() const { return status_; }
 
     bool Compile(const std::string& source);
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(Shader);
 };
 
 }

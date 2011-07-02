@@ -77,9 +77,12 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     texture_->info().GenerateMipmap = false;
     texture_->Generate();
 
-    program_ = base::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"));
+    std::string status;
+    program_ = base::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"), status);
     if (program_ != NULL)
         program_->Bind();
+    else
+        std::cout << "Error at creating shader program: " << status << std::endl;
 
     base::math::Vector4 cc(0, 0, 0, 1);
 

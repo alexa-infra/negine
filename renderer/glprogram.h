@@ -76,12 +76,15 @@ public:
 
     void set_uniform(const std::string& name, const param& p);
 
-    static Program* Create(const std::string& vs, const std::string& fs);
+    static Program* Create(const std::string& vs, const std::string& fs, std::string& status);
 protected:
     void Link();
     void Unlink();
     void get_uniforms_list(UniformList& uniforms);
     void get_attributes_list(AttributeList& attributes);
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(Program);
 };
 
 } // namespace opengl

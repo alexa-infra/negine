@@ -139,6 +139,9 @@ public:
 
     void Bind();
     void Generate();
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(Texture);
 };
 
 }

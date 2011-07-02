@@ -72,6 +72,9 @@ public:
     void GetSubData(u32 offset, u32 size, void* data_ptr);
 
     void Clear();
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(GLBufferObject);
 };
 
 }

@@ -20,19 +20,22 @@ Program::Program()
     program_id_ = glCreateProgram();
 }
 
-Program* Program::Create(const std::string& vs, const std::string& fs) {
+Program* Program::Create(const std::string& vs, const std::string& fs, std::string& status) {
     std::auto_ptr<Shader> pvs(new Shader(GL_VERTEX_SHADER));
     std::auto_ptr<Shader> pfs(new Shader(GL_FRAGMENT_SHADER));
     std::auto_ptr<Program> pr(new Program);
     bool failed = false;
     if (!pvs->Compile(vs)) {
-        std::cout << pvs->status() << std::endl;
+        status = pvs->status();
         failed = true;
     } else {
         pr->set_vertex_shader(pvs.release());
     }
     if (!pfs->Compile(fs)) {
-        std::cout << pfs->status() << std::endl;
+        if (!failed)
+            status = pfs->status();
+        else
+            status = status + pfs->status();
         failed = true;
     } else {
         pr->set_pixel_shader(pfs.release());
@@ -40,7 +43,7 @@ Program* Program::Create(const std::string& vs, const std::string& fs) {
     if (failed) return NULL;
     pr->Link();
     if (!pr->is_ok()) {
-        std::cout << pr->status() << std::endl;
+        status = pr->status();
         return NULL;
     }
     pr->own_pixel_shader_ = true;

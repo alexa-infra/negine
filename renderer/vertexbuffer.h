@@ -37,6 +37,9 @@ public:
 protected:
     void BindAttributes(AttributeBinding& binding);
     void UnbindAttributes(AttributeBinding& binding);
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(VertexBuffer);
 };
 
 }
