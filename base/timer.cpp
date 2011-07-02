@@ -1,7 +1,10 @@
 #include "base/timer.h"
 
 #ifdef OS_WIN
-#include <windows.h>
+# include <windows.h>
+#endif
+#ifdef OS_POSIX
+# include <sys/time.h>
 #endif
 
 namespace base {
@@ -45,13 +48,19 @@ f32 Timer::GetMillis(u64 range)
     return (f32)(range / (f32)1000);
 }
 
-#else
+#elif defined(OS_POSIX)
 
-#error IMPLEMENT TIMER FOR UNIX
+u64 Timer::GetClock()
+{
+    timeval time;
+    gettimeofday(&time, NULL);
+    return time.tv_sec * 1000000 + time.tv_usec;
+}
 
-//timeval time;
-//gettimeofday(&time, NULL);
-//return time.tv_sec * 1000000 + time.tv_usec;
+f32 Timer::GetMillis(u64 range)
+{
+    return (f32)(range / (f32)1000);
+}
 
 #endif
 

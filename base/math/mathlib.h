@@ -9,7 +9,7 @@ namespace math {
 const f32 eps = 0.000001f;
 const f32 pi = 3.1415f;
 
-inline bool Equal(f32 x, f32 y) { return abs(x - y) < eps; }
+inline bool Equal(f32 x, f32 y) { return fabs(x - y) < eps; }
 
 }
 }

@@ -205,7 +205,7 @@ private:
     Vector2 point3() const { return position + Vector2(size.x, size.y); }
     Vector2 point4() const { return position + Vector2(-size.x, size.y); }
 
-    Vector2 rotate(Vector2& v, f32 c, f32 s) const {
+    Vector2 rotate(Vector2 const& v, f32 c, f32 s) const {
         return Vector2(c * v.x - s * v.y, s * v.x + c * v.y);
     }
 };
