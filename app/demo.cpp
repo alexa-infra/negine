@@ -64,7 +64,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
-    projection_ = GetOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 100.0);
+    projection_ = GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
 
     modelview_.SetIdentity();
 
@@ -72,9 +72,9 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
 //    glColor4f(1.0, 0.0, 0.0, 1.0);
 
     texture_ = new base::opengl::Texture;
-    texture_->info().Filename = "texture.png";
+    texture_->info().Filename = "european_fnt.tga";
     texture_->info().MinFilter = base::opengl::TextureMinFilters::LINEAR;
-    texture_->info().GenerateMipmap = false;
+    texture_->info().GenerateMipmap = true;
     texture_->Generate();
 
     std::string status;
@@ -91,9 +91,15 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     sg_->AddSprite(base::math::Vector2(-0.5f, 0.5f), cc, 0.25f, 0.f);
     sg_->AddSprite(base::math::Vector2(0.5f, 0.5f), cc, 0.25f, 0.f);
     sg_->AddSprite(base::math::Vector2(0.5f, -0.5f), cc, 0.25f, 0.f);
+
+    mesh_ = base::opengl::load_md3("european_fnt_v2.md3");
+    for (u32 i=0; i<mesh_.size(); i++)
+        mesh_[i]->CommitData();
 }
 
 GlutSampleWindow::~GlutSampleWindow() {
+    for (u32 i=0; i<mesh_.size(); i++)
+        delete mesh_[i];
     delete sg_;
     delete buffer_;
     delete texture_;
@@ -103,16 +109,21 @@ GlutSampleWindow::~GlutSampleWindow() {
 void GlutSampleWindow::OnDisplay(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
     f32 frame_time = GetTimer();
 
     i32 pos = program_->get_attributes()["position"].Location;
     i32 tex = program_->get_attributes()["tex"].Location;
     i32 color = program_->get_attributes()["color"].Location;
+    i32 normal = program_->get_attributes()["n"].Location;
 
     base::opengl::AttributeBinding binding;
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagPosition, pos));
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagTexture, tex));
-    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
+//    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
+    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagNormal, normal));
 
     base::generic_param<base::opengl::Texture*> p;
     p.Value = texture_;
@@ -126,7 +137,10 @@ void GlutSampleWindow::OnDisplay(void) {
     modv.Value = modelview_;
     program_->set_uniform("modelview_matrix", modv);
 
-    sg_->Draw(binding);
+    //sg_->Draw(binding);
+    for (u32 i=0; i<mesh_.size(); i++) {
+        mesh_[i]->buffer->Draw(binding);
+    }
 
     GLenum glstatus = glGetError();
     if (glstatus != GL_NO_ERROR) 
@@ -140,8 +154,8 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 }
 
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
-    modelview_.SetIdentity();
-    modelview_.Rotate(base::math::Vector3(1, x, y), 60);
+//    modelview_.SetIdentity();
+    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1);
     OnDisplay();
 }
 

@@ -15,9 +15,9 @@ protected:
 
 public:
     VertexBuffer();
-    VertexBuffer(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage = BufferUsages::DynamicDraw); 
+    VertexBuffer(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage = BufferUsages::DynamicDraw); 
 
-    void SetData(Vertex* vertexes, u8 vcount, Face* faces, u8 fcount, BufferUsage usage = BufferUsages::DynamicDraw);
+    void SetData(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage = BufferUsages::DynamicDraw);
 
     ~VertexBuffer();
 
@@ -29,7 +29,7 @@ public:
 
     u32 faces_count() const { return faces_count_; }
     u32 index_count() const { return faces_count_ * 3; }
-    u32 index_array_size() const { return index_count() * sizeof(u8); }
+    u32 index_array_size() const { return index_count() * sizeof(u16); }
     u32 vertex_count() const { return vertex_count_; }
     u32 vertex_array_size() const { return vertex_count_ * sizeof(Vertex); }
     u32 face_to_index(u32 face) const { return face * 3; }

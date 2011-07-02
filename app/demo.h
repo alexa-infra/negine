@@ -6,6 +6,7 @@
 #include "base/math/matrix.h"
 #include "renderer/vertexbuffer.h"
 #include "renderer/spritegroup.h"
+#include "renderer/md3mesh.h"
 
 class GlutSampleWindow : public GlutWindow {
 private:
@@ -15,6 +16,7 @@ private:
     base::math::Matrix4 modelview_;
     base::opengl::VertexBuffer* buffer_;
     base::opengl::SpriteGroup* sg_;
+    std::vector<base::opengl::Mesh*> mesh_;
 public:
     GlutSampleWindow(i32 width = 640, i32 height = 480); 
     virtual ~GlutSampleWindow();

@@ -46,11 +46,24 @@ struct Edge
     u32 c, d;
 };
 
-struct Mesh
+class VertexBuffer;
+
+class Mesh
 {
-	std::vector<Vertex>     vertices;
-	std::vector<Face>       faces;
-	std::vector<Edge>       edges;
+public:
+    std::string name;
+
+    Vertex* vertexes;
+    Face*   faces;
+    u32     num_vertexes;
+    u32     num_faces;
+
+    VertexBuffer* buffer;
+
+    Mesh();
+    ~Mesh();
+
+    void CommitData();
 };
 
 
