@@ -1,15 +1,20 @@
 attribute vec2 tex;
 attribute vec3 position;
-attribute vec4 color;
+attribute vec3 n;
 
 uniform mat4 projection_matrix;
 uniform mat4 modelview_matrix;
 
 varying vec2 tex0;
-varying vec4 col;
+varying vec3 normal;
+varying vec3 vertex_to_light_vector;
 
 void main(void) {
     tex0 = tex;
-    col = color;
+    normal = normalize( vec3(modelview_matrix * vec4(n, 0.0)) );
+    
+    vec4 vertex_in_modelview_space = modelview_matrix * vec4(position, 1.0);
+    vertex_to_light_vector = normalize(vec3(0.0, 0.0, 250.0) - vertex_in_modelview_space);
+
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
 }

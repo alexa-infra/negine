@@ -1,8 +1,10 @@
 uniform sampler2D diffuse;
 varying vec2 tex0;
-varying vec4 col;
+varying vec3 normal;
+varying vec3 vertex_to_light_vector;
 
 void main() {
-    gl_FragColor = texture2D(diffuse, tex0) * col;
-//    gl_FragColor = vec4(1, 0, 0, 1);
+    vec4 DiffuseColor = texture2D(diffuse, tex0);
+    float DiffuseTerm = clamp(dot(normal, vertex_to_light_vector), 0.0, 1.0);
+    gl_FragColor = DiffuseColor * DiffuseTerm;
 }
