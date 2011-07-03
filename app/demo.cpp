@@ -92,7 +92,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     sg_->AddSprite(base::math::Vector2(0.5f, 0.5f), cc, 0.25f, 0.f);
     sg_->AddSprite(base::math::Vector2(0.5f, -0.5f), cc, 0.25f, 0.f);
 
-    mesh_ = base::opengl::load_md3("european_fnt_v2.md3");
+    mesh_ = base::opengl::load_md3_se("european_fnt_v2.md3");
     for (u32 i=0; i<mesh_.size(); i++)
         mesh_[i]->CommitData();
 }

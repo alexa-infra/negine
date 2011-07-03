@@ -9,6 +9,7 @@ namespace base {
 namespace opengl {
 
 std::vector<Mesh*> load_md3(const std::string& name);
+std::vector<Mesh*> load_md3_se(const std::string& name);
 
 }
 }

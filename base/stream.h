@@ -59,6 +59,10 @@ public:
     virtual ~FileBinary() {
         if (file_.is_open()) file_.close();
     }
+    u32 size() {
+        file_.seekg(0, std::ios::end);
+        return file_.tellg();
+    }
 protected:
     void read_impl(u8* dest, u32 size, u32 position) {
         file_.seekg(position);
