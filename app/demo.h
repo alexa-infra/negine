@@ -16,7 +16,7 @@ private:
     base::math::Matrix4 modelview_;
     base::opengl::VertexBuffer* buffer_;
     base::opengl::SpriteGroup* sg_;
-    std::vector<base::opengl::Mesh*> mesh_;
+    std::vector<base::opengl::VertexBuffer*> mesh_;
 public:
     GlutSampleWindow(i32 width = 640, i32 height = 480); 
     virtual ~GlutSampleWindow();

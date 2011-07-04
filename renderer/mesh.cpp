@@ -31,17 +31,14 @@ u8 GetComponentCount(VertexAttr attr) {
 } // namespace VertexAttr
 
 Mesh::Mesh() {
-    buffer = new VertexBuffer;
 }
 
 Mesh::~Mesh() {
     delete[] vertexes;
     delete[] faces;
-    delete buffer;
 }
 
 void Mesh::CommitData() {
-    buffer->SetData(vertexes, num_vertexes, faces, num_faces);
 }
 
 }
