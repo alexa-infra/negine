@@ -6,7 +6,7 @@
 #include "GL/glew.h"
 #include <GL/gl.h>
 
-#include <GL/glut.h>
+#include "GL/glut.h"
 
 #include <fstream>
 #include <utility>
@@ -39,14 +39,14 @@ std::string read_file(const std::string& filename) {
 
 
 
-base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
+base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 _near, f32 _far)
 {
-    f32 range = far - near;
+    f32 range = _far - _near;
     f32 width = right - left;
     f32 height = top - bottom;
     base::math::Matrix4 m(2 / width, 0,          0,          -(right+left)/width,
                           0,         2 / height, 0,          -(top+bottom)/height,
-                          0,         0,          -2 / range, -(far+near)/range,
+                          0,         0,          -2 / range, -(_far+_near)/range,
                           0,         0,          0,          1);
     return m;
 }
@@ -161,7 +161,7 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
 //    modelview_.SetIdentity();
-    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1);
+    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1f);
     OnDisplay();
 }
 

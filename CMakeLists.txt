@@ -17,5 +17,9 @@ if(WIN32)
 endif(WIN32)
 set(CMAKE_DEBUG_POSTFIX "_d")
 
+add_subdirectory(${TOOLS_PATH}/freeglut ${PROJECT_BINARY_DIR}/freeglut)
+add_subdirectory(${TOOLS_PATH}/glew ${PROJECT_BINARY_DIR}/glew)
+
 add_subdirectory(${TESTS_PATH} ${PROJECT_BINARY_DIR}/tests)
 add_subdirectory(${APP_PATH} ${PROJECT_BINARY_DIR}/app)
+
