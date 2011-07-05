@@ -54,6 +54,8 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
                  width, height)
     , texture_(NULL)
     , program_(NULL)
+    , buffer_(NULL)
+    , sg_(NULL)
 {
     glewExperimental = GL_TRUE;
 
@@ -78,9 +80,6 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     projection_ = GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
 
     modelview_.SetIdentity();
-
-//    glRotatef(60, 1, 1, 1);
-//    glColor4f(1.0, 0.0, 0.0, 1.0);
 
     texture_ = new base::opengl::Texture;
     texture_->info().Filename = "european_fnt.tga";
