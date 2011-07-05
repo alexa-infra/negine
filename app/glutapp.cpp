@@ -50,6 +50,7 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
 GlutWindow::~GlutWindow() {
     glutDestroyWindow(window_id_);
     window_ = NULL;
+    glutExit();
 }
 
 void GlutWindow::Run() {
