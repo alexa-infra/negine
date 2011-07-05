@@ -82,8 +82,8 @@ void Texture::Generate() {
             GL_UNSIGNED_BYTE, 
             image_);
 
-    if (info_.GenerateMipmap)
-        glGenerateMipmap(GL_TEXTURE_2D);
+//    if (info_.GenerateMipmap)
+//        glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image_);
 }

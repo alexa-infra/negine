@@ -4,8 +4,6 @@
 #include <iostream>
 
 #include "GL/glew.h"
-#include <GL/gl.h>
-
 #include "GL/glut.h"
 
 #include <fstream>
@@ -57,9 +55,20 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     , texture_(NULL)
     , program_(NULL)
 {
+    glewExperimental = GL_TRUE;
+
     GLenum err = glewInit();
-    if (GLEW_OK != err) 
+    if (GLEW_OK != err)
+    {
         std::cout << glewGetErrorString(err) << std::endl;
+        assert(false);
+    }
+
+    if (!GLEW_VERSION_3_3)
+    {
+        std::cout << "OpenGL 3.3 is not supported." << std::endl;
+        assert(false);
+    }
 
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 

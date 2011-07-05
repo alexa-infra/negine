@@ -113,7 +113,7 @@ void Program::set_uniform(const std::string& name, const param& p) {
         {
             Texture* t = p.get<Texture*>();
             t->Bind();
-            glUniform1iARB(uniform.Location, uniform.Index);
+            glUniform1i(uniform.Location, uniform.Index);
         }
         break;
         case Types::Matrix4:
@@ -130,8 +130,8 @@ void Program::set_uniform(const std::string& name, const param& p) {
 
 void Program::get_uniforms_list(UniformList& uniforms) {
     GLint uniform_count, max_name_length = 0;
-    glGetObjectParameterivARB(program_id_, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &uniform_count);
-    glGetObjectParameterivARB(program_id_, GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB, &max_name_length);
+    glGetProgramiv(program_id_, GL_ACTIVE_UNIFORMS, &uniform_count);
+    glGetProgramiv(program_id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length);
 
     if (!uniform_count || !max_name_length) return;
 
@@ -164,8 +164,8 @@ void Program::get_uniforms_list(UniformList& uniforms) {
 
 void Program::get_attributes_list(AttributeList& attributes) {
     GLint attrib_count, max_name_len = 0;
-    glGetObjectParameterivARB(program_id_, GL_OBJECT_ACTIVE_ATTRIBUTES_ARB, &attrib_count);
-    glGetObjectParameterivARB(program_id_, GL_OBJECT_ACTIVE_ATTRIBUTE_MAX_LENGTH_ARB, &max_name_len);
+    glGetProgramiv(program_id_, GL_ACTIVE_ATTRIBUTES, &attrib_count);
+    glGetProgramiv(program_id_, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_name_len);
 
     if (attrib_count == 0 || max_name_len == 0) return;
 
@@ -175,10 +175,10 @@ void Program::get_attributes_list(AttributeList& attributes) {
         GLsizei attrNameLen = 0;
         i32 attrSize = 0;
         GLenum attrGLType = 0;
-        glGetActiveAttribARB(program_id_, i, max_name_len, &attrNameLen, &attrSize, &attrGLType, attrName);
+        glGetActiveAttrib(program_id_, i, max_name_len, &attrNameLen, &attrSize, &attrGLType, attrName);
                 
         std::string name(attrName);
-        i32 location = glGetAttribLocationARB(program_id_, attrName);
+        i32 location = glGetAttribLocation(program_id_, attrName);
         Attribute attr;
         attr.Location = location;
         attr.Type = attrGLType;

@@ -7,8 +7,9 @@
 # include <windows.h>
 #endif
 
-#include <GL/gl.h>
+#include "GL/glew.h"
 #include "GL/glut.h"
+#include "GL/freeglut_ext.h"
 
 GlutWindow* GlutWindow::window_ = NULL;
 
@@ -20,6 +21,10 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
     glutInitDisplayMode(flags);
     glutInitWindowSize(width, height);
     glutInitWindowPosition(100, 100);
+
+    glutInitContextVersion(3, 3);
+    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
 
     window_ = this;
     window_id_ = glutCreateWindow("GlutWindow");
