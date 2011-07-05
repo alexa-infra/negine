@@ -4,9 +4,7 @@
 #include <iostream>
 
 #include "GL/glew.h"
-#include <GL/gl.h>
-
-#include <GL/glut.h>
+#include "GL/glut.h"
 
 #include <fstream>
 #include <utility>
@@ -39,14 +37,14 @@ std::string read_file(const std::string& filename) {
 
 
 
-base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
+base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 _near, f32 _far)
 {
-    f32 range = far - near;
+    f32 range = _far - _near;
     f32 width = right - left;
     f32 height = top - bottom;
     base::math::Matrix4 m(2 / width, 0,          0,          -(right+left)/width,
                           0,         2 / height, 0,          -(top+bottom)/height,
-                          0,         0,          -2 / range, -(far+near)/range,
+                          0,         0,          -2 / range, -(_far+_near)/range,
                           0,         0,          0,          1);
     return m;
 }
@@ -56,10 +54,25 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
                  width, height)
     , texture_(NULL)
     , program_(NULL)
+    , buffer_(NULL)
+    , sg_(NULL)
 {
+    glewExperimental = GL_TRUE;
+
     GLenum err = glewInit();
-    if (GLEW_OK != err) 
+    if (GLEW_OK != err)
+    {
         std::cout << glewGetErrorString(err) << std::endl;
+        assert(false);
+    }
+
+    if (!GLEW_VERSION_3_3)
+    {
+        std::cout << "OpenGL 3.3 is not supported." << std::endl;
+        assert(false);
+    }
+
+    assert(glGetError() == GL_NO_ERROR);
 
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
@@ -67,9 +80,6 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     projection_ = GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
 
     modelview_.SetIdentity();
-
-//    glRotatef(60, 1, 1, 1);
-//    glColor4f(1.0, 0.0, 0.0, 1.0);
 
     texture_ = new base::opengl::Texture;
     texture_->info().Filename = "european_fnt.tga";
@@ -148,9 +158,10 @@ void GlutSampleWindow::OnDisplay(void) {
         mesh_[i]->Draw(binding);
     }
 
-    GLenum glstatus = glGetError();
-    if (glstatus != GL_NO_ERROR) 
-        std::cout << "GL Error: " << std::hex << glstatus << std::endl;
+//    GLenum glstatus = glGetError();
+//    if (glstatus != GL_NO_ERROR) 
+//        std::cout << "GL Error: " << std::hex << glstatus << std::endl;
+    assert(glGetError() == GL_NO_ERROR);
     glutSwapBuffers();
 }
 
@@ -161,7 +172,7 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
 //    modelview_.SetIdentity();
-    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1);
+    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1f);
     OnDisplay();
 }
 

@@ -7,12 +7,15 @@
 # include <windows.h>
 #endif
 
-#include <GL/gl.h>
-#include <GL/glut.h>
+#include "GL/glew.h"
+#include "GL/glut.h"
+#include "GL/freeglut_ext.h"
 
 GlutWindow* GlutWindow::window_ = NULL;
 
-GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
+GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
+: is_closed_(false)
+{
     int dummy_argc = 1;
     const char *dummy_argv[] = { "", NULL };
     glutInit(&dummy_argc, const_cast<char**>(dummy_argv));
@@ -20,6 +23,10 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
     glutInitDisplayMode(flags);
     glutInitWindowSize(width, height);
     glutInitWindowPosition(100, 100);
+
+    glutInitContextVersion(3, 3);
+    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
 
     window_ = this;
     window_id_ = glutCreateWindow("GlutWindow");
@@ -32,6 +39,9 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
     glutPassiveMotionFunc(OnPassiveMotionProc);
     glutVisibilityFunc(OnVisibilityProc);
     glutIdleFunc(OnIdleProc);
+    glutCloseFunc(OnCloseProc);
+
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
     timer_.Reset();
     glutTimerFunc(1000 / 60, OnTimerProc, 0);
@@ -40,18 +50,28 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/) {
 GlutWindow::~GlutWindow() {
     glutDestroyWindow(window_id_);
     window_ = NULL;
+    glutExit();
 }
 
 void GlutWindow::Run() {
-    glutMainLoop();
+    while (!is_closed_) {
+        glutMainLoopEvent();
+    }
 }
 
 void GlutWindow::OnTimerCallback(u32 value) {
-    OnDisplay();
+    if (!window_->is_closed_)
+        OnDisplay();
     f32 elapsed = timer_.Elapsed();
     if (elapsed > 1000 / 60)
         elapsed = 0;
     else
         elapsed = 1000 / 60 - elapsed;
     glutTimerFunc(1000 / 60, OnTimerProc, value);
+}
+
+void GlutWindow::OnCloseProc() {
+    window_->is_closed_ = true;
+    glutLeaveMainLoop();
+    window_->OnClose();
 }

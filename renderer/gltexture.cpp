@@ -63,8 +63,6 @@ void Texture::Generate() {
         assert(false);
     }
 
-    glEnable(info_.Type);
-
     glBindTexture(info_.Type, id_);
     glTexParameteri(info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter);
     glTexParameteri(info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter);
@@ -82,8 +80,8 @@ void Texture::Generate() {
             GL_UNSIGNED_BYTE, 
             image_);
 
-    if (info_.GenerateMipmap)
-        glGenerateMipmap(GL_TEXTURE_2D);
+//    if (info_.GenerateMipmap)
+//        glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(image_);
 }
