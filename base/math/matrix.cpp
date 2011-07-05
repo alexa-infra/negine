@@ -161,6 +161,20 @@ Matrix4 Matrix4::GetReflection(const Plane &_plane) {
     return _matrix;
 }
 
+bool Matrix4::operator == (const Matrix4& m) {
+    for (u8 i=0; i<16; i++) 
+        if (!Equal(m.array1d[i], array1d[i]))
+            return false;
+    return true;
+}
+
+bool Matrix4::operator != (const Matrix4& m) {
+    for (u8 i=0; i<16; i++) 
+        if (!Equal(m.array1d[i], array1d[i]))
+            return true;
+    return false;
+}
+
 void Matrix4::SetIdentity() {
     *this = Identity;
 }
@@ -405,7 +419,8 @@ Vector4 Matrix4::operator * (const Vector4 &_vector) const {
 }
 
 Matrix4& Matrix4::operator = (const Matrix4& m) {
-    memcpy(array1d, m.array1d, sizeof(array1d));
+    if (&m != this)
+        memcpy(array1d, m.array1d, sizeof(array1d));
     return *this;
 }
 

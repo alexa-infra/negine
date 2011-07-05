@@ -19,7 +19,7 @@ struct Point {
         return x == p.x && y == p.y;
     }
     bool operator!= (const Point& p) const {
-        return x != p.x || y == p.y;
+        return x != p.x || y != p.y;
     }
     static Point init(i32 x, i32 y) {
         Point p;

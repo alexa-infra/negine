@@ -57,6 +57,8 @@ class Matrix4 {
     Matrix4 operator * (const f32& s) const;
     Vector3 operator * (const Vector3& v) const;
     Vector4 operator * (const Vector4& v) const;
+    bool operator == (const Matrix4& m);
+    bool operator != (const Matrix4& m);
 
  public:
     static const Matrix4 Identity;
