@@ -46,8 +46,6 @@ struct Edge
     u32 c, d;
 };
 
-class VertexBuffer;
-
 class Mesh
 {
 public:
@@ -58,12 +56,8 @@ public:
     u32     num_vertexes;
     u32     num_faces;
 
-    VertexBuffer* buffer;
-
     Mesh();
     ~Mesh();
-
-    void CommitData();
 };
 
 

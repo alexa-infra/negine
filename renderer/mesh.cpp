@@ -38,8 +38,5 @@ Mesh::~Mesh() {
     delete[] faces;
 }
 
-void Mesh::CommitData() {
-}
-
 }
 }
