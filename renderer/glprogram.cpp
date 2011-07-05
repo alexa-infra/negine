@@ -122,6 +122,13 @@ void Program::set_uniform(const std::string& name, const param& p) {
             math::Matrix4 const& m = p.get<math::Matrix4>();
             glUniformMatrix4fv(uniform.Location, 1, GL_TRUE, m.array1d);
         }
+        break;
+        case Types::Vector4:
+        {
+            math::Vector4 const& v = p.get<math::Vector4>();
+            glUniform4f(uniform.Location, v.x, v.y, v.z, v.w);
+        }
+        break;
         default:
         {
         }
