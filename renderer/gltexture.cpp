@@ -63,8 +63,6 @@ void Texture::Generate() {
         assert(false);
     }
 
-    glEnable(info_.Type);
-
     glBindTexture(info_.Type, id_);
     glTexParameteri(info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter);
     glTexParameteri(info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter);

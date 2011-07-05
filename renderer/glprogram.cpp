@@ -112,6 +112,7 @@ void Program::set_uniform(const std::string& name, const param& p) {
         case Types::Texture:
         {
             Texture* t = p.get<Texture*>();
+            glActiveTexture(GL_TEXTURE0 + uniform.Index);
             t->Bind();
             glUniform1i(uniform.Location, uniform.Index);
         }

@@ -70,6 +70,8 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
         assert(false);
     }
 
+    assert(glGetError() == GL_NO_ERROR);
+
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
@@ -157,9 +159,10 @@ void GlutSampleWindow::OnDisplay(void) {
         mesh_[i]->Draw(binding);
     }
 
-    GLenum glstatus = glGetError();
-    if (glstatus != GL_NO_ERROR) 
-        std::cout << "GL Error: " << std::hex << glstatus << std::endl;
+//    GLenum glstatus = glGetError();
+//    if (glstatus != GL_NO_ERROR) 
+//        std::cout << "GL Error: " << std::hex << glstatus << std::endl;
+    assert(glGetError() == GL_NO_ERROR);
     glutSwapBuffers();
 }
 
