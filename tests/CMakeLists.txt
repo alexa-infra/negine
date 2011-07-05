@@ -36,3 +36,7 @@ endif(WIN32)
 if(UNIX)
   target_link_libraries(tests pthread GL)
 endif(UNIX)
+
+set_target_properties(tests PROPERTIES
+    COMPILE_FLAGS "-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0 -DGLEW_STATIC"
+)
