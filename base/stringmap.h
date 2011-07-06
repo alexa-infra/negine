@@ -24,7 +24,7 @@ template<class T, u32 N>
 class StringMap
 {
 public:
-    typedef std::map<const char*, T> map_type;
+    typedef std::map<std::string, T> map_type;
 
 private:
     map_type entries_;
@@ -35,17 +35,17 @@ public:
     };
     StringMap(const Entry* m) {
         for (u32 i=0; i<N; i++) {
-            entries_[m[i].key] = m[i].value;
+            entries_[std::string(m[i].key)] = m[i].value;
         }
     }
     const char* to_string(const T& value) {
         typename map_type::iterator it = std::find_if(entries_.begin(), entries_.end(),
             std::bind2nd(map_data_compare<map_type>(), value));
         assert(it != entries_.end());
-        return it->first;
+        return it->first.c_str();
     }
     T from_string(const char* key) {
-        typename map_type::iterator it = entries_.find(key);
+        typename map_type::iterator it = entries_.find(std::string(key));
         assert(it != entries_.end());
         return it->second;
     }
