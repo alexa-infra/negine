@@ -9,12 +9,8 @@ include_directories(${TOOLS_PATH}/freeglut/include ${TOOLS_PATH}/freeglut/src)
 
 add_library(freeglut STATIC ${SRC})
 
-set_target_properties(freeglut PROPERTIES
-    COMPILE_FLAGS "-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0"
-)
+add_definitions(-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0)
 
 if(UNIX)
-  set_target_properties(freeglut PROPERTIES
-    COMPILE_FLAGS "-DHAVE_SYS_TYPES_H -DHAVE_UNISTD_H -DTIME_WITH_SYS_TIME -DHAVE_FCNTL_H"
-  )
+  add_definitions(-DHAVE_SYS_TYPES_H -DHAVE_UNISTD_H -DTIME_WITH_SYS_TIME -DHAVE_FCNTL_H)
 endif(UNIX)
