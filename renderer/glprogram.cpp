@@ -5,6 +5,7 @@
 #include "base/math/matrix.h"
 #include "renderer/gltexture.h"
 #include <memory>
+#include "base/stream.h"
 
 namespace base {
 namespace opengl {
@@ -49,6 +50,35 @@ Program* Program::Create(const std::string& vs, const std::string& fs, std::stri
     pr->own_pixel_shader_ = true;
     pr->own_vertex_shader_ = true;
     return pr.release();
+}
+
+Program* Program::Create(const std::string& filename, std::string& status) {
+    FileText file(filename);
+    std::vector<std::string> lines = file.read_lines();
+    u32 vertexBegin = 0;
+    u32 pixelBegin = 0;
+    for (u32 i=0; i<lines.size(); i++) {
+        if (lines[i] == "-- vertex")
+            vertexBegin = i + 1;
+        if (lines[i] == "-- pixel")
+            pixelBegin = i + 1;
+    }
+    u32 vertexEnd = 0;
+    u32 pixelEnd = 0;
+    if (vertexBegin > pixelBegin) {
+        vertexEnd = lines.size();
+        pixelEnd = vertexBegin;
+    } else {
+        vertexEnd = pixelBegin;
+        pixelEnd = lines.size();
+    }
+    std::string vertexSrc;
+    for (u32 i=vertexBegin; i<vertexEnd; i++)
+        vertexSrc = vertexSrc + lines[i] + "\n";
+    std::string pixelSrc;
+    for (u32 i=pixelBegin; i<pixelEnd; i++)
+        pixelSrc = pixelSrc + lines[i] + "\n";
+    return Create(vertexSrc, pixelSrc, status);
 }
 
 Program::~Program() {

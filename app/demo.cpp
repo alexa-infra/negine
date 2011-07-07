@@ -6,36 +6,7 @@
 #include "GL/glew.h"
 #include "GL/glut.h"
 
-#include <fstream>
 #include <utility>
-
-std::string read_file(const std::string& filename) {
-    int length;
-    char* buffer;
-
-    std::ifstream is;
-    is.open(filename.c_str());
-    if (!is.good())
-        return "";
-
-    // get length of file:
-    is.seekg(0, std::ios::end);
-    length = is.tellg();
-    is.seekg(0, std::ios::beg);
-
-    // allocate memory:
-    buffer = new char[length];
-
-    // read data as a block:
-    is.read(buffer,length);
-    is.close();
-
-    std::string ret(buffer, length);
-    delete[] buffer;
-    return ret;
-}
-
-
 
 base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 _near, f32 _far)
 {
@@ -88,7 +59,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     texture_->Generate();
 
     std::string status;
-    program_ = base::opengl::Program::Create(read_file("shader.vs"), read_file("shader.ps"), status);
+    program_ = base::opengl::Program::Create("shader.shader", status);
     if (program_ != NULL)
         program_->Bind();
     else

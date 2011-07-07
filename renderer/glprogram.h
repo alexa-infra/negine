@@ -77,6 +77,7 @@ public:
     void set_uniform(const std::string& name, const param& p);
 
     static Program* Create(const std::string& vs, const std::string& fs, std::string& status);
+    static Program* Create(const std::string& filename, std::string& status);
 protected:
     void Link();
     void Unlink();

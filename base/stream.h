@@ -3,6 +3,7 @@
 #include "base/types.h"
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 namespace base {
 
@@ -71,6 +72,43 @@ protected:
     void write_impl(const u8* source, u32 size, u32 position) {
         file_.seekp(position);
         file_.write(reinterpret_cast<const char*>(source), size);
+    }
+};
+
+class FileText {
+protected:
+    std::fstream file_;
+public:
+    FileText(const std::string& filename) {
+        file_.open(filename.c_str(), std::ios::in | std::ios::out);
+    }
+    virtual ~FileText() {
+        if (file_.is_open()) file_.close();
+    }
+    std::vector<std::string> read_lines() {
+        file_.seekg(0, std::ios::beg);
+        std::vector<std::string> ret;
+        std::string str;
+        while(std::getline(file_, str)) {
+            ret.push_back(str);
+        }
+        return ret;
+    }
+    std::string read_all() {
+        u32 s = size();
+        
+        std::string ret;
+        ret.resize(s);
+        char* buf = const_cast<char*>(ret.c_str());
+
+        file_.seekg(0, std::ios::beg);
+        file_.read(buf, s);
+
+        return ret;
+    }
+    u32 size() {
+        file_.seekg(0, std::ios::end);
+        return file_.tellg();
     }
 };
 
