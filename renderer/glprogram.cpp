@@ -67,9 +67,9 @@ Program* Program::Create(const std::string& filename, std::string& status) {
     u32 pixelEnd = 0;
     if (vertexBegin > pixelBegin) {
         vertexEnd = lines.size();
-        pixelEnd = vertexBegin;
+        pixelEnd = vertexBegin - 1;
     } else {
-        vertexEnd = pixelBegin;
+        vertexEnd = pixelBegin - 1;
         pixelEnd = lines.size();
     }
     std::string vertexSrc;
