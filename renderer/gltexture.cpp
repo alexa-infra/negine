@@ -47,8 +47,9 @@ void Texture::Bind() {
     glBindTexture(info_.Type, id_);
 }
 
-void Texture::Generate() {
-    
+void Texture::Generate(const TextureInfo& textureinfo) {
+
+    info_ = textureinfo;
     if (!info_.GenerateMipmap)
     {
         assert(info_.MinFilter == TextureMinFilters::LINEAR

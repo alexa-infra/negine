@@ -10,16 +10,18 @@ namespace opengl {
 
 using namespace base::math;
 
+//! Simple vertex
 struct Vertex
 {
-    Vector3 pos;
-    Vector3 n;
-    Vector2 tex;
-    Vector4 color;
+    Vector3 pos;        //!< Position in 3D space
+    Vector3 n;          //!< Normal to surface
+    Vector2 tex;        //!< Texture coordinates
+    Vector4 color;      //!< Color of vertex
 };
 
 namespace VertexAttrs
 {
+    //! Tags for vertex components
     enum VertexAttr
     {
         tagPosition,
@@ -27,34 +29,41 @@ namespace VertexAttrs
         tagTexture,
         tagColor
     };
+
+    //! Gets offset of attribute in vertex structure
     u8 GetOffset(VertexAttr attr);
+
+    //! Gets component count in attribute
     u8 GetComponentCount(VertexAttr attr);
 }
 typedef VertexAttrs::VertexAttr VertexAttr;
 
 typedef std::list< std::pair<VertexAttr, u32> > AttributeBinding;
 
+//! Triangle face
 struct Face
 {
-    u32 index[3];
-    Vector3 n;
+    u32 index[3];       //!< Indexes of vertexes in vertex array
+    Vector3 n;          //!< Normal of face
 };
 
+//! Single edge
 struct Edge
 {
-    u32 a, b;
-    u32 c, d;
+    u32 a, b;           //!< Indexes of vertexes
+    u32 c, d;           //!< Indexes of faces
 };
 
+//! Mesh object, triangle data
 class Mesh
 {
 public:
-    std::string name;
+    std::string name;       //!< Name of mesh
 
-    Vertex* vertexes;
-    Face*   faces;
-    u32     num_vertexes;
-    u32     num_faces;
+    Vertex* vertexes;       //!< Vertexes array
+    Face*   faces;          //!< Faces array
+    u32     num_vertexes;   //!< Number of vertexes
+    u32     num_faces;      //!< Number of faces
 
     Mesh();
     ~Mesh();

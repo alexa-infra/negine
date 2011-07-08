@@ -39,7 +39,7 @@ bool GLBufferObject::Unmap() {
     return (glUnmapBuffer(target_) == GL_TRUE);
 }
 
-void GLBufferObject::SetData(u32 size, void* data_ptr, BufferUsage usage) {
+void GLBufferObject::SetData(u32 size, const void* data_ptr, BufferUsage usage) {
     glBufferData(target_, size, data_ptr, usage);
 }
 

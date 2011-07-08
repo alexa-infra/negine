@@ -81,12 +81,12 @@ namespace TextureMagFilters {
     //! Texture magnification function is used when the pixel being textured 
     //! maps to an area less than or equal to one texture element.
     enum TextureMagFilter {
-        NEAREST = GL_NEAREST,    //!< Returns the value of the texture element
-                    //!< that is nearest (in Manhattan distance) to the center of 
-                    //!< the pixel being textured.
-        LINEAR = GL_LINEAR       //!< Returns the weighted average of the four
-                    //!< texture elements that are closest to the center of 
-                    //!< the pixel being textured.
+        NEAREST = GL_NEAREST,   //!< Returns the value of the texture element
+                                //!< that is nearest (in Manhattan distance) to the center of 
+                                //!< the pixel being textured.
+        LINEAR = GL_LINEAR      //!< Returns the weighted average of the four
+                                //!< texture elements that are closest to the center of 
+                                //!< the pixel being textured.
     };
 }
 typedef TextureMagFilters::TextureMagFilter TextureMagFilter;
@@ -94,51 +94,65 @@ typedef TextureMagFilters::TextureMagFilter TextureMagFilter;
 namespace TextureWraps {
     //! Enumerates texture wrap modes
     enum TextureWrap {
-        CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,  //!< coordinates are clamped to the
-                        //!< range 1/2 texel inside [0, 1]
-        MIRROR_REPEAT = GL_MIRRORED_REPEAT,  //!< if integer part is even then
-                        //!< use fractional part if integer part is odd then
-                        //!< use (1-x) of fractional 
-        REPEAT = GL_REPEAT                 //!< uses fractional part of
-                        //!< coordinates only
+        CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,   //!< coordinates are clamped to the
+                                            //!< range 1/2 texel inside [0, 1]
+        MIRROR_REPEAT = GL_MIRRORED_REPEAT, //!< if integer part is even then
+                                            //!< use fractional part if integer part is odd then
+                                            //!< use (1-x) of fractional 
+        REPEAT = GL_REPEAT                  //!< uses fractional part of
+                                            //!< coordinates only
     };
 }
 typedef TextureWraps::TextureWrap TextureWrap;
 
+//! Texture creation info
 struct TextureInfo {
-    TextureUsage Usage;
-    TextureType Type;
-    TextureMagFilter MagFilter;
-    TextureMinFilter MinFilter;
-    TextureWrap WrapT, WrapS, WrapR;
+    TextureUsage Usage;                     //!< Usage
+    TextureType Type;                       //!< Texture type
+    TextureMagFilter MagFilter;             //!< Magnification filter
+    TextureMinFilter MinFilter;             //!< Minification filter
+    TextureWrap WrapT;                      //!< Wrap mode of T coordinate
+    TextureWrap WrapS;                      //!< Wrap mode of S coordinate
+    TextureWrap WrapR;                      //!< Wrap mode of R coordinate
     bool GenerateMipmap;
     
-    std::string Filename;
-    i32 Width;
-    i32 Height;
-    i32 Depth;
-    PixelType Pixel;
+    std::string Filename;                   //!< Source file name
+    i32 Width;                              //!< Width of image
+    i32 Height;                             //!< Height of image
+    i32 Depth;                              //!< Depth color
+    PixelType Pixel;                        //!< Pixel format
     
     TextureInfo();
 };
 
+//! Texture object
 class Texture {
 protected:
-    GLuint id_;
-    TextureInfo info_;
-    u8* image_;
-    bool is_ok_;
+    GLuint id_;         //!< Texture name
+    TextureInfo info_;  //!< Current info
+    u8* image_;         //!< Image buffer
+    bool is_ok_;        //!< Creation status
 public:
     Texture();
     ~Texture();
     
+    //! Gets creation status
     bool is_ok() const { return is_ok_; }
-    TextureInfo& info() { return info_; }
+
+    //! Gets texture info
+    const TextureInfo& info() { return info_; }
+
+    //! Gets bitmap data
     const u8* data() const { return image_; }
+
+    //! Gets name of texture
     GLuint id() const { return id_; }
 
+    //! Bind texture
     void Bind();
-    void Generate();
+
+    //! Generate texture object from texture info
+    void Generate(const TextureInfo& textureinfo);
 
 private:
     DISALLOW_COPY_AND_ASSIGN(Texture);
