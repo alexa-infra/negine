@@ -3,11 +3,11 @@
 namespace base {
 namespace opengl {
 
-Shader::Shader(GLenum type) 
+Shader::Shader(ShaderType shaderType) 
     : id_(0)
     , is_ok_(false)
     , compiled_(false)
-    , shader_type_(type) {
+    , shader_type_(shaderType) {
     id_ = glCreateShader(shader_type_);
     is_ok_ = (glIsShader(id_) == GL_TRUE);
 }

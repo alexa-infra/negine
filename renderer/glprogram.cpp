@@ -22,8 +22,8 @@ Program::Program()
 }
 
 Program* Program::Create(const std::string& vs, const std::string& fs, std::string& status) {
-    std::auto_ptr<Shader> pvs(new Shader(GL_VERTEX_SHADER));
-    std::auto_ptr<Shader> pfs(new Shader(GL_FRAGMENT_SHADER));
+    std::auto_ptr<Shader> pvs(new Shader(ShaderTypes::VERTEX));
+    std::auto_ptr<Shader> pfs(new Shader(ShaderTypes::PIXEL));
     std::auto_ptr<Program> pr(new Program);
     bool failed = false;
     if (!pvs->Compile(vs)) {

@@ -5,6 +5,14 @@
 namespace base {
 namespace opengl {
 
+namespace ShaderTypes {
+    enum ShaderType {
+        VERTEX = GL_VERTEX_SHADER,
+        PIXEL = GL_FRAGMENT_SHADER
+    };
+}
+typedef ShaderTypes::ShaderType ShaderType;
+
 //! Shader object
 class Shader {
 private:
@@ -14,7 +22,7 @@ private:
     GLenum shader_type_;        //!< Type of shader
     std::string status_;        //!< Status string
 public:
-    Shader(GLenum type);
+    Shader(ShaderType shaderType);
     ~Shader();
 
     //! Gets name of shader
