@@ -8,4 +8,8 @@ include_directories(
 	${TOOLS_PATH}/lua/include
 )
 
-add_library(Lua STATIC ${SRC})
+add_library(lua STATIC ${SRC})
+
+if(UNIX)
+  add_definitions(-DLUA_USE_POSIX)
+endif(UNIX)
