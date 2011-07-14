@@ -10,6 +10,7 @@ include_directories(
     ${TOOLS_PATH}/glew/include
     ${TOOLS_PATH}/freeglut/include
     ${TOOLS_PATH}/lua/include
+    ${Boost_INCLUDE_DIRS}
 )
 add_executable(app ${SRC})
 
@@ -25,6 +26,7 @@ target_link_libraries(app
     base
     renderer
     lua
+    ${Boost_LIBRARIES}
 )
 
 add_definitions(-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0 -DGLEW_STATIC)

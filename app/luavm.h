@@ -32,4 +32,17 @@ public:
         lua_pop(L, 1);
         return false;
     }
+    void call_func(const std::string& function, int argc, char** argv) {
+        lua_getglobal(L, function.c_str());
+        if (!lua_isfunction(L, -1)) {
+            lua_pop(L, 1);
+            return;
+        }
+        for (int i=1; i<argc; i++)
+            lua_pushstring(L, argv[i]);
+        lua_call(L, argc-1, 0);
+    }
+    void register_func(const std::string& name, lua_CFunction func) {
+        lua_register(L, name.c_str(), func);
+    }
 };

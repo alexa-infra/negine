@@ -8,6 +8,7 @@ add_source_group("tests"        ${TESTS_PATH}       TESTS_SRC)
 add_source_group("google-test"  ${GTEST_PATH}       TESTS_SRC)
 
 include_directories(
+    ${Boost_INCLUDE_DIRS}
     ${TOOLS_PATH}
     ${SRC_PATH}
     ${TOOLS_PATH}/glew/include
@@ -24,7 +25,10 @@ target_link_libraries(tests
     glew
     base
     renderer
+    ${Boost_LIBRARIES}
 )
+message(${Boost_LIBRARIES})
+message(${Boost_INCLUDE_DIRS})
 
 if(UNIX)
   target_link_libraries(tests pthread)
