@@ -11,13 +11,13 @@ public:
     template<typename T>
     const T& get() const {
         const generic_param<T>* pthis = static_cast<const generic_param<T>*>(this);
-        return pthis->Value;
+        return pthis->value;
     }
 
     template<typename T>
     void set(const T& value) {
         generic_param<T>* pthis = static_cast<generic_param<T>*>(this);
-        pthis->Value = value;
+        pthis->value = value;
     }
 
     virtual Type get_type() const { return Types::Unknown; }
@@ -26,7 +26,9 @@ public:
 template<typename T>
 class generic_param : public param {
 public:
-    T Value;
+    generic_param(const T& val) : value(val) {}
+    
+    T value;
     Type get_type() const { return class_info<T>::type(); }
 };
 

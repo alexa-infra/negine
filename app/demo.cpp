@@ -114,16 +114,13 @@ void GlutSampleWindow::OnDisplay(void) {
 //    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagNormal, normal));
 
-    base::generic_param<base::opengl::Texture*> p;
-    p.Value = texture_;
+    base::generic_param<base::opengl::Texture*> p(texture_);
     program_->set_uniform("diffuse", p);
 
-    base::generic_param<base::math::Matrix4> proj;
-    proj.Value = projection_;
+    base::generic_param<base::math::Matrix4> proj(projection_);
     program_->set_uniform("projection_matrix", proj);
 
-    base::generic_param<base::math::Matrix4> modv;
-    modv.Value = modelview_;
+    base::generic_param<base::math::Matrix4> modv(modelview_);
     program_->set_uniform("modelview_matrix", modv);
 
     //sg_->Draw(binding);

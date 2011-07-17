@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
             std::cout << status << std::endl;
         vm.register_func("get_current_dir", &get_current_dir);
         vm.call_func("main", argc, argv);
-        
     }
     {
         GlutSampleWindow app(800, 600);
