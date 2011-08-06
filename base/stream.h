@@ -64,6 +64,15 @@ public:
         file_.seekg(0, std::ios::end);
         return file_.tellg();
     }
+    std::string get_line() {
+        file_.seekg(position_);
+        std::string ret;
+        //u32 len = 0;
+        //safeGetline(file_, ret, len);
+        std::getline(file_, ret);
+        position_ = file_.tellg();
+        return ret;
+    }
 protected:
     void read_impl(u8* dest, u32 size, u32 position) {
         file_.seekg(position);
@@ -73,6 +82,30 @@ protected:
         file_.seekp(position);
         file_.write(reinterpret_cast<const char*>(source), size);
     }
+    std::istream& safeGetline(std::istream& is, std::string& t, u32& read_count)
+    {
+        t.clear();
+        std::istream::sentry se(is);
+        std::streambuf* sb = is.rdbuf();
+
+        for(read_count=1;;read_count++) {
+            int c = sb->sbumpc();
+            switch (c) {
+            case '\r':
+                c = sb->sgetc();
+                if(c == '\n') {
+                    sb->sbumpc();
+                    read_count++;
+                }
+                return is;
+            case '\n':
+            case EOF:
+                return is;
+            default:
+                t += (char)c;
+            }
+        }
+}
 };
 
 class FileText {
