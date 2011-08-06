@@ -145,7 +145,17 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
 //    modelview_.SetIdentity();
-    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1f);
+
+    static i32 old_x = 0;
+    static i32 old_y = 0;
+
+    i32 dx = x-old_x;
+    i32 dy = y-old_y;
+
+    old_x = x;
+    old_y = y;
+    
+    modelview_.Rotate(base::math::Vector3(dy, dx, 0), 0.1f);
     OnDisplay();
 }
 
