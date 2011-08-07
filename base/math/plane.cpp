@@ -1,3 +1,13 @@
+/**
+ * @file    base/math/plane.cpp
+ * @brief   Implementation of plane class
+ *
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
+ **/
 #include "base/math/plane.h"
 
 namespace base {

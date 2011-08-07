@@ -1,3 +1,13 @@
+/**
+ * @file    base/math/vector.h
+ * @brief   Vector in 2D, 3D, 4D classes
+ *
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
+ **/
 #pragma once
 
 #include "base/math/mathlib.h"
