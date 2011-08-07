@@ -1,3 +1,13 @@
+/**
+ * @file    base/math/matrix.h
+ * @brief   Matrix 4x4 class
+ *
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
+ **/
 #pragma once
 
 #include "base/math/mathlib.h"
@@ -74,6 +84,8 @@ class Matrix4 {
 
     static Matrix4 GetProjection(const Plane& plane);
     static Matrix4 GetReflection(const Plane& plane);
+
+    static Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist);
  private:
     void MatrixSwap(const u8& _a, const u8& _b);
 };

@@ -1,6 +1,11 @@
 /**
  * @file    base/types.h
  * @brief   basic types for platform
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
  **/
 #pragma once
 

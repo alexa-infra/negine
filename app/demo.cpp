@@ -1,3 +1,10 @@
+/**
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
+ **/
 #include "app/demo.h"
 
 #include <string>
@@ -7,18 +14,6 @@
 #include "GL/glut.h"
 
 #include <utility>
-
-base::math::Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 _near, f32 _far)
-{
-    f32 range = _far - _near;
-    f32 width = right - left;
-    f32 height = top - bottom;
-    base::math::Matrix4 m(2 / width, 0,          0,          -(right+left)/width,
-                          0,         2 / height, 0,          -(top+bottom)/height,
-                          0,         0,          -2 / range, -(_far+_near)/range,
-                          0,         0,          0,          1);
-    return m;
-}
 
 GlutSampleWindow::GlutSampleWindow(i32 width, i32 height) 
     : GlutWindow(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE, 
@@ -48,7 +43,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
-    projection_ = GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
+    projection_ = base::math::Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
 
     modelview_.SetIdentity();
 
@@ -62,11 +57,12 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
 
     std::string status;
     program_ = base::opengl::Program::Create("shader.shader", status);
-    if (program_ != NULL)
-        program_->Bind();
-    else
+    if (program_ == NULL) {
         std::cout << "Error at creating shader program: " << status << std::endl;
-
+        assert(false);
+    }
+    program_->Bind();
+    
     base::math::Vector4 cc(0, 0, 0, 1);
 
     sg_ = new base::opengl::SpriteGroup(4);
@@ -97,6 +93,8 @@ GlutSampleWindow::~GlutSampleWindow() {
 
 void GlutSampleWindow::OnDisplay(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
@@ -142,7 +140,17 @@ void GlutSampleWindow::OnReshape(i32 width, i32 height) {
 
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
 //    modelview_.SetIdentity();
-    modelview_.Rotate(base::math::Vector3(0, 1, 1), 0.1f);
+
+    static i32 old_x = 0;
+    static i32 old_y = 0;
+
+    i32 dx = x-old_x;
+    i32 dy = y-old_y;
+
+    old_x = x;
+    old_y = y;
+    
+    modelview_.Rotate(base::math::Vector3(dy, dx, 0), 0.1f);
     OnDisplay();
 }
 

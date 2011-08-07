@@ -1,3 +1,10 @@
+/**
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
+ **/
 #include "renderer/glprogram.h"
 #include <assert.h>
 #include <iostream>

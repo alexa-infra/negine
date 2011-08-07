@@ -5,6 +5,12 @@
  *          posix:              OS_POSIX
  *          compiler:           COMPILER_GCC, COMPILER_MSVC
  *          architecture:       OS_ARCH_32, OS_ARCH_64
+ *
+ * @author  Alexey Vasilyev <alexa.infra@gmail.com>
+ * @section LICENSE
+ * 
+ * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
  **/
 #pragma once
 
