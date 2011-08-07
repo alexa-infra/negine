@@ -428,5 +428,17 @@ void Matrix4::MatrixSwap(const u8& _a, const u8& _b) {
     Swap(array2d[_a][_b], array2d[_b][_a]);
 }
 
+Matrix4 Matrix4::GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist)
+{
+    f32 range = farDist - nearDist;
+    f32 width = right - left;
+    f32 height = top - bottom;
+    Matrix4 m(2 / width, 0,          0,          -(right+left)/width,
+              0,         2 / height, 0,          -(top+bottom)/height,
+              0,         0,          -2 / range, -(farDist+nearDist)/range,
+              0,         0,          0,          1);
+    return m;
+}
+
 }
 }

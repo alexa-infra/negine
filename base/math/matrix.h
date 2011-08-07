@@ -74,6 +74,8 @@ class Matrix4 {
 
     static Matrix4 GetProjection(const Plane& plane);
     static Matrix4 GetReflection(const Plane& plane);
+
+    static Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist);
  private:
     void MatrixSwap(const u8& _a, const u8& _b);
 };
