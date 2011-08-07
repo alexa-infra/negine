@@ -31,7 +31,7 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
     glutInitWindowSize(width, height);
     glutInitWindowPosition(100, 100);
 
-//    glutInitContextVersion(2, 0);
+//    glutInitContextVersion(3, 3);
 //    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
 //    glutInitContextProfile(GLUT_CORE_PROFILE);
 

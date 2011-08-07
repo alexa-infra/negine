@@ -15,7 +15,7 @@ void main(void) {
     normal = normalize( vec3(modelview_matrix * vec4(n, 0.0)) );
     
     vec4 vertex_in_modelview_space = modelview_matrix * vec4(position, 1.0);
-    vertex_to_light_vector = normalize(vec3(0.0, 0.0, 250.0) - vertex_in_modelview_space);
+    vertex_to_light_vector = normalize(vec3(0.0, 0.0, 250.0) - vec3(vertex_in_modelview_space));
 
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
 }
