@@ -3,7 +3,7 @@
  * @section LICENSE
  * 
  * This file is part of Negine (https://alexadotlife.com/hg/negine)
- * Licensed under LGPLv3 (or GLPv3) – see LICENSE file for details
+ * Licensed under LGPLv3 (or GPLv3) – see LICENSE file for details
  **/
 #include "app/glutapp.h"
 
@@ -31,9 +31,9 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
     glutInitWindowSize(width, height);
     glutInitWindowPosition(100, 100);
 
-    glutInitContextVersion(3, 3);
-    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
-    glutInitContextProfile(GLUT_CORE_PROFILE);
+//    glutInitContextVersion(2, 0);
+//    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
+//    glutInitContextProfile(GLUT_CORE_PROFILE);
 
     window_ = this;
     window_id_ = glutCreateWindow("GlutWindow");
