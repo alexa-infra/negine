@@ -9,13 +9,9 @@
 #include <GL/glut.h>
 #include "luavm.h"
 
-#include <boost/filesystem.hpp>
-
-namespace fs = boost::filesystem;
-
 int get_current_dir(lua_State* L) {
-    fs::path p = fs::current_path();
-    lua_pushstring(L, p.native().c_str());
+    std::string p = "not implemented";
+    lua_pushstring(L, p.c_str());
     return 1;
 }
 
