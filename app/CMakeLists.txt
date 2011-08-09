@@ -43,13 +43,13 @@ if(NOT SDL_FOUND)
 else()
     set(SDLSRC
         ${APP_PATH}/sdldemo.cpp
+        ${APP_PATH}/sdlapp.cpp
     )
     source_group("sdlapp" FILES ${SDLSRC})
     include_directories(
         ${TOOLS_PATH}
         ${SRC_PATH}
         ${TOOLS_PATH}/glew/include
-        ${TOOLS_PATH}/lua/include
         ${SDL_INCLUDE_DIR}
     )
     add_executable(sdldemo ${SDLSRC})
