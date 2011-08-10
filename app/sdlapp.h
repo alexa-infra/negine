@@ -25,13 +25,12 @@ protected:
     bool run_;
     
 public:
-    SDLApp();
-    ~SDLApp();
-
+    SDLApp(u32 width, u32 height);
+    virtual ~SDLApp();
     void Run();
-
 protected:
-    static u32 GameLoopTimer(u32 interval, void* param);
     void HandleUserEvents(SDL_Event* event);
-    void GameLoop();
+    virtual void OnFrame();
+private:
+    static u32 GameLoopTimer(u32 interval, void* param);
 };

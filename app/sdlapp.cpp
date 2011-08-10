@@ -13,7 +13,7 @@
 
 #include "GL/glew.h"
 
-SDLApp::SDLApp()
+SDLApp::SDLApp(u32 width, u32 height)
     : mainwindow(NULL)
     , run_(true) 
 {
@@ -29,7 +29,7 @@ SDLApp::SDLApp()
         "SDL Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        512, 512,
+        width, height,
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
     );
     
@@ -82,7 +82,7 @@ void SDLApp::Run() {
 void SDLApp::HandleUserEvents(SDL_Event* event) {
     switch (event->user.code) {
         case RUN_GAME_LOOP:
-            GameLoop();
+            OnFrame();
             break;
         default:
             break;
@@ -102,9 +102,9 @@ u32 SDLApp::GameLoopTimer(u32 interval, void* param) {
     return interval;
 }
 
-void SDLApp::GameLoop() {
-    glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-    glClear ( GL_COLOR_BUFFER_BIT );
+void SDLApp::OnFrame() {
+    //glClearColor ( 1.0, 0.0, 0.0, 1.0 );
+    //glClear ( GL_COLOR_BUFFER_BIT );
     /* Swap our back buffer to the front */
     SDL_GL_SwapWindow(mainwindow);
 }
