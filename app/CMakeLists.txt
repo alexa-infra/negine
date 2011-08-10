@@ -57,7 +57,6 @@ else()
     target_link_libraries(sdldemo 
         base
         renderer
-        lua
         ${SDL_LIBRARY}
     )
 endif()

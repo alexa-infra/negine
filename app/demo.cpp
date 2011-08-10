@@ -150,7 +150,7 @@ void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     old_x = x;
     old_y = y;
     
-    modelview_.Rotate(base::math::Vector3(dy, dx, 0), 0.1f);
+    modelview_.Rotate(base::math::Vector3((f32)dy, (f32)dx, (f32)0), 0.1f);
     OnDisplay();
 }
 

@@ -7,8 +7,13 @@
  **/
 #pragma once
 
-#include <SDL/SDL.h>
 #include "base/types.h"
+
+#ifdef OS_WIN
+#  define SDL_MAIN_HANDLED
+#endif
+
+#include <SDL/SDL.h>
 
 const i32 RUN_GAME_LOOP = 1;
 
