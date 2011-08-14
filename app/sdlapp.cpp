@@ -15,7 +15,10 @@
 
 SDLApp::SDLApp(u32 width, u32 height)
     : mainwindow(NULL)
-    , run_(true) 
+    , run_(true)
+    , width_(width)
+    , height_(height)
+    , capture_(false)
 {
     SDL_Init(SDL_INIT_VIDEO);
  
@@ -52,8 +55,6 @@ SDLApp::SDLApp(u32 width, u32 height)
 
     assert(glGetError() == GL_NO_ERROR);
     SDL_GL_SetSwapInterval(1);
-
-    timer = SDL_AddTimer(20, GameLoopTimer, this);
 }
 
 SDLApp::~SDLApp() {
@@ -65,41 +66,41 @@ SDLApp::~SDLApp() {
 void SDLApp::Run() {
     SDL_Event event;
     
-    while(run_ && (SDL_WaitEvent(&event))) {
-        switch(event.type) {
-            case SDL_USEREVENT:
-                HandleUserEvents(&event);
-                break;
-            case SDL_QUIT:
-                run_ = false;
-                break;
-            default:
-                break;
+    while(run_) {
+        if (SDL_PollEvent(&event)) {
+            switch(event.type) {
+                case SDL_QUIT:
+                    run_ = false;
+                    break;
+                case SDL_MOUSEBUTTONUP:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        capture_ = false;
+                        SDL_ShowCursor(1);
+                    }
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        capture_ = true;
+                        SDL_ShowCursor(0);
+                    }
+                    break;
+                case SDL_MOUSEMOTION:
+                    if (capture_) {
+                        if (event.motion.x != width_ / 2. ||
+                            event.motion.y != height_ / 2.) {
+                            OnMotion(event.motion.xrel/(f32)width_, 
+                                event.motion.yrel/(f32)height_);
+                            SDL_WarpMouseInWindow(mainwindow, width_ / 2., height_ / 2.);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
+        OnFrame();
+        SDL_Delay(1);
     }
-}
-
-void SDLApp::HandleUserEvents(SDL_Event* event) {
-    switch (event->user.code) {
-        case RUN_GAME_LOOP:
-            OnFrame();
-            break;
-        default:
-            break;
-    }
-}
-
-u32 SDLApp::GameLoopTimer(u32 interval, void* param) {
-    SDL_Event event;
-    
-    event.type = SDL_USEREVENT;
-    event.user.code = RUN_GAME_LOOP;
-    event.user.data1 = 0;
-    event.user.data2 = 0;
-    
-    SDL_PushEvent(&event);
-    
-    return interval;
 }
 
 void SDLApp::OnFrame() {
@@ -107,4 +108,8 @@ void SDLApp::OnFrame() {
     //glClear ( GL_COLOR_BUFFER_BIT );
     /* Swap our back buffer to the front */
     SDL_GL_SwapWindow(mainwindow);
+}
+
+void SDLApp::OnMotion(f32 dx, f32 dy) {
+    
 }

@@ -29,9 +29,9 @@ Program::Program()
 }
 
 Program* Program::Create(const std::string& vs, const std::string& fs, std::string& status) {
-    std::auto_ptr<Shader> pvs(new Shader(ShaderTypes::VERTEX));
-    std::auto_ptr<Shader> pfs(new Shader(ShaderTypes::PIXEL));
-    std::auto_ptr<Program> pr(new Program);
+    std::unique_ptr<Shader> pvs(new Shader(ShaderTypes::VERTEX));
+    std::unique_ptr<Shader> pfs(new Shader(ShaderTypes::PIXEL));
+    std::unique_ptr<Program> pr(new Program);
     bool failed = false;
     if (!pvs->Compile(vs)) {
         status = pvs->status();

@@ -91,6 +91,11 @@ void SDLDemo::OnFrame() {
     SDLApp::OnFrame();
 }
 
+void SDLDemo::OnMotion(f32 dx, f32 dy) {
+    modelview_.Rotate(base::math::Vector3((f32)1, (f32)0, (f32)0), -dy);
+    modelview_.Rotate(base::math::Vector3((f32)0, (f32)1, (f32)0), -dx);
+}
+
 int main(int argc, char *argv[])
 {
     SDLDemo app(512, 512);

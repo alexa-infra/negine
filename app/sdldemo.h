@@ -31,4 +31,5 @@ public:
 
 protected:
     void OnFrame();
+    void OnMotion(f32 dx, f32 dy);
 };
