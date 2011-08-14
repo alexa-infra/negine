@@ -55,6 +55,8 @@ SDLApp::SDLApp(u32 width, u32 height)
 
     assert(glGetError() == GL_NO_ERROR);
     SDL_GL_SetSwapInterval(1);
+
+    timer = SDL_AddTimer(20, GameLoopTimer, this);
 }
 
 SDLApp::~SDLApp() {
@@ -69,6 +71,10 @@ void SDLApp::Run() {
     while(run_) {
         if (SDL_PollEvent(&event)) {
             switch(event.type) {
+                case SDL_USEREVENT:
+                    if (event.user.code == RUN_GAME_LOOP)
+                        OnFrame();
+                    break;
                 case SDL_QUIT:
                     run_ = false;
                     break;
@@ -98,8 +104,6 @@ void SDLApp::Run() {
                     break;
             }
         }
-        OnFrame();
-        SDL_Delay(1);
     }
 }
 
@@ -112,4 +116,17 @@ void SDLApp::OnFrame() {
 
 void SDLApp::OnMotion(f32 dx, f32 dy) {
     
+}
+
+u32 SDLApp::GameLoopTimer(u32 interval, void* param) {
+    SDL_Event event;
+
+    event.type = SDL_USEREVENT;
+    event.user.code = RUN_GAME_LOOP;
+    event.user.data1 = 0;
+    event.user.data2 = 0;
+
+    SDL_PushEvent(&event);
+
+    return interval;
 }
