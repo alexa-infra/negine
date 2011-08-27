@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <assert.h>
 
 SDLDemo::SDLDemo(u32 width, u32 height)
     : SDLApp(width, height)
@@ -32,8 +33,6 @@ SDLDemo::SDLDemo(u32 width, u32 height)
         assert(false);
     }
     program_->Bind();
-    
-    base::math::Vector4 cc(0, 0, 0, 1);
 
     std::vector<base::opengl::Mesh*> mesh_list 
         = base::opengl::load_md3_se("european_fnt_v2.md3");
@@ -47,8 +46,8 @@ SDLDemo::SDLDemo(u32 width, u32 height)
 }
 
 SDLDemo::~SDLDemo() {
-    for (u32 i=0; i<mesh_.size(); i++)
-        delete mesh_[i];
+    for (auto m=mesh_.begin(); m != mesh_.end(); ++m)
+        delete (*m);
     delete buffer_;
     delete texture_;
     delete program_;
@@ -82,9 +81,8 @@ void SDLDemo::OnFrame() {
     base::generic_param<base::math::Matrix4> modv(modelview_);
     program_->set_uniform("modelview_matrix", modv);
 
-    for (u32 i=0; i<mesh_.size(); i++) {
-        mesh_[i]->Draw(binding);
-    }
+    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
+        (*m)->Draw(binding);
 
     assert(glGetError() == GL_NO_ERROR);
 

@@ -13,7 +13,6 @@
 #include "renderer/glprogram.h"
 #include "base/math/matrix.h"
 #include "renderer/vertexbuffer.h"
-#include "renderer/spritegroup.h"
 #include "renderer/md3mesh.h"
 
 class SDLDemo : public SDLApp {
