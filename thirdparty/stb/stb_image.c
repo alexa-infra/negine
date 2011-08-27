@@ -178,13 +178,14 @@
 //
 //     stbi_is_hdr(char *filename);
 
+
 #ifndef STBI_NO_STDIO
 #include <stdio.h>
 #endif
 
 #define STBI_VERSION 1
 
-enum
+enum 
 {
    STBI_default = 0, // only used for req_comp
 
