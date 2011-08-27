@@ -80,6 +80,15 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
         mesh_.push_back(vb);
         delete m;
     }
+
+    //font test
+    //string filename = "AlphaBetaBRK.ttf";
+    string filename = "AmerikaSans.ttf";
+    font = new base::opengl::SpriteFont(filename, 0);
+    font->setText(-50,-20,(char*)"Just for test.");
+    
+    
+
 }
 
 GlutSampleWindow::~GlutSampleWindow() {
@@ -89,6 +98,7 @@ GlutSampleWindow::~GlutSampleWindow() {
     delete buffer_;
     delete texture_;
     delete program_;
+    delete font;
 }
 
 void GlutSampleWindow::OnDisplay(void) {
@@ -100,6 +110,8 @@ void GlutSampleWindow::OnDisplay(void) {
     glEnable(GL_DEPTH_TEST);
 
     f32 frame_time = GetTimer();
+
+    //font->print(0,0,(char*)"Just for test.");
 
     i32 pos = program_->get_attributes()["position"].Location;
     i32 tex = program_->get_attributes()["tex"].Location;
@@ -121,10 +133,14 @@ void GlutSampleWindow::OnDisplay(void) {
     base::generic_param<base::math::Matrix4> modv(modelview_);
     program_->set_uniform("modelview_matrix", modv);
 
+    font->Draw(binding);
+    texture_->Bind();
     //sg_->Draw(binding);
+    
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
     }
+    
 
 //    GLenum glstatus = glGetError();
 //    if (glstatus != GL_NO_ERROR) 

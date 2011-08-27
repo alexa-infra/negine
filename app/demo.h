@@ -14,6 +14,7 @@
 #include "renderer/vertexbuffer.h"
 #include "renderer/spritegroup.h"
 #include "renderer/md3mesh.h"
+#include "renderer/spritefont.h"
 
 class GlutSampleWindow : public GlutWindow {
 private:
@@ -24,6 +25,7 @@ private:
     base::opengl::VertexBuffer* buffer_;
     base::opengl::SpriteGroup* sg_;
     std::vector<base::opengl::VertexBuffer*> mesh_;
+    base::opengl::SpriteFont *font;
 public:
     GlutSampleWindow(i32 width = 640, i32 height = 480); 
     virtual ~GlutSampleWindow();
