@@ -34,7 +34,8 @@ namespace opengl {
 		f32 m_height;
 		bool m_valid;
 
-		char ttf_buffer[1<<20];
+		//char ttf_buffer[1<<20];
+		char *ttf_buffer;
 		unsigned char temp_bitmap[512*512];
 
 		void* cdata; // ASCII 32..126 is 95 glyphs

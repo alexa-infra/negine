@@ -12,37 +12,36 @@
 #define STBI_HEADER_FILE_ONLY
 #include "stb/stb_image.c"
 #include <iostream>
-//nclude <fstream>
-
+#include "base/stream.h"
 namespace base {
 namespace opengl {
 
 
 SpriteFont::SpriteFont(std::string filename, f32 height):m_height(height),m_valid(false)
 {
+	_vertexes	= NULL;
+	_faces		= NULL;
+	textVBO		= NULL;
 
-   fread(ttf_buffer, 1, 1<<20, fopen(filename.c_str(), "rb"));      
-         
+	base::FileBinary file(filename.c_str());
+	u32 size = file.size();
+	ttf_buffer = new char[size];
+	file.read((u8*)ttf_buffer, size);	
+	  
 	cdata = new stbtt_bakedchar[96];
-   stbtt_BakeFontBitmap((const unsigned char*)ttf_buffer,0, 32.0, temp_bitmap,512,512, 32,96, (stbtt_bakedchar*)cdata); // no guarantee this fits!
-   // can free ttf_buffer at this point
-   glGenTextures(1, &ftex);
-   glBindTexture(GL_TEXTURE_2D, ftex);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 512,512, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp_bitmap);
-   // can free temp_bitmap at this point
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  
-   
-   _vertexes	= NULL;
-   _faces		= NULL;
-   textVBO		= NULL; 
-   
+   	stbtt_BakeFontBitmap((const unsigned char*)ttf_buffer,0, 32.0, temp_bitmap,512,512, 32,96, (stbtt_bakedchar*)cdata); // no guarantee this fits!   
+    delete[] ttf_buffer;
+
+	glGenTextures(1, &ftex);
+	glBindTexture(GL_TEXTURE_2D, ftex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 512,512, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp_bitmap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  
 }
 
 void SpriteFont::setText (f32 x, f32 y, char *text)
 {
 	if (textVBO!=NULL)
 		delete textVBO;
-	// assume orthographic projection with units = screen pixels, origin at top left
    
    int length = strlen(text);
    vertex_index = 0;
