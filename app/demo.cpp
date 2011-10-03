@@ -173,5 +173,7 @@ void GlutSampleWindow::OnMotion(i32 x, i32 y) {
 
 void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
 {
-	font->setText(-50,-20,(char*)&key);
+    std::string test("Key pressed: ");
+    test += (const char*)&key;
+	font->setText(-50, -20, test);
 }

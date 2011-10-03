@@ -8,47 +8,39 @@
  
 #pragma once
 
+#include "base/types.h"
 #include "renderer/vertexbuffer.h"
 #include "renderer/sprite.h"
-#include <stdio.h>
 
-#include <string>
-
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+#include "stb/stb_truetype.h"
 
 namespace base {
 namespace opengl {
 
-	class SpriteFont 
-	{
-	public:
-		//Sprite *sprites;
+    class SpriteFont 
+    {
+    public:
+        SpriteFont(const std::string& filename, f32 height);
+        ~SpriteFont();
 
-		SpriteFont(std::string filename, f32 height);
-		~SpriteFont();
+        void setText (f32 x, f32 y, const std::string& text); 
+        void Draw(const AttributeBinding& binding);
 
-		void setText (f32 x, f32 y, char *text); 
-		void Draw(const AttributeBinding& binding);
+    private:
+        f32 height_;
+        bool valid_;
 
-	private:
-		f32 m_height;
-		bool m_valid;
+        stbtt_bakedchar* cdata_; // ASCII 32..126 is 95 glyphs
+        GLuint tex_;
 
-		//char ttf_buffer[1<<20];
-		char *ttf_buffer;
-		unsigned char temp_bitmap[512*512];
+        Vertex *vertexes_;
+        Face *faces_;
 
-		void* cdata; // ASCII 32..126 is 95 glyphs
-		GLuint ftex;
+        i32 vertex_index_;
+        i32 face_index_;
 
-		Vertex *_vertexes;
-		Face *_faces;
-
-		int vertex_index;
-	    int face_index;
-
-	    VertexBuffer *textVBO;
-	};
+        VertexBuffer *textVBO_;
+    };
 
 }//namespace opengl
 }//namespace base
