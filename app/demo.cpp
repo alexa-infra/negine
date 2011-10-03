@@ -15,6 +15,7 @@
 
 #include <utility>
 
+
 GlutSampleWindow::GlutSampleWindow(i32 width, i32 height) 
     : GlutWindow(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE, 
                  width, height)
@@ -170,3 +171,7 @@ void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     OnDisplay();
 }
 
+void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
+{
+	font->setText(-50,-20,(char*)&key);
+}
