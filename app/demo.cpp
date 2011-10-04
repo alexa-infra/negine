@@ -52,9 +52,10 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     tex_info.Filename = "european_fnt.tga";
     tex_info.MinFilter = base::opengl::TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
+    tex_info.Pixel = base::opengl::PixelTypes::RGB;
 
     texture_ = new base::opengl::Texture;
-    texture_->Generate(tex_info);
+    texture_->GenerateFromFile(tex_info);
 
     std::string status;
     program_ = base::opengl::Program::Create("shader.shader", status);

@@ -16,6 +16,7 @@
 
 namespace base {
 namespace opengl {
+    class Texture;
 
     class SpriteFont 
     {
@@ -27,17 +28,9 @@ namespace opengl {
         void Draw(const AttributeBinding& binding);
 
     private:
-        f32 height_;
-        bool valid_;
+        base::opengl::Texture* texture_;
 
         stbtt_bakedchar* cdata_; // ASCII 32..126 is 95 glyphs
-        GLuint tex_;
-
-        Vertex *vertexes_;
-        Face *faces_;
-
-        i32 vertex_index_;
-        i32 face_index_;
 
         VertexBuffer *textVBO_;
     };

@@ -41,8 +41,7 @@ TextureInfo::TextureInfo()
 
 
 Texture::Texture() 
-    : image_(NULL)
-    , id_(0) {
+    : id_(0) {
     glGenTextures(1, &id_);
 }
 
@@ -54,21 +53,32 @@ void Texture::Bind() {
     glBindTexture(info_.Type, id_);
 }
 
-void Texture::Generate(const TextureInfo& textureinfo) {
-
+void Texture::GenerateFromBuffer(const TextureInfo& textureinfo, const u8* data) {
     info_ = textureinfo;
+    FromBuffer(data);
+}
+
+void Texture::GenerateFromFile(const TextureInfo& textureinfo) {
+    info_ = textureinfo;
+
+    u8* image = stbi_load(info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.Depth, 0);
+
+    if(image == NULL)
+    {   
+        std::cout << stbi_failure_reason() << std::endl;
+        assert(false);
+    }
+
+    FromBuffer(image);
+    
+    stbi_image_free(image);
+}
+
+void Texture::FromBuffer(const u8* data) {
     if (!info_.GenerateMipmap)
     {
         assert(info_.MinFilter == TextureMinFilters::LINEAR
             || info_.MinFilter == TextureMinFilters::NEAREST);
-    }
-
-    image_ = stbi_load(info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.Depth, 0);
-
-    if(image_ == NULL)
-    {   
-        std::cout << stbi_failure_reason() << std::endl;
-        assert(false);
     }
 
     glBindTexture(info_.Type, id_);
@@ -84,14 +94,13 @@ void Texture::Generate(const TextureInfo& textureinfo) {
             info_.Width, 
             info_.Height, 
             0, 
-            GL_RGB,
+            PixelTypes::GetGLType(info_.Pixel),
             GL_UNSIGNED_BYTE, 
-            image_);
+            data);
 
 //    if (info_.GenerateMipmap)
 //        glGenerateMipmap(GL_TEXTURE_2D);
 
-    stbi_image_free(image_);
 }
 
 }

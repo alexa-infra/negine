@@ -137,7 +137,6 @@ class Texture {
 protected:
     GLuint id_;         //!< Texture name
     TextureInfo info_;  //!< Current info
-    u8* image_;         //!< Image buffer
     bool is_ok_;        //!< Creation status
 public:
     Texture();
@@ -149,9 +148,6 @@ public:
     //! Gets texture info
     const TextureInfo& info() { return info_; }
 
-    //! Gets bitmap data
-    const u8* data() const { return image_; }
-
     //! Gets name of texture
     GLuint id() const { return id_; }
 
@@ -159,7 +155,13 @@ public:
     void Bind();
 
     //! Generate texture object from texture info
-    void Generate(const TextureInfo& textureinfo);
+    void GenerateFromFile(const TextureInfo& textureinfo);
+
+    //! Generate texture object from texture info
+    void GenerateFromBuffer(const TextureInfo& textureinfo, const u8* data);
+
+private:
+    void FromBuffer(const u8* data);
 
 private:
     DISALLOW_COPY_AND_ASSIGN(Texture);
