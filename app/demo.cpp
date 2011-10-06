@@ -15,6 +15,58 @@
 
 #include <utility>
 
+using namespace base::math;
+
+// compute transform axis from object position and target point
+void lookAtToAxes(const Vector3& position, const Vector3& target,
+                  Vector3& left, Vector3& up, Vector3& forward)
+{
+    // compute the forward vector
+    forward = target - position;
+    forward.Normalize();
+
+    // compute temporal up vector based on the forward vector
+    // watch out when look up/down at 90 degree
+    // for example, forward vector is on the Y axis
+    if(Equal(forward.x, 0.f)&& Equal(forward.z, 0.f))
+    {
+        // forward vector is pointing +Y axis
+        if(forward.y > 0)
+            up = Vector3(0, 0, -1);
+        // forward vector is pointing -Y axis
+        else
+            up = Vector3(0, 0, 1);
+    }
+    // in general, up vector is straight up
+    else
+    {
+        up = Vector3(0, 1, 0);
+    }
+
+    // compute the left vector
+    left = up ^ forward;  // cross product
+    left.Normalize();
+
+    // re-calculate the orthonormal up vector
+    up = forward ^ left;  // cross product
+    up.Normalize();
+}
+
+void AxesToMatrix(Vector3 const& ax, Vector3 const& ay, Vector3 const& az,
+    Matrix4& matrix) {
+    matrix.SetIdentity();
+    matrix.xx = ax.x;
+    matrix.yx = ax.y;
+    matrix.zx = ax.z;
+
+    matrix.xy = ay.x;
+    matrix.yy = ay.y;
+    matrix.zy = ay.z;
+
+    matrix.xz = az.x;
+    matrix.yz = az.y;
+    matrix.zz = az.z;        
+}
 
 GlutSampleWindow::GlutSampleWindow(i32 width, i32 height) 
     : GlutWindow(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE, 
@@ -44,9 +96,17 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
+    Vector3 ax, ay, az;
+    lookAtToAxes(Vector3(0., 0., -50.), Vector3(0., 0., 0.), ax, ay, az);
+    AxesToMatrix(ax, ay, az, cameraTransform_);
+    
+    cameraTransform_.Translate(base::math::Vector3(0., 0., -50));
+
     projection_ = base::math::Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
 
-    modelview_.SetIdentity();
+    modelTransform_.SetIdentity();
+    //modelTransform_.Translate(base::math::Vector3(0., 0., -450.));
+    //modelTransform_.Scale(base::math::Vector3(0.5, 0.5, 0.5));
 
     base::opengl::TextureInfo tex_info;
     tex_info.Filename = "european_fnt.tga";
@@ -87,7 +147,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     //string filename = "AlphaBetaBRK.ttf";
     string filename = "AmerikaSans.ttf";
     font = new base::opengl::SpriteFont(filename, 0);
-    font->setText(-50,-20,(char*)"Just for test.");
+    font->setText(-50., 0, "Just for test.");
     
     
 
@@ -132,21 +192,25 @@ void GlutSampleWindow::OnDisplay(void) {
     base::generic_param<base::math::Matrix4> proj(projection_);
     program_->set_uniform("projection_matrix", proj);
 
-    base::generic_param<base::math::Matrix4> modv(modelview_);
+    base::generic_param<base::math::Matrix4> modv(cameraTransform_ * modelTransform_);
     program_->set_uniform("modelview_matrix", modv);
 
-    font->Draw(binding);
-    texture_->Bind();
+    
     //sg_->Draw(binding);
     
+    texture_->Bind();
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
     }
-    
 
-//    GLenum glstatus = glGetError();
-//    if (glstatus != GL_NO_ERROR) 
-//        std::cout << "GL Error: " << std::hex << glstatus << std::endl;
+    base::math::Matrix4 m = cameraTransform_;
+    m.Invert();
+
+    base::generic_param<base::math::Matrix4> identity(m);
+    program_->set_uniform("modelview_matrix", identity);
+
+    font->Draw(binding);
+    
     assert(glGetError() == GL_NO_ERROR);
     glutSwapBuffers();
 }
@@ -168,7 +232,7 @@ void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     old_x = x;
     old_y = y;
     
-    modelview_.Rotate(base::math::Vector3((f32)dy, (f32)dx, (f32)0), 0.1f);
+    modelTransform_.Rotate(base::math::Vector3((f32)dy, (f32)dx, (f32)0), 0.1f);
     OnDisplay();
 }
 
@@ -176,5 +240,6 @@ void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
 {
     std::string test("Key pressed: ");
     test += (const char*)&key;
-	font->setText(-50, -20, test);
+	font->setText(-50., 0, test);
+    OnDisplay();
 }

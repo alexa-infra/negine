@@ -26,6 +26,9 @@ private:
     base::opengl::SpriteGroup* sg_;
     std::vector<base::opengl::VertexBuffer*> mesh_;
     base::opengl::SpriteFont *font;
+
+    base::math::Matrix4 cameraTransform_;
+    base::math::Matrix4 modelTransform_;
 public:
     GlutSampleWindow(i32 width = 640, i32 height = 480); 
     virtual ~GlutSampleWindow();

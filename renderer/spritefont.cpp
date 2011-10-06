@@ -73,31 +73,33 @@ void SpriteFont::setText(f32 x, f32 y, const std::string& str)
 
         stbtt_aligned_quad q;
         stbtt_GetBakedQuad(cdata_, 
-            512,
-            512, 
-            ch-32,
-            &x,
+            512,    // width of font canvas
+            512,    // height of font canvas
+            ch-32,  // position of character in font
+            &x,     // current position 
             &y,
-            &q,
-            1);//1=opengl,0=old d3d
+            &q,     // resulted quad
+            1);     // 1 tex coords for opengl (0 for d3d)
+
+        // note: x,y position is advanced by font character size
 
         //VERTEX 0
-        vertexes_[vertex_index_].pos = Vector3(q.x0+x, q.y0+y, 0.0);
+        vertexes_[vertex_index_].pos = Vector3(q.x0, q.y0, 0.0);
         vertexes_[vertex_index_].n = norm;
         vertexes_[vertex_index_].tex = Vector2(q.s0, q.t1);
 
         //VERTEX 1
-        vertexes_[vertex_index_+1].pos = Vector3(q.x1+x, q.y0+y, 0.0);
+        vertexes_[vertex_index_+1].pos = Vector3(q.x1, q.y0, 0.0);
         vertexes_[vertex_index_+1].n = norm;
         vertexes_[vertex_index_+1].tex = Vector2(q.s1, q.t1);
 
         //VERTEX 2
-        vertexes_[vertex_index_+2].pos = Vector3(q.x1+x, q.y1+y, 0.0);
+        vertexes_[vertex_index_+2].pos = Vector3(q.x1, q.y1, 0.0);
         vertexes_[vertex_index_+2].n = norm;
         vertexes_[vertex_index_+2].tex = Vector2(q.s1, q.t0);
 
         //VERTEX 3
-        vertexes_[vertex_index_+3].pos = Vector3(q.x0+x, q.y1+y, 0.0);
+        vertexes_[vertex_index_+3].pos = Vector3(q.x0, q.y1, 0.0);
         vertexes_[vertex_index_+3].n = norm;
         vertexes_[vertex_index_+3].tex = Vector2(q.s0, q.t0);
 
