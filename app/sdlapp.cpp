@@ -96,7 +96,7 @@ void SDLApp::Run() {
                             event.motion.y != height_ / 2.) {
                             OnMotion(event.motion.xrel/(f32)width_, 
                                 event.motion.yrel/(f32)height_);
-                            SDL_WarpMouseInWindow(mainwindow, width_ / 2., height_ / 2.);
+                            SDL_WarpMouseInWindow(mainwindow, width_ / 2, height_ / 2);
                         }
                     }
                     break;

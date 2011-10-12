@@ -72,7 +72,7 @@ public:
     }
     u32 size() {
         file_.seekg(0, std::ios::end);
-        return file_.tellg();
+        return static_cast<u32>(file_.tellg());
     }
     std::string get_line() {
         file_.seekg(position_);
@@ -80,7 +80,7 @@ public:
         //u32 len = 0;
         //safeGetline(file_, ret, len);
         std::getline(file_, ret);
-        position_ = file_.tellg();
+        position_ = static_cast<u32>(file_.tellg());
         return ret;
     }
 protected:
@@ -151,7 +151,7 @@ public:
     }
     u32 size() {
         file_.seekg(0, std::ios::end);
-        return file_.tellg();
+        return static_cast<u32>(file_.tellg());
     }
 };
 

@@ -55,7 +55,7 @@ void SpriteFont::setText(f32 x, f32 y, const std::string& str)
 {
     delete textVBO_;
 
-    const i32 length = str.size();
+    const u32 length = str.size();
     u32 vertex_index_ = 0;
     u32 face_index_ = 0;
     
