@@ -10,9 +10,9 @@ include_directories(
 )
 add_library(renderer ${SRC})
 
-add_dependencies(renderer glew)
+add_dependencies(renderer glew base)
 
-target_link_libraries(renderer glew)
+target_link_libraries(renderer glew base)
 
 if(WIN32)
   target_link_libraries(renderer OpenGL32 winmm user32)
