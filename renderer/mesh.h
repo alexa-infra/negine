@@ -24,6 +24,8 @@ struct Vertex
     Vector3 n;          //!< Normal to surface
     Vector2 tex;        //!< Texture coordinates
     Vector4 color;      //!< Color of vertex
+
+    Vertex() {}
 };
 
 namespace VertexAttrs

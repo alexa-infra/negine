@@ -33,7 +33,8 @@ bool Shader::Compile(const std::string& source) {
 
     GLint compile_status;
     glGetShaderiv(id_, GL_COMPILE_STATUS, &compile_status);
-    if (compiled_ = (compile_status == GL_TRUE))
+    compiled_ = (compile_status == GL_TRUE);
+    if (compiled_)
         return true;
     GLint log_size;
     glGetShaderiv(id_, GL_INFO_LOG_LENGTH, &log_size);

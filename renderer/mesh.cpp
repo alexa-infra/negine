@@ -14,7 +14,7 @@ namespace opengl {
 namespace VertexAttrs {
 
 const Vertex test;
-const u8 offsets[] = {
+const uptr offsets[] = {
     ((uptr)&test.pos) - ((uptr)&test),
     ((uptr)&test.n) - ((uptr)&test),
     ((uptr)&test.tex) - ((uptr)&test),
@@ -22,7 +22,7 @@ const u8 offsets[] = {
 };
 
 u8 GetOffset(VertexAttr attr) {
-    return offsets[attr];
+    return (u8)offsets[attr];
 }
 u8 GetComponentCount(VertexAttr attr) {
     switch (attr) {

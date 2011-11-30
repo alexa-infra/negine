@@ -417,8 +417,9 @@ class Vector4 {
             return;
         *this /= magnitude;
     }
-    inline Vector3& Normalize() {
-        SetLength(1.0f);
+    inline Vector4& Normalize() {
+        SetLength(1.f);
+        return *this;
     }
     inline Vector4 Normalized() const {
         Vector4 normalized(x, y, z, w);

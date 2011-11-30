@@ -192,13 +192,13 @@ std::vector<Mesh*> load_md3(u8* data) {
     std::vector<Mesh*> mesh_list;
 
     Md3Frame* frames = (Md3Frame*)(data + hdr->ofs_frames);
-    for (i32 i = 0; i<hdr->num_frames; i++) {
-        frames[i];   
-    }
+    //for (i32 i = 0; i<hdr->num_frames; i++) {
+    //    frames[i];   
+    //}
     Md3Tag* tags = (Md3Tag*)(data + hdr->ofs_tags);
-    for (i32 i = 0; i<hdr->num_frames * hdr->num_tags; i++) {
-        tags[i];
-    }
+    //for (i32 i = 0; i<hdr->num_frames * hdr->num_tags; i++) {
+    //    tags[i];
+    //}
 
     Md3Surface* surface = (Md3Surface*)(data + hdr->ofs_surfaces);
     for (i32 i = 0; i<hdr->num_surfaces; i++)
@@ -214,9 +214,9 @@ std::vector<Mesh*> load_md3(u8* data) {
         mesh->faces = new Face[surface->num_frames * surface->num_triangles];
 
         Md3Shader* shaders = (Md3Shader*)((u8*)surface + surface->ofs_shaders);
-        for (i32 j=0; j<surface->num_shaders; j++) {
-            shaders[j];
-        }
+        //for (i32 j=0; j<surface->num_shaders; j++) {
+        //    shaders[j];
+        //}
         Md3Triangle* triangles = (Md3Triangle*)((u8*)surface + surface->ofs_triangles);
         for (i32 j=0; j<surface->num_triangles; j++) {
             for (u8 k=0; k<3; k++)
