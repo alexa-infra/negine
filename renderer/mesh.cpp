@@ -21,8 +21,8 @@ const uptr offsets[] = {
     ((uptr)&test.color) - ((uptr)&test)
 };
 
-u8 GetOffset(VertexAttr attr) {
-    return (u8)offsets[attr];
+uptr GetOffset(VertexAttr attr) {
+    return offsets[attr];
 }
 u8 GetComponentCount(VertexAttr attr) {
     switch (attr) {

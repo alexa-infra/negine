@@ -40,7 +40,7 @@ namespace VertexAttrs
     };
 
     //! Gets offset of attribute in vertex structure
-    u8 GetOffset(VertexAttr attr);
+    uptr GetOffset(VertexAttr attr);
 
     //! Gets component count in attribute
     u8 GetComponentCount(VertexAttr attr);
