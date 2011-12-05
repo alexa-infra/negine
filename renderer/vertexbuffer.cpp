@@ -67,21 +67,16 @@ void VertexBuffer::Draw(const AttributeBinding& binding) {
 }
 
 void VertexBuffer::Draw(const AttributeBinding& binding, u32 from_face, u32 count_faces) {
-    vertexes_->Bind(BufferTargets::Array);
     BindAttributes(binding);
-    {
-        indexes_->Bind(BufferTargets::ElementArray);
-        glDrawElements(GL_TRIANGLES,
-            face_to_index(count_faces),
-            GL_UNSIGNED_SHORT,
-            (GLvoid*)face_to_index(from_face)); 
-        indexes_->Unbind();
-    }
+    glDrawElements(GL_TRIANGLES,
+        face_to_index(count_faces),
+        GL_UNSIGNED_SHORT,
+        (GLvoid*)face_to_index(from_face)); 
     UnbindAttributes(binding);
-    vertexes_->Unbind();
 }
 
 void VertexBuffer::BindAttributes(const AttributeBinding& binding) {
+    vertexes_->Bind(BufferTargets::Array);
     AttributeBinding::const_iterator it;
     for(it = binding.begin(); it != binding.end(); ++it) {
         glVertexAttribPointer(
@@ -93,13 +88,16 @@ void VertexBuffer::BindAttributes(const AttributeBinding& binding) {
                     (GLvoid*)VertexAttrs::GetOffset(it->first));
         glEnableVertexAttribArray(it->second);
     }
+    indexes_->Bind(BufferTargets::ElementArray);
 }
 
 void VertexBuffer::UnbindAttributes(const AttributeBinding& binding) {
+    indexes_->Unbind();
     AttributeBinding::const_iterator it;
     for(it = binding.begin(); it != binding.end(); ++it) {
         glDisableVertexAttribArray(it->second);
     }
+    vertexes_->Unbind();
 }
 
 }

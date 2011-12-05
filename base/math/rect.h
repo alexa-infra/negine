@@ -187,13 +187,13 @@ struct RectF {
         , angle(0.f) {
     }
 
-    RectF(Vector2& pos_, Vector2& size_, f32 angle_) 
+    RectF(const Vector2& pos_, const Vector2& size_, f32 angle_) 
         : position(pos_)
         , size(size_)
         , angle(angle_) {
     }
 
-    RectF(Vector2& pos_, f32 size_)
+    RectF(const Vector2& pos_, f32 size_)
         : position(pos_)
         , size(size_)
         , angle(0.f) {

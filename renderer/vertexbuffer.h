@@ -48,6 +48,9 @@ public:
     //! Perform drawing of specified triangle range on vertex-buffer-object
     void Draw(const AttributeBinding& binding, u32 from_face, u32 count_faces);
 
+    //! Draw without bind-unbind attributes
+    void DrawOnly(u32 from_face, u32 count_faces);
+
     //! Gets number of triangles
     u32 faces_count() const { return faces_count_; }
 
@@ -66,7 +69,6 @@ public:
     //! Convert face to index
     u32 face_to_index(u32 face) const { return face * 3; }
 
-protected:
     //! Bind components of vertex to active attributes in current shader program
     void BindAttributes(const AttributeBinding& binding);
 

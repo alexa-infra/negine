@@ -24,7 +24,7 @@ namespace opengl {
         SpriteFont(const std::string& filename, f32 height);
         ~SpriteFont();
 
-        void setText (f32 x, f32 y, const std::string& text); 
+        void setText(f32 x, f32 y, const std::string& text); 
         void Draw(const AttributeBinding& binding);
 
     private:
