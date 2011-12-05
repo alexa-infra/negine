@@ -68,11 +68,15 @@ void VertexBuffer::Draw(const AttributeBinding& binding) {
 
 void VertexBuffer::Draw(const AttributeBinding& binding, u32 from_face, u32 count_faces) {
     BindAttributes(binding);
+    DrawOnly(from_face, count_faces);
+    UnbindAttributes(binding);
+}
+
+void VertexBuffer::DrawOnly(u32 from_face, u32 count_faces) {
     glDrawElements(GL_TRIANGLES,
         face_to_index(count_faces),
         GL_UNSIGNED_SHORT,
         (GLvoid*)face_to_index(from_face)); 
-    UnbindAttributes(binding);
 }
 
 void VertexBuffer::BindAttributes(const AttributeBinding& binding) {

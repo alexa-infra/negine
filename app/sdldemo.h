@@ -14,6 +14,8 @@
 #include "base/math/matrix.h"
 #include "renderer/vertexbuffer.h"
 #include "renderer/md3mesh.h"
+#include "renderer/particlesystem.h"
+#include "base/timer.h"
 
 class SDLDemo : public SDLApp {
 protected:
@@ -23,6 +25,8 @@ protected:
     base::math::Matrix4 modelview_;
     base::opengl::VertexBuffer* buffer_;
     std::vector<base::opengl::VertexBuffer*> mesh_;
+    base::opengl::ParticleSystem* ps_;
+	base::Timer timer_;
 
 public:
     SDLDemo(u32 width, u32 height);

@@ -21,12 +21,12 @@ SDLDemo::SDLDemo(u32 width, u32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
-    projection_ = base::math::Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
+    projection_ = base::math::Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -5.0, 5.0);
 
     modelview_.SetIdentity();
 
     base::opengl::TextureInfo tex_info;
-    tex_info.Filename = "european_fnt.tga";
+    tex_info.Filename = "checked.jpeg";//"european_fnt.tga";
     tex_info.MinFilter = base::opengl::TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
     tex_info.Pixel = base::opengl::PixelTypes::RGB;
@@ -51,6 +51,11 @@ SDLDemo::SDLDemo(u32 width, u32 height)
         mesh_.push_back(vb);
         delete m;
     }
+
+    base::opengl::ParticleSystemSetting ss;
+    ps_ = new base::opengl::ParticleSystem(ss);
+
+    timer_.Reset();
 }
 
 SDLDemo::~SDLDemo() {
@@ -89,8 +94,11 @@ void SDLDemo::OnFrame() {
     base::generic_param<base::math::Matrix4> modv(modelview_);
     program_->set_uniform("modelview_matrix", modv);
 
-    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
-        (*m)->Draw(binding);
+//    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
+//        (*m)->Draw(binding);
+
+	ps_->Draw(binding, timer_.Elapsed());
+	timer_.Reset();
 
     assert(glGetError() == GL_NO_ERROR);
 
@@ -98,8 +106,9 @@ void SDLDemo::OnFrame() {
 }
 
 void SDLDemo::OnMotion(f32 dx, f32 dy) {
-    modelview_.Rotate(base::math::Vector3((f32)1, (f32)0, (f32)0), -dy);
-    modelview_.Rotate(base::math::Vector3((f32)0, (f32)1, (f32)0), -dx);
+//    modelview_.Rotate(base::math::Vector3((f32)1, (f32)0, (f32)0), -dy);
+//    modelview_.Rotate(base::math::Vector3((f32)0, (f32)1, (f32)0), -dx);
+    ps_->position += base::math::Vector3(dx * 10, dy * 10, 0);
 }
 
 int main(int argc, char *argv[])
