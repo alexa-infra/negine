@@ -19,8 +19,8 @@ namespace opengl {
 struct ParticleSystemSetting {
     u32 max_count;
 
-    f32 life_time;
-    f32 life_time_spread;
+    f32 particle_lifetime;
+    f32 particle_lifetime_spread;
 
     Vector4 color_start;
     Vector4 color_end;
@@ -30,15 +30,20 @@ struct ParticleSystemSetting {
 
     f32 speed;
 
+    u32 emission_rate;
+    f32 lifetime;
+
     ParticleSystemSetting()
-        : max_count(1000)
-        , life_time(200.f)
-        , life_time_spread(50.f)
-        , color_start(1, 0, 0, 1)
-        , color_end(1, 1, 1, 1)
+        : max_count(500)
+        , particle_lifetime(1600.f)
+        , particle_lifetime_spread(900.f)
+        , color_start(1, 1, 1, 0.1)
+        , color_end(1, 0, 0, 0.9)
         , size_start(0.1f)
-        , size_end(1.f)
+        , size_end(12.f)
         , speed(0.1f)
+        , emission_rate(10)
+        , lifetime(100000000000.f)
     {
     }
 };
@@ -57,6 +62,10 @@ struct Particle {
     f32 rotation;
     Vector4 color;
 };
+
+inline bool sort_particles_from_farest_to_nearest(Particle* first, Particle* second) {
+    return first->size > second->size;
+}
 
 class ParticleSystem {
 public:
@@ -80,16 +89,16 @@ public:
     ParticleSystem(ParticleSystemSetting s) {
         particles = new Particle[s.max_count];
         for (u32 i=0; i<s.max_count; i++) {
-            particles[i].index = i;
+            particles[i].index = 4 * i;
             particles_free.push_back(&particles[i]);
         }
         //particles_free.insert( particles_free.begin(), &(), &(particles[0]) + s.max_count );
         Vertex* v = new Vertex[s.max_count * 4];
         Face* f = new Face[s.max_count * 2];
         emission_active = true;
-        emission_rate = 10;
+        emission_rate = s.emission_rate;
         emission_timer = 0.f;
-        lifetime = 100000000000.f;
+        lifetime = s.lifetime;
         settings = s;
 
         for (u32 i=0, j=0; i<s.max_count * 2; i+=2, j+=4) {
@@ -128,12 +137,12 @@ public:
         Particle* p = particles_free.front();
         particles_free.pop_front();
 
-        p->life_time = rand() / (f32)(RAND_MAX + 1) * (2 * settings.life_time_spread) + (settings.life_time - settings.life_time_spread);
+        p->life_time = rand() / (f32)(RAND_MAX) * (2 * settings.particle_lifetime_spread) + (settings.particle_lifetime - settings.particle_lifetime_spread);
         p->life = 0;
 
-        f32 direction = rand() / (f32)(RAND_MAX + 1) * (2 * math::pi);
+        f32 direction = rand() / (f32)(RAND_MAX) * (2 * math::pi);
         p->position = Vector2(position);
-        p->speed = Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX + 1)) *0.1f;
+        p->speed = Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX)) *0.1f;
         p->acceleration = 0.f;
 
         p->size = settings.size_start;
@@ -145,13 +154,10 @@ public:
 
     void Draw(AttributeBinding& binding, f32 frame_time) {
         update(frame_time);
-        //vbo->Draw(binding);
-        //return;
         vbo->BindAttributes(binding);
         for (auto it = particles_active.begin(); it != particles_active.end(); ++it) {
             Particle* p = *it;
-            vbo->DrawOnly(p->index * 4, 2);
-
+            vbo->DrawOnly(p->index, 2);
         }
         vbo->UnbindAttributes(binding);
     }
@@ -169,6 +175,9 @@ public:
                 emission_active = false;
             }
         }
+
+        Vector2 v[4];
+        Vertex* vertex = vbo->Lock();
         for (auto it = particles_active.begin(); it != particles_active.end();) {
             Particle* p = *it;
 
@@ -192,29 +201,24 @@ public:
             ppos += p->speed * frame_time;
             p->position = ppos;
 
-            ++it;
-        }
-
-        Vector2 v[4];
-        Vertex* vertex = vbo->Lock();
-        for (auto it = particles_active.begin(); it != particles_active.end(); ++it) {
-            Particle* p = *it;
-            
             base::math::RectF rectange(p->position, Vector2(p->size), p->rotation);
             rectange.Points(v);
 
-            vertex[4 * p->index + 0].pos = Vector3(v[0]);
-            vertex[4 * p->index + 1].pos = Vector3(v[1]);
-            vertex[4 * p->index + 2].pos = Vector3(v[2]);
-            vertex[4 * p->index + 3].pos = Vector3(v[3]);
+            vertex[p->index + 0].pos = Vector3(v[0]);
+            vertex[p->index + 1].pos = Vector3(v[1]);
+            vertex[p->index + 2].pos = Vector3(v[2]);
+            vertex[p->index + 3].pos = Vector3(v[3]);
 
-            vertex[4 * p->index + 0].color = p->color;
-            vertex[4 * p->index + 1].color = p->color;
-            vertex[4 * p->index + 2].color = p->color;
-            vertex[4 * p->index + 3].color = p->color;
+            vertex[p->index + 0].color = p->color;
+            vertex[p->index + 1].color = p->color;
+            vertex[p->index + 2].color = p->color;
+            vertex[p->index + 3].color = p->color;
 
+            ++it;
         }
         vbo->Unlock();
+
+        particles_active.sort(sort_particles_from_farest_to_nearest);
     }
 };
 

@@ -27,7 +27,8 @@ SDLApp::SDLApp(u32 width, u32 height)
  
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
- 
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
     mainwindow = SDL_CreateWindow(
         "SDL Demo",
         SDL_WINDOWPOS_CENTERED,
@@ -56,7 +57,7 @@ SDLApp::SDLApp(u32 width, u32 height)
     assert(glGetError() == GL_NO_ERROR);
     SDL_GL_SetSwapInterval(1);
 
-    timer = SDL_AddTimer(20, GameLoopTimer, this);
+    timer = SDL_AddTimer(50, GameLoopTimer, this);
 }
 
 SDLApp::~SDLApp() {

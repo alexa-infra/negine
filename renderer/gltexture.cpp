@@ -90,7 +90,7 @@ void Texture::FromBuffer(const u8* data) {
     glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RGB, 
+            GL_RGBA, 
             info_.Width, 
             info_.Height, 
             0, 

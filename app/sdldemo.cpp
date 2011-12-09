@@ -26,10 +26,10 @@ SDLDemo::SDLDemo(u32 width, u32 height)
     modelview_.SetIdentity();
 
     base::opengl::TextureInfo tex_info;
-    tex_info.Filename = "checked.jpeg";//"european_fnt.tga";
+    tex_info.Filename = "european_fnt.tga";
     tex_info.MinFilter = base::opengl::TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
-    tex_info.Pixel = base::opengl::PixelTypes::RGB;
+    tex_info.Pixel = base::opengl::PixelTypes::RGBA;
 
     texture_ = new base::opengl::Texture;
     texture_->GenerateFromFile(tex_info);
@@ -71,18 +71,22 @@ void SDLDemo::OnFrame() {
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    glDepthMask(GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
+//    glDepthMask(GL_TRUE);
+//    glEnable(GL_DEPTH_TEST);
 
+    glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    
     i32 pos = program_->get_attributes()["position"].Location;
     i32 tex = program_->get_attributes()["tex"].Location;
-    i32 color = program_->get_attributes()["color"].Location;
+    i32 color = program_->get_attributes()["col"].Location;
     i32 normal = program_->get_attributes()["n"].Location;
 
     base::opengl::AttributeBinding binding;
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagPosition, pos));
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagTexture, tex));
-//    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
+    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagNormal, normal));
 
     base::generic_param<base::opengl::Texture*> p(texture_);
