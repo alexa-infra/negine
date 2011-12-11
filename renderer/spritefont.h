@@ -18,21 +18,22 @@ namespace base {
 namespace opengl {
     class Texture;
 
+    //! Sprite that contains writted text
     class SpriteFont 
     {
+    private:
+        u32 max_chars_;             //!< maximum text length
+        VertexBuffer* vbo_;         //!< vertex buffer for drawing text
+        Texture* texture_;          //!< font texture
+        stbtt_bakedchar* cdata_;    //!< font data: ASCII 32..126 is 95 glyphs
+        std::string text_;          //!< current displayed text
+        Vector2 position_;          //!< position of displayed text
     public:
-        SpriteFont(const std::string& filename, f32 height);
+        SpriteFont(const std::string& filename, f32 height, u32 max_chars);
         ~SpriteFont();
 
-        void setText(f32 x, f32 y, const std::string& text); 
+        void SetText(f32 x, f32 y, const std::string& text);
         void Draw(const AttributeBinding& binding);
-
-    private:
-        base::opengl::Texture* texture_;
-
-        stbtt_bakedchar* cdata_; // ASCII 32..126 is 95 glyphs
-
-        VertexBuffer *textVBO_;
     };
 
 }//namespace opengl

@@ -146,8 +146,8 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     //font test
     //string filename = "AlphaBetaBRK.ttf";
     string filename = "AmerikaSans.ttf";
-    font = new base::opengl::SpriteFont(filename, 0);
-    font->setText(-50., 0, "Just for test.");
+    font = new base::opengl::SpriteFont(filename, 0, 100);
+    font->SetText(-50., 0, "Just for test.");
     
     
 
@@ -240,6 +240,6 @@ void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
 {
     std::string test("Key pressed: ");
     test += (const char*)&key;
-	font->setText(-50., 0, test);
+	font->SetText(-50., 0, test);
     OnDisplay();
 }
