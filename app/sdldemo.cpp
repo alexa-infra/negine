@@ -18,7 +18,7 @@ SDLDemo::SDLDemo(u32 width, u32 height)
     , program_(NULL)
     , buffer_(NULL)
 {
-    glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
     projection_ = base::math::Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -5.0, 5.0);
@@ -26,7 +26,7 @@ SDLDemo::SDLDemo(u32 width, u32 height)
     modelview_.SetIdentity();
 
     base::opengl::TextureInfo tex_info;
-    tex_info.Filename = "european_fnt.tga";
+    tex_info.Filename = "heart.png";
     tex_info.MinFilter = base::opengl::TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
     tex_info.Pixel = base::opengl::PixelTypes::RGBA;
@@ -75,8 +75,7 @@ void SDLDemo::OnFrame() {
 //    glEnable(GL_DEPTH_TEST);
 
     glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     i32 pos = program_->get_attributes()["position"].Location;
     i32 tex = program_->get_attributes()["tex"].Location;
@@ -100,8 +99,9 @@ void SDLDemo::OnFrame() {
 
 //    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
 //        (*m)->Draw(binding);
+    f32 frame_time = timer_.Elapsed() / 1000.0;
 
-	ps_->Draw(binding, timer_.Elapsed());
+	ps_->Draw(binding, frame_time);
 	timer_.Reset();
 
     assert(glGetError() == GL_NO_ERROR);
@@ -112,7 +112,7 @@ void SDLDemo::OnFrame() {
 void SDLDemo::OnMotion(f32 dx, f32 dy) {
 //    modelview_.Rotate(base::math::Vector3((f32)1, (f32)0, (f32)0), -dy);
 //    modelview_.Rotate(base::math::Vector3((f32)0, (f32)1, (f32)0), -dx);
-    ps_->position += base::math::Vector3(dx * 10, dy * 10, 0);
+    ps_->position = base::math::Vector3(dx, dy, 0);
 }
 
 int main(int argc, char *argv[])
