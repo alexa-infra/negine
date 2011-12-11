@@ -16,17 +16,21 @@
 #include "renderer/md3mesh.h"
 #include "renderer/particlesystem.h"
 #include "base/timer.h"
+#include "renderer/spritefont.h"
 
 class SDLDemo : public SDLApp {
 protected:
     base::opengl::Texture* texture_;
     base::opengl::Program* program_;
+    base::opengl::Program* program_hud_;
     base::math::Matrix4 projection_;
     base::math::Matrix4 modelview_;
+    base::math::Matrix4 cameraTransform_;
     base::opengl::VertexBuffer* buffer_;
     std::vector<base::opengl::VertexBuffer*> mesh_;
     base::opengl::ParticleSystem* ps_;
 	base::Timer timer_;
+    base::opengl::SpriteFont *font_;
 
 public:
     SDLDemo(u32 width, u32 height);

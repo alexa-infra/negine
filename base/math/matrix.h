@@ -43,6 +43,7 @@ class Matrix4 {
             f32 vyx, f32 vyy, f32 vyz, f32 vyw,
             f32 vzx, f32 vzy, f32 vzz, f32 vzw,
             f32 vwx, f32 vwy, f32 vwz, f32 vww);
+    Matrix4(const Vector3& col0, const Vector3& col1, const Vector3& col2);
 
     void SetIdentity();
 
@@ -86,6 +87,7 @@ class Matrix4 {
     static Matrix4 GetReflection(const Plane& plane);
 
     static Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist);
+    static Matrix4 LookAt(const Vector3& from_position, const Vector3& target);
  private:
     void MatrixSwap(const u8& _a, const u8& _b);
 };

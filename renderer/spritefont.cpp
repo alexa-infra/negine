@@ -58,13 +58,13 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     Vertex* vertexes_ = new Vertex[max_chars_*4];
     Face* faces_ = new Face[max_chars_*2];
 
-    Vector3 norm(0.0, 0.0, 1.0);
+    Vector4 color(1.0, 1.0, 1.0, 1.0);
 
     for (u32 i=0; i<max_chars_; i++) {
-        vertexes_[vertex_index_].n = norm;
-        vertexes_[vertex_index_+1].n = norm;
-        vertexes_[vertex_index_+2].n = norm;
-        vertexes_[vertex_index_+3].n = norm;
+        vertexes_[vertex_index_].color = color;
+        vertexes_[vertex_index_+1].color = color;
+        vertexes_[vertex_index_+2].color = color;
+        vertexes_[vertex_index_+3].color = color;
 
         faces_[face_index_].index[0] = vertex_index_;
         faces_[face_index_].index[1] = vertex_index_+1;
@@ -73,9 +73,6 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
         faces_[face_index_+1].index[0] = vertex_index_+2;
         faces_[face_index_+1].index[1] = vertex_index_+3;
         faces_[face_index_+1].index[2] = vertex_index_;
-
-        faces_[face_index_].n = norm;
-        faces_[face_index_+1].n = norm;
 
         face_index_ += 2;
         vertex_index_ += 4;

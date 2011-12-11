@@ -42,9 +42,30 @@ Matrix4::Matrix4(f32 vxx, f32 vxy, f32 vxz, f32 vxw,
     , wx(vwx), wy(vwy), wz(vwz), ww(vww) {
 }
 
-
 Matrix4::Matrix4(const f32 *m) {
     memcpy(array1d, m, sizeof(array1d));
+}
+
+Matrix4::Matrix4(const Vector3& ax, const Vector3& ay, const Vector3& az) {
+    xx = ax.x;
+    yx = ax.y;
+    zx = ax.z;
+    wx = 0.f;
+
+    xy = ay.x;
+    yy = ay.y;
+    zy = ay.z;
+    wy = 0.f;
+
+    xz = az.x;
+    yz = az.y;
+    zz = az.z;
+    wz = 0.f;
+    
+    wx = 0.f;
+    wy = 0.f;
+    wz = 0.f;
+    ww = 1.f;        
 }
 
 Matrix4 Matrix4::GetScale(const Vector3 &_scale_vector) {
@@ -449,6 +470,47 @@ Matrix4 Matrix4::GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist
               0,         0,          0,          1);
     return m;
 }
+
+Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target) {
+    Vector3 left;
+    Vector3 up;
+    Vector3 forward;
+
+    // compute the forward vector
+    forward = target - position;
+    forward.Normalize();
+
+    // compute temporal up vector based on the forward vector
+    // watch out when look up/down at 90 degree
+    // for example, forward vector is on the Y axis
+    if(Equal(forward.x, 0.f)&& Equal(forward.z, 0.f))
+    {
+        // forward vector is pointing +Y axis
+        if(forward.y > 0)
+            up = Vector3(0, 0, -1);
+        // forward vector is pointing -Y axis
+        else
+            up = Vector3(0, 0, 1);
+    }
+    // in general, up vector is straight up
+    else
+    {
+        up = Vector3(0, 1, 0);
+    }
+
+    // compute the left vector
+    left = up ^ forward;  // cross product
+    left.Normalize();
+
+    // re-calculate the orthonormal up vector
+    up = forward ^ left;  // cross product
+    up.Normalize();
+
+    Matrix4 result(left, up, forward);
+    result.Translate(position);
+    return result;
+}
+
 
 }
 }

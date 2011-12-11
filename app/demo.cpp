@@ -17,57 +17,6 @@
 
 using namespace base::math;
 
-// compute transform axis from object position and target point
-void lookAtToAxes(const Vector3& position, const Vector3& target,
-                  Vector3& left, Vector3& up, Vector3& forward)
-{
-    // compute the forward vector
-    forward = target - position;
-    forward.Normalize();
-
-    // compute temporal up vector based on the forward vector
-    // watch out when look up/down at 90 degree
-    // for example, forward vector is on the Y axis
-    if(Equal(forward.x, 0.f)&& Equal(forward.z, 0.f))
-    {
-        // forward vector is pointing +Y axis
-        if(forward.y > 0)
-            up = Vector3(0, 0, -1);
-        // forward vector is pointing -Y axis
-        else
-            up = Vector3(0, 0, 1);
-    }
-    // in general, up vector is straight up
-    else
-    {
-        up = Vector3(0, 1, 0);
-    }
-
-    // compute the left vector
-    left = up ^ forward;  // cross product
-    left.Normalize();
-
-    // re-calculate the orthonormal up vector
-    up = forward ^ left;  // cross product
-    up.Normalize();
-}
-
-void AxesToMatrix(Vector3 const& ax, Vector3 const& ay, Vector3 const& az,
-    Matrix4& matrix) {
-    matrix.SetIdentity();
-    matrix.xx = ax.x;
-    matrix.yx = ax.y;
-    matrix.zx = ax.z;
-
-    matrix.xy = ay.x;
-    matrix.yy = ay.y;
-    matrix.zy = ay.z;
-
-    matrix.xz = az.x;
-    matrix.yz = az.y;
-    matrix.zz = az.z;        
-}
-
 GlutSampleWindow::GlutSampleWindow(i32 width, i32 height) 
     : GlutWindow(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE, 
                  width, height)
@@ -96,14 +45,8 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
-    Vector3 ax, ay, az;
-    lookAtToAxes(Vector3(0., 0., -50.), Vector3(0., 0., 0.), ax, ay, az);
-    AxesToMatrix(ax, ay, az, cameraTransform_);
-    
-    cameraTransform_.Translate(base::math::Vector3(0., 0., -50));
-
+    cameraTransform_ = Matrix4::LookAt(Vector3(0., 0., -50.), Vector3(0., 0., 0.));
     projection_ = base::math::Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
-
     modelTransform_.SetIdentity();
     //modelTransform_.Translate(base::math::Vector3(0., 0., -450.));
     //modelTransform_.Scale(base::math::Vector3(0.5, 0.5, 0.5));
