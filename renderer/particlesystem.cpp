@@ -12,14 +12,14 @@ namespace opengl {
 
 ParticleSystemSetting::ParticleSystemSetting()
     : max_count(100)
-    , particle_lifetime(0.5f)
-    , particle_lifetime_spread(0.4f)
+    , particle_lifetime(2.0f)
+    , particle_lifetime_spread(1.f)
     , color_start(1, 1, 1, 0.1)
     , color_end(1, 0, 0, 0.9)
     , size_start(1.0f)
     , size_end(12.f)
     , speed(1000.0f)
-    , emission_rate(100)
+    , emission_rate(50)
     , lifetime(100000000000.f)
 {
 }
@@ -80,7 +80,7 @@ void ParticleSystem::add() {
 
     f32 direction = rand() / (f32)(RAND_MAX) * (2 * math::pi);
     p->position = Vector2(position);
-    p->speed = Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX)) *0.1f;
+    p->speed = Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX));
     p->acceleration = 0.f;
 
     p->size = settings.size_start;
@@ -136,7 +136,7 @@ void ParticleSystem::update(f32 frame_time) {
         p->color[3] = settings.color_start[3] * (1-t) + settings.color_end[3] * t;
         
         Vector2 ppos = p->position - Vector2(position);
-        ppos += p->speed * p->life * 100.0f;
+        ppos += p->speed * p->life;
         p->position = ppos + Vector2(position);
 
         base::math::RectF rectange(p->position, Vector2(p->size), p->rotation);
