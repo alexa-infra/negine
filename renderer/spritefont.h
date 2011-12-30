@@ -34,6 +34,9 @@ namespace opengl {
 
         void SetText(f32 x, f32 y, const std::string& text);
         void Draw(const AttributeBinding& binding);
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN(SpriteFont);
     };
 
 }//namespace opengl

@@ -82,6 +82,9 @@ protected:
     void add();
 
     void update(f32 frame_time);
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(ParticleSystem);
 };
 
 }
