@@ -95,9 +95,10 @@ void SDLApp::Run() {
                     if (capture_) {
                         if (event.motion.x != width_ / 2. ||
                             event.motion.y != height_ / 2.) {
-                            OnMotion(event.motion.xrel/(f32)width_, 
-                                event.motion.yrel/(f32)height_);
-                            SDL_WarpMouseInWindow(mainwindow, width_ / 2, height_ / 2);
+                            OnMotion(event.motion.xrel, 
+                                event.motion.yrel);
+                            SDL_WarpMouseInWindow(mainwindow,
+                                width_ / 2, height_ / 2);
                         }
                     }
                     break;
@@ -109,8 +110,6 @@ void SDLApp::Run() {
 }
 
 void SDLApp::OnFrame() {
-    //glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-    //glClear ( GL_COLOR_BUFFER_BIT );
     /* Swap our back buffer to the front */
     SDL_GL_SwapWindow(mainwindow);
 }

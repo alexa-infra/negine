@@ -52,11 +52,6 @@ ParticleSystem::ParticleSystem(ParticleSystemSetting s) {
         v[j + 1].tex.set(1.f, 0.f);
         v[j + 2].tex.set(1.f, 1.f);
         v[j + 3].tex.set(0.f, 1.f);
-
-        v[j + 0].n.set(0.f, 0.f, 1.f);
-        v[j + 1].n.set(0.f, 0.f, 1.f);
-        v[j + 2].n.set(0.f, 0.f, 1.f);
-        v[j + 3].n.set(0.f, 0.f, 1.f);
     }
 
     vbo = new VertexBuffer(v, s.max_count * 4, f, s.max_count * 2);
@@ -81,6 +76,7 @@ void ParticleSystem::add() {
     f32 direction = rand() / (f32)(RAND_MAX) * (2 * math::pi);
     p->position = Vector2(position);
     p->speed = Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX));
+    p->speed.Normalize();
     p->acceleration = 0.f;
 
     p->size = settings.size_start;

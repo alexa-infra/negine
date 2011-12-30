@@ -158,7 +158,17 @@ void SDLDemo::OnFrame() {
 void SDLDemo::OnMotion(f32 dx, f32 dy) {
 //    modelview_.Rotate(Vector3((f32)1, (f32)0, (f32)0), -dy);
 //    modelview_.Rotate(Vector3((f32)0, (f32)1, (f32)0), -dx);
-    ps_->position = Vector3(dx, dy, 0);
+    cursor_.x += dx / width_ * 300.;
+    cursor_.y -= dy / height_ * 300.;
+    if (cursor_.x > 150.)
+        cursor_.x = 150.;
+    if (cursor_.x < -150.)
+        cursor_.x = -150.;
+    if (cursor_.y > 150.)
+        cursor_.y = 150.;
+    if (cursor_.y < -150.)
+        cursor_.y = -150.;
+    ps_->position = Vector3(cursor_.x, cursor_.y, 0);
 }
 
 int main(int argc, char *argv[])

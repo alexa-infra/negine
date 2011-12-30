@@ -32,6 +32,7 @@ protected:
 	base::Timer timer_;
     base::opengl::SpriteFont *font_;
 
+    base::math::Vector2 cursor_;
 public:
     SDLDemo(u32 width, u32 height);
     ~SDLDemo();
