@@ -7,7 +7,7 @@ set(SRC
     ${APP_PATH}/demo.cpp
     ${APP_PATH}/glutapp.h
     ${APP_PATH}/glutapp.cpp
-    ${APP_PATH}/luavm.h
+    ${APP_PATH}/luavm.cpp
     ${APP_PATH}/main.cpp
 )
 source_group("app" FILES ${SRC})
@@ -44,6 +44,7 @@ else()
     set(SDLSRC
         ${APP_PATH}/sdldemo.cpp
         ${APP_PATH}/sdlapp.cpp
+        ${APP_PATH}/luavm.cpp
     )
     source_group("sdlapp" FILES ${SDLSRC})
     include_directories(
@@ -58,5 +59,6 @@ else()
         base
         renderer
         ${SDL_LIBRARY}
+        lua
     )
 endif()
