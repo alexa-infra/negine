@@ -133,13 +133,13 @@ std::vector<Mesh*> load_md3(FileBinary& file) {
 
     std::vector<Mesh*> mesh_list;
 
-    file.set_position(hdr_start + hdr.ofs_frames);
+//    file.set_position(hdr_start + hdr.ofs_frames);
     for (i32 i = 0; i<hdr.num_frames; i++)
         file.read_type<Md3Frame>();
-    file.set_position(hdr_start + hdr.ofs_tags);
+//    file.set_position(hdr_start + hdr.ofs_tags);
     for (i32 i = 0; i<hdr.num_frames * hdr.num_tags; i++)
         file.read_type<Md3Tag>();
-    file.set_position(hdr_start + hdr.ofs_surfaces);
+//    file.set_position(hdr_start + hdr.ofs_surfaces);
     for (i32 i = 0; i<hdr.num_surfaces; i++)
     {
         Mesh* mesh = new Mesh;
@@ -154,22 +154,22 @@ std::vector<Mesh*> load_md3(FileBinary& file) {
         mesh->vertexes = new Vertex[surface.num_frames * surface.num_verts];
         mesh->faces = new Face[surface.num_frames * surface.num_triangles];
 
-        file.set_position(surface_start + surface.ofs_shaders);
+//        file.set_position(surface_start + surface.ofs_shaders);
         for (i32 j=0; j<surface.num_shaders; j++)
             file.read_type<Md3Shader>();
-        file.set_position(surface_start + surface.ofs_triangles);
+//        file.set_position(surface_start + surface.ofs_triangles);
         for (i32 j=0; j<surface.num_triangles; j++) {
             Md3Triangle tri = file.read_type<Md3Triangle>();
             for (u8 k=0; k<3; k++)
                 mesh->faces[j].index[k] = tri.indexes[k];
         }
-        file.set_position(surface_start + surface.ofs_st);
+//        file.set_position(surface_start + surface.ofs_st);
         for (i32 j=0; j<surface.num_frames * surface.num_verts; j++) {
             Md3TexCoord tex = file.read_type<Md3TexCoord>();
             mesh->vertexes[j].tex.x = tex.st[0];
             mesh->vertexes[j].tex.y = tex.st[1];
         }
-        file.set_position(surface_start + surface.ofs_xyzn);
+//        file.set_position(surface_start + surface.ofs_xyzn);
         for (i32 j=0; j<surface.num_frames * surface.num_verts; j++) {
             Md3Vertex v = file.read_type<Md3Vertex>();
             mesh->vertexes[j].n = DecodeNormal(v.normal);
@@ -191,16 +191,16 @@ std::vector<Mesh*> load_md3(u8* data) {
 
     std::vector<Mesh*> mesh_list;
 
-    Md3Frame* frames = (Md3Frame*)(data + hdr->ofs_frames);
-    //for (i32 i = 0; i<hdr->num_frames; i++) {
-    //    frames[i];   
-    //}
-    Md3Tag* tags = (Md3Tag*)(data + hdr->ofs_tags);
-    //for (i32 i = 0; i<hdr->num_frames * hdr->num_tags; i++) {
-    //    tags[i];
-    //}
+    Md3Frame* frames = (Md3Frame*)((u8*)hdr + sizeof(Md3Header));
+//    for (i32 i = 0; i<hdr->num_frames; i++) {
+//        frames[i];   
+//    }
+    Md3Tag* tags = (Md3Tag*)((u8*)frames + hdr->num_frames *sizeof(Md3Frame));
+//    for (i32 i = 0; i<hdr->num_frames * hdr->num_tags; i++) {
+//        tags[i];
+//    }
 
-    Md3Surface* surface = (Md3Surface*)(data + hdr->ofs_surfaces);
+    Md3Surface* surface = (Md3Surface*)((u8*)tags + hdr->num_frames * hdr->num_tags * sizeof(Md3Tag));
     for (i32 i = 0; i<hdr->num_surfaces; i++)
     {
         Mesh* mesh = new Mesh;
@@ -213,21 +213,21 @@ std::vector<Mesh*> load_md3(u8* data) {
         mesh->vertexes = new Vertex[surface->num_frames * surface->num_verts];
         mesh->faces = new Face[surface->num_frames * surface->num_triangles];
 
-        Md3Shader* shaders = (Md3Shader*)((u8*)surface + surface->ofs_shaders);
-        //for (i32 j=0; j<surface->num_shaders; j++) {
-        //    shaders[j];
-        //}
-        Md3Triangle* triangles = (Md3Triangle*)((u8*)surface + surface->ofs_triangles);
+        Md3Shader* shaders = (Md3Shader*)((u8*)surface + sizeof(Md3Surface));
+        for (i32 j=0; j<surface->num_shaders; j++) {
+            shaders[j];
+        }
+        Md3Triangle* triangles = (Md3Triangle*)((u8*)shaders + surface->num_shaders * sizeof(Md3Shader));
         for (i32 j=0; j<surface->num_triangles; j++) {
             for (u8 k=0; k<3; k++)
                 mesh->faces[j].index[k] = triangles[j].indexes[k];
         }
-        Md3TexCoord* texcoord = (Md3TexCoord*)((u8*)surface + surface->ofs_st);
+        Md3TexCoord* texcoord = (Md3TexCoord*)((u8*)triangles + surface->num_triangles * sizeof(Md3Triangle));
         for (i32 j=0; j<surface->num_frames * surface->num_verts; j++) {
             mesh->vertexes[j].tex.x = texcoord[j].st[0];
             mesh->vertexes[j].tex.y = texcoord[j].st[1];
         }
-        Md3Vertex* vert = (Md3Vertex*)((u8*)surface + surface->ofs_xyzn);
+        Md3Vertex* vert = (Md3Vertex*)((u8*)texcoord + surface->num_frames * surface->num_verts * sizeof(Md3TexCoord));
         for (i32 j=0; j<surface->num_frames * surface->num_verts; j++) {
             mesh->vertexes[j].n = DecodeNormal(vert[j].normal);
             mesh->vertexes[j].pos.x = vert[j].coord[0] / 64.0f;
@@ -239,7 +239,7 @@ std::vector<Mesh*> load_md3(u8* data) {
         mesh_list.push_back(mesh);
 
         if (i + 1 != hdr->num_surfaces)
-            surface = (Md3Surface*)((u8*)surface + surface->ofs_end);
+            surface = (Md3Surface*)((u8*)vert + surface->num_frames * surface->num_verts * sizeof(Md3Vertex));
     }
     return mesh_list;
 }
