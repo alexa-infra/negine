@@ -17,6 +17,7 @@
 
 namespace base {
 
+template<class T>
 class Stream {
 protected:
     u32 position_;
@@ -26,41 +27,39 @@ public:
     virtual ~Stream() {}
 
     void read(u8* dest, u32 size) {
-        read_impl(dest, size, position_);
+        T* pthis = static_cast<T*>(this);
+        pthis->read_impl(dest, size, position_);
         position_ += size;
     }
 
-    template <typename T>
-    T read_type() {
-        T ret;
-        read(reinterpret_cast<u8*>(&ret), sizeof(T));
+    template <typename TT>
+    TT read_type() {
+        TT ret;
+        read(reinterpret_cast<u8*>(&ret), sizeof(TT));
         return ret;
     }
 
-    template <typename T>
-    void read_template(T& value) {
-        value = read_type<T>();
+    template <typename TT>
+    void read_template(TT& value) {
+        value = read_type<TT>();
     }
 
     void write(const u8* source, u32 size) {
-        write_impl(source, size, position_);
+        T* pthis = static_cast<T*>(this);
+        pthis->write_impl(source, size, position_);
         position_ += size;
     }
 
-    template <typename T>   
-    void write_template(const T& value) {
-        write(reinterpret_cast<const u8*>(&value), sizeof(T));
+    template <typename TT>   
+    void write_template(const TT& value) {
+        write(reinterpret_cast<const u8*>(&value), sizeof(TT));
     }
 
     u32 position() const { return position_; }
     void set_position(u32 position) { position_ = position; }
-
-protected:
-    virtual void read_impl(u8* dest, u32 size, u32 position) = 0;
-    virtual void write_impl(const u8* source, u32 size, u32 position) = 0;
 };
 
-class FileBinary : public Stream {
+class FileBinary : public Stream<FileBinary> {
 protected:
     std::fstream file_;
 public:
@@ -68,9 +67,10 @@ public:
     virtual ~FileBinary();
     u32 size();
     std::string get_line();
-protected:
+
     void read_impl(u8* dest, u32 size, u32 position);
     void write_impl(const u8* source, u32 size, u32 position);
+protected:
     std::istream& safeGetline(std::istream& is, std::string& t, u32& read_count);
 };
 
