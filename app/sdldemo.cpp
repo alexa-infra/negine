@@ -93,9 +93,9 @@ void SDLDemo::OnFrame() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     program_hud_->Bind();
-    i32 pos = program_hud_->get_attributes()["position"].Location;
-    i32 tex = program_hud_->get_attributes()["tex"].Location;
-    i32 color = program_hud_->get_attributes()["col"].Location;
+    i32 pos = program_hud_->get_attribute("position").Location;
+    i32 tex = program_hud_->get_attribute("tex").Location;
+    i32 color = program_hud_->get_attribute("col").Location;
 //    i32 normal = program_->get_attributes()["n"].Location;
 
     AttributeBinding binding;
@@ -104,14 +104,9 @@ void SDLDemo::OnFrame() {
     binding.push_back(std::make_pair(VertexAttrs::tagColor, color));
 //    binding.push_back(std::make_pair(VertexAttrs::tagNormal, normal));
 
-    base::generic_param<Texture*> p(texture_);
-    program_hud_->set_uniform("diffuse", p);
-
-    base::generic_param<Matrix4> proj(projection_);
-    program_hud_->set_uniform("projection_matrix", proj);
-
-    base::generic_param<Matrix4> modv(cameraTransform_ * modelview_);
-    program_hud_->set_uniform("modelview_matrix", modv);
+    program_hud_->set_uniform("diffuse", texture_);
+    program_hud_->set_uniform("projection_matrix", projection_);
+    program_hud_->set_uniform("modelview_matrix", cameraTransform_ * modelview_);
 
 //    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
 //        (*m)->Draw(binding);
@@ -130,22 +125,21 @@ void SDLDemo::OnFrame() {
     std::string text = ss.str();
     font_->SetText(-150.f, 150.f, text);
 
-    pos = program_hud_->get_attributes()["position"].Location;
-    tex = program_hud_->get_attributes()["tex"].Location;
-    color = program_hud_->get_attributes()["col"].Location;
+    pos = program_hud_->get_attribute("position").Location;
+    tex = program_hud_->get_attribute("tex").Location;
+    color = program_hud_->get_attribute("col").Location;
 
     binding.clear();
     binding.push_back(std::make_pair(VertexAttrs::tagPosition, pos));
     binding.push_back(std::make_pair(VertexAttrs::tagTexture, tex));
     binding.push_back(std::make_pair(VertexAttrs::tagColor, color));
 
-    program_hud_->set_uniform("diffuse", p);
-    program_hud_->set_uniform("projection_matrix", proj);
+    program_hud_->set_uniform("diffuse", texture_);
+    program_hud_->set_uniform("projection_matrix", projection_);
 
     base::math::Matrix4 m = cameraTransform_;
     m.Invert();
-    base::generic_param<base::math::Matrix4> ii(m);
-    program_->set_uniform("modelview_matrix", ii);
+    program_->set_uniform("modelview_matrix", m);
 
     font_->Draw(binding);
 

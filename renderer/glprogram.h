@@ -97,10 +97,22 @@ public:
         return attributes_;
     }
 
+    //! Gets active attribute by name
+    Attribute get_attribute(const std::string& name) {
+        return get_attributes()[name];
+    }
+
+    //! Set uniform helper, that wraps value by generic param
+    template<typename T>
+    void set_uniform(const std::string& name, const T& val) {
+        base::generic_param<T> param(val);
+        set_uniform_param(name, param);
+    }
+
     //! Sets uniform value by name
     //! \param      name            Name of uniform
     //! \param      p               Parametrized value
-    void set_uniform(const std::string& name, const param& p);
+    void set_uniform_param(const std::string& name, const param& p);
 
     //! Creates program from vertex and shader source texts
     //! \param      vs              text of vertex shader

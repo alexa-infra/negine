@@ -139,7 +139,7 @@ void Program::Unlink() {
     linked_ = false;
 }
 
-void Program::set_uniform(const std::string& name, const param& p) {
+void Program::set_uniform_param(const std::string& name, const param& p) {
     UniformList::iterator it = uniforms_.find(name);
     if (it == uniforms_.end()) return;
 

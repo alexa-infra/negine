@@ -118,10 +118,10 @@ void GlutSampleWindow::OnDisplay(void) {
 
     //font->print(0,0,(char*)"Just for test.");
 
-    i32 pos = program_->get_attributes()["position"].Location;
-    i32 tex = program_->get_attributes()["tex"].Location;
-    i32 color = program_->get_attributes()["color"].Location;
-    i32 normal = program_->get_attributes()["n"].Location;
+    i32 pos = program_->get_attribute("position").Location;
+    i32 tex = program_->get_attribute("tex").Location;
+    i32 color = program_->get_attribute("color").Location;
+    i32 normal = program_->get_attribute("n").Location;
 
     base::opengl::AttributeBinding binding;
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagPosition, pos));
@@ -129,15 +129,9 @@ void GlutSampleWindow::OnDisplay(void) {
 //    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
     binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagNormal, normal));
 
-    base::generic_param<base::opengl::Texture*> p(texture_);
-    program_->set_uniform("diffuse", p);
-
-    base::generic_param<base::math::Matrix4> proj(projection_);
-    program_->set_uniform("projection_matrix", proj);
-
-    base::generic_param<base::math::Matrix4> modv(cameraTransform_ * modelTransform_);
-    program_->set_uniform("modelview_matrix", modv);
-
+    program_->set_uniform("diffuse", texture_);
+    program_->set_uniform("projection_matrix", projection_);
+    program_->set_uniform("modelview_matrix", cameraTransform_ * modelTransform_);
     
     //sg_->Draw(binding);
     
@@ -148,9 +142,7 @@ void GlutSampleWindow::OnDisplay(void) {
 
     base::math::Matrix4 m = cameraTransform_;
     m.Invert();
-
-    base::generic_param<base::math::Matrix4> identity(m);
-    program_->set_uniform("modelview_matrix", identity);
+    program_->set_uniform("modelview_matrix", m);
 
     font->Draw(binding);
     
