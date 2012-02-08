@@ -40,6 +40,120 @@
 
 /* -- PRIVATE FUNCTIONS ---------------------------------------------------- */
 
+#if TARGET_HOST_POSIX_X11
+static int xrandr_resize(int xsz, int ysz, int rate, int just_checking)
+{
+#ifdef HAVE_X11_EXTENSIONS_XRANDR_H
+    int event_base, error_base, ver_major, ver_minor, use_rate;
+    XRRScreenConfiguration *xrr_config = 0;
+    Status result = -1;
+
+    /* must check at runtime for the availability of the extension */
+    if(!XRRQueryExtension(fgDisplay.Display, &event_base, &error_base)) {
+        return -1;
+    }
+
+    XRRQueryVersion(fgDisplay.Display, &ver_major, &ver_minor);
+
+    /* we only heed the rate if we CAN actually use it (Xrandr >= 1.1) and
+     * the user actually cares about it (rate > 0)
+     */
+    use_rate = ( rate > 0 ) && ( ( ver_major >= 1 ) ||
+		                         ( ( ver_major == 1 ) && ( ver_minor >= 1 ) ) );
+
+    /* this loop is only so that the whole thing will be repeated if someone
+     * else changes video mode between our query of the current information and
+     * the attempt to change it.
+     */
+    do {
+        XRRScreenSize *ssizes;
+        short *rates;
+        Rotation rot;
+        int i, ssizes_count, rates_count, curr, res_idx = -1;
+        Time timestamp, cfg_timestamp;
+
+        if(xrr_config) {
+            XRRFreeScreenConfigInfo(xrr_config);
+        }
+
+        if(!(xrr_config = XRRGetScreenInfo(fgDisplay.Display, fgDisplay.RootWindow))) {
+            fgWarning("XRRGetScreenInfo failed");
+            break;
+        }
+        ssizes = XRRConfigSizes(xrr_config, &ssizes_count);
+        curr = XRRConfigCurrentConfiguration(xrr_config, &rot);
+        timestamp = XRRConfigTimes(xrr_config, &cfg_timestamp);
+
+        /* if either of xsz or ysz are unspecified, use the current values */
+        if(xsz <= 0)
+            xsz = fgState.GameModeSize.X = ssizes[curr].width;
+        if(ysz <= 0)
+            ysz = fgState.GameModeSize.Y = ssizes[curr].height;
+
+
+        if(xsz == ssizes[curr].width && ysz == ssizes[curr].height) {
+            /* no need to switch, we're already in the requested resolution */
+            res_idx = curr;
+        } else {
+            for(i=0; i<ssizes_count; i++) {
+                if(ssizes[i].width == xsz && ssizes[i].height == ysz) {
+                    res_idx = i;
+                    break;  /* found it */
+                }
+            }
+        }
+        if(res_idx == -1)
+            break;  /* no matching resolution */
+
+#if ( RANDR_MAJOR >= 1 ) || ( ( RANDR_MAJOR == 1 ) && ( RANDR_MINOR >= 1 ) )
+        if(use_rate) {
+            rate = fgState.GameModeRefresh;
+
+            /* for the selected resolution, let's find out if there is
+             * a matching refresh rate available.
+             */
+            rates = XRRConfigRates(xrr_config, res_idx, &rates_count);
+
+            for(i=0; i<rates_count; i++) {
+                if(rates[i] == rate) {
+                    break;
+                }
+            }
+            if(i == rates_count) {
+                break; /* no matching rate */
+            }
+        }
+#endif
+
+        if(just_checking) {
+            result = 0;
+            break;
+        }
+
+#if ( RANDR_MAJOR >= 1 ) || ( ( RANDR_MAJOR == 1 ) && ( RANDR_MINOR >= 1 ) )
+        if(use_rate)
+            result = XRRSetScreenConfigAndRate(fgDisplay.Display, xrr_config,
+                    fgDisplay.RootWindow, res_idx, rot, rate, timestamp);
+        else
+#endif
+            result = XRRSetScreenConfig(fgDisplay.Display, xrr_config,
+                    fgDisplay.RootWindow, res_idx, rot, timestamp);
+
+    } while(result == RRSetConfigInvalidTime);
+
+    if(xrr_config) {
+        XRRFreeScreenConfigInfo(xrr_config);
+    }
+
+    if(result == 0) {
+        return 0;
+    }
+
+#endif  /* HAVE_X11_EXTENSIONS_XRANDR_H */
+    return -1;
+}
+#endif  /* TARGET_HOST_POSIX_X11 */
+
 /*
  * Remembers the current visual settings, so that
  * we can change them and restore later...
@@ -47,13 +161,56 @@
 static void fghRememberState( void )
 {
 #if TARGET_HOST_POSIX_X11
+    int event_base, error_base;
+
+    /*
+     * Remember the current pointer location before going fullscreen
+     * for restoring it later:
+     */
+    Window junk_window;
+    unsigned int junk_mask;
+
+    XQueryPointer(fgDisplay.Display, fgDisplay.RootWindow,
+            &junk_window, &junk_window,
+            &fgDisplay.DisplayPointerX, &fgDisplay.DisplayPointerY,
+            &fgDisplay.DisplayPointerX, &fgDisplay.DisplayPointerY, &junk_mask);
+
+#   ifdef HAVE_X11_EXTENSIONS_XRANDR_H
+    if(XRRQueryExtension(fgDisplay.Display, &event_base, &error_base)) {
+        XRRScreenConfiguration *xrr_config;
+        XRRScreenSize *ssizes;
+        Rotation rot;
+        int ssize_count, curr;
+
+        if((xrr_config = XRRGetScreenInfo(fgDisplay.Display, fgDisplay.RootWindow))) {
+            ssizes = XRRConfigSizes(xrr_config, &ssize_count);
+            curr = XRRConfigCurrentConfiguration(xrr_config, &rot);
+
+            fgDisplay.prev_xsz = ssizes[curr].width;
+            fgDisplay.prev_ysz = ssizes[curr].height;
+            fgDisplay.prev_refresh = -1;
+
+#       if ( RANDR_MAJOR >= 1 ) || ( ( RANDR_MAJOR == 1 ) && ( RANDR_MINOR >= 1 ) )
+            if(fgState.GameModeRefresh != -1) {
+                fgDisplay.prev_refresh = XRRConfigCurrentRate(xrr_config);
+            }
+#       endif
+
+            fgDisplay.prev_size_valid = 1;
+
+            XRRFreeScreenConfigInfo(xrr_config);
+        }
+    }
+#   endif
 
     /*
      * This highly depends on the XFree86 extensions,
      * not approved as X Consortium standards
      */
-#   ifdef X_XF86VidModeGetModeLine
-
+#   ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
+    if(!XF86VidModeQueryExtension(fgDisplay.Display, &event_base, &error_base)) {
+        return;
+    }
 
     /*
      * Remember the current ViewPort location of the screen to be able to
@@ -66,21 +223,6 @@ static void fghRememberState( void )
              &fgDisplay.DisplayViewPortY ) )
         fgWarning( "XF86VidModeGetViewPort failed" );
 
-    /*
-     * Remember the current pointer location before going fullscreen
-     * for restoring it later:
-     */
-    {
-        Window junk_window;
-        unsigned int mask;
-
-        XQueryPointer(
-            fgDisplay.Display, fgDisplay.RootWindow,
-            &junk_window, &junk_window,
-            &fgDisplay.DisplayPointerX, &fgDisplay.DisplayPointerY,
-            &fgDisplay.DisplayPointerX, &fgDisplay.DisplayPointerY, &mask
-        );
-    }
 
     /* Query the current display settings: */
     fgDisplay.DisplayModeValid =
@@ -92,13 +234,7 @@ static void fghRememberState( void )
     );
 
     if( !fgDisplay.DisplayModeValid )
-            fgWarning( "XF86VidModeGetModeLine failed" );
-
-#   else
-    /*
-     * XXX warning fghRememberState: missing XFree86 video mode extensions,
-     * XXX game mode will not change screen resolution when activated
-     */
+        fgWarning( "XF86VidModeGetModeLine failed" );
 #   endif
 
 #elif TARGET_HOST_MS_WINDOWS
@@ -110,7 +246,7 @@ static void fghRememberState( void )
 /* hack to get around my stupid cross-gcc headers */
 #define FREEGLUT_ENUM_CURRENT_SETTINGS -1
 
-    EnumDisplaySettings( NULL, FREEGLUT_ENUM_CURRENT_SETTINGS,
+    EnumDisplaySettings( fgDisplay.DisplayName, FREEGLUT_ENUM_CURRENT_SETTINGS,
                          &fgDisplay.DisplayMode );
 
     /* Make sure we will be restoring all settings needed */
@@ -126,14 +262,28 @@ static void fghRememberState( void )
 static void fghRestoreState( void )
 {
 #if TARGET_HOST_POSIX_X11
-
-#   ifdef X_XF86VidModeGetAllModeLines
     /* Restore the remembered pointer position: */
     XWarpPointer(
         fgDisplay.Display, None, fgDisplay.RootWindow, 0, 0, 0, 0,
         fgDisplay.DisplayPointerX, fgDisplay.DisplayPointerY
     );
 
+
+#   ifdef HAVE_X11_EXTENSIONS_XRANDR_H
+    if(fgDisplay.prev_size_valid) {
+        if(xrandr_resize(fgDisplay.prev_xsz, fgDisplay.prev_ysz, fgDisplay.prev_refresh, 0) != -1) {
+            fgDisplay.prev_size_valid = 0;
+#       ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
+            fgDisplay.DisplayModeValid = 0;
+#       endif
+            return;
+        }
+    }
+#   endif
+
+
+
+#   ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
     /*
      * This highly depends on the XFree86 extensions,
      * not approved as X Consortium standards
@@ -189,29 +339,29 @@ static void fghRestoreState( void )
                  */
                 XFlush( fgDisplay.Display );
 
+                fgDisplay.DisplayModeValid = 0;
+#       ifdef HAVE_X11_EXTENSIONS_XRANDR_H
+                fgDisplay.prev_size_valid = 0;
+#       endif
+
                 break;
             }
         }
         XFree( displayModes );
     }
 
-#   else
-    /*
-     * XXX warning fghRestoreState: missing XFree86 video mode extensions,
-     * XXX game mode will not change screen resolution when activated
-     */
 #   endif
 
 #elif TARGET_HOST_MS_WINDOWS
 
-    /* Restore the previously rememebered desktop display settings */
-    ChangeDisplaySettings( &fgDisplay.DisplayMode, 0 );
+    /* Restore the previously remembered desktop display settings */
+    ChangeDisplaySettingsEx( fgDisplay.DisplayName,&fgDisplay.DisplayMode, 0,0,0 );
 
 #endif
 }
 
 #if TARGET_HOST_POSIX_X11
-#ifdef X_XF86VidModeGetAllModeLines
+#ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
 
 /*
  * Checks a single display mode settings against user's preferences.
@@ -242,6 +392,15 @@ static int fghCheckDisplayModes( GLboolean exactMatch, int displayModesCount, XF
                                  displayModes[ i ]->vdisplay,
                                  fgState.GameModeDepth,
                                  ( exactMatch ? refresh : fgState.GameModeRefresh ) ) ) {
+            if (!exactMatch)
+            {
+                /* Update the chosen refresh rate, otherwise a
+                 * glutGameModeGet(GLUT_GAME_MODE_REFRESH_RATE) would not
+                 * return the right values
+                 */
+                fgState.GameModeRefresh = refresh;
+            }
+
             return i;
         }
     }
@@ -259,14 +418,23 @@ static GLboolean fghChangeDisplayMode( GLboolean haveToTest )
     GLboolean success = GL_FALSE;
 #if TARGET_HOST_POSIX_X11
 
+    /* first try to use XRandR, then fallback to XF86VidMode */
+#   ifdef HAVE_X11_EXTENSIONS_XRANDR_H
+    if(xrandr_resize(fgState.GameModeSize.X, fgState.GameModeSize.Y,
+                fgState.GameModeRefresh, haveToTest) != -1) {
+        return GL_TRUE;
+    }
+#   endif
+
+
     /*
      * This highly depends on the XFree86 extensions,
      * not approved as X Consortium standards
      */
-#   ifdef X_XF86VidModeGetAllModeLines
+#   ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
 
     /*
-     * This is also used by applcations which check modes by calling
+     * This is also used by applications which check modes by calling
      * glutGameModeGet(GLUT_GAME_MODE_POSSIBLE), so allow the check:
      */
     if( haveToTest || fgDisplay.DisplayModeValid )
@@ -274,6 +442,42 @@ static GLboolean fghChangeDisplayMode( GLboolean haveToTest )
         XF86VidModeModeInfo** displayModes;
         int i, displayModesCount;
 
+        /* If we don't have a valid modeline in the display structure, which
+         * can happen if this is called from glutGameModeGet instead of
+         * glutEnterGameMode, then we need to query the current mode, to make
+         * unspecified settings to default to their current values.
+         */
+        if(!fgDisplay.DisplayModeValid) {
+            if(!XF86VidModeGetModeLine(fgDisplay.Display, fgDisplay.Screen,
+                    &fgDisplay.DisplayModeClock, &fgDisplay.DisplayMode)) {
+                return success;
+            }
+        }
+
+        if (fgState.GameModeSize.X == -1)
+        {
+            fgState.GameModeSize.X = fgDisplay.DisplayMode.hdisplay;
+        }
+        if (fgState.GameModeSize.Y == -1)
+        {
+            fgState.GameModeSize.Y = fgDisplay.DisplayMode.vdisplay;
+        }
+        if (fgState.GameModeDepth == -1)
+        {
+            /* can't get color depth from this, nor can we change it, do nothing
+             * TODO: get with XGetVisualInfo()? but then how to set?
+             */
+        }
+        if (fgState.GameModeRefresh == -1)
+        {
+            /* Compute the displays refresh rate, dotclock comes in kHz. */
+            int refresh = ( fgDisplay.DisplayModeClock * 1000 ) /
+                ( fgDisplay.DisplayMode.htotal * fgDisplay.DisplayMode.vtotal );
+
+            fgState.GameModeRefresh = refresh;
+        }
+
+        /* query all possible display modes */
         if( !XF86VidModeGetAllModeLines(
                  fgDisplay.Display,
                  fgDisplay.Screen,
@@ -306,43 +510,55 @@ static GLboolean fghChangeDisplayMode( GLboolean haveToTest )
         XFree( displayModes );
     }
 
-#   else
-
-    /*
-     * XXX warning fghChangeDisplayMode: missing XFree86 video mode extensions,
-     * XXX game mode will not change screen resolution when activated
-     */
-    success = GL_TRUE;
-
 #   endif
+
 
 #elif TARGET_HOST_MS_WINDOWS
 
     DEVMODE  devMode;
     char *fggmstr = NULL;
+    char displayMode[300];
 
     success = GL_FALSE;
 
-    EnumDisplaySettings( NULL, -1, &devMode ); 
-    devMode.dmFields |= DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
+    EnumDisplaySettings( fgDisplay.DisplayName, -1, &devMode ); 
+    devMode.dmFields = 0;
 
-    devMode.dmPelsWidth  = fgState.GameModeSize.X;
-    devMode.dmPelsHeight = fgState.GameModeSize.Y;
-    devMode.dmBitsPerPel = fgState.GameModeDepth;
-    devMode.dmDisplayFrequency = fgState.GameModeRefresh;
-    devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
+    if (fgState.GameModeSize.X!=-1)
+    {
+        devMode.dmPelsWidth  = fgState.GameModeSize.X;
+        devMode.dmFields |= DM_PELSWIDTH;
+    }
+    if (fgState.GameModeSize.Y!=-1)
+    {
+        devMode.dmPelsHeight  = fgState.GameModeSize.Y;
+        devMode.dmFields |= DM_PELSHEIGHT;
+    }
+    if (fgState.GameModeDepth!=-1)
+    {
+        devMode.dmBitsPerPel  = fgState.GameModeDepth;
+        devMode.dmFields |= DM_BITSPERPEL;
+    }
+    if (fgState.GameModeRefresh!=-1)
+    {
+        devMode.dmDisplayFrequency  = fgState.GameModeRefresh;
+        devMode.dmFields |= DM_DISPLAYFREQUENCY;
+    }
 
-    switch ( ChangeDisplaySettingsEx(NULL, &devMode, NULL, haveToTest ? CDS_TEST : CDS_FULLSCREEN , NULL) )
+    switch ( ChangeDisplaySettingsEx(fgDisplay.DisplayName, &devMode, NULL, haveToTest ? CDS_TEST : CDS_FULLSCREEN , NULL) )
     {
     case DISP_CHANGE_SUCCESSFUL:
         success = GL_TRUE;
 
-        /* update vars in case if windows switched to proper mode */
-        EnumDisplaySettings( NULL, FREEGLUT_ENUM_CURRENT_SETTINGS, &devMode );
-        fgState.GameModeSize.X  = devMode.dmPelsWidth;        
-        fgState.GameModeSize.Y  = devMode.dmPelsHeight;
-        fgState.GameModeDepth   = devMode.dmBitsPerPel;
-        fgState.GameModeRefresh = devMode.dmDisplayFrequency;
+        if (!haveToTest)
+        {
+            /* update vars in case if windows switched to proper mode */
+            EnumDisplaySettings( fgDisplay.DisplayName, FREEGLUT_ENUM_CURRENT_SETTINGS, &devMode );
+            fgState.GameModeSize.X  = devMode.dmPelsWidth;        
+            fgState.GameModeSize.Y  = devMode.dmPelsHeight;
+            fgState.GameModeDepth   = devMode.dmBitsPerPel;
+            fgState.GameModeRefresh = devMode.dmDisplayFrequency;
+        }
 		break;
     case DISP_CHANGE_RESTART:
         fggmstr = "The computer must be restarted for the graphics mode to work.";
@@ -365,8 +581,14 @@ static GLboolean fghChangeDisplayMode( GLboolean haveToTest )
     }
 
     if ( !success )
-        fgWarning(fggmstr); /* I'd rather get info whats going on in my program than wonder about */
-                            /* magic happenings behind my back, its lib for devels at last ;) */
+    {
+        /* I'd rather get info whats going on in my program than wonder about */
+        /* magic happenings behind my back, its lib for devels at last ;) */
+        
+        /* append display mode to error to make things more informative */
+        sprintf(displayMode,"%s Problem with requested mode: %ix%i:%i@%i", fggmstr, devMode.dmPelsWidth, devMode.dmPelsHeight, devMode.dmBitsPerPel, devMode.dmDisplayFrequency);
+        fgWarning(displayMode);
+    }
 #endif
 
     return success;
@@ -380,7 +602,7 @@ static GLboolean fghChangeDisplayMode( GLboolean haveToTest )
  */
 void FGAPIENTRY glutGameModeString( const char* string )
 {
-    int width = 640, height = 480, depth = 16, refresh = 72;
+    int width = -1, height = -1, depth = -1, refresh = -1;
 
     FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutGameModeString" );
 
@@ -403,12 +625,17 @@ void FGAPIENTRY glutGameModeString( const char* string )
                                     string
                                 );
 
-    /* Hopefully it worked, and if not, we still have the default values */
+    /* All values not specified are now set to -1, which means those
+     * aspects of the current display mode are not changed in
+     * fghChangeDisplayMode() above.
+     */
     fgState.GameModeSize.X  = width;
     fgState.GameModeSize.Y  = height;
     fgState.GameModeDepth   = depth;
     fgState.GameModeRefresh = refresh;
 }
+
+
 
 /*
  * Enters the game mode
@@ -445,7 +672,6 @@ int FGAPIENTRY glutEnterGameMode( void )
      * the window before we can grab the pointer into it:
      */
     XSync( fgDisplay.Display, False );
-
     /*
      * Grab the pointer to confine it into the window after the calls to
      * XWrapPointer() which ensure that the pointer really enters the window.
@@ -463,7 +689,6 @@ int FGAPIENTRY glutEnterGameMode( void )
                GrabModeAsync, GrabModeAsync,
                fgStructure.GameModeWindow->Window.Handle, None, CurrentTime) )
         usleep( 100 );
-
     /*
      * Change input focus to the new window. This will exit the application
      * if the new window is not viewable yet, see the XGrabPointer loop above.
@@ -484,7 +709,7 @@ int FGAPIENTRY glutEnterGameMode( void )
         fgState.GameModeSize.X/2, fgState.GameModeSize.Y/2
     );
 
-#   ifdef X_XF86VidModeSetViewPort
+#   ifdef HAVE_X11_EXTENSIONS_XF86VMODE_H
 
     if( fgDisplay.DisplayModeValid )
     {

@@ -179,6 +179,15 @@ void FGAPIENTRY glutJoystickFunc( void (* callback)
     FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutJoystickFunc" );
     fgInitialiseJoysticks ();
 
+    if ( ( ( fgStructure.CurrentWindow->State.JoystickPollRate < 0 ) ||
+           !FETCH_WCB(*fgStructure.CurrentWindow,Joystick) ) &&  /* Joystick callback was disabled */
+         ( callback && ( pollInterval >= 0 ) ) )               /* but is now enabled */
+        ++fgState.NumActiveJoysticks;
+    else if ( ( ( fgStructure.CurrentWindow->State.JoystickPollRate >= 0 ) &&
+                FETCH_WCB(*fgStructure.CurrentWindow,Joystick) ) &&  /* Joystick callback was enabled */
+              ( !callback || ( pollInterval < 0 ) ) )              /* but is now disabled */
+        --fgState.NumActiveJoysticks;
+
     SET_CALLBACK( Joystick );
     fgStructure.CurrentWindow->State.JoystickPollRate = pollInterval;
 
@@ -362,6 +371,42 @@ void FGAPIENTRY glutTabletButtonFunc( void (* callback)( int, int, int, int ) )
 {
     FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutTabletButtonFunc" );
     SET_CALLBACK( TabletButton );
+}
+
+/*
+ * Sets the multi-pointer entry callback for the current window
+ */
+void FGAPIENTRY glutMultiEntryFunc( void (* callback)(int, int ) )
+{
+    FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutMultiEntryFunc" );
+    SET_CALLBACK( MultiEntry );
+}
+
+/*
+ * Sets the multi-pointer button callback for the current window
+ */
+void FGAPIENTRY glutMultiButtonFunc( void (* callback)(int, int, int, int, int ) )
+{
+    FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutMultiButtonFunc" );
+    SET_CALLBACK( MultiButton );
+}
+
+/*
+ * Sets the multi-pointer motion callback for the current window
+ */
+void FGAPIENTRY glutMultiMotionFunc( void (* callback)(int, int, int ) )
+{
+    FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutMultiMotionFunc" );
+    SET_CALLBACK( MultiMotion );
+}
+
+/*
+ * Sets the multi-pointer passive motion callback for the current window
+ */
+void FGAPIENTRY glutMultiPassiveFunc( void (* callback)(int, int, int ) )
+{
+    FREEGLUT_EXIT_IF_NOT_INITIALISED ( "glutMultiPassiveFunc" );
+    SET_CALLBACK( MultiPassive );
 }
 
 /*** END OF FILE ***/

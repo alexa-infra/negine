@@ -139,10 +139,17 @@ EXPORTS
 	glutGetProcAddress
 	glutExit
 	glutFullScreenToggle
+	glutLeaveFullScreen
 	glutGetModeValues
 	glutInitContextFlags
 	glutInitContextVersion
 	glutInitContextProfile
+        glutInitErrorFunc
+        glutInitWarningFunc
 	__glutInitWithExit
 	__glutCreateWindowWithExit
 	__glutCreateMenuWithExit
+	glutMultiButtonFunc
+	glutMultiEntryFunc
+	glutMultiMotionFunc
+	glutMultiPassiveFunc

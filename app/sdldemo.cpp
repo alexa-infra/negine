@@ -110,7 +110,7 @@ void SDLDemo::OnFrame() {
 
 //    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
 //        (*m)->Draw(binding);
-    f32 frame_time = timer_.Elapsed() / 1000.0;
+    f32 frame_time = timer_.Elapsed() / 1000.0f;
 
 	ps_->Draw(binding, frame_time);
 
@@ -152,16 +152,16 @@ void SDLDemo::OnFrame() {
 void SDLDemo::OnMotion(f32 dx, f32 dy) {
 //    modelview_.Rotate(Vector3((f32)1, (f32)0, (f32)0), -dy);
 //    modelview_.Rotate(Vector3((f32)0, (f32)1, (f32)0), -dx);
-    cursor_.x += dx / width_ * 300.;
-    cursor_.y -= dy / height_ * 300.;
-    if (cursor_.x > 150.)
-        cursor_.x = 150.;
-    if (cursor_.x < -150.)
-        cursor_.x = -150.;
-    if (cursor_.y > 150.)
-        cursor_.y = 150.;
-    if (cursor_.y < -150.)
-        cursor_.y = -150.;
+    cursor_.x += dx / width_ * 300.f;
+    cursor_.y -= dy / height_ * 300.f;
+    if (cursor_.x > 150.f)
+        cursor_.x = 150.f;
+    if (cursor_.x < -150.f)
+        cursor_.x = -150.f;
+    if (cursor_.y > 150.f)
+        cursor_.y = 150.f;
+    if (cursor_.y < -150.f)
+        cursor_.y = -150.f;
     ps_->position = Vector3(cursor_.x, cursor_.y, 0);
 }
 

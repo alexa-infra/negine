@@ -95,8 +95,8 @@ void SDLApp::Run() {
                     if (capture_) {
                         if (event.motion.x != width_ / 2. ||
                             event.motion.y != height_ / 2.) {
-                            OnMotion(event.motion.xrel, 
-                                event.motion.yrel);
+                            OnMotion((f32)event.motion.xrel, 
+                                (f32)event.motion.yrel);
                             SDL_WarpMouseInWindow(mainwindow,
                                 width_ / 2, height_ / 2);
                         }
