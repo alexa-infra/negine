@@ -10,6 +10,8 @@
 #include <GL/freeglut.h>
 #include "freeglut_internal.h"
 
+/* -- PRIVATE FUNCTIONS --------------------------------------------------- */
+
 #if TARGET_HOST_POSIX_X11
 #include <X11/Xlib.h>
 
@@ -50,12 +52,17 @@ static int spnav_remove_events(int type);
 static SFG_Window *spnav_win;
 #endif
 
-static int sball_initialized;
+/* Flag telling whether we have a spaceball:
+ *   0 - haven't tried initializing
+ *   1 - have successfully initialized
+ *  -1 - have tried to initialize but not succeeded
+ */
+static int sball_initialized = 0;
 
 
 void fgInitialiseSpaceball(void)
 {
-    if(sball_initialized) {
+    if(sball_initialized != 0) {
         return;
     }
 
@@ -64,10 +71,15 @@ void fgInitialiseSpaceball(void)
         Window w;
 
         if(!fgStructure.CurrentWindow)
+		{
+			sball_initialized = -1;
             return;
+		}
 
         w = fgStructure.CurrentWindow->Window.Handle;
-        if(spnav_x11_open(fgDisplay.Display, w) == -1) {
+        if(spnav_x11_open(fgDisplay.Display, w) == -1)
+		{
+			sball_initialized = -1;
             return;
         }
     }
@@ -85,9 +97,9 @@ void fgSpaceballClose(void)
 
 int fgHasSpaceball(void)
 {
-    if(!sball_initialized) {
+    if(sball_initialized == 0) {
         fgInitialiseSpaceball();
-        if(!sball_initialized) {
+        if(sball_initialized != 1) {
             fgWarning("fgInitialiseSpaceball failed\n");
             return 0;
         }
@@ -105,9 +117,9 @@ int fgHasSpaceball(void)
 
 int fgSpaceballNumButtons(void)
 {
-    if(!sball_initialized) {
+    if(sball_initialized == 0) {
         fgInitialiseSpaceball();
-        if(!sball_initialized) {
+        if(sball_initialized != 1) {
             fgWarning("fgInitialiseSpaceball failed\n");
             return 0;
         }
@@ -122,9 +134,9 @@ int fgSpaceballNumButtons(void)
 
 void fgSpaceballSetWindow(SFG_Window *window)
 {
-    if(!sball_initialized) {
+    if(sball_initialized == 0) {
         fgInitialiseSpaceball();
-        if(!sball_initialized) {
+        if(sball_initialized != 1) {
             return;
         }
     }
@@ -143,11 +155,13 @@ int fgIsSpaceballXEvent(const XEvent *xev)
 {
     spnav_event sev;
 
-    if(!sball_initialized) {
-        fgInitialiseSpaceball();
-        if(!sball_initialized) {
-            return 0;
-        }
+    if(spnav_win != fgStructure.CurrentWindow) {
+        /* this will also initialize spaceball if needed (first call) */
+        fgSpaceballSetWindow(fgStructure.CurrentWindow);
+    }
+
+    if(sball_initialized != 1) {
+        return 0;
     }
 
     return spnav_x11_event(xev, &sev);
@@ -157,9 +171,9 @@ void fgSpaceballHandleXEvent(const XEvent *xev)
 {
     spnav_event sev;
 
-    if(!sball_initialized) {
+    if(sball_initialized == 0) {
         fgInitialiseSpaceball();
-        if(!sball_initialized) {
+        if(sball_initialized != 1) {
             return;
         }
     }
@@ -215,7 +229,10 @@ OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef HAVE_ERRNO_H
 #include <errno.h>
+#endif
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

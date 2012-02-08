@@ -36,19 +36,15 @@
 #include "freeglut_internal.h"
 
 #if TARGET_HOST_POSIX_X11
-#if HAVE_ERRNO
+#ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
 #include <sys/ioctl.h>
-#include <sys/time.h>
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <termios.h>
 #include <fcntl.h>
-#include <sys/types.h>
 
 typedef struct {
    int fd;
@@ -140,17 +136,8 @@ void fgInitialiseInputDevices ( void )
 {
     if( !fgState.InputDevsInitialised )
     {
-      /* will return true for VC8 (VC2005) and higher */
-#if TARGET_HOST_MS_WINDOWS && ( _MSC_VER >= 1400 ) && HAVE_ERRNO
-        char *dial_device=NULL;
-        size_t sLen;
-        errno_t err = _dupenv_s( &dial_device, &sLen, "GLUT_DIALS_SERIAL" );
-        if (err)
-            fgError("Error getting GLUT_DIALS_SERIAL environment variable");
-#else
         const char *dial_device=NULL;
         dial_device = getenv ( "GLUT_DIALS_SERIAL" );
-#endif
 #if TARGET_HOST_MS_WINDOWS
         if (!dial_device){
             static char devname[256];
@@ -167,10 +154,6 @@ void fgInitialiseInputDevices ( void )
 #endif
         if ( !dial_device ) return;
         if ( !( dialbox_port = serial_open ( dial_device ) ) ) return;
-      /* will return true for VC8 (VC2005) and higher */
-#if TARGET_HOST_MS_WINDOWS && ( _MSC_VER >= 1400 ) && HAVE_ERRNO
-        free ( dial_device );  dial_device = NULL;  /* dupenv_s allocates a string that we must free */
-#endif
         serial_putchar(dialbox_port,DIAL_INITIALIZE);
         glutTimerFunc ( 10, poll_dials, 0 );
         fgState.InputDevsInitialised = GL_TRUE;

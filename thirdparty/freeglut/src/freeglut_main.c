@@ -27,13 +27,13 @@
 
 #include <GL/freeglut.h>
 #include "freeglut_internal.h"
-#if HAVE_ERRNO
+#ifdef HAVE_ERRNO_H
 #    include <errno.h>
 #endif
 #include <stdarg.h>
-#if  HAVE_VPRINTF
+#ifdef  HAVE_VFPRINTF
 #    define VFPRINTF(s,f,a) vfprintf((s),(f),(a))
-#elif HAVE_DOPRNT
+#elif defined(HAVE__DOPRNT)
 #    define VFPRINTF(s,f,a) _doprnt((f),(a),(s))
 #else
 #    define VFPRINTF(s,f,a)
@@ -59,7 +59,7 @@ struct GXKeyList gxKeyList;
  * Try to get the maximum value allowed for ints, falling back to the minimum
  * guaranteed by ISO C99 if there is no suitable header.
  */
-#if HAVE_LIMITS_H
+#ifdef HAVE_LIMITS_H
 #    include <limits.h>
 #endif
 #ifndef INT_MAX
@@ -70,6 +70,12 @@ struct GXKeyList gxKeyList;
 #    define MIN(a,b) (((a)<(b)) ? (a) : (b))
 #endif
 
+#ifdef WM_TOUCH
+    typedef BOOL (WINAPI *pGetTouchInputInfo)(HTOUCHINPUT,UINT,PTOUCHINPUT,int);
+    typedef BOOL (WINAPI *pCloseTouchInputHandle)(HTOUCHINPUT);
+	static pGetTouchInputInfo fghGetTouchInputInfo = (pGetTouchInputInfo)0xDEADBEEF;
+	static pCloseTouchInputHandle fghCloseTouchInputHandle = (pCloseTouchInputHandle)0xDEADBEEF;
+#endif
 
 /*
  * TODO BEFORE THE STABLE RELEASE:
@@ -95,7 +101,6 @@ static void fghReshapeWindow ( SFG_Window *window, int width, int height )
 
     freeglut_return_if_fail( window != NULL );
 
-
 #if TARGET_HOST_POSIX_X11
 
     XResizeWindow( fgDisplay.Display, window->Window.Handle,
@@ -104,8 +109,7 @@ static void fghReshapeWindow ( SFG_Window *window, int width, int height )
 
 #elif TARGET_HOST_MS_WINDOWS && !defined(_WIN32_WCE)
     {
-        RECT winRect;
-        int x, y, w, h;
+        RECT windowRect;
 
         /*
          * For windowed mode, get the current position of the
@@ -114,50 +118,43 @@ static void fghReshapeWindow ( SFG_Window *window, int width, int height )
          */
 
         /* "GetWindowRect" returns the pixel coordinates of the outside of the window */
-        GetWindowRect( window->Window.Handle, &winRect );
-        x = winRect.left;
-        y = winRect.top;
-        w = width;
-        h = height;
+        GetWindowRect( window->Window.Handle, &windowRect );
 
-        if ( window->Parent == NULL )
-        {
-            if ( ! window->IsMenu && (window != fgStructure.GameModeWindow) )
-            {
-                w += GetSystemMetrics( SM_CXSIZEFRAME ) * 2;
-                h += GetSystemMetrics( SM_CYSIZEFRAME ) * 2 +
-                     GetSystemMetrics( SM_CYCAPTION );
-            }
-        }
+        /* Create rect in FreeGLUT format, (X,Y) topleft outside window, WxH of client area */
+        windowRect.right    = windowRect.left+width;
+        windowRect.bottom   = windowRect.top+height;
+
+        if (window->Parent == NULL)
+            /* get the window rect from this to feed to SetWindowPos, correct for window decorations */
+            fghComputeWindowRectFromClientArea_QueryWindow(window,&windowRect,TRUE);
         else
         {
+            /* correct rect for position client area of parent window
+             * (SetWindowPos input for child windows is in coordinates
+             * relative to the parent's client area).
+             * Child windows don't have decoration, so no need to correct
+             * for them.
+             */
             RECT parentRect;
-            GetWindowRect( window->Parent->Window.Handle, &parentRect );
-            x -= parentRect.left + GetSystemMetrics( SM_CXSIZEFRAME ) * 2;
-            y -= parentRect.top  + GetSystemMetrics( SM_CYSIZEFRAME ) * 2 +
-                                   GetSystemMetrics( SM_CYCAPTION );
+            parentRect = fghGetClientArea( window->Parent, FALSE );
+            windowRect.left   -= parentRect.left;
+            windowRect.right  -= parentRect.left;
+            windowRect.top    -= parentRect.top;
+            windowRect.bottom -= parentRect.top;
         }
-
-        /*
-         * SWP_NOACTIVATE      Do not activate the window
-         * SWP_NOOWNERZORDER   Do not change position in z-order
-         * SWP_NOSENDCHANGING  Supress WM_WINDOWPOSCHANGING message
-         * SWP_NOZORDER        Retains the current Z order (ignore 2nd param)
-         */
-
+        
+        /* Do the actual resizing */
         SetWindowPos( window->Window.Handle,
                       HWND_TOP,
-                      x, y, w, h,
+                      windowRect.left, windowRect.top,
+                      windowRect.right - windowRect.left,
+                      windowRect.bottom- windowRect.top,
                       SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING |
                       SWP_NOZORDER
         );
     }
 #endif
 
-    /*
-     * XXX Should update {window->State.OldWidth, window->State.OldHeight}
-     * XXX to keep in lockstep with POSIX_X11 code.
-     */
     if( FETCH_WCB( *window, Reshape ) )
         INVOKE_WCB( *window, Reshape, ( width, height ) );
     else
@@ -226,6 +223,7 @@ static void fghcbDisplayWindow( SFG_Window *window,
 #if TARGET_HOST_POSIX_X11
         fghRedrawWindow ( window ) ;
 #elif TARGET_HOST_MS_WINDOWS
+
         RedrawWindow(
             window->Window.Handle, NULL, NULL,
             RDW_NOERASE | RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_UPDATENOW
@@ -338,36 +336,61 @@ void fgError( const char *fmt, ... )
 {
     va_list ap;
 
-    va_start( ap, fmt );
+    if (fgState.ErrorFunc) {
 
-    fprintf( stderr, "freeglut ");
-    if( fgState.ProgramName )
-        fprintf( stderr, "(%s): ", fgState.ProgramName );
-    VFPRINTF( stderr, fmt, ap );
-    fprintf( stderr, "\n" );
+        va_start( ap, fmt );
 
-    va_end( ap );
+        /* call user set error handler here */
+        fgState.ErrorFunc(fmt, ap);
 
-    if ( fgState.Initialised )
-        fgDeinitialize ();
+        va_end( ap );
 
-    exit( 1 );
+    } else {
+
+        va_start( ap, fmt );
+
+        fprintf( stderr, "freeglut ");
+        if( fgState.ProgramName )
+            fprintf( stderr, "(%s): ", fgState.ProgramName );
+        VFPRINTF( stderr, fmt, ap );
+        fprintf( stderr, "\n" );
+
+        va_end( ap );
+
+        if ( fgState.Initialised )
+            fgDeinitialize ();
+
+        exit( 1 );
+    }
 }
 
 void fgWarning( const char *fmt, ... )
 {
     va_list ap;
 
-    va_start( ap, fmt );
+    if (fgState.WarningFunc) {
 
-    fprintf( stderr, "freeglut ");
-    if( fgState.ProgramName )
-        fprintf( stderr, "(%s): ", fgState.ProgramName );
-    VFPRINTF( stderr, fmt, ap );
-    fprintf( stderr, "\n" );
+        va_start( ap, fmt );
 
-    va_end( ap );
+        /* call user set warning handler here */
+        fgState.WarningFunc(fmt, ap);
+
+        va_end( ap );
+
+    } else {
+
+        va_start( ap, fmt );
+
+        fprintf( stderr, "freeglut ");
+        if( fgState.ProgramName )
+            fprintf( stderr, "(%s): ", fgState.ProgramName );
+        VFPRINTF( stderr, fmt, ap );
+        fprintf( stderr, "\n" );
+
+        va_end( ap );
+    }
 }
+
 
 /*
  * Indicates whether Joystick events are being used by ANY window.
@@ -473,7 +496,7 @@ static void fghSleepForEvents( void )
         wait.tv_usec = (msec % 1000) * 1000;
         err = select( socket+1, &fdset, NULL, NULL, &wait );
 
-#if HAVE_ERRNO
+#ifdef HAVE_ERRNO_H
         if( ( -1 == err ) && ( errno != EINTR ) )
             fgWarning ( "freeglut select() error: %d", errno );
 #endif
@@ -487,7 +510,7 @@ static void fghSleepForEvents( void )
 /*
  * Returns GLUT modifier mask for the state field of an X11 event.
  */
-static int fghGetXModifiers( int state )
+int fghGetXModifiers( int state )
 {
     int ret = 0;
 
@@ -1241,8 +1264,10 @@ void FGAPIENTRY glutMainLoopEvent( void )
                  * XXX See XFree86 configuration docs (even back in the
                  * XXX 3.x days, and especially with 4.x).
                  *
-                 * XXX Note that {button} has already been decremeted
+                 * XXX Note that {button} has already been decremented
                  * XXX in mapping from X button numbering to GLUT.
+				 *
+				 * XXX Should add support for partial wheel turns as Windows does -- 5/27/11
                  */
                 int wheel_number = (button - glutDeviceGet ( GLUT_NUM_MOUSE_BUTTONS )) / 2;
                 int direction = -1;
@@ -1387,6 +1412,13 @@ void FGAPIENTRY glutMainLoopEvent( void )
                     case XK_Num_Lock :  special = GLUT_KEY_NUM_LOCK;  break;
                     case XK_KP_Begin :  special = GLUT_KEY_BEGIN;     break;
                     case XK_KP_Delete:  special = GLUT_KEY_DELETE;    break;
+
+                    case XK_Shift_L:   special = GLUT_KEY_SHIFT_L;    break;
+                    case XK_Shift_R:   special = GLUT_KEY_SHIFT_R;    break;
+                    case XK_Control_L: special = GLUT_KEY_CTRL_L;     break;
+                    case XK_Control_R: special = GLUT_KEY_CTRL_R;     break;
+                    case XK_Alt_L:     special = GLUT_KEY_ALT_L;      break;
+                    case XK_Alt_R:     special = GLUT_KEY_ALT_R;      break;
                     }
 
                     /*
@@ -1413,7 +1445,10 @@ void FGAPIENTRY glutMainLoopEvent( void )
             break;
 
         default:
-            fgWarning ("Unknown X event type: %d\n", event.type);
+            /* enter handling of Extension Events here */
+            #ifdef HAVE_X11_EXTENSIONS_XINPUT2_H
+                fgHandleExtensionEvents( &event );
+            #endif
             break;
         }
     }
@@ -1566,6 +1601,9 @@ static int fghGetWin32Modifiers (void)
 LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
                                LPARAM lParam )
 {
+    static unsigned char lControl = 0, rControl = 0, lShift = 0,
+                         rShift = 0, lAlt = 0, rAlt = 0;
+
     SFG_Window* window;
     PAINTSTRUCT ps;
     LRESULT lRet = 1;
@@ -1579,10 +1617,124 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
 
     /* printf ( "Window %3d message <%04x> %12d %12d\n", window?window->ID:0,
              uMsg, wParam, lParam ); */
+
+    if ( window )
+    {
+      /* Checking for CTRL, ALT, and SHIFT key positions:  Key Down! */
+      if ( !lControl && GetAsyncKeyState ( VK_LCONTROL ) )
+      {
+          INVOKE_WCB	( *window, Special,
+                        ( GLUT_KEY_CTRL_L, window->State.MouseX, window->State.MouseY )
+                      );
+
+          lControl = 1;
+      }
+
+      if ( !rControl && GetAsyncKeyState ( VK_RCONTROL ) )
+      {
+          INVOKE_WCB ( *window, Special,
+                       ( GLUT_KEY_CTRL_R, window->State.MouseX, window->State.MouseY )
+                     );
+
+          rControl = 1;
+      }
+
+      if ( !lShift && GetAsyncKeyState ( VK_LSHIFT ) )
+      {
+          INVOKE_WCB ( *window, Special,
+                       ( GLUT_KEY_SHIFT_L, window->State.MouseX, window->State.MouseY )
+                     );
+
+          lShift = 1;
+      }
+
+      if ( !rShift && GetAsyncKeyState ( VK_RSHIFT ) )
+      {
+          INVOKE_WCB ( *window, Special,
+                       ( GLUT_KEY_SHIFT_R, window->State.MouseX, window->State.MouseY )
+                     );
+
+          rShift = 1;
+      }
+
+      if ( !lAlt && GetAsyncKeyState ( VK_LMENU ) )
+      {
+          INVOKE_WCB ( *window, Special,
+                       ( GLUT_KEY_ALT_L, window->State.MouseX, window->State.MouseY )
+                     );
+
+          lAlt = 1;
+      }
+
+      if ( !rAlt && GetAsyncKeyState ( VK_RMENU ) )
+      {
+          INVOKE_WCB ( *window, Special,
+                       ( GLUT_KEY_ALT_R, window->State.MouseX, window->State.MouseY )
+                     );
+
+          rAlt = 1;
+      }
+
+      /* Checking for CTRL, ALT, and SHIFT key positions:  Key Up! */
+      if ( lControl && !GetAsyncKeyState ( VK_LCONTROL ) )
+      {
+          INVOKE_WCB ( *window, SpecialUp,
+                       ( GLUT_KEY_CTRL_L, window->State.MouseX, window->State.MouseY )
+                     );
+
+          lControl = 0;
+      }
+
+      if ( rControl && !GetAsyncKeyState ( VK_RCONTROL ) )
+      {
+          INVOKE_WCB ( *window, SpecialUp,
+                       ( GLUT_KEY_CTRL_R, window->State.MouseX, window->State.MouseY )
+                     );
+
+          rControl = 0;
+      }
+
+      if ( lShift && !GetAsyncKeyState ( VK_LSHIFT ) )
+      {
+          INVOKE_WCB ( *window, SpecialUp,
+                       ( GLUT_KEY_SHIFT_L, window->State.MouseX, window->State.MouseY )
+                     );
+
+          lShift = 0;
+      }
+
+      if ( rShift && !GetAsyncKeyState ( VK_RSHIFT ) )
+      {
+          INVOKE_WCB ( *window, SpecialUp,
+                       ( GLUT_KEY_SHIFT_R, window->State.MouseX, window->State.MouseY )
+                     );
+
+          rShift = 0;
+      }
+
+      if ( lAlt && !GetAsyncKeyState ( VK_LMENU ) )
+      {
+          INVOKE_WCB ( *window, SpecialUp,
+                       ( GLUT_KEY_ALT_L, window->State.MouseX, window->State.MouseY )
+                     );
+
+          lAlt = 0;
+      }
+
+      if ( rAlt && !GetAsyncKeyState ( VK_RMENU ) )
+      {
+          INVOKE_WCB ( *window, SpecialUp,
+                       ( GLUT_KEY_ALT_R, window->State.MouseX, window->State.MouseY )
+                     );
+
+          rAlt = 0;
+      }
+    }
+
     switch( uMsg )
     {
     case WM_CREATE:
-        /* The window structure is passed as the creation structure paramter... */
+        /* The window structure is passed as the creation structure parameter... */
         window = (SFG_Window *) (((LPCREATESTRUCT) lParam)->lpCreateParams);
         FREEGLUT_INTERNAL_ERROR_EXIT ( ( window != NULL ), "Cannot create window",
                                        "fgWindowProc" );
@@ -1636,6 +1788,10 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
         }
 
         window->State.NeedToResize = GL_TRUE;
+        /* if we used CW_USEDEFAULT (thats a negative value) for the size
+         * of the window, query the window now for the size at which it
+         * was created.
+         */
         if( ( window->State.Width < 0 ) || ( window->State.Height < 0 ) )
         {
             SFG_Window *current_window = fgStructure.CurrentWindow;
@@ -1769,6 +1925,7 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             fgUpdateMenuHighlight( window->ActiveMenu );
             break;
         }
+        SetFocus(window->Window.Handle);
 
         fgState.Modifiers = fghGetWin32Modifiers( );
 
@@ -1898,67 +2055,67 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
     case 0x020a:
         /* Should be WM_MOUSEWHEEL but my compiler doesn't recognize it */
     {
+        int wheel_number = LOWORD( wParam );
+        short ticks = ( short )HIWORD( wParam );
+		fgState.MouseWheelTicks += ticks;
+
         /*
-         * XXX THIS IS SPECULATIVE -- John Fay, 10/2/03
          * XXX Should use WHEEL_DELTA instead of 120
          */
-        int wheel_number = LOWORD( wParam );
-        short ticks = ( short )HIWORD( wParam ) / 120;
-        int direction = 1;
+		if ( abs ( fgState.MouseWheelTicks ) > 120 )
+		{
+			int direction = ( fgState.MouseWheelTicks > 0 ) ? 1 : -1;
 
-        if( ticks < 0 )
-        {
-            direction = -1;
-            ticks = -ticks;
-        }
+            if( ! FETCH_WCB( *window, MouseWheel ) &&
+                ! FETCH_WCB( *window, Mouse ) )
+                break;
 
-        /*
-         * The mouse cursor has moved. Remember the new mouse cursor's position
-         */
-        /*        window->State.MouseX = LOWORD( lParam ); */
-        /* Need to adjust by window position, */
-        /*        window->State.MouseY = HIWORD( lParam ); */
-        /* change "lParam" to other parameter */
+            fgSetWindow( window );
+            fgState.Modifiers = fghGetWin32Modifiers( );
 
-        if( ! FETCH_WCB( *window, MouseWheel ) &&
-            ! FETCH_WCB( *window, Mouse ) )
-            break;
+            /*
+             * XXX Should use WHEEL_DELTA instead of 120
+             */
+            while( abs ( fgState.MouseWheelTicks ) > 120 )
+			{
+                if( FETCH_WCB( *window, MouseWheel ) )
+                    INVOKE_WCB( *window, MouseWheel,
+                                ( wheel_number,
+                                  direction,
+                                  window->State.MouseX,
+                                  window->State.MouseY
+                                )
+                    );
+                else  /* No mouse wheel, call the mouse button callback twice */
+				{
+                    /*
+                     * Map wheel zero to button 3 and 4; +1 to 3, -1 to 4
+                     *  "    "   one                     +1 to 5, -1 to 6, ...
+                     *
+                     * XXX The below assumes that you have no more than 3 mouse
+                     * XXX buttons.  Sorry.
+                     */
+                    int button = wheel_number * 2 + 3;
+                    if( direction < 0 )
+                        ++button;
+                    INVOKE_WCB( *window, Mouse,
+                                ( button, GLUT_DOWN,
+                                  window->State.MouseX, window->State.MouseY )
+                    );
+                    INVOKE_WCB( *window, Mouse,
+                                ( button, GLUT_UP,
+                                  window->State.MouseX, window->State.MouseY )
+                    );
+				}
 
-        fgSetWindow( window );
-        fgState.Modifiers = fghGetWin32Modifiers( );
-
-        while( ticks-- )
-            if( FETCH_WCB( *window, MouseWheel ) )
-                INVOKE_WCB( *window, MouseWheel,
-                            ( wheel_number,
-                              direction,
-                              window->State.MouseX,
-                              window->State.MouseY
-                            )
-                );
-            else  /* No mouse wheel, call the mouse button callback twice */
-            {
                 /*
-                 * Map wheel zero to button 3 and 4; +1 to 3, -1 to 4
-                 *  "    "   one                     +1 to 5, -1 to 6, ...
-                 *
-                 * XXX The below assumes that you have no more than 3 mouse
-                 * XXX buttons.  Sorry.
+                 * XXX Should use WHEEL_DELTA instead of 120
                  */
-                int button = wheel_number * 2 + 3;
-                if( direction < 0 )
-                    ++button;
-                INVOKE_WCB( *window, Mouse,
-                            ( button, GLUT_DOWN,
-                              window->State.MouseX, window->State.MouseY )
-                );
-                INVOKE_WCB( *window, Mouse,
-                            ( button, GLUT_UP,
-                              window->State.MouseX, window->State.MouseY )
-                );
-            }
+				fgState.MouseWheelTicks -= 120 * direction;
+			}
 
-        fgState.Modifiers = INVALID_MODIFIERS;
+            fgState.Modifiers = INVALID_MODIFIERS;
+		}
     }
     break ;
 
@@ -2009,6 +2166,12 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             KEY( VK_RIGHT,  GLUT_KEY_RIGHT     );
             KEY( VK_DOWN,   GLUT_KEY_DOWN      );
             KEY( VK_INSERT, GLUT_KEY_INSERT    );
+            KEY( VK_LCONTROL, GLUT_KEY_CTRL_L  );
+            KEY( VK_RCONTROL, GLUT_KEY_CTRL_R  );
+            KEY( VK_LSHIFT, GLUT_KEY_SHIFT_L   );
+            KEY( VK_RSHIFT, GLUT_KEY_SHIFT_R   );
+            KEY( VK_LMENU,  GLUT_KEY_ALT_L     );
+            KEY( VK_RMENU,  GLUT_KEY_ALT_R     );
 
         case VK_DELETE:
             /* The delete key should be treated as an ASCII keypress: */
@@ -2095,6 +2258,12 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
             KEY( VK_RIGHT,  GLUT_KEY_RIGHT     );
             KEY( VK_DOWN,   GLUT_KEY_DOWN      );
             KEY( VK_INSERT, GLUT_KEY_INSERT    );
+            KEY( VK_LCONTROL, GLUT_KEY_CTRL_L  );
+            KEY( VK_RCONTROL, GLUT_KEY_CTRL_R  );
+            KEY( VK_LSHIFT, GLUT_KEY_SHIFT_L   );
+            KEY( VK_RSHIFT, GLUT_KEY_SHIFT_R   );
+            KEY( VK_LMENU,  GLUT_KEY_ALT_L     );
+            KEY( VK_RMENU,  GLUT_KEY_ALT_R     );
 
           case VK_DELETE:
               /* The delete key should be treated as an ASCII keypress: */
@@ -2283,6 +2452,52 @@ LRESULT CALLBACK fgWindowProc( HWND hWnd, UINT uMsg, WPARAM wParam,
         lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
         break;
 
+#ifdef WM_TOUCH
+	/* handle multi-touch messages */
+	case WM_TOUCH:
+	{
+		unsigned int numInputs = (unsigned int)wParam;
+		unsigned int i = 0;
+		TOUCHINPUT* ti = (TOUCHINPUT*)malloc( sizeof(TOUCHINPUT)*numInputs);
+
+		if (fghGetTouchInputInfo == (pGetTouchInputInfo)0xDEADBEEF) {
+		    fghGetTouchInputInfo = (pGetTouchInputInfo)GetProcAddress(GetModuleHandle("user32"),"GetTouchInputInfo");
+		    fghCloseTouchInputHandle = (pCloseTouchInputHandle)GetProcAddress(GetModuleHandle("user32"),"CloseTouchInputHandle");
+		}
+
+		if (!fghGetTouchInputInfo) { 
+			free( (void*)ti );
+			break;
+		}
+
+		if (fghGetTouchInputInfo( (HTOUCHINPUT)lParam, numInputs, ti, sizeof(TOUCHINPUT) )) {
+			/* Handle each contact point */
+			for (i = 0; i < numInputs; ++i ) {
+
+				POINT tp;
+				tp.x = TOUCH_COORD_TO_PIXEL(ti[i].x);
+				tp.y = TOUCH_COORD_TO_PIXEL(ti[i].y);
+				ScreenToClient( hWnd, &tp );
+
+				ti[i].dwID = ti[i].dwID * 2;
+
+				if (ti[i].dwFlags & TOUCHEVENTF_DOWN) {
+					INVOKE_WCB( *window, MultiEntry,  ( ti[i].dwID, GLUT_ENTERED ) );
+					INVOKE_WCB( *window, MultiButton, ( ti[i].dwID, tp.x, tp.y, 0, GLUT_DOWN ) );
+				} else if (ti[i].dwFlags & TOUCHEVENTF_MOVE) {
+					INVOKE_WCB( *window, MultiMotion, ( ti[i].dwID, tp.x, tp.y ) );
+				} else if (ti[i].dwFlags & TOUCHEVENTF_UP)   { 
+					INVOKE_WCB( *window, MultiButton, ( ti[i].dwID, tp.x, tp.y, 0, GLUT_UP ) );
+					INVOKE_WCB( *window, MultiEntry,  ( ti[i].dwID, GLUT_LEFT ) );
+				}
+			}
+		}
+		fghCloseTouchInputHandle((HTOUCHINPUT)lParam);
+		free( (void*)ti );
+		lRet = 0; /*DefWindowProc( hWnd, uMsg, wParam, lParam );*/
+		break;
+	}
+#endif
     default:
         /* Handle unhandled messages */
         lRet = DefWindowProc( hWnd, uMsg, wParam, lParam );
