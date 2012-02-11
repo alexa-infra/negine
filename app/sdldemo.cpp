@@ -93,16 +93,8 @@ void SDLDemo::OnFrame() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     program_hud_->Bind();
-    i32 pos = program_hud_->get_attribute("position").Location;
-    i32 tex = program_hud_->get_attribute("tex").Location;
-    i32 color = program_hud_->get_attribute("col").Location;
-//    i32 normal = program_->get_attributes()["n"].Location;
 
-    AttributeBinding binding;
-    binding.push_back(std::make_pair(VertexAttrs::tagPosition, pos));
-    binding.push_back(std::make_pair(VertexAttrs::tagTexture, tex));
-    binding.push_back(std::make_pair(VertexAttrs::tagColor, color));
-//    binding.push_back(std::make_pair(VertexAttrs::tagNormal, normal));
+    AttributeBinding binding = program_hud_->binding();
 
     program_hud_->set_uniform("diffuse", texture_);
     program_hud_->set_uniform("projection_matrix", projection_);
@@ -125,14 +117,7 @@ void SDLDemo::OnFrame() {
     std::string text = ss.str();
     font_->SetText(-150.f, 150.f, text);
 
-    pos = program_hud_->get_attribute("position").Location;
-    tex = program_hud_->get_attribute("tex").Location;
-    color = program_hud_->get_attribute("col").Location;
-
-    binding.clear();
-    binding.push_back(std::make_pair(VertexAttrs::tagPosition, pos));
-    binding.push_back(std::make_pair(VertexAttrs::tagTexture, tex));
-    binding.push_back(std::make_pair(VertexAttrs::tagColor, color));
+    binding = program_hud_->binding();
 
     program_hud_->set_uniform("diffuse", texture_);
     program_hud_->set_uniform("projection_matrix", projection_);

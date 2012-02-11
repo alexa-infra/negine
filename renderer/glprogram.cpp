@@ -117,6 +117,7 @@ void Program::Link() {
         is_ok_ = true;
         get_uniforms_list(uniforms_);
         get_attributes_list(attributes_);
+        get_attribute_binding(binding_);
         return;
     }
     
@@ -137,6 +138,7 @@ void Program::Unlink() {
     uniforms_.clear();
     attributes_.clear();
     linked_ = false;
+    binding_.clear();
 }
 
 void Program::set_uniform_param(const std::string& name, const param& p) {
@@ -144,7 +146,7 @@ void Program::set_uniform_param(const std::string& name, const param& p) {
     if (it == uniforms_.end()) return;
 
     Uniform uniform = it->second;
-    
+
     switch (p.get_type()) {
         case Types::Texture:
         {
@@ -181,8 +183,8 @@ void Program::get_uniforms_list(UniformList& uniforms) {
     if (!uniform_count || !max_name_length) return;
 
     char *buffer = new char[max_name_length];
-    i32 textureUnit = 0;
 
+    std::map<GLenum, u32> index_map;
     for (GLint i = 0; i < uniform_count; ++i) 
     {
         GLsizei name_length = 0;
@@ -194,12 +196,9 @@ void Program::get_uniforms_list(UniformList& uniforms) {
         u32 location = glGetUniformLocation(program_id_, uniformName.c_str());
 
         Uniform uniform;
-        uniform.Location = location;
+        uniform.Location = (i32)location;
         uniform.Type = uniform_type;
-        if (uniform_type == GL_SAMPLER_2D)
-            uniform.Index = textureUnit++;
-        else
-            uniform.Index = -1;
+        uniform.Index = index_map[uniform_type]++;
 
         uniforms[uniformName] = uniform;
     }
@@ -233,6 +232,29 @@ void Program::get_attributes_list(AttributeList& attributes) {
     delete [] attrName;
 }
 
+
+Attribute Program::get_attribute(const std::string& name) {
+    AttributeList::const_iterator found = attributes_.find(name);
+    if (found != attributes_.end())
+        return found->second;
+    return Attribute();
+}
+
+void Program::add_attribute_binding(AttributeBinding& binding, const std::string& name, VertexAttr tag) {
+    Attribute attr = get_attribute(name);
+    if (attr.Type != 0)
+        binding.push_back(std::make_pair(tag, attr.Location));
+}
+
+void Program::get_attribute_binding(AttributeBinding& binding) {
+    binding.clear();
+    add_attribute_binding(binding, "position", VertexAttrs::tagPosition);
+    add_attribute_binding(binding, "tex", VertexAttrs::tagTexture);
+    add_attribute_binding(binding, "col", VertexAttrs::tagColor);
+    add_attribute_binding(binding, "n", VertexAttrs::tagNormal);
+    add_attribute_binding(binding, "t", VertexAttrs::tagTangent);
+    add_attribute_binding(binding, "bi", VertexAttrs::tagBinormal);
+}
 
 }
 }

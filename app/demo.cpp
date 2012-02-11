@@ -118,16 +118,7 @@ void GlutSampleWindow::OnDisplay(void) {
 
     //font->print(0,0,(char*)"Just for test.");
 
-    i32 pos = program_->get_attribute("position").Location;
-    i32 tex = program_->get_attribute("tex").Location;
-    i32 color = program_->get_attribute("color").Location;
-    i32 normal = program_->get_attribute("n").Location;
-
-    base::opengl::AttributeBinding binding;
-    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagPosition, pos));
-    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagTexture, tex));
-//    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagColor, color));
-    binding.push_back(std::make_pair(base::opengl::VertexAttrs::tagNormal, normal));
+    base::opengl::AttributeBinding binding = program_->binding();
 
     program_->set_uniform("diffuse", texture_);
     program_->set_uniform("projection_matrix", projection_);

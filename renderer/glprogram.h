@@ -12,6 +12,7 @@
 #include "base/param.h"
 #include <map>
 #include <string>
+#include "renderer/mesh.h"
 
 namespace base {
 namespace opengl {
@@ -21,6 +22,8 @@ class Attribute {
 public:
     u32 Location;           //!< Location of attribute
     GLenum Type;            //!< Type of attribute
+
+    Attribute() : Location(0), Type(0) {}
 };
 typedef std::map<std::string, Attribute> AttributeList;
 
@@ -29,7 +32,9 @@ class Uniform {
 public:
     u32 Location;           //!< Location of uniform
     GLenum Type;            //!< Type of uniform
-    i32 Index;              //!< Index of sampler (-1 for other types)
+    u32 Index;              //!< Index of sampler (-1 for other types)
+
+    Uniform() : Location(0), Type(0) {}
 };
 typedef std::map<std::string, Uniform> UniformList;
 
@@ -50,6 +55,8 @@ protected:
 
     bool own_pixel_shader_;     //!< Pixel shader is created by program, and should be destructed with program
     bool own_vertex_shader_;    //!< Vertex shader is created by program, and should be destructed with program
+
+    AttributeBinding binding_;  //!< attributes to vertex data binding
 public:
     Program();
     ~Program();
@@ -91,15 +98,10 @@ public:
     //! Unbind program
     void Unbind();
 
-    //! Gets list of active atributes
-    AttributeList& get_attributes() {
+    //! Gets binding of attributes to vertex tags
+    const AttributeBinding& binding() {
         if (!linked_) Link();
-        return attributes_;
-    }
-
-    //! Gets active attribute by name
-    Attribute get_attribute(const std::string& name) {
-        return get_attributes()[name];
+        return binding_;
     }
 
     //! Set uniform helper, that wraps value by generic param
@@ -138,6 +140,15 @@ protected:
 
     //! Populate list of active attributes
     void get_attributes_list(AttributeList& attributes);
+
+    //! Gets active attribute by name
+    Attribute get_attribute(const std::string& name);
+
+    //! Add attribute (if exists at program) to binding
+    void add_attribute_binding(AttributeBinding& binding, const std::string& name, VertexAttr tag);
+
+    //! Populate attribute location to vertex tag binding 
+    void get_attribute_binding(AttributeBinding& binding);
 
 private:
     DISALLOW_COPY_AND_ASSIGN(Program);

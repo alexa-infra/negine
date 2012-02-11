@@ -23,6 +23,8 @@ struct Vertex
     Vector3 pos;        //!< Position in 3D space
     Vector3 n;          //!< Normal to surface
     Vector2 tex;        //!< Texture coordinates
+    Vector3 tangent;    //!< Tangent
+    Vector3 binormal;   //!< Binormal
     Vector4 color;      //!< Color of vertex
 
     Vertex() {}
@@ -36,6 +38,8 @@ namespace VertexAttrs
         tagPosition,
         tagNormal,
         tagTexture,
+        tagTangent,
+        tagBinormal,
         tagColor
     };
 
