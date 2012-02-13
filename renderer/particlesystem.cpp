@@ -11,14 +11,14 @@ namespace base {
 namespace opengl {
 
 ParticleSystemSetting::ParticleSystemSetting()
-    : max_count(100)
-    , particle_lifetime(2.0f)
-    , particle_lifetime_spread(1.f)
+    : max_count(1000)
+    , particle_lifetime(1.0f)
+    , particle_lifetime_spread(0.2f)
     , color_start(1.f, 1.f, 1.f, 0.1f)
     , color_end(1.f, 0.f, 0.f, 0.9f)
     , size_start(1.0f)
     , size_end(12.f)
-    , speed(1000.0f)
+    , speed(10.0f)
     , emission_rate(50)
     , lifetime(100000000000.f)
 {

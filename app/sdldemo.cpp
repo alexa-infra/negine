@@ -103,6 +103,7 @@ void SDLDemo::OnFrame() {
 //    for (auto m = mesh_.begin(); m != mesh_.end(); ++m)
 //        (*m)->Draw(binding);
     f32 frame_time = timer_.Elapsed() / 1000.0f;
+    timer_.Reset();
 
 	ps_->Draw(binding, frame_time);
 
@@ -111,7 +112,7 @@ void SDLDemo::OnFrame() {
     program_hud_->Bind();
 
     std::stringstream ss;
-    ss.precision(5);
+    ss.precision(2);
     ss.setf(std::ios::fixed,std::ios::floatfield);
     ss << frame_time << " sec";
     std::string text = ss.str();
@@ -124,11 +125,9 @@ void SDLDemo::OnFrame() {
 
     base::math::Matrix4 m = cameraTransform_;
     m.Invert();
-    program_->set_uniform("modelview_matrix", m);
+    program_hud_->set_uniform("modelview_matrix", m);
 
     font_->Draw(binding);
-
-    timer_.Reset();
 
     assert(glGetError() == GL_NO_ERROR);
     SDLApp::OnFrame();

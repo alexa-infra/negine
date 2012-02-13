@@ -15,17 +15,14 @@
 
 #include <SDL/SDL.h>
 
-const i32 RUN_GAME_LOOP = 1;
-
 class SDLApp {
 protected:
-    SDL_Window *mainwindow;     //!< window handle
-    SDL_GLContext maincontext;  //!< GL context
+    SDL_Window* mainwindow_;     //!< window handle
+    SDL_GLContext maincontext_;  //!< GL context
     bool run_;
     bool capture_;
     u32 width_;
     u32 height_;
-    SDL_TimerID timer;
     
 public:
     SDLApp(u32 width, u32 height);
@@ -34,6 +31,5 @@ public:
 protected:
     virtual void OnFrame();
     virtual void OnMotion(f32 dx, f32 dy);
-private:
-    static u32 GameLoopTimer(u32 interval, void* param);
+    void Pump();
 };

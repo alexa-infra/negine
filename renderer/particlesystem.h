@@ -70,7 +70,6 @@ public:
     f32 lifetime;               //!< particle system lifetime
 
     Vector3 position;           //!< center position
-
 public:
     ParticleSystem(ParticleSystemSetting s);
 
