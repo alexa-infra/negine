@@ -42,8 +42,8 @@ public:
     GlutWindow(u32 flags, i32 width = 640, i32 height = 480); 
     virtual ~GlutWindow();
     void Run();
-private:
-    virtual void OnDisplay(void) {}
+protected:
+    virtual void OnDisplay(void);
     virtual void OnReshape(i32 width, i32 height) {}
     virtual void OnKeyboard(u8 key, i32 x, i32 y) {}
     virtual void OnMouse(i32 button, i32 state, i32 x, i32 y) {}
@@ -51,7 +51,6 @@ private:
     virtual void OnPassiveMotion(i32 x, i32 y) {}
     virtual void OnVisibility(i32 state) {}
     virtual void OnIdle(void) {}
-    virtual void OnTimer() {}
     virtual void OnClose() {}
 
     base::Timer timer_;

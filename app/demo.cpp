@@ -25,23 +25,6 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
     , buffer_(NULL)
     , sg_(NULL)
 {
-    glewExperimental = GL_TRUE;
-
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        std::cout << glewGetErrorString(err) << std::endl;
-        assert(false);
-    }
-
-    if (!GLEW_VERSION_3_3)
-    {
-        std::cout << "OpenGL 3.3 is not supported." << std::endl;
-        assert(false);
-    }
-
-    assert(glGetError() == GL_NO_ERROR);
-
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
 
@@ -113,8 +96,7 @@ void GlutSampleWindow::OnDisplay(void) {
 
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
-
-    f32 frame_time = GetTimer();
+    f32 time = GetTimer();
 
     //font->print(0,0,(char*)"Just for test.");
 
@@ -138,7 +120,7 @@ void GlutSampleWindow::OnDisplay(void) {
     font->Draw(binding);
     
     assert(glGetError() == GL_NO_ERROR);
-    glutSwapBuffers();
+    GlutWindow::OnDisplay();
 }
 
 void GlutSampleWindow::OnReshape(i32 width, i32 height) {

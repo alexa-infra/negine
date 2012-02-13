@@ -18,6 +18,8 @@
 #include "GL/glut.h"
 #include "GL/freeglut_ext.h"
 
+#include <assert.h>
+
 GlutWindow* GlutWindow::window_ = NULL;
 
 GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
@@ -37,6 +39,23 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
 
     window_ = this;
     window_id_ = glutCreateWindow("GlutWindow");
+
+    glewExperimental = GL_TRUE;
+
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+        std::cout << glewGetErrorString(err) << std::endl;
+        assert(false);
+    }
+
+    if (!GLEW_VERSION_3_3)
+    {
+        std::cout << "OpenGL 3.3 is not supported." << std::endl;
+        assert(false);
+    }
+
+    assert(glGetError() == GL_NO_ERROR);
 
     glutReshapeFunc(OnReshapeProc);
     glutKeyboardFunc(OnKeyboardProc);
@@ -69,4 +88,8 @@ void GlutWindow::OnCloseProc() {
     window_->is_closed_ = true;
     glutLeaveMainLoop();
     window_->OnClose();
+}
+
+void GlutWindow::OnDisplay(void) {
+    glutSwapBuffers();
 }
