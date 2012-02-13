@@ -16,9 +16,6 @@ private:
 
     static GlutWindow* window_;
 
-    static void OnDisplayProc(void) { 
-        window_->OnDisplay(); 
-    }
     static void OnReshapeProc(i32 width, i32 height) { 
         window_->OnReshape(width, height); 
     }
@@ -40,9 +37,6 @@ private:
     static void OnIdleProc() {
         window_->OnIdle();
     }
-    static void OnTimerProc(int value) {
-        window_->OnTimerCallback(value);
-    }
     static void OnCloseProc();
 public:
     GlutWindow(u32 flags, i32 width = 640, i32 height = 480); 
@@ -59,7 +53,6 @@ private:
     virtual void OnIdle(void) {}
     virtual void OnTimer() {}
     virtual void OnClose() {}
-    void OnTimerCallback(u32 time);
 
     base::Timer timer_;
     bool is_closed_;

@@ -38,7 +38,6 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
     window_ = this;
     window_id_ = glutCreateWindow("GlutWindow");
 
-    glutDisplayFunc(OnDisplayProc);
     glutReshapeFunc(OnReshapeProc);
     glutKeyboardFunc(OnKeyboardProc);
     glutMouseFunc(OnMouseProc);
@@ -51,7 +50,6 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
     timer_.Reset();
-    glutTimerFunc(1000 / 60, OnTimerProc, 0);
 }
 
 GlutWindow::~GlutWindow() {
@@ -63,18 +61,8 @@ GlutWindow::~GlutWindow() {
 void GlutWindow::Run() {
     while (!is_closed_) {
         glutMainLoopEvent();
-    }
-}
-
-void GlutWindow::OnTimerCallback(u32 value) {
-    if (!window_->is_closed_)
         OnDisplay();
-    f32 elapsed = timer_.Elapsed();
-    if (elapsed > 1000 / 60)
-        elapsed = 0;
-    else
-        elapsed = 1000 / 60 - elapsed;
-    glutTimerFunc(1000 / 60, OnTimerProc, value);
+    }
 }
 
 void GlutWindow::OnCloseProc() {

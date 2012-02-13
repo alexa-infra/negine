@@ -143,7 +143,6 @@ void GlutSampleWindow::OnDisplay(void) {
 
 void GlutSampleWindow::OnReshape(i32 width, i32 height) {
     glViewport(0, 0, width, height); 
-    OnDisplay();
 }
 
 void GlutSampleWindow::OnMotion(i32 x, i32 y) {
@@ -159,7 +158,6 @@ void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     old_y = y;
     
     modelTransform_.Rotate(base::math::Vector3((f32)dy, (f32)dx, (f32)0), 0.1f);
-    OnDisplay();
 }
 
 void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
@@ -167,5 +165,4 @@ void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
     std::string test("Key pressed: ");
     test += (const char*)&key;
 	font->SetText(-50., 0, test);
-    OnDisplay();
 }
