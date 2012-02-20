@@ -22,15 +22,17 @@
 
 GlutWindow* GlutWindow::window_ = NULL;
 
-GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
+GlutWindow::GlutWindow()
 : is_closed_(false)
+, width_(640)
+, height_(480)
 {
     int dummy_argc = 1;
     const char *dummy_argv[] = { "", NULL };
     glutInit(&dummy_argc, const_cast<char**>(dummy_argv));
 
-    glutInitDisplayMode(flags);
-    glutInitWindowSize(width, height);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+    glutInitWindowSize(width_, height_);
     glutInitWindowPosition(100, 100);
 
 //    glutInitContextVersion(3, 3);
@@ -67,8 +69,6 @@ GlutWindow::GlutWindow(u32 flags, i32 width/* = 640*/, i32 height/* = 480*/)
     glutCloseFunc(OnCloseProc);
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
-
-    timer_.Reset();
 }
 
 GlutWindow::~GlutWindow() {
@@ -80,7 +80,7 @@ GlutWindow::~GlutWindow() {
 void GlutWindow::Run() {
     while (!is_closed_) {
         glutMainLoopEvent();
-        OnDisplay();
+        OnFrame();
     }
 }
 
@@ -90,6 +90,6 @@ void GlutWindow::OnCloseProc() {
     window_->OnClose();
 }
 
-void GlutWindow::OnDisplay(void) {
+void GlutWindow::OnFrame(void) {
     glutSwapBuffers();
 }

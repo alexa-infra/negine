@@ -5,7 +5,6 @@
  * This file is part of Negine (https://alexadotlife.com/hg/negine)
  * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
  **/
-#include "app/sdlapp.h"
 #include "app/sdldemo.h"
 
 #include <iostream>
@@ -16,14 +15,13 @@
 using namespace base::math;
 using namespace base::opengl;
 
-SDLDemo::SDLDemo(u32 width, u32 height)
-    : SDLApp(width, height)
-    , texture_(NULL)
+SDLDemo::SDLDemo()
+    : texture_(NULL)
     , program_(NULL)
     , buffer_(NULL)
 {
 //    glEnable(GL_DEPTH_TEST);
-    glViewport(0, 0, width, height); 
+    glViewport(0, 0, width_, height_); 
 
     cameraTransform_ = Matrix4::LookAt(Vector3(0., 0., -3.), Vector3(0., 0., 0.));
     projection_ = Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -5.0, 5.0);
@@ -130,7 +128,7 @@ void SDLDemo::OnFrame() {
     font_->Draw(binding);
 
     assert(glGetError() == GL_NO_ERROR);
-    SDLApp::OnFrame();
+    Application::OnFrame();
 }
 
 void SDLDemo::OnMotion(f32 dx, f32 dy) {
@@ -151,7 +149,7 @@ void SDLDemo::OnMotion(f32 dx, f32 dy) {
 
 int main(int argc, char *argv[])
 {
-    SDLDemo app(512, 512);
+    SDLDemo app;
     app.Run();
  
     return 0;

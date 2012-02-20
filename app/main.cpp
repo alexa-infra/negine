@@ -6,7 +6,6 @@
  * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
  **/
 #include "app/demo.h"
-#include <GL/glut.h>
 #include "luavm.h"
 
 int get_current_dir(lua_State* L) {
@@ -26,7 +25,7 @@ int main(int argc, char** argv) {
         vm.call_func("main", argc, argv);
     }
     {
-        GlutSampleWindow app(800, 600);
+        Demo app;
         app.Run();
     }
     return 0;

@@ -7,7 +7,7 @@
  **/
 #pragma once 
 
-#include "app/glutapp.h"
+#include "app/app.h"
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
 #include "base/math/matrix.h"
@@ -15,8 +15,9 @@
 #include "renderer/spritegroup.h"
 #include "renderer/md3mesh.h"
 #include "renderer/spritefont.h"
+#include "base/timer.h"
 
-class GlutSampleWindow : public GlutWindow {
+class Demo : public Application {
 private:
     base::opengl::Texture* texture_;
     base::opengl::Program* program_;
@@ -29,11 +30,12 @@ private:
 
     base::math::Matrix4 cameraTransform_;
     base::math::Matrix4 modelTransform_;
+    base::Timer timer_;
 public:
-    GlutSampleWindow(i32 width = 640, i32 height = 480); 
-    virtual ~GlutSampleWindow();
+    Demo(i32 width = 640, i32 height = 480); 
+    virtual ~Demo();
 protected:
-    virtual void OnDisplay(void);
+    virtual void OnFrame(void);
     virtual void OnReshape(i32 width, i32 height);
     virtual void OnMotion(i32 x, i32 y);
     virtual void OnKeyboard(unsigned char key, int x, int y);

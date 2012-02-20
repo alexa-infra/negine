@@ -25,7 +25,7 @@ protected:
     u32 height_;
     
 public:
-    SDLApp(u32 width, u32 height);
+    SDLApp();
     virtual ~SDLApp();
     void Run();
 protected:

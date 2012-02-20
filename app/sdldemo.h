@@ -7,7 +7,7 @@
  **/
 #pragma once
 
-#include "app/sdlapp.h"
+#include "app/app.h"
 
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
@@ -18,7 +18,7 @@
 #include "base/timer.h"
 #include "renderer/spritefont.h"
 
-class SDLDemo : public SDLApp {
+class SDLDemo : public Application {
 protected:
     base::opengl::Texture* texture_;
     base::opengl::Program* program_;
@@ -34,7 +34,7 @@ protected:
 
     base::math::Vector2 cursor_;
 public:
-    SDLDemo(u32 width, u32 height);
+    SDLDemo();
     ~SDLDemo();
 
 protected:

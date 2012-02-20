@@ -5,11 +5,14 @@ set(APP_PATH ${SRC_PATH}/app)
 set(SRC
     ${APP_PATH}/demo.h
     ${APP_PATH}/demo.cpp
-    ${APP_PATH}/glutapp.h
-    ${APP_PATH}/glutapp.cpp
     ${APP_PATH}/luavm.cpp
     ${APP_PATH}/main.cpp
 )
+if (USE_SDL)
+    list(APPEND SRC ${APP_PATH}/sdlapp.cpp)
+elseif (USE_GLUT)
+    list(APPEND SRC ${APP_PATH}/glutapp.cpp)    
+endif()
 source_group("app" FILES ${SRC})
 
 include_directories(
@@ -35,30 +38,29 @@ target_link_libraries(app
     lua
 )
 
-add_definitions(-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0 -DGLEW_STATIC)
+add_definitions(-DGLEW_STATIC)
 
-find_package(SDL 1.3) 
-if(NOT SDL_FOUND)
-    message("SDL is not found")
-else()
-    set(SDLSRC
-        ${APP_PATH}/sdldemo.cpp
-        ${APP_PATH}/sdlapp.cpp
-        ${APP_PATH}/luavm.cpp
-    )
-    source_group("sdlapp" FILES ${SDLSRC})
+if (USE_SDL)
+    find_package(SDL 1.3) 
+    if(NOT SDL_FOUND)
+        message(FATAL_ERROR "SDL is not found")
+    endif()
+
+    add_definitions(-DSDL_ENGINE)
+
     include_directories(
-        ${TOOLS_PATH}
-        ${SRC_PATH}
-        ${TOOLS_PATH}/glew/include
         ${SDL_INCLUDE_DIR}
     )
-    add_executable(sdldemo ${SDLSRC})
-
-    target_link_libraries(sdldemo 
-        base
-        renderer
+    target_link_libraries(app 
         ${SDL_LIBRARY}
-        lua
+    )
+elseif (USE_GLUT)
+    add_definitions(-DGLUT_ENGINE)
+    add_definitions(-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0)
+    include_directories(
+        ${TOOLS_PATH}/freeglut/include
+    )
+    target_link_libraries(app 
+        freeglut
     )
 endif()

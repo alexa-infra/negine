@@ -39,11 +39,11 @@ private:
     }
     static void OnCloseProc();
 public:
-    GlutWindow(u32 flags, i32 width = 640, i32 height = 480); 
+    GlutWindow(); 
     virtual ~GlutWindow();
     void Run();
 protected:
-    virtual void OnDisplay(void);
+    virtual void OnFrame(void);
     virtual void OnReshape(i32 width, i32 height) {}
     virtual void OnKeyboard(u8 key, i32 x, i32 y) {}
     virtual void OnMouse(i32 button, i32 state, i32 x, i32 y) {}
@@ -53,10 +53,8 @@ protected:
     virtual void OnIdle(void) {}
     virtual void OnClose() {}
 
-    base::Timer timer_;
     bool is_closed_;
-
-protected:
-    f32 GetTimer() { return timer_.Reset(); }
+    i32 width_;
+    i32 height_;
 };
 

@@ -6,6 +6,16 @@ set(TOOLS_PATH ${SRC_PATH}/thirdparty)
 set(TESTS_PATH ${SRC_PATH}/tests)
 set(APP_PATH ${SRC_PATH}/app)
 
+option(USE_SDL "SDL" ON)
+option(USE_GLUT "Freeglut" OFF)
+
+if (USE_SDL AND USE_GLUT)
+  message(FATAL_ERROR "use only one sdl or glut option")
+endif()
+if (NOT USE_SDL AND NOT USE_GLUT)
+  message(FATAL_ERROR "use one engine: sdl or glut")
+endif()
+
 set(CMAKE_MODULE_PATH ${SRC_PATH}/CMake ${CMAKE_MODULE_PATH})
 include(${SRC_PATH}/CMake/CMakeHelpers.txt)
 

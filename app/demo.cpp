@@ -10,17 +10,12 @@
 #include <string>
 #include <iostream>
 
-#include "GL/glew.h"
-#include "GL/glut.h"
-
 #include <utility>
 
 using namespace base::math;
 
-GlutSampleWindow::GlutSampleWindow(i32 width, i32 height) 
-    : GlutWindow(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE, 
-                 width, height)
-    , texture_(NULL)
+Demo::Demo(i32 width, i32 height) 
+    : texture_(NULL)
     , program_(NULL)
     , buffer_(NULL)
     , sg_(NULL)
@@ -79,7 +74,7 @@ GlutSampleWindow::GlutSampleWindow(i32 width, i32 height)
 
 }
 
-GlutSampleWindow::~GlutSampleWindow() {
+Demo::~Demo() {
     for (u32 i=0; i<mesh_.size(); i++)
         delete mesh_[i];
     delete sg_;
@@ -89,14 +84,15 @@ GlutSampleWindow::~GlutSampleWindow() {
     delete font;
 }
 
-void GlutSampleWindow::OnDisplay(void) {
+void Demo::OnFrame(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
-    f32 time = GetTimer();
+    f32 time = timer_.Elapsed() / 1000.0f;
+    timer_.Reset();
 
     //font->print(0,0,(char*)"Just for test.");
 
@@ -120,14 +116,14 @@ void GlutSampleWindow::OnDisplay(void) {
     font->Draw(binding);
     
     assert(glGetError() == GL_NO_ERROR);
-    GlutWindow::OnDisplay();
+    Application::OnFrame();
 }
 
-void GlutSampleWindow::OnReshape(i32 width, i32 height) {
+void Demo::OnReshape(i32 width, i32 height) {
     glViewport(0, 0, width, height); 
 }
 
-void GlutSampleWindow::OnMotion(i32 x, i32 y) {
+void Demo::OnMotion(i32 x, i32 y) {
 //    modelview_.SetIdentity();
 
     static i32 old_x = 0;
@@ -142,9 +138,9 @@ void GlutSampleWindow::OnMotion(i32 x, i32 y) {
     modelTransform_.Rotate(base::math::Vector3((f32)dy, (f32)dx, (f32)0), 0.1f);
 }
 
-void GlutSampleWindow::OnKeyboard(u8 key, i32 x, i32 y)
+void Demo::OnKeyboard(u8 key, i32 x, i32 y)
 {
     std::string test("Key pressed: ");
-    test += (const char*)&key;
+    test += (char)key;
 	font->SetText(-50., 0, test);
 }

@@ -13,11 +13,11 @@
 
 #include "GL/glew.h"
 
-SDLApp::SDLApp(u32 width, u32 height)
+SDLApp::SDLApp()
     : mainwindow_(NULL)
     , run_(true)
-    , width_(width)
-    , height_(height)
+    , width_(640)
+    , height_(480)
     , capture_(false)
 {
     SDL_Init(SDL_INIT_VIDEO);
@@ -33,7 +33,7 @@ SDLApp::SDLApp(u32 width, u32 height)
         "SDL Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        width, height,
+        width_, height_,
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
     );
     
