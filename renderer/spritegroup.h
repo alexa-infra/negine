@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#error Depricated header SpriteGroup.h
+
 #include "renderer/sprite.h"
 #include "renderer/vertexbuffer.h"
 

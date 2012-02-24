@@ -12,7 +12,6 @@
 #include "renderer/glprogram.h"
 #include "base/math/matrix.h"
 #include "renderer/vertexbuffer.h"
-#include "renderer/spritegroup.h"
 #include "renderer/md3mesh.h"
 #include "renderer/spritefont.h"
 #include "base/timer.h"
@@ -24,9 +23,8 @@ private:
     base::math::Matrix4 projection_;
     base::math::Matrix4 modelview_;
     base::opengl::VertexBuffer* buffer_;
-    base::opengl::SpriteGroup* sg_;
     std::vector<base::opengl::VertexBuffer*> mesh_;
-    base::opengl::SpriteFont *font;
+    base::opengl::SpriteFont *font_;
 
     base::math::Matrix4 cameraTransform_;
     base::math::Matrix4 modelTransform_;

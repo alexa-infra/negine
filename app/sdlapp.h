@@ -30,6 +30,6 @@ public:
     void Run();
 protected:
     virtual void OnFrame();
-    virtual void OnMotion(f32 dx, f32 dy);
+    virtual void OnMotion(i32 dx, i32 dy);
     void Pump();
 };

@@ -18,7 +18,6 @@ Demo::Demo(i32 width, i32 height)
     : texture_(NULL)
     , program_(NULL)
     , buffer_(NULL)
-    , sg_(NULL)
 {
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height); 
@@ -46,14 +45,6 @@ Demo::Demo(i32 width, i32 height)
     }
     program_->Bind();
     
-    base::math::Vector4 cc(0, 0, 0, 1);
-
-    sg_ = new base::opengl::SpriteGroup(4);
-    sg_->AddSprite(base::math::Vector2(-0.5f, -0.5f), cc, 0.25f, 0.f);
-    sg_->AddSprite(base::math::Vector2(-0.5f, 0.5f), cc, 0.25f, 0.f);
-    sg_->AddSprite(base::math::Vector2(0.5f, 0.5f), cc, 0.25f, 0.f);
-    sg_->AddSprite(base::math::Vector2(0.5f, -0.5f), cc, 0.25f, 0.f);
-
     std::vector<base::opengl::Mesh*> mesh_list 
         = base::opengl::load_md3_se("european_fnt_v2.md3");
     for (u32 i=0; i<mesh_list.size(); i++) {
@@ -67,21 +58,17 @@ Demo::Demo(i32 width, i32 height)
     //font test
     //string filename = "AlphaBetaBRK.ttf";
     string filename = "AmerikaSans.ttf";
-    font = new base::opengl::SpriteFont(filename, 0, 100);
-    font->SetText(-50., 0, "Just for test.");
-    
-    
-
+    font_ = new base::opengl::SpriteFont(filename, 0, 100);
+    font_->SetText(-50., 0, "Just for test.");
 }
 
 Demo::~Demo() {
     for (u32 i=0; i<mesh_.size(); i++)
         delete mesh_[i];
-    delete sg_;
     delete buffer_;
     delete texture_;
     delete program_;
-    delete font;
+    delete font_;
 }
 
 void Demo::OnFrame(void) {
@@ -93,8 +80,6 @@ void Demo::OnFrame(void) {
     glEnable(GL_DEPTH_TEST);
     f32 time = timer_.Elapsed() / 1000.0f;
     timer_.Reset();
-
-    //font->print(0,0,(char*)"Just for test.");
 
     base::opengl::AttributeBinding binding = program_->binding();
 
@@ -113,7 +98,7 @@ void Demo::OnFrame(void) {
     m.Invert();
     program_->set_uniform("modelview_matrix", m);
 
-    font->Draw(binding);
+    font_->Draw(binding);
     
     assert(glGetError() == GL_NO_ERROR);
     Application::OnFrame();
@@ -124,23 +109,12 @@ void Demo::OnReshape(i32 width, i32 height) {
 }
 
 void Demo::OnMotion(i32 x, i32 y) {
-//    modelview_.SetIdentity();
-
-    static i32 old_x = 0;
-    static i32 old_y = 0;
-
-    i32 dx = x-old_x;
-    i32 dy = y-old_y;
-
-    old_x = x;
-    old_y = y;
-    
-    modelTransform_.Rotate(base::math::Vector3((f32)dy, (f32)dx, (f32)0), 0.1f);
+    modelTransform_.Rotate(base::math::Vector3((f32)y, (f32)x, (f32)0), 0.1f);
 }
 
 void Demo::OnKeyboard(u8 key, i32 x, i32 y)
 {
     std::string test("Key pressed: ");
     test += (char)key;
-	font->SetText(-50., 0, test);
+	font_->SetText(-50., 0, test);
 }

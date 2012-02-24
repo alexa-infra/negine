@@ -69,6 +69,8 @@ GlutWindow::GlutWindow()
     glutCloseFunc(OnCloseProc);
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
+
+    std::cout << "ME: " << glutGet(GLUT_FULL_SCREEN) << std::endl;
 }
 
 GlutWindow::~GlutWindow() {
