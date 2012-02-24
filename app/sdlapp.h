@@ -30,6 +30,7 @@ public:
     void Run();
 protected:
     virtual void OnFrame();
-    virtual void OnMotion(i32 dx, i32 dy);
+    virtual void OnMotion(i32 x, i32 y, i32 dx, i32 dy);
+    virtual void OnReshape(i32 width, i32 height);
     void Pump();
 };
