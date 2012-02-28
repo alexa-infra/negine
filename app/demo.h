@@ -17,24 +17,29 @@
 #include "renderer/particlesystem.h"
 #include "base/timer.h"
 
+using namespace base::math;
+using namespace base::opengl;
+
 class Demo : public Application {
 private:
-    base::opengl::Texture* texture_;
-    base::opengl::Program* program_;
-    base::opengl::Program* program_hud_;
-    base::math::Matrix4 projection_;
-    base::math::Matrix4 modelview_;
-    base::opengl::VertexBuffer* buffer_;
-    std::vector<base::opengl::VertexBuffer*> mesh_;
-    base::opengl::SpriteFont *font_;
-    base::opengl::ParticleSystem* ps_;
-    base::opengl::Texture* texture_ps_;
+    Texture* texture_;
+    Program* program_;
+    Program* program_hud_;
+    Program* program_font_;
+    Matrix4 projection_;
+    Matrix4 modelview_;
+    VertexBuffer* buffer_;
+    std::vector<VertexBuffer*> mesh_;
+    SpriteFont *font_;
+    ParticleSystem* ps_;
+    Texture* texture_ps_;
 
-    base::math::Matrix4 cameraTransform_;
-    base::math::Matrix4 modelTransform_;
+    Matrix4 cameraTransform_;
+    Matrix4 modelTransform_;
     base::Timer timer_;
 
-    base::math::Vector2 cursor_;
+    Vector2 cursor_;
+    std::string title_text_;
 public:
     Demo(i32 width = 640, i32 height = 480); 
     virtual ~Demo();
@@ -43,5 +48,8 @@ protected:
     void OnReshape(i32 width, i32 height);
     void OnMotion(i32 x, i32 y, i32 dx, i32 dy);
     void OnKeyboard(unsigned char key, int x, int y);
+
+private:
+    Program* LoadProgram(const std::string& filename);
 };
 

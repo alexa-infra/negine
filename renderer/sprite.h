@@ -7,6 +7,8 @@
  **/
 #pragma once
 
+#error depricated header
+
 #include "renderer/mesh.h"
 #include "renderer/glbuffer.h"
 #include "base/math/rect.h"

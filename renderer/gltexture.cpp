@@ -18,6 +18,7 @@ namespace opengl {
 namespace PixelTypes {
     GLenum GetGLType(u32 type) {
         switch (type) {
+            case Alpha:     return GL_ALPHA;
             case Gray:      return GL_LUMINANCE;
             case GrayAlpha: return GL_LUMINANCE_ALPHA;
             case RGB:       return GL_RGB;

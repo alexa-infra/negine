@@ -9,12 +9,8 @@
 
 #include <string>
 #include <iostream>
-
-#include <utility>
-
-using namespace base;
-using namespace base::math;
-using namespace base::opengl;
+#include <assert.h>
+#include <sstream>
 
 Demo::Demo(i32 width, i32 height) 
     : texture_(NULL)
@@ -36,18 +32,9 @@ Demo::Demo(i32 width, i32 height)
     texture_ = new Texture;
     texture_->GenerateFromFile(tex_info);
 
-    std::string status;
-    program_ = Program::Create("shader.shader", status);
-    if (program_ == NULL) {
-        std::cout << "Error at creating shader program: " << status << std::endl;
-        assert(false);
-    }
-    
-    program_hud_ = Program::Create("hud.shader", status);
-    if (program_hud_ == NULL) {
-        std::cout << "Error at creating HUD shader program: " << status << std::endl;
-        assert(false);
-    }
+    program_ = LoadProgram("shader.shader");
+    program_hud_ = LoadProgram("hud.shader");
+    program_font_ = LoadProgram("font.shader");
 
     std::vector<Mesh*> mesh_list 
         = load_md3_se("european_fnt_v2.md3");
@@ -63,7 +50,7 @@ Demo::Demo(i32 width, i32 height)
     //string filename = "AlphaBetaBRK.ttf";
     string filename = "AmerikaSans.ttf";
     font_ = new SpriteFont(filename, 0, 100);
-    font_->SetText(-50., 0, "Just for test.");
+    title_text_ = "Just for test.";
 
     ParticleSystemSetting ss;
     ps_ = new ParticleSystem(ss);
@@ -87,6 +74,7 @@ Demo::~Demo() {
     delete font_;
     delete ps_;
     delete texture_ps_;
+    delete program_font_;
 }
 
 void Demo::OnFrame(void) {
@@ -110,12 +98,6 @@ void Demo::OnFrame(void) {
         mesh_[i]->Draw(binding);
     }
 
-    Matrix4 m = cameraTransform_;
-    m.Invert();
-    program_->set_uniform("modelview_matrix", m);
-
-    font_->Draw(binding);
-
     glDisable(GL_DEPTH_TEST);
 
     glEnable(GL_BLEND);
@@ -129,7 +111,25 @@ void Demo::OnFrame(void) {
     program_hud_->set_uniform("modelview_matrix", cameraTransform_ * modelview_);
 
     ps_->Draw(binding, frame_time);
-    
+
+    program_font_->Bind();
+    binding = program_font_->binding();
+
+    program_font_->set_uniform("diffuse", font_->texture());
+    program_font_->set_uniform("projection_matrix", projection_);
+    program_font_->set_uniform("modelview_matrix", cameraTransform_ * modelview_);
+
+    font_->SetText(Vector2(-50.f, 0.f), title_text_, Vector4(0.f, 0.f, 1.f, 1.f));
+    font_->Draw(binding);
+
+    std::stringstream ss;
+    ss.precision(2);
+    ss.setf(std::ios::fixed,std::ios::floatfield);
+    ss << frame_time << " sec";
+    std::string text = ss.str();
+    font_->SetText(Vector2(-150.f, 150.f), text, Vector4(0.f, 0.f, 0.f, 1.f));
+    font_->Draw(binding);
+
     glDisable(GL_BLEND);
 
     assert(glGetError() == GL_NO_ERROR);
@@ -161,5 +161,18 @@ void Demo::OnMotion(i32 x, i32 y, i32 dx, i32 dy) {
 void Demo::OnKeyboard(u8 key, i32 x, i32 y) {
     std::string test("Key pressed: ");
     test += (char)key;
-	font_->SetText(-50., 0, test);
+    title_text_ = test;
+}
+
+Program* Demo::LoadProgram(const std::string& filename) {
+    std::string status;
+    Program* program = Program::Create(filename, status);
+    if (program == NULL) {
+        std::cout
+            << "Error on load shader program "
+            << filename << std::endl
+            << status << std::endl;
+        assert(false);
+    }
+    return program;
 }

@@ -14,6 +14,7 @@
 #include <iostream>
 #include "base/stream.h"
 #include "renderer/gltexture.h"
+#include "renderer/vertexbuffer.h"
 
 namespace base {
 namespace opengl {
@@ -46,7 +47,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     tex_info.GenerateMipmap = true;
     tex_info.Height = 512;
     tex_info.Width = 512;
-    tex_info.Pixel = PixelTypes::Gray;
+    tex_info.Pixel = PixelTypes::Alpha;
 
     texture_ = new base::opengl::Texture;
     texture_->GenerateFromBuffer(tex_info, temp_bitmap);
@@ -58,7 +59,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     Vertex* vertexes_ = new Vertex[max_chars_*4];
     Face* faces_ = new Face[max_chars_*2];
 
-    Vector4 color(1.0, 1.0, 1.0, 1.0);
+    Vector4 color(1.0, 0.0, 0.0, 1.0);
 
     for (u32 i=0; i<max_chars_; i++) {
         vertexes_[vertex_index_].color = color;
@@ -83,15 +84,15 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     delete[] faces_;
 }
 
-void SpriteFont::SetText(f32 x, f32 y, const std::string& str)
+void SpriteFont::SetText(const base::math::Vector2& position, const std::string& str, const math::Vector4& color)
 {
-    text_ = str;
-
-    const u32 length = str.size();
+    f32 x = position.x;
+    f32 y = position.y;
+    text_length_ = str.size();
     u32 vertex_index_ = 0;
     
     Vertex* vertexes_ = vbo_->Lock();
-    for (u32 i=0; i<length; i++) {
+    for (u32 i=0; i<text_length_; i++) {
         u8 ch = str[i];
             
         if (ch < 32 || ch > 128)
@@ -112,28 +113,32 @@ void SpriteFont::SetText(f32 x, f32 y, const std::string& str)
         //VERTEX 0
         vertexes_[vertex_index_].pos = Vector3(q.x0, q.y0, 0.0);
         vertexes_[vertex_index_].tex = Vector2(q.s0, q.t1);
+        vertexes_[vertex_index_].color = color;
 
         //VERTEX 1
         vertexes_[vertex_index_+1].pos = Vector3(q.x1, q.y0, 0.0);
         vertexes_[vertex_index_+1].tex = Vector2(q.s1, q.t1);
+        vertexes_[vertex_index_+1].color = color;
 
         //VERTEX 2
         vertexes_[vertex_index_+2].pos = Vector3(q.x1, q.y1, 0.0);
         vertexes_[vertex_index_+2].tex = Vector2(q.s1, q.t0);
+        vertexes_[vertex_index_+2].color = color;
 
         //VERTEX 3
         vertexes_[vertex_index_+3].pos = Vector3(q.x0, q.y1, 0.0);
         vertexes_[vertex_index_+3].tex = Vector2(q.s0, q.t0);
+        vertexes_[vertex_index_+3].color = color;
 
         vertex_index_ += 4;
     }
-    vbo_->Unlock();   
+    vbo_->Unlock();
 }
 
 void SpriteFont::Draw(const AttributeBinding& binding)
 {
-    texture_->Bind();
-    vbo_->Draw(binding, 0, text_.size() * 2);
+//    texture_->Bind();
+    vbo_->Draw(binding, 0, text_length_ * 2);
 }
 
 SpriteFont::~SpriteFont()

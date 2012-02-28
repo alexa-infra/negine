@@ -33,5 +33,5 @@ varying vec4 color;
 void main() {
     vec4 DiffuseColor = texture2D(diffuse, tex0) * color;
     float DiffuseTerm = clamp(dot(normal, vertex_to_light_vector), 0.0, 1.0);
-    gl_FragColor = DiffuseColor * DiffuseTerm;
+    gl_FragColor = DiffuseColor * color; // * DiffuseTerm;
 }
