@@ -123,9 +123,10 @@ void Demo::OnFrame(void) {
     font_->Draw(binding);
 
     std::stringstream ss;
-    ss.precision(2);
-    ss.setf(std::ios::fixed,std::ios::floatfield);
-    ss << frame_time << " sec";
+    //ss.precision(0);
+    //ss.setf(std::ios::fixed,std::ios::floatfield);
+    if (frame_diff_ > 0.f)
+        ss << (i32)(1.f / frame_diff_) << " fps";
     std::string text = ss.str();
     font_->SetText(Vector2(-150.f, 150.f), text, Vector4(0.f, 0.f, 0.f, 1.f));
     font_->Draw(binding);
@@ -134,6 +135,8 @@ void Demo::OnFrame(void) {
 
     assert(glGetError() == GL_NO_ERROR);
     Application::OnFrame();
+
+    frame_diff_ = timer_.Elapsed() / 1000.0f;
 }
 
 void Demo::OnReshape(i32 width, i32 height) {

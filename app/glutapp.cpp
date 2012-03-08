@@ -20,6 +20,12 @@
 
 #include <assert.h>
 
+ #ifdef OS_WIN
+ #include "GL/wglew.h"
+ #elif defined(OS_LINUX)
+ #include "GL/glxew.h"
+ #endif
+
 GlutWindow* GlutWindow::window_ = NULL;
 
 GlutWindow::GlutWindow()
@@ -70,6 +76,11 @@ GlutWindow::GlutWindow()
     glutCloseFunc(OnCloseProc);
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
+#ifdef OS_WIN
+    wglSwapInterval(1);
+#elif defined(OS_LINUX)
+    glXSwapIntervalSGI(1);
+#endif
 }
 
 GlutWindow::~GlutWindow() {

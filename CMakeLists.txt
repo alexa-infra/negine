@@ -21,7 +21,7 @@ include(${SRC_PATH}/CMake/CMakeHelpers.txt)
 
 if(UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -std=c++0x")
-  add_definitions(-D_DEBUG)
+#  add_definitions(-D_DEBUG)
 endif(UNIX)
 if(WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
