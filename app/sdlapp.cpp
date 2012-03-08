@@ -105,9 +105,10 @@ void SDLApp::Pump() {
 }
 
 void SDLApp::Run() {
+    Pump();
     while(run_) {
-        Pump();    
         OnFrame();
+        Pump();
     }
 }
 

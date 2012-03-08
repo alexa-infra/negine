@@ -60,7 +60,7 @@ protected:
     virtual void OnIdle(void) {}
     virtual void OnClose() {}
 
-    bool is_closed_;
+    bool run_;
     i32 width_;
     i32 height_;
     bool capture_;

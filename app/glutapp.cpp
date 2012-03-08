@@ -29,7 +29,7 @@
 GlutWindow* GlutWindow::window_ = NULL;
 
 GlutWindow::GlutWindow()
-: is_closed_(false)
+: run_(true)
 , width_(640)
 , height_(480)
 , capture_(false)
@@ -90,16 +90,17 @@ GlutWindow::~GlutWindow() {
 }
 
 void GlutWindow::Run() {
-    while (!is_closed_) {
-        glutMainLoopEvent();
+    glutMainLoopEvent();
+    while (run_) {
         OnFrame();
+        glutMainLoopEvent();
     }
 }
 
 void GlutWindow::OnCloseProc() {
-    window_->is_closed_ = true;
-    glutLeaveMainLoop();
+    window_->run_ = false;
     window_->OnClose();
+    glutLeaveMainLoop();
 }
 
 void GlutWindow::OnFrame(void) {
