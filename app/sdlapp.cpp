@@ -2,7 +2,7 @@
  * @author  Alexey Vasilyev <alexa.infra@gmail.com>
  * @section LICENSE
  * 
- * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * This file is part of Negine (https://hg.alexadotlife.com/negine)
  * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
  **/
 #include "app/sdlapp.h"
@@ -105,9 +105,10 @@ void SDLApp::Pump() {
 }
 
 void SDLApp::Run() {
+    Pump();
     while(run_) {
-        Pump();    
         OnFrame();
+        Pump();
     }
 }
 

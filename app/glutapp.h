@@ -2,7 +2,7 @@
  * @author  Alexey Vasilyev <alexa.infra@gmail.com>
  * @section LICENSE
  * 
- * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * This file is part of Negine (https://hg.alexadotlife.com/negine)
  * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
  **/
 #pragma once 
@@ -60,7 +60,7 @@ protected:
     virtual void OnIdle(void) {}
     virtual void OnClose() {}
 
-    bool is_closed_;
+    bool run_;
     i32 width_;
     i32 height_;
     bool capture_;

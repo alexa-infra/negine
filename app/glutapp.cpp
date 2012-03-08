@@ -2,7 +2,7 @@
  * @author  Alexey Vasilyev <alexa.infra@gmail.com>
  * @section LICENSE
  * 
- * This file is part of Negine (https://alexadotlife.com/hg/negine)
+ * This file is part of Negine (https://hg.alexadotlife.com/negine)
  * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
  **/
 #include "app/glutapp.h"
@@ -20,10 +20,16 @@
 
 #include <assert.h>
 
+#ifdef OS_WIN
+#include "GL/wglew.h"
+#elif defined(OS_LINUX)
+#include "GL/glxew.h"
+#endif
+
 GlutWindow* GlutWindow::window_ = NULL;
 
 GlutWindow::GlutWindow()
-: is_closed_(false)
+: run_(true)
 , width_(640)
 , height_(480)
 , capture_(false)
@@ -70,6 +76,11 @@ GlutWindow::GlutWindow()
     glutCloseFunc(OnCloseProc);
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
+#ifdef OS_WIN
+    wglSwapInterval(1);
+#elif defined(OS_LINUX)
+    glXSwapIntervalSGI(1);
+#endif
 }
 
 GlutWindow::~GlutWindow() {
@@ -79,16 +90,17 @@ GlutWindow::~GlutWindow() {
 }
 
 void GlutWindow::Run() {
-    while (!is_closed_) {
-        glutMainLoopEvent();
+    glutMainLoopEvent();
+    while (run_) {
         OnFrame();
+        glutMainLoopEvent();
     }
 }
 
 void GlutWindow::OnCloseProc() {
-    window_->is_closed_ = true;
-    glutLeaveMainLoop();
+    window_->run_ = false;
     window_->OnClose();
+    glutLeaveMainLoop();
 }
 
 void GlutWindow::OnFrame(void) {
