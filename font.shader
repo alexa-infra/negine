@@ -24,5 +24,5 @@ varying vec4 color;
 void main() {
     vec4 DiffuseColor = texture2D(diffuse, tex0);
     gl_FragColor = color;
-    gl_FragColor.a = DiffuseColor.a;
+    gl_FragColor.a = DiffuseColor.r;
 }
