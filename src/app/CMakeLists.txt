@@ -1,5 +1,6 @@
-set(SRC_PATH ${negine_SOURCE_DIR})
-set(TOOLS_PATH ${SRC_PATH}/thirdparty)
+set(SRC_PATH ${negine_SOURCE_DIR}/src)
+set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
+
 set(APP_PATH ${SRC_PATH}/app)
 
 set(SRC
@@ -19,26 +20,20 @@ include_directories(
     ${TOOLS_PATH}
     ${SRC_PATH}
     ${TOOLS_PATH}/glew/include
-    ${TOOLS_PATH}/freeglut/include
     ${TOOLS_PATH}/lua/include
-)
-add_executable(app ${SRC})
-
-add_dependencies(app
-    freeglut
-    base
-    renderer
-    lua
-)
-
-target_link_libraries(app 
-    freeglut
-    base
-    renderer
-    lua
 )
 
 add_definitions(-DGLEW_STATIC)
+
+add_executable(app
+    ${SRC}
+)
+add_dependencies(app
+    negine
+)
+target_link_libraries(app 
+    negine
+)
 
 if (USE_SDL)
     find_package(SDL 1.3) 

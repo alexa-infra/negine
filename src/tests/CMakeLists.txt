@@ -1,5 +1,5 @@
-set(SRC_PATH ${negine_SOURCE_DIR})
-set(TOOLS_PATH ${SRC_PATH}/thirdparty)
+set(SRC_PATH ${negine_SOURCE_DIR}/src)
+set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 set(TESTS_PATH ${SRC_PATH}/tests)
 
 set(GTEST_PATH ${TOOLS_PATH}/gtest)
@@ -10,24 +10,17 @@ add_source_group("google-test"  ${GTEST_PATH}       TESTS_SRC)
 include_directories(
     ${TOOLS_PATH}
     ${SRC_PATH}
-    ${TOOLS_PATH}/glew/include
 )
 add_executable(tests ${TESTS_SRC})
 
 add_dependencies(tests
-    glew
-    base
-    renderer
+    negine
 )
 
 target_link_libraries(tests
-    glew
-    base
-    renderer
+    negine
 )
 
 if(UNIX)
   target_link_libraries(tests pthread)
 endif(UNIX)
-
-add_definitions(-DGLEW_STATIC)

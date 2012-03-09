@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(negine)
 
-set(SRC_PATH ${negine_SOURCE_DIR})
-set(TOOLS_PATH ${SRC_PATH}/thirdparty)
+set(SRC_PATH ${negine_SOURCE_DIR}/src)
+set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 set(TESTS_PATH ${SRC_PATH}/tests)
-set(APP_PATH ${SRC_PATH}/app)
 
 option(USE_SDL "SDL" ON)
 option(USE_GLUT "Freeglut" OFF)
@@ -37,14 +36,13 @@ if(WIN32)
 endif(WIN32)
 set(CMAKE_DEBUG_POSTFIX "_d")
 
-add_subdirectory(${TOOLS_PATH}/freeglut ${PROJECT_BINARY_DIR}/freeglut)
+if(USE_GLUT)
+  add_subdirectory(${TOOLS_PATH}/freeglut ${PROJECT_BINARY_DIR}/freeglut)
+endif(USE_GLUT)
 add_subdirectory(${TOOLS_PATH}/glew ${PROJECT_BINARY_DIR}/glew)
 add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
 add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)
 
-add_subdirectory(${SRC_PATH}/base ${PROJECT_BINARY_DIR}/base)
-add_subdirectory(${SRC_PATH}/renderer ${PROJECT_BINARY_DIR}/renderer)
-
+add_subdirectory(${SRC_PATH} ${PROJECT_BINARY_DIR}/negine)
+add_subdirectory(${SRC_PATH}/app ${PROJECT_BINARY_DIR}/app)
 add_subdirectory(${TESTS_PATH} ${PROJECT_BINARY_DIR}/tests)
-add_subdirectory(${APP_PATH} ${PROJECT_BINARY_DIR}/app)
-
