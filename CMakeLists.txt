@@ -16,8 +16,16 @@ if (NOT USE_SDL AND NOT USE_GLUT)
   message(FATAL_ERROR "use one engine: sdl or glut")
 endif()
 
-set(CMAKE_MODULE_PATH ${SRC_PATH}/CMake ${CMAKE_MODULE_PATH})
-include(${SRC_PATH}/CMake/CMakeHelpers.txt)
+macro(add_source_group FILTER_NAME SOURCE_PATH TARGET_LIST)
+    file(GLOB TEMP_SRC
+        ${SOURCE_PATH}/*.h
+        ${SOURCE_PATH}/*.cpp
+        ${SOURCE_PATH}/*.cc
+        ${SOURCE_PATH}/*.c
+    )
+    source_group(${FILTER_NAME} FILES ${TEMP_SRC})
+    list(APPEND ${TARGET_LIST} ${TEMP_SRC})
+endmacro(add_source_group)
 
 if(UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -std=c++0x")
