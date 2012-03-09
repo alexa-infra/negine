@@ -148,6 +148,7 @@ std::vector<Mesh*> load_md3(FileBinary& file) {
         Md3Surface surface = file.read_type<Md3Surface>();
         assert(surface.ident == 0x33504449);
 
+        mesh->name = std::string((const char *)surface.name);
         mesh->num_vertexes = surface.num_verts;
         mesh->num_faces = surface.num_triangles;
 
@@ -207,6 +208,7 @@ std::vector<Mesh*> load_md3(u8* data) {
 
         assert(surface->ident == 0x33504449);
 
+        mesh->name = std::string((const char *)surface->name);
         mesh->num_vertexes = surface->num_verts;
         mesh->num_faces = surface->num_triangles;
 

@@ -123,10 +123,18 @@ Program::~Program() {
     
 void Program::Bind() {
     glUseProgram(program_id_);
+    AttributeBinding::const_iterator it;
+    for(it = attr_binding_.begin(); it != attr_binding_.end(); ++it) {
+        glEnableVertexAttribArray(it->second);
+    }
 }
 
 void Program::Unbind() {
-    glUseProgram(0);
+    AttributeBinding::const_iterator it;
+    for(it = attr_binding_.begin(); it != attr_binding_.end(); ++it) {
+        glDisableVertexAttribArray(it->second);
+    }
+//    glUseProgram(0);
 }
 
 void Program::Link() {

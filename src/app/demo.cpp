@@ -15,7 +15,6 @@
 Demo::Demo(i32 width, i32 height) 
     : texture_(NULL)
     , program_(NULL)
-    , buffer_(NULL)
 {
     glViewport(0, 0, width, height); 
 
@@ -33,6 +32,8 @@ Demo::Demo(i32 width, i32 height)
         = load_md3_se("european_fnt_v2.md3");
     for (u32 i=0; i<mesh_list.size(); i++) {
         Mesh* m = mesh_list[i];
+
+        std::cout << m->name << std::endl;
         VertexBuffer* vb = new VertexBuffer;
         vb->SetData(m->vertexes, m->num_vertexes, m->faces, m->num_faces);
         mesh_.push_back(vb);
@@ -54,7 +55,6 @@ Demo::Demo(i32 width, i32 height)
 Demo::~Demo() {
     for (u32 i=0; i<mesh_.size(); i++)
         delete mesh_[i];
-    delete buffer_;
     delete program_;
     delete program_hud_;
     delete font_;
@@ -78,11 +78,11 @@ void Demo::OnFrame(void) {
     program_->set_uniform(UniformVars::Projection, projection_);
     program_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelTransform_);
     
-    texture_->Bind();
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
     }
 
+    program_->Unbind();
     glDisable(GL_DEPTH_TEST);
 
     glEnable(GL_BLEND);
@@ -96,6 +96,7 @@ void Demo::OnFrame(void) {
     program_hud_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelview_);
 
     ps_->Draw(binding, frame_time);
+    program_hud_->Unbind();
 
     program_font_->Bind();
     binding = program_font_->binding();
@@ -115,6 +116,7 @@ void Demo::OnFrame(void) {
     std::string text = ss.str();
     font_->SetText(Vector2(-150.f, 150.f), text, Vector4(0.f, 0.f, 0.f, 1.f));
     font_->Draw(binding);
+    program_font_->Unbind();
 
     glDisable(GL_BLEND);
 

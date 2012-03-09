@@ -90,17 +90,12 @@ void VertexBuffer::BindAttributes(const AttributeBinding& binding) {
                     GL_FALSE,
                     sizeof(Vertex),
                     (GLvoid*)VertexAttrs::GetOffset(it->first));
-        glEnableVertexAttribArray(it->second);
     }
     indexes_->Bind(BufferTargets::ElementArray);
 }
 
 void VertexBuffer::UnbindAttributes(const AttributeBinding& binding) {
     indexes_->Unbind();
-    AttributeBinding::const_iterator it;
-    for(it = binding.begin(); it != binding.end(); ++it) {
-        glDisableVertexAttribArray(it->second);
-    }
     vertexes_->Unbind();
 }
 

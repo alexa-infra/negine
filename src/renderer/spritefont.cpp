@@ -137,7 +137,6 @@ void SpriteFont::SetText(const base::math::Vector2& position, const std::string&
 
 void SpriteFont::Draw(const AttributeBinding& binding)
 {
-//    texture_->Bind();
     vbo_->Draw(binding, 0, text_length_ * 2);
 }
 
