@@ -9,6 +9,7 @@
 
 #include "base/types.h"
 #include "renderer/glcontext.h"
+#include <unordered_map>
 
 namespace base {
 namespace opengl {
@@ -165,6 +166,21 @@ private:
 
 private:
     DISALLOW_COPY_AND_ASSIGN(Texture);
+};
+
+struct hash_string {
+    size_t operator()(const std::string& x) const;
+};
+
+class TextureLoader {
+    std::unordered_map<std::string, Texture*, hash_string> cache_;
+public:
+    TextureLoader();
+    ~TextureLoader();
+    Texture* Load(const std::string& filename);
+    void ClearCache();
+private:
+    DISALLOW_COPY_AND_ASSIGN(TextureLoader);
 };
 
 }

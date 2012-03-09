@@ -42,6 +42,8 @@ private:
     std::string title_text_;
 
     f32 frame_diff_;
+
+    TextureLoader texure_loader_;
 public:
     Demo(i32 width = 640, i32 height = 480); 
     virtual ~Demo();

@@ -23,14 +23,7 @@ Demo::Demo(i32 width, i32 height)
     projection_ = Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
     modelTransform_.SetIdentity();
 
-    TextureInfo tex_info;
-    tex_info.Filename = "european_fnt.tga";
-    tex_info.MinFilter = TextureMinFilters::LINEAR;
-    tex_info.GenerateMipmap = true;
-    tex_info.Pixel = PixelTypes::RGB;
-
-    texture_ = new Texture;
-    texture_->GenerateFromFile(tex_info);
+    texture_ = texure_loader_.Load("european_fnt.tga");
 
     program_ = LoadProgram("shader.shader");
     program_hud_ = LoadProgram("hud.shader");
@@ -55,25 +48,17 @@ Demo::Demo(i32 width, i32 height)
     ParticleSystemSetting ss;
     ps_ = new ParticleSystem(ss);
 
-    TextureInfo tex_info_ps;
-    tex_info_ps.Filename = "heart.png";
-    tex_info_ps.MinFilter = TextureMinFilters::LINEAR;
-    tex_info_ps.Pixel = PixelTypes::RGBA;
-
-    texture_ps_ = new Texture;
-    texture_ps_->GenerateFromFile(tex_info_ps);
+    texture_ps_ = texure_loader_.Load("heart.png");
 }
 
 Demo::~Demo() {
     for (u32 i=0; i<mesh_.size(); i++)
         delete mesh_[i];
     delete buffer_;
-    delete texture_;
     delete program_;
     delete program_hud_;
     delete font_;
     delete ps_;
-    delete texture_ps_;
     delete program_font_;
 }
 

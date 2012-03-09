@@ -67,7 +67,13 @@ void Texture::GenerateFromFile(const TextureInfo& textureinfo) {
     if(image == NULL)
     {   
         std::cout << stbi_failure_reason() << std::endl;
-        assert(false);
+        return;
+    }
+
+    switch(info_.Depth) {
+        case 1: info_.Pixel = PixelTypes::Alpha; break;
+        case 3: info_.Pixel = PixelTypes::RGB; break;
+        case 4: info_.Pixel = PixelTypes::RGBA; break;
     }
 
     FromBuffer(image);
@@ -102,6 +108,46 @@ void Texture::FromBuffer(const u8* data) {
 //    if (info_.GenerateMipmap)
 //        glGenerateMipmap(GL_TEXTURE_2D);
 
+}
+
+size_t hash_string::operator()(const std::string& x) const {
+    const char* str = x.c_str();
+    u32 hash = *str;
+    if(hash) {
+        for(str += 1; *str != '\0'; ++str)
+            hash = (hash << 5) - hash + *str;
+    }
+    return hash;
+}
+
+TextureLoader::TextureLoader() {
+}
+
+TextureLoader::~TextureLoader() {
+    ClearCache();
+}
+
+void TextureLoader::ClearCache() {
+    for(auto it = cache_.begin(); it != cache_.end(); ++it) {
+        delete it->second;
+    }
+    cache_.clear();
+}
+
+Texture* TextureLoader::Load(const std::string& filename) {
+    auto found = cache_.find(filename);
+    if (found != cache_.end()) {
+        return found->second;
+    }
+    TextureInfo tex_info;
+    tex_info.Filename = filename;
+    tex_info.MinFilter = TextureMinFilters::LINEAR;
+    tex_info.GenerateMipmap = true;
+
+    Texture* t = new Texture();
+    t->GenerateFromFile(tex_info);
+    cache_[filename] = t;
+    return t;
 }
 
 }
