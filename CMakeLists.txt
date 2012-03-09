@@ -32,6 +32,7 @@ set(CMAKE_DEBUG_POSTFIX "_d")
 add_subdirectory(${TOOLS_PATH}/freeglut ${PROJECT_BINARY_DIR}/freeglut)
 add_subdirectory(${TOOLS_PATH}/glew ${PROJECT_BINARY_DIR}/glew)
 add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
+add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)
 
 add_subdirectory(${SRC_PATH}/base ${PROJECT_BINARY_DIR}/base)
 add_subdirectory(${SRC_PATH}/renderer ${PROJECT_BINARY_DIR}/renderer)
