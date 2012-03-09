@@ -168,10 +168,6 @@ private:
     DISALLOW_COPY_AND_ASSIGN(Texture);
 };
 
-struct hash_string {
-    size_t operator()(const std::string& x) const;
-};
-
 class TextureLoader {
     std::unordered_map<std::string, Texture*, hash_string> cache_;
 public:

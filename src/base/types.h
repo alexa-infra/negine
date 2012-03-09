@@ -48,6 +48,10 @@ typedef i64 iptr;
 #include <string>
 typedef std::string string;
 
+struct hash_string {
+    size_t operator()(const std::string& x) const;
+};
+
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
