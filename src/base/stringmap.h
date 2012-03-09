@@ -11,7 +11,7 @@
 #pragma once
 
 #include "base/types.h"
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <algorithm>
 
@@ -34,7 +34,7 @@ template<class T, u32 N>
 class StringMap
 {
 public:
-    typedef std::map<std::string, T> map_type;
+    typedef std::unordered_map<std::string, T, hash_string> map_type;
 
 private:
     map_type entries_;
@@ -48,16 +48,20 @@ public:
             entries_[std::string(m[i].key)] = m[i].value;
         }
     }
-    const char* to_string(const T& value) {
+    bool to_string(const T& value, std::string& ret) {
         typename map_type::iterator it = std::find_if(entries_.begin(), entries_.end(),
             std::bind2nd(map_data_compare<map_type>(), value));
-        assert(it != entries_.end());
-        return it->first.c_str();
+        if (it == entries_.end())
+            return false;
+        ret = it->first;
+        return true;
     }
-    T from_string(const char* key) {
-        typename map_type::iterator it = entries_.find(std::string(key));
-        assert(it != entries_.end());
-        return it->second;
+    bool from_string(const std::string& key, T& ret) {
+        typename map_type::iterator it = entries_.find(key);
+        if (it == entries_.end())
+            return false;
+        ret = it->second;
+        return true;
     }
 };
 

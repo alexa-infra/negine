@@ -23,10 +23,21 @@ StringMap<TestEnum, TestEnums::Count>::Entry strs[TestEnums::Count] = {
     { "Third",  TestEnums::Third  },
     { "Fourth", TestEnums::Fourth }
 };
+StringMap<TestEnum, TestEnums::Count> map(strs);
 
 TEST(enums, basic)
 {
-    StringMap<TestEnum, TestEnums::Count> map(strs);
-    EXPECT_STREQ(map.to_string(TestEnums::Second), "Second");
-    EXPECT_EQ(map.from_string("Fourth"), TestEnums::Fourth);
+    std::string res;
+    EXPECT_TRUE(map.to_string(TestEnums::Second, res));
+    EXPECT_STREQ(res.c_str(), "Second");
+
+    TestEnum en;
+    EXPECT_TRUE(map.from_string("Fourth", en));
+    EXPECT_EQ(en, TestEnums::Fourth);
+}
+
+TEST(enums, not_found)
+{
+    TestEnum en;
+    EXPECT_FALSE(map.from_string("bla-bla-bla", en));
 }

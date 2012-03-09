@@ -17,80 +17,42 @@
 namespace base {
 namespace opengl {
 
-//! Program attribute information
-class Attribute {
-public:
-    u32 Location;           //!< Location of attribute
-    GLenum Type;            //!< Type of attribute
-
-    Attribute() : Location(0), Type(0) {}
-};
-typedef std::map<std::string, Attribute> AttributeList;
-
 //! Program uniform information
-class Uniform {
-public:
-    u32 Location;           //!< Location of uniform
-    GLenum Type;            //!< Type of uniform
-    u32 Index;              //!< Index of sampler (-1 for other types)
+namespace UniformVars {
+    enum UniformVar {
+        Diffuse,
+        Projection,
+        Modelview,
 
-    Uniform() : Location(0), Type(0) {}
-};
-typedef std::map<std::string, Uniform> UniformList;
+        Count
+    };
+
+    u32 get_tex_index(UniformVar var);
+}
+typedef UniformVars::UniformVar UniformVar;
+typedef std::map<UniformVar, u32> UniformBinding;
 
 //! Shader program object
 class Program {
 protected:
     GLuint program_id_;         //!< Name of program object
     
-    UniformList uniforms_;      //!< Active uniform objects
-    AttributeList attributes_;  //!< Active attribute objects
-
     Shader* pixel_shader_;      //!< Attached pixel shader
     Shader* vertex_shader_;     //!< Attached vertex shader
 
-    bool linked_;               //!< Program is linked status (shaders are attached, program is linked)
     std::string status_;        //!< Status string, result of linkage
     bool is_ok_;                //!< Status of program creation
 
-    bool own_pixel_shader_;     //!< Pixel shader is created by program, and should be destructed with program
-    bool own_vertex_shader_;    //!< Vertex shader is created by program, and should be destructed with program
-
-    AttributeBinding binding_;  //!< attributes to vertex data binding
-public:
+    AttributeBinding attr_binding_;  //!< attributes to vertex data binding
+    UniformBinding uni_binding_;
     Program();
+public:
     ~Program();
 
     //! Gets program creation status
     bool is_ok() const { return is_ok_; }
     //! Returns status string
     const std::string& status() const { return status_; }
-
-    //! Sets pixel shader
-    void set_pixel_shader(Shader* shader) { 
-        if (linked_) Unlink();
-        if (own_pixel_shader_) delete pixel_shader_;
-        own_pixel_shader_ = false;
-        pixel_shader_ = shader; 
-    }
-
-    //! Gets pixel shader
-    const Shader* pixel_shader() const { 
-        return pixel_shader_; 
-    }
-
-    //! Sets vertex shader
-    void set_vertex_shader(Shader* shader) { 
-        if (linked_) Unlink();
-        if (own_vertex_shader_) delete vertex_shader_;
-        own_vertex_shader_ = false;
-        vertex_shader_ = shader; 
-    }
-
-    //! Gets vertex shader
-    const Shader* vertex_shader() const { 
-        return vertex_shader_; 
-    }
 
     //! Sets program to be used at current pipeline
     void Bind();
@@ -100,21 +62,20 @@ public:
 
     //! Gets binding of attributes to vertex tags
     const AttributeBinding& binding() {
-        if (!linked_) Link();
-        return binding_;
+        return attr_binding_;
     }
 
     //! Set uniform helper, that wraps value by generic param
     template<typename T>
-    void set_uniform(const std::string& name, const T& val) {
+    void set_uniform(UniformVar uniform, const T& val) {
         base::generic_param<T> param(val);
-        set_uniform_param(name, param);
+        set_uniform_param(uniform, param);
     }
 
     //! Sets uniform value by name
-    //! \param      name            Name of uniform
+    //! \param      uniform         Variable name
     //! \param      p               Parametrized value
-    void set_uniform_param(const std::string& name, const param& p);
+    void set_uniform_param(UniformVar uniform, const param& p);
 
     //! Creates program from vertex and shader source texts
     //! \param      vs              text of vertex shader
@@ -136,20 +97,10 @@ protected:
     void Unlink();
     
     //! Populate list of active uniforms
-    void get_uniforms_list(UniformList& uniforms);
+    void get_uniforms_list();
 
     //! Populate list of active attributes
-    void get_attributes_list(AttributeList& attributes);
-
-    //! Gets active attribute by name
-    Attribute get_attribute(const std::string& name);
-
-    //! Add attribute (if exists at program) to binding
-    void add_attribute_binding(AttributeBinding& binding, const std::string& name, VertexAttr tag);
-
-    //! Populate attribute location to vertex tag binding 
-    void get_attribute_binding(AttributeBinding& binding);
-
+    void get_attributes_list();
 private:
     DISALLOW_COPY_AND_ASSIGN(Program);
 };

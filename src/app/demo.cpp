@@ -74,9 +74,9 @@ void Demo::OnFrame(void) {
     program_->Bind();
     AttributeBinding binding = program_->binding();
 
-    program_->set_uniform("diffuse", texture_);
-    program_->set_uniform("projection_matrix", projection_);
-    program_->set_uniform("modelview_matrix", cameraTransform_ * modelTransform_);
+    program_->set_uniform(UniformVars::Diffuse, texture_);
+    program_->set_uniform(UniformVars::Projection, projection_);
+    program_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelTransform_);
     
     texture_->Bind();
     for (u32 i=0; i<mesh_.size(); i++) {
@@ -91,18 +91,18 @@ void Demo::OnFrame(void) {
     program_hud_->Bind();
     binding = program_hud_->binding();
 
-    program_hud_->set_uniform("diffuse", texture_ps_);
-    program_hud_->set_uniform("projection_matrix", projection_);
-    program_hud_->set_uniform("modelview_matrix", cameraTransform_ * modelview_);
+    program_hud_->set_uniform(UniformVars::Diffuse, texture_ps_);
+    program_hud_->set_uniform(UniformVars::Projection, projection_);
+    program_hud_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelview_);
 
     ps_->Draw(binding, frame_time);
 
     program_font_->Bind();
     binding = program_font_->binding();
 
-    program_font_->set_uniform("diffuse", font_->texture());
-    program_font_->set_uniform("projection_matrix", projection_);
-    program_font_->set_uniform("modelview_matrix", cameraTransform_ * modelview_);
+    program_font_->set_uniform(UniformVars::Diffuse, font_->texture());
+    program_font_->set_uniform(UniformVars::Projection, projection_);
+    program_font_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelview_);
 
     font_->SetText(Vector2(-50.f, 0.f), title_text_, Vector4(0.f, 0.f, 1.f, 1.f));
     font_->Draw(binding);

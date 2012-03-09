@@ -13,18 +13,41 @@
 #include "renderer/gltexture.h"
 #include <memory>
 #include "base/stream.h"
+#include "base/stringmap.h"
 
 namespace base {
 namespace opengl {
+
+StringMap<VertexAttr, VertexAttr::Count>::Entry attr_map_str[VertexAttr::Count] = {
+    { "position",  VertexAttrs::tagPosition },
+    { "tex",       VertexAttrs::tagTexture },
+    { "col",       VertexAttrs::tagColor },
+    { "n",         VertexAttrs::tagNormal },
+    { "t",         VertexAttrs::tagTangent },
+    { "bi",        VertexAttrs::tagBinormal }
+};
+StringMap<VertexAttr, VertexAttr::Count> attr_map(attr_map_str);
+
+StringMap<UniformVar, UniformVars::Count>::Entry uni_map_str[UniformVars::Count] = {
+    { "diffuse",            UniformVars::Diffuse },
+    { "projection_matrix",  UniformVars::Projection },
+    { "modelview_matrix",   UniformVars::Modelview }
+};
+StringMap<UniformVar, UniformVars::Count> uni_map(uni_map_str);
+
+u32 UniformVars::get_tex_index(UniformVar var) {
+    switch (var) {
+        case UniformVars::Diffuse: return 0;
+        default:
+            return 0;
+    }
+}
 
 Program::Program()
     : program_id_(0)
     , pixel_shader_(NULL)
     , vertex_shader_(NULL)
-    , linked_(false)
-    , is_ok_(false)
-    , own_pixel_shader_(false)
-    , own_vertex_shader_(false) {
+    , is_ok_(false) {
     program_id_ = glCreateProgram();
 }
 
@@ -37,7 +60,7 @@ Program* Program::Create(const std::string& vs, const std::string& fs, std::stri
         status = pvs->status();
         failed = true;
     } else {
-        pr->set_vertex_shader(pvs.release());
+        pr->vertex_shader_ = pvs.release();
     }
     if (!pfs->Compile(fs)) {
         if (!failed)
@@ -46,7 +69,7 @@ Program* Program::Create(const std::string& vs, const std::string& fs, std::stri
             status = status + pfs->status();
         failed = true;
     } else {
-        pr->set_pixel_shader(pfs.release());
+        pr->pixel_shader_ = pfs.release();
     }
     if (failed) return NULL;
     pr->Link();
@@ -54,14 +77,15 @@ Program* Program::Create(const std::string& vs, const std::string& fs, std::stri
         status = pr->status();
         return NULL;
     }
-    pr->own_pixel_shader_ = true;
-    pr->own_vertex_shader_ = true;
     return pr.release();
 }
 
 Program* Program::Create(const std::string& filename, std::string& status) {
     FileText file(filename);
     std::vector<std::string> lines = file.read_lines();
+    if (lines.size() == 0)
+        return NULL;
+
     u32 vertexBegin = 0;
     u32 pixelBegin = 0;
     for (u32 i=0; i<lines.size(); i++) {
@@ -70,6 +94,9 @@ Program* Program::Create(const std::string& filename, std::string& status) {
         if (lines[i] == "-- pixel")
             pixelBegin = i + 1;
     }
+    if (vertexBegin == pixelBegin)
+        return NULL;
+
     u32 vertexEnd = 0;
     u32 pixelEnd = 0;
     if (vertexBegin > pixelBegin) {
@@ -89,13 +116,12 @@ Program* Program::Create(const std::string& filename, std::string& status) {
 }
 
 Program::~Program() {
-    if (own_pixel_shader_) delete pixel_shader_;
-    if (own_vertex_shader_) delete vertex_shader_;
+    delete pixel_shader_;
+    delete vertex_shader_;
     glDeleteProgram(program_id_);
 }
     
 void Program::Bind() {
-    if (!linked_) Link();
     glUseProgram(program_id_);
 }
 
@@ -109,15 +135,13 @@ void Program::Link() {
     if (pixel_shader_ != NULL)
         glAttachShader(program_id_, pixel_shader_->id());
     glLinkProgram(program_id_);
-    linked_ = true;    
 
     GLint status;
     glGetProgramiv(program_id_, GL_LINK_STATUS, &status);
     if (status != GL_FALSE) {
         is_ok_ = true;
-        get_uniforms_list(uniforms_);
-        get_attributes_list(attributes_);
-        get_attribute_binding(binding_);
+        get_uniforms_list();
+        get_attributes_list();
         return;
     }
     
@@ -127,7 +151,6 @@ void Program::Link() {
     char* buf = const_cast<char*>(status_.c_str());
     glGetProgramInfoLog(program_id_, len, NULL, buf);
     is_ok_ = false;
-    return;
 }
 
 void Program::Unlink() {
@@ -135,37 +158,36 @@ void Program::Unlink() {
         glDetachShader(program_id_, pixel_shader_->id());
     if (vertex_shader_ != NULL)
         glDetachShader(program_id_, vertex_shader_->id());
-    uniforms_.clear();
-    attributes_.clear();
-    linked_ = false;
-    binding_.clear();
+    uni_binding_.clear();
+    attr_binding_.clear();
 }
 
-void Program::set_uniform_param(const std::string& name, const param& p) {
-    UniformList::iterator it = uniforms_.find(name);
-    if (it == uniforms_.end()) return;
+void Program::set_uniform_param(UniformVar uniform, const param& p) {
+    UniformBinding::iterator it = uni_binding_.find(uniform);
+    if (it == uni_binding_.end()) return;
 
-    Uniform uniform = it->second;
+    u32 location = it->second;
 
     switch (p.get_type()) {
         case Types::Texture:
         {
             Texture* t = p.get<Texture*>();
-            glActiveTexture(GL_TEXTURE0 + uniform.Index);
+            u32 sampler_index = get_tex_index(uniform);
+            glActiveTexture(GL_TEXTURE0 + sampler_index);
             t->Bind();
-            glUniform1i(uniform.Location, uniform.Index);
+            glUniform1i(location, sampler_index);
         }
         break;
         case Types::Matrix4:
         {
             math::Matrix4 const& m = p.get<math::Matrix4>();
-            glUniformMatrix4fv(uniform.Location, 1, GL_TRUE, m.array1d);
+            glUniformMatrix4fv(location, 1, GL_TRUE, m.array1d);
         }
         break;
         case Types::Vector4:
         {
             math::Vector4 const& v = p.get<math::Vector4>();
-            glUniform4f(uniform.Location, v.x, v.y, v.z, v.w);
+            glUniform4f(location, v.x, v.y, v.z, v.w);
         }
         break;
         default:
@@ -175,7 +197,7 @@ void Program::set_uniform_param(const std::string& name, const param& p) {
     }    
 } 
 
-void Program::get_uniforms_list(UniformList& uniforms) {
+void Program::get_uniforms_list() {
     GLint uniform_count, max_name_length = 0;
     glGetProgramiv(program_id_, GL_ACTIVE_UNIFORMS, &uniform_count);
     glGetProgramiv(program_id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length);
@@ -184,7 +206,6 @@ void Program::get_uniforms_list(UniformList& uniforms) {
 
     char *buffer = new char[max_name_length];
 
-    std::map<GLenum, u32> index_map;
     for (GLint i = 0; i < uniform_count; ++i) 
     {
         GLsizei name_length = 0;
@@ -195,18 +216,19 @@ void Program::get_uniforms_list(UniformList& uniforms) {
         std::string uniformName(buffer);
         u32 location = glGetUniformLocation(program_id_, uniformName.c_str());
 
-        Uniform uniform;
-        uniform.Location = (i32)location;
-        uniform.Type = uniform_type;
-        uniform.Index = index_map[uniform_type]++;
-
-        uniforms[uniformName] = uniform;
+        UniformVar uni;
+        if (!uni_map.from_string(uniformName, uni)) {
+            std::cout << "uniform not found. name: " << uniformName 
+                << ", type: " << uniform_type << std::endl;
+            continue;
+        }
+        uni_binding_[uni] = location;
     }
 
     delete[] buffer;
 }
 
-void Program::get_attributes_list(AttributeList& attributes) {
+void Program::get_attributes_list() {
     GLint attrib_count, max_name_len = 0;
     glGetProgramiv(program_id_, GL_ACTIVE_ATTRIBUTES, &attrib_count);
     glGetProgramiv(program_id_, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_name_len);
@@ -223,37 +245,17 @@ void Program::get_attributes_list(AttributeList& attributes) {
                 
         std::string name(attrName);
         i32 location = glGetAttribLocation(program_id_, attrName);
-        Attribute attr;
-        attr.Location = location;
-        attr.Type = attrGLType;
-        attributes[name] = attr;
+
+        VertexAttr va;
+        if (!attr_map.from_string(name, va)) {
+            std::cout << "vertex attr not found. name: " << name 
+                << ", type: " << attrGLType << std::endl;
+            continue;
+        }
+        attr_binding_.push_back(std::make_pair(va, location));
     }
 
     delete [] attrName;
-}
-
-
-Attribute Program::get_attribute(const std::string& name) {
-    AttributeList::const_iterator found = attributes_.find(name);
-    if (found != attributes_.end())
-        return found->second;
-    return Attribute();
-}
-
-void Program::add_attribute_binding(AttributeBinding& binding, const std::string& name, VertexAttr tag) {
-    Attribute attr = get_attribute(name);
-    if (attr.Type != 0)
-        binding.push_back(std::make_pair(tag, attr.Location));
-}
-
-void Program::get_attribute_binding(AttributeBinding& binding) {
-    binding.clear();
-    add_attribute_binding(binding, "position", VertexAttrs::tagPosition);
-    add_attribute_binding(binding, "tex", VertexAttrs::tagTexture);
-    add_attribute_binding(binding, "col", VertexAttrs::tagColor);
-    add_attribute_binding(binding, "n", VertexAttrs::tagNormal);
-    add_attribute_binding(binding, "t", VertexAttrs::tagTangent);
-    add_attribute_binding(binding, "bi", VertexAttrs::tagBinormal);
 }
 
 }

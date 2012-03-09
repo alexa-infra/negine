@@ -40,7 +40,9 @@ namespace VertexAttrs
         tagTexture,
         tagTangent,
         tagBinormal,
-        tagColor
+        tagColor,
+
+        Count
     };
 
     //! Gets offset of attribute in vertex structure
