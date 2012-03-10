@@ -32,8 +32,6 @@ Demo::Demo(i32 width, i32 height)
         = load_md3_se("european_fnt_v2.md3");
     for (u32 i=0; i<mesh_list.size(); i++) {
         Mesh* m = mesh_list[i];
-
-        std::cout << m->name << std::endl;
         VertexBuffer* vb = new VertexBuffer;
         vb->SetData(m->vertexes, m->num_vertexes, m->faces, m->num_faces);
         mesh_.push_back(vb);
