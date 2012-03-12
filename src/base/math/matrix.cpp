@@ -511,6 +511,47 @@ Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target) {
     return result;
 }
 
+Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target, const Vector3& upDirection) {
+    Vector3 left;
+    Vector3 forward;
+    Vector3 up;
+
+    up = upDirection;
+    up.Normalize();
+
+    forward = target - position;
+    forward.Normalize();
+
+    left = up ^ forward;  // cross product
+    left.Normalize();
+
+    Matrix4 result(left, up, forward);
+    result.Translate(position);
+    return result;    
+}
+
+Matrix4 Matrix4::GetPerspective(f32 fovy, f32 aspect, f32 zNear, f32 zFar)
+{
+    f32 range = zFar - zNear;
+    f32 fov2 = fovy * deg_to_rad / 2.f;
+    f32 top = zNear * tan(fov2);
+    f32 bottom = -top;
+    f32 left = bottom * aspect;
+    f32 right = top * aspect;
+
+    f32 rl = right - left;
+    f32 tb = top - bottom;
+
+    Matrix4 m(
+        2*zNear/rl,      0,               0,                   0,
+        0,               2*zNear/tb,      0,                   0,
+        (right+left)/rl, (top+bottom)/tb, -(zFar+zNear)/range, -1,
+        0,               0,               -2*zFar*zNear/range, 0);
+
+    return m;
+}
+
+
 
 }
 }

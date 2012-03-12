@@ -11,6 +11,7 @@
 #pragma once
 
 #include "base/math/mathlib.h"
+#include <iostream>
 
 namespace base {
 namespace math {
@@ -283,7 +284,13 @@ class Vector3 {
     inline f32 Dot(const Vector3& v) const {
         return (x * v.x + y * v.y + z * v.z);
     }
+
+    friend std::ostream& operator<< (std::ostream& o, const Vector3& v);
 };
+
+inline std::ostream& operator<< (std::ostream& o, const Vector3& v) {
+    return o << v.x << ' ' << v.y << ' ' << v.z;
+}
 
 class Vector4 {
  public:

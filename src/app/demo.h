@@ -15,6 +15,7 @@
 #include "renderer/md3mesh.h"
 #include "renderer/spritefont.h"
 #include "renderer/particlesystem.h"
+#include "renderer/camera.h"
 #include "base/timer.h"
 
 using namespace base::math;
@@ -42,6 +43,8 @@ private:
     std::string title_text_;
 
     f32 frame_diff_;
+
+    base::opengl::Camera camera_;
 
     TextureLoader texure_loader_;
 public:

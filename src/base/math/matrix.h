@@ -60,6 +60,7 @@ class Matrix4 {
 
     void Transpose();
     void Invert();
+    Matrix4 Inverted() { Matrix4 m(*this); m.Invert(); return m; }
 
  public:
     Matrix4& operator = (const Matrix4& m);
@@ -86,8 +87,10 @@ class Matrix4 {
     static Matrix4 GetProjection(const Plane& plane);
     static Matrix4 GetReflection(const Plane& plane);
 
+    static Matrix4 GetPerspective(f32 fovy, f32 aspect, f32 zNear, f32 zFar);
     static Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist);
     static Matrix4 LookAt(const Vector3& from_position, const Vector3& target);
+    static Matrix4 LookAt(const Vector3& from_position, const Vector3& target, const Vector3& up);
  private:
     void MatrixSwap(const u8& _a, const u8& _b);
 };

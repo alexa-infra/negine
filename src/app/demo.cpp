@@ -18,9 +18,22 @@ Demo::Demo(i32 width, i32 height)
 {
     glViewport(0, 0, width, height); 
 
-    cameraTransform_ = Matrix4::LookAt(Vector3(0., 0., -50.), Vector3(0., 0., 0.));
-    projection_ = Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0);
+    camera_.position = Vector3(0., 0., 0.);
+    
+    camera_.pitch = 0;
+    camera_.head = 180 * deg_to_rad;
+        
+    camera_.aspect = width / (f32)height;
+    camera_.fov = 50;
+    camera_.zNear = 1;
+    camera_.zFar = 2000;
+
+    camera_.UpdateOrientation();
+
+    cameraTransform_ = camera_.GetModelView(); 
+    projection_ = camera_.GetProjection();
     modelTransform_.SetIdentity();
+    modelTransform_.Translate(Vector3(0, 0, 150));
 
     texture_ = texure_loader_.Load("european_fnt.tga");
 
@@ -90,8 +103,8 @@ void Demo::OnFrame(void) {
     binding = program_hud_->binding();
 
     program_hud_->set_uniform(UniformVars::Diffuse, texture_ps_);
-    program_hud_->set_uniform(UniformVars::Projection, projection_);
-    program_hud_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelview_);
+    program_hud_->set_uniform(UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
+    program_hud_->set_uniform(UniformVars::Modelview, Matrix4::Identity);
 
     ps_->Draw(binding, frame_time);
     program_hud_->Unbind();
@@ -100,8 +113,8 @@ void Demo::OnFrame(void) {
     binding = program_font_->binding();
 
     program_font_->set_uniform(UniformVars::Diffuse, font_->texture());
-    program_font_->set_uniform(UniformVars::Projection, projection_);
-    program_font_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelview_);
+    program_font_->set_uniform(UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
+    program_font_->set_uniform(UniformVars::Modelview, Matrix4::Identity);
 
     font_->SetText(Vector2(-50.f, 0.f), title_text_, Vector4(0.f, 0.f, 1.f, 1.f));
     font_->Draw(binding);
@@ -130,7 +143,10 @@ void Demo::OnReshape(i32 width, i32 height) {
 }
 
 void Demo::OnMotion(i32 x, i32 y, i32 dx, i32 dy) {
-    modelTransform_.Rotate(Vector3((f32)y, (f32)x, (f32)0), 0.1f);
+    camera_.head += deg_to_rad * dx;
+    camera_.pitch += deg_to_rad * dy;
+    camera_.UpdateOrientation();
+    cameraTransform_ = camera_.GetModelView(); 
 
     cursor_.x += dx / (f32)width_ * 300.f;
     cursor_.y -= dy / (f32)height_ * 300.f;
@@ -150,6 +166,19 @@ void Demo::OnKeyboard(u8 key, i32 x, i32 y) {
     std::string test("Key pressed: ");
     test += (char)key;
     title_text_ = test;
+
+    if (key == 'w') {
+        camera_.position += camera_.forward;
+    } else if (key == 's') {
+        camera_.position -= camera_.forward;
+    } else if (key == 'a') {
+        camera_.position -= camera_.right;
+    } else if (key == 'd') {
+        camera_.position += camera_.right;
+    }
+    std::cout << "camera: " << camera_.position << std::endl;
+    camera_.UpdateOrientation();
+    cameraTransform_ = camera_.GetModelView();
 }
 
 Program* Demo::LoadProgram(const std::string& filename) {

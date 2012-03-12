@@ -98,6 +98,9 @@ void SDLApp::Pump() {
                     }
                 }
                 break;
+            case SDL_KEYDOWN:
+                OnKeyboard((u8)event.key.keysym.sym, 0, 0);
+                break;
             default:
                 break;
         }
