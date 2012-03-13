@@ -15,7 +15,9 @@
 namespace base {
 namespace opengl {
 
-using namespace base::math;
+using base::math::Vector2;
+using base::math::Vector3;
+using base::math::Vector4;
 
 //! Simple vertex
 struct Vertex

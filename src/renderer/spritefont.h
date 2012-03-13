@@ -31,7 +31,7 @@ namespace opengl {
         SpriteFont(const std::string& filename, f32 height, u32 max_chars);
         ~SpriteFont();
 
-        void SetText(const base::math::Vector2& position, const std::string& text, const math::Vector4& color);
+        void SetText(const Vector2& position, const std::string& text, const math::Vector4& color);
         void Draw(const AttributeBinding& binding);
         Texture* texture() const { return texture_; }
 

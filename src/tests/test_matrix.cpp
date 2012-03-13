@@ -9,7 +9,9 @@
 #include "base/math/matrix.h"
 #include "base/math/vector.h"
 
-using namespace base::math;
+using base::math::Matrix4;
+using base::math::Vector3;
+using base::math::pi;
 
 TEST(math, matrix4)
 {

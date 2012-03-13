@@ -42,14 +42,14 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
         (stbtt_bakedchar*)cdata_); // no guarantee this fits!   
     delete[] ttf_buffer;
 
-    base::opengl::TextureInfo tex_info;
-    tex_info.MinFilter = base::opengl::TextureMinFilters::LINEAR;
+    TextureInfo tex_info;
+    tex_info.MinFilter = TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
     tex_info.Height = 512;
     tex_info.Width = 512;
     tex_info.Pixel = PixelTypes::Alpha;
 
-    texture_ = new base::opengl::Texture;
+    texture_ = new Texture;
     texture_->GenerateFromBuffer(tex_info, temp_bitmap);
 
     u32 vertex_index_ = 0;
@@ -84,7 +84,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     delete[] faces_;
 }
 
-void SpriteFont::SetText(const base::math::Vector2& position, const std::string& str, const math::Vector4& color)
+void SpriteFont::SetText(const Vector2& position, const std::string& str, const math::Vector4& color)
 {
     f32 x = position.x;
     f32 y = position.y;

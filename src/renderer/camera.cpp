@@ -1,7 +1,7 @@
 #include "renderer/camera.h"
 
-using namespace base::math;
-using namespace base::opengl;
+namespace base {
+namespace opengl {
 
 Camera::Camera()
 {
@@ -37,3 +37,6 @@ void Camera::UpdateVectors()
     up = orientation_ * u;
     forward = orientation_ * f;
 }
+
+} // namespace opengl
+} // namespace base

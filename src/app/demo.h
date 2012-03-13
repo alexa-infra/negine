@@ -18,8 +18,23 @@
 #include "renderer/camera.h"
 #include "base/timer.h"
 
-using namespace base::math;
-using namespace base::opengl;
+using base::math::Matrix4;
+using base::math::Vector2;
+using base::math::Vector3;
+using base::math::Vector4;
+using base::opengl::Texture;
+using base::opengl::Program;
+using base::opengl::VertexBuffer;
+using base::opengl::VertexBuffer;
+using base::opengl::SpriteFont;
+using base::opengl::ParticleSystem;
+using base::opengl::Camera;
+using base::opengl::TextureLoader;
+using base::opengl::AttributeBinding;
+using base::opengl::load_md3_se;
+using base::opengl::Mesh;
+using base::opengl::ParticleSystemSetting;
+using base::Timer;
 
 class Demo : public Application {
 private:
@@ -37,14 +52,14 @@ private:
 
     Matrix4 cameraTransform_;
     Matrix4 modelTransform_;
-    base::Timer timer_;
+    Timer timer_;
 
     Vector2 cursor_;
     std::string title_text_;
 
     f32 frame_diff_;
 
-    base::opengl::Camera camera_;
+    Camera camera_;
 
     TextureLoader texure_loader_;
 public:

@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 #include "base/stringmap.h"
 
-using namespace base;
+using base::StringMap;
 
 namespace TestEnums {
     enum TestEnum {

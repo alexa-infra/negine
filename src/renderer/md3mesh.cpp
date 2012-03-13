@@ -106,7 +106,10 @@ struct  Md3Vertex
 
 #pragma pack(pop)
 
-using namespace base::math;
+namespace base {
+namespace opengl {
+
+using base::math::pi;
 
 Vector3 DecodeNormal(const u8* normal) {
     f32 const& zenith = normal[0];
@@ -120,9 +123,6 @@ Vector3 DecodeNormal(const u8* normal) {
     ret.z = cosf(lng);
     return ret;
 }
-
-namespace base {
-namespace opengl {
 
 std::vector<Mesh*> load_md3(FileBinary& file) {
     u32 hdr_start = file.position();

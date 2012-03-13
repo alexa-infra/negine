@@ -12,6 +12,8 @@
 #include <assert.h>
 #include <sstream>
 
+using base::math::deg_to_rad;
+
 Demo::Demo(i32 width, i32 height) 
     : texture_(NULL)
     , program_(NULL)
@@ -85,9 +87,9 @@ void Demo::OnFrame(void) {
     program_->Bind();
     AttributeBinding binding = program_->binding();
 
-    program_->set_uniform(UniformVars::Diffuse, texture_);
-    program_->set_uniform(UniformVars::Projection, projection_);
-    program_->set_uniform(UniformVars::Modelview, cameraTransform_ * modelTransform_);
+    program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
+    program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
+    program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
     
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
@@ -102,9 +104,9 @@ void Demo::OnFrame(void) {
     program_hud_->Bind();
     binding = program_hud_->binding();
 
-    program_hud_->set_uniform(UniformVars::Diffuse, texture_ps_);
-    program_hud_->set_uniform(UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
-    program_hud_->set_uniform(UniformVars::Modelview, Matrix4::Identity);
+    program_hud_->set_uniform(base::opengl::UniformVars::Diffuse, texture_ps_);
+    program_hud_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
+    program_hud_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
     ps_->Draw(binding, frame_time);
     program_hud_->Unbind();
@@ -112,9 +114,9 @@ void Demo::OnFrame(void) {
     program_font_->Bind();
     binding = program_font_->binding();
 
-    program_font_->set_uniform(UniformVars::Diffuse, font_->texture());
-    program_font_->set_uniform(UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
-    program_font_->set_uniform(UniformVars::Modelview, Matrix4::Identity);
+    program_font_->set_uniform(base::opengl::UniformVars::Diffuse, font_->texture());
+    program_font_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
+    program_font_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
     font_->SetText(Vector2(-50.f, 0.f), title_text_, Vector4(0.f, 0.f, 1.f, 1.f));
     font_->Draw(binding);

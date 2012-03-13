@@ -7,18 +7,20 @@
 namespace base {
 namespace opengl {
 
+using base::math::Matrix4;
+using base::math::Vector3;
+
 class Camera {
 private:
-    base::math::Matrix4 orientation_;
-
+    Matrix4 orientation_;
 
 public:
 
-    base::math::Vector3 forward;
-    base::math::Vector3 right;
-    base::math::Vector3 up;
+    Vector3 forward;
+    Vector3 right;
+    Vector3 up;
     
-    base::math::Vector3 position;
+    Vector3 position;
     
     f32 pitch;
     f32 head;
@@ -30,8 +32,8 @@ public:
 
     Camera();
 
-    base::math::Matrix4 GetProjection() const;
-    base::math::Matrix4 GetModelView() const;
+    Matrix4 GetProjection() const;
+    Matrix4 GetModelView() const;
 
     void UpdateOrientation();
 private:

@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 #include "base/math/vector.h"
 
-using namespace base::math;
+using base::math::Vector2;
 
 const Vector2 v1(0.f, 2.f);
 const Vector2 v2(1.f, 3.f);
