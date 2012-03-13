@@ -9,10 +9,10 @@
 
 #include "renderer/glcontext.h"
 #include "renderer/glshader.h"
-#include "base/param.h"
 #include <map>
 #include <string>
 #include "renderer/mesh.h"
+#include "base/math/matrix.h"
 
 namespace base {
 namespace opengl {
@@ -31,6 +31,8 @@ namespace UniformVars {
 }
 typedef UniformVars::UniformVar UniformVar;
 typedef std::map<UniformVar, u32> UniformBinding;
+
+using base::math::Matrix4;
 
 //! Shader program object
 class Program {
@@ -65,17 +67,14 @@ public:
         return attr_binding_;
     }
 
-    //! Set uniform helper, that wraps value by generic param
     template<typename T>
     void set_uniform(UniformVar uniform, const T& val) {
-        base::generic_param<T> param(val);
-        set_uniform_param(uniform, param);
-    }
+        UniformBinding::iterator it = uni_binding_.find(uniform);
+        if (it == uni_binding_.end()) return;
 
-    //! Sets uniform value by name
-    //! \param      uniform         Variable name
-    //! \param      p               Parametrized value
-    void set_uniform_param(UniformVar uniform, const param& p);
+        u32 location = it->second;
+        set_uniform_param(it->first, location, val);
+    }
 
     //! Creates program from vertex and shader source texts
     //! \param      vs              text of vertex shader
@@ -90,6 +89,10 @@ public:
     //! \returns    The program instance (deallocation should be handled by caller), null if fails
     static Program* Create(const std::string& filename, std::string& status);
 protected:
+    //! Set uniform helper, that wraps value by generic param
+    template<typename T>
+    void set_uniform_param(UniformVar uniform, u32 location, const T& val);
+
     //! Attach shaders, and link program. Result is in 'is_ok_' and 'status' members
     void Link();
     

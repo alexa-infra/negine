@@ -84,7 +84,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     delete[] faces_;
 }
 
-void SpriteFont::SetText(const Vector2& position, const std::string& str, const math::Vector4& color)
+void SpriteFont::SetText(const Vector2& position, const std::string& str, const Vector4& color)
 {
     f32 x = position.x;
     f32 y = position.y;

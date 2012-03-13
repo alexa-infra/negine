@@ -170,40 +170,23 @@ void Program::Unlink() {
     attr_binding_.clear();
 }
 
-void Program::set_uniform_param(UniformVar uniform, const param& p) {
-    UniformBinding::iterator it = uni_binding_.find(uniform);
-    if (it == uni_binding_.end()) return;
+template<>
+void Program::set_uniform_param<Texture*>(UniformVar uniform, u32 location, Texture* const& t) {
+    u32 sampler_index = get_tex_index(uniform);
+    glActiveTexture(GL_TEXTURE0 + sampler_index);
+    t->Bind();
+    glUniform1i(location, sampler_index);
+}
 
-    u32 location = it->second;
+template<>
+void Program::set_uniform_param<Matrix4>(UniformVar uniform, u32 location, const Matrix4& m) {
+    glUniformMatrix4fv(location, 1, GL_TRUE, m.array1d);
+}
 
-    switch (p.get_type()) {
-        case Types::Texture:
-        {
-            Texture* t = p.get<Texture*>();
-            u32 sampler_index = get_tex_index(uniform);
-            glActiveTexture(GL_TEXTURE0 + sampler_index);
-            t->Bind();
-            glUniform1i(location, sampler_index);
-        }
-        break;
-        case Types::Matrix4:
-        {
-            math::Matrix4 const& m = p.get<math::Matrix4>();
-            glUniformMatrix4fv(location, 1, GL_TRUE, m.array1d);
-        }
-        break;
-        case Types::Vector4:
-        {
-            math::Vector4 const& v = p.get<math::Vector4>();
-            glUniform4f(location, v.x, v.y, v.z, v.w);
-        }
-        break;
-        default:
-        {
-        }
-        break;
-    }    
-} 
+template<>
+void Program::set_uniform_param<Vector4>(UniformVar uniform, u32 location, const Vector4& v) {
+    glUniform4f(location, v.x, v.y, v.z, v.w);
+}
 
 void Program::get_uniforms_list() {
     GLint uniform_count, max_name_length = 0;

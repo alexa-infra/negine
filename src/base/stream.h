@@ -68,10 +68,12 @@ public:
     u32 size();
     std::string get_line();
 
+protected:
     void read_impl(u8* dest, u32 size, u32 position);
     void write_impl(const u8* source, u32 size, u32 position);
-protected:
+
     std::istream& safeGetline(std::istream& is, std::string& t, u32& read_count);
+    friend class Stream<FileBinary>;
 };
 
 class FileText {
