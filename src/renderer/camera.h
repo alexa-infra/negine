@@ -1,3 +1,9 @@
+/**
+ * \file
+ * \brief       Camera class, provides projection and modelview matrix
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
+ **/
 #pragma once
 
 #include "base/types.h"

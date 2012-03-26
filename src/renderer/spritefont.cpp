@@ -1,11 +1,9 @@
 /**
- * @author  Victor Sukochev <sukochevvv@gmail.com>
- * @section LICENSE
- * 
- * This file is part of Negine (https://hg.alexadotlife.com/negine)
- * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
+ * \file
+ * \author      Victor Sukochev <sukochevvv@gmail.com>
+ *              Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
  **/
-
 #include "renderer/spritefont.h"
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb/stb_truetype.h"

@@ -1,3 +1,8 @@
+/**
+ * \file
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
+ **/
 #include "base/stream.h"
 
 namespace base {

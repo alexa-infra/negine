@@ -1,9 +1,8 @@
 /**
- * @author  Alexey Vasilyev <alexa.infra@gmail.com>
- * @section LICENSE
- * 
- * This file is part of Negine (https://hg.alexadotlife.com/negine)
- * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
+ * \file
+ * \brief       Particle system
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
  **/
 #pragma once
 

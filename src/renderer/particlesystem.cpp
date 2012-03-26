@@ -1,3 +1,8 @@
+/**
+ * \file
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
+ **/
 #include "renderer/particlesystem.h"
 
 #include "renderer/gltexture.h"

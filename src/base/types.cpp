@@ -1,3 +1,8 @@
+/**
+ * \file
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
+ **/
 #include "base/types.h"
 
 size_t hash_string::operator()(const std::string& x) const {

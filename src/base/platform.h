@@ -1,16 +1,12 @@
-/*
- * @file    base/platform.h
- * @brief   defines preprocessor symbols
- *          operating system:   OS_WIN, OS_MAC, OS_LINUX
- *          posix:              OS_POSIX
- *          compiler:           COMPILER_GCC, COMPILER_MSVC
- *          architecture:       OS_ARCH_32, OS_ARCH_64
- *
- * @author  Alexey Vasilyev <alexa.infra@gmail.com>
- * @section LICENSE
- * 
- * This file is part of Negine (https://hg.alexadotlife.com/negine)
- * Licensed under LGPLv3 (or GPLv3) - see LICENSE file for details
+/**
+ * \file
+ * \brief       defines preprocessor symbols
+ *              operating system:   OS_WIN, OS_MAC, OS_LINUX
+ *              posix:              OS_POSIX
+ *              compiler:           COMPILER_GCC, COMPILER_MSVC
+ *              architecture:       OS_ARCH_32, OS_ARCH_64
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
  **/
 #pragma once
 

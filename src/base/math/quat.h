@@ -1,3 +1,9 @@
+/**
+ * \file
+ * \brief       Quaternion
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ * \copyright   MIT License
+ **/
 #pragma once
 
 #include "base/types.h"
