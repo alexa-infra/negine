@@ -24,7 +24,7 @@ using base::math::Vector4;
 using base::opengl::Texture;
 using base::opengl::Program;
 using base::opengl::VertexBuffer;
-using base::opengl::VertexBuffer;
+using base::opengl::VertexBufferGPU;
 using base::opengl::SpriteFont;
 using base::opengl::ParticleSystem;
 using base::opengl::Camera;

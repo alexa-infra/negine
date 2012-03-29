@@ -14,26 +14,32 @@ VertexBuffer::VertexBuffer()
 : vertex_count_(0)
 , faces_count_(0)
 {
+}
+
+VertexBufferGPU::VertexBufferGPU()
+: VertexBuffer()
+{
     vertexes_ = new GLBufferObject;
     indexes_ = new GLBufferObject;
 }
 
-VertexBuffer::VertexBuffer(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/)
-: vertex_count_(vcount)
-, faces_count_(fcount)
+VertexBufferGPU::VertexBufferGPU(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/)
+: VertexBuffer()
 {
+    vertex_count_ = vcount;
+    faces_count_ = fcount;
     vertexes_ = new GLBufferObject;
     indexes_ = new GLBufferObject;
 
     SetData(vertexes, vcount, faces, fcount, usage);
 }
 
-VertexBuffer::~VertexBuffer() {
+VertexBufferGPU::~VertexBufferGPU() {
     delete vertexes_;
     delete indexes_;
 }
 
-void VertexBuffer::SetData(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/) {
+void VertexBufferGPU::SetData(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/) {
     vertex_count_ = vcount;
     faces_count_ = fcount;
 
@@ -44,34 +50,24 @@ void VertexBuffer::SetData(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount
     indexes_->SetData(index_array_size(), (void*)faces, BufferUsages::StreamDraw);
 }
 
-Vertex* VertexBuffer::Lock(BufferAccess access/* = BufferAccesses::ReadWrite*/) {
+Vertex* VertexBufferGPU::Lock(BufferAccess access/* = BufferAccesses::ReadWrite*/) {
     vertexes_->Bind(BufferTargets::Array);
     return (Vertex*)vertexes_->Map(access);
 }
 
-void VertexBuffer::Unlock() {
+void VertexBufferGPU::Unlock() {
     vertexes_->Bind(BufferTargets::Array);
     vertexes_->Unmap();
 }
 
-void VertexBuffer::Draw(const AttributeBinding& binding) {
-    Draw(binding, /*from_face*/0, /*count_faces*/faces_count());
-}
-
-void VertexBuffer::Draw(const AttributeBinding& binding, u32 from_face, u32 count_faces) {
-    BindAttributes(binding);
-    DrawOnly(from_face, count_faces);
-    UnbindAttributes(binding);
-}
-
-void VertexBuffer::DrawOnly(u32 from_face, u32 count_faces) {
+void VertexBufferGPU::DrawOnly(u32 from_face, u32 count_faces) {
     glDrawElements(GL_TRIANGLES,
         count_faces * 3,
         GL_UNSIGNED_SHORT,
         (Face*)0 + from_face); 
 }
 
-void VertexBuffer::BindAttributes(const AttributeBinding& binding) {
+void VertexBufferGPU::BindAttributes(const AttributeBinding& binding) {
     vertexes_->Bind(BufferTargets::Array);
     AttributeBinding::const_iterator it;
     for(it = binding.begin(); it != binding.end(); ++it) {
@@ -86,7 +82,7 @@ void VertexBuffer::BindAttributes(const AttributeBinding& binding) {
     indexes_->Bind(BufferTargets::ElementArray);
 }
 
-void VertexBuffer::UnbindAttributes(const AttributeBinding& binding) {
+void VertexBufferGPU::UnbindAttributes(const AttributeBinding& binding) {
     indexes_->Unbind();
     vertexes_->Unbind();
 }
@@ -94,19 +90,19 @@ void VertexBuffer::UnbindAttributes(const AttributeBinding& binding) {
 ///////////////////////
 
 VertexBufferMemory::VertexBufferMemory()
-: vertex_count_(0)
-, faces_count_(0)
+: VertexBuffer()
 , vertexes_(NULL)
 , indexes_(NULL)
 {
 }
 
 VertexBufferMemory::VertexBufferMemory(Vertex* vertexes, u16 vcount, Face* faces, u16 fcount, BufferUsage usage/* = BufferUsages::DynamicDraw*/)
-: vertex_count_(vcount)
-, faces_count_(fcount)
+: VertexBuffer()
 , vertexes_(NULL)
 , indexes_(NULL)
 {
+    vertex_count_ = vcount;
+    faces_count_ = fcount;
     vertexes_ = new Vertex[vcount];
     indexes_ = new Face[fcount];
 
@@ -134,16 +130,6 @@ void VertexBufferMemory::SetData(Vertex* vertexes, u16 vcount, Face* faces, u16 
 
     memcpy(vertexes_, vertexes, vertex_count_ * sizeof(Vertex)); //vertex_array_size());
     memcpy(indexes_, faces, faces_count_ * sizeof(Face));// index_array_size());
-}
-
-void VertexBufferMemory::Draw(const AttributeBinding& binding) {
-    Draw(binding, /*from_face*/0, /*count_faces*/faces_count());
-}
-
-void VertexBufferMemory::Draw(const AttributeBinding& binding, u32 from_face, u32 count_faces) {
-    BindAttributes(binding);
-    DrawOnly(from_face, count_faces);
-    UnbindAttributes(binding);
 }
 
 void VertexBufferMemory::DrawOnly(u32 from_face, u32 count_faces) {

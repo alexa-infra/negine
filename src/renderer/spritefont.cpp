@@ -77,7 +77,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
         vertex_index_ += 4;
     }
    
-    vbo_ = new VertexBuffer(vertexes_, vertex_index_, faces_, face_index_);
+    vbo_ = new VertexBufferGPU(vertexes_, vertex_index_, faces_, face_index_);
     delete[] vertexes_;
     delete[] faces_;
 }

@@ -59,7 +59,7 @@ ParticleSystem::ParticleSystem(ParticleSystemSetting s) {
         v[j + 3].tex.set(0.f, 1.f);
     }
 
-    vbo = new VertexBuffer(v, s.max_count * 4, f, s.max_count * 2);
+    vbo = new VertexBufferMemory(v, s.max_count * 4, f, s.max_count * 2);
     delete[] v;
     delete[] f;
 }
