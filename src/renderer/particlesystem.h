@@ -34,7 +34,8 @@ struct ParticleSystemSetting {
 };
 
 struct Particle {
-    u32 index;
+    u16 index;
+    u16 face;
 
     f32 life_time;
     f32 life;
@@ -74,12 +75,11 @@ public:
 
     ~ParticleSystem();
 
-    void Draw(AttributeBinding& binding, f32 frame_time);
-
-protected:
-    void add();
+    void Draw(AttributeBinding& binding);
 
     void update(f32 frame_time);
+protected:
+    void add();
 
 private:
     DISALLOW_COPY_AND_ASSIGN(ParticleSystem);

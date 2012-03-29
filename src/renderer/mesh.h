@@ -59,15 +59,7 @@ typedef std::list< std::pair<VertexAttr, u32> > AttributeBinding;
 //! Triangle face
 struct Face
 {
-    u32 index[3];       //!< Indexes of vertexes in vertex array
-    Vector3 n;          //!< Normal of face
-};
-
-//! Single edge
-struct Edge
-{
-    u32 a, b;           //!< Indexes of vertexes
-    u32 c, d;           //!< Indexes of faces
+    u16 index[3];       //!< Indexes of vertexes in vertex array
 };
 
 //! Mesh object, triangle data

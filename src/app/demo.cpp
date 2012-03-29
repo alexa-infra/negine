@@ -106,7 +106,8 @@ void Demo::OnFrame(void) {
     program_hud_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
     program_hud_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
-    ps_->Draw(binding, frame_time);
+    ps_->update(frame_time);
+    ps_->Draw(binding);
     program_hud_->Unbind();
 
     program_font_->Bind();

@@ -33,9 +33,9 @@ ParticleSystem::ParticleSystem(ParticleSystemSetting s) {
     particles = new Particle[s.max_count];
     for (u32 i=0; i<s.max_count; i++) {
         particles[i].index = 4 * i;
+        particles[i].face = 2 * i;
         particles_free.push_back(&particles[i]);
     }
-    //particles_free.insert( particles_free.begin(), &(), &(particles[0]) + s.max_count );
     Vertex* v = new Vertex[s.max_count * 4];
     Face* f = new Face[s.max_count * 2];
     emission_active = true;
@@ -91,12 +91,11 @@ void ParticleSystem::add() {
     particles_active.push_back(p);
 }
 
-void ParticleSystem::Draw(AttributeBinding& binding, f32 frame_time) {
-    update(frame_time);
+void ParticleSystem::Draw(AttributeBinding& binding) {
     vbo->BindAttributes(binding);
     for (auto it = particles_active.begin(); it != particles_active.end(); ++it) {
         Particle* p = *it;
-        vbo->DrawOnly(p->index, 2);
+        vbo->DrawOnly(p->face, 2);
     }
     vbo->UnbindAttributes(binding);
 }
