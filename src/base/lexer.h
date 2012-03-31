@@ -20,11 +20,11 @@ protected:
 
     const u32 maxTokenSize;
 
-    char* token;
-    char* tokenChar;
+    string  token_str_;
+    char*   token_;
+    char*   whiteCharacters;
 
-    char *whiteCharacters;
-
+    u32     size;
 public: 
     Lexer(const std::string &filename);
     ~Lexer();
@@ -32,11 +32,11 @@ public:
     void   SkipWhiteSpace();
     void   SkipRestOfLine();
     string ReadToken();
-    string GetCurrentToken() { return token; }
-    f32    ReadReal();
-    i32    HasMoreData();
+    const string& GetCurrentToken() const { return token_str_; }
+    f32    ReadFloat();
+    bool   HasMoreData() const;
     void   SetWhiteCharValue(char c, char value);
-    bool   IsWhiteChar(char character);
+    bool   IsWhiteChar(char character) const;
 
 
 private:

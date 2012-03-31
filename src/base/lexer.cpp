@@ -14,12 +14,15 @@ namespace base {
 Lexer::Lexer(const std::string &filename)
     : file_(filename)
     , maxTokenSize(256) 
-    , token(NULL)
-    , tokenChar(NULL)
+    , token_(NULL)
     , whiteCharacters(NULL)
 {
-    token = new char[maxTokenSize];
-    memset(token, 0, maxTokenSize);
+
+    token_str_.resize(static_cast<u32>(maxTokenSize));
+    token_ = const_cast<char*>(token_str_.c_str());
+
+    size = file_.size();
+
     whiteCharacters = new char[128];
     memset(whiteCharacters, 0, 128);
 
@@ -36,7 +39,7 @@ Lexer::Lexer(const std::string &filename)
 }
 
 Lexer::~Lexer(){
-    delete[] token;
+
     delete[] whiteCharacters;
 }
 
@@ -86,6 +89,7 @@ void Lexer::SkipWhiteSpace() {
 }
 
 void Lexer::SkipRestOfLine() {
+
     while (HasMoreData()) {
         if (file_.read_type<char>() == '\n')
             break;     
@@ -95,10 +99,9 @@ void Lexer::SkipRestOfLine() {
 
 string Lexer::ReadToken() {
     
-    tokenChar = token;
+    char* tokenChar = token_;
     *tokenChar = '\0';
     SkipWhiteSpace();
-
 
     if (file_.read_type_nomove<char>() == '"') 
     {
@@ -124,22 +127,25 @@ string Lexer::ReadToken() {
         *tokenChar++;
     }
     *tokenChar = '\0';
-    return token;
+    return token_;
 }
 
-bool Lexer::IsWhiteChar(char character) {
+bool Lexer::IsWhiteChar(char character) const {
+
     return whiteCharacters[character] == 1;
 }
 
-f32 Lexer::ReadReal() {
+f32 Lexer::ReadFloat() {
+
     ReadToken(); 
-    return (float)atof(token);
+    return (float)atof(token_);
 }
 
-i32 Lexer::HasMoreData() {
+bool Lexer::HasMoreData() const {
     
-    return (file_.position() < file_.size());
+    return (file_.position() < size);
 }
+
 void Lexer::SetWhiteCharValue(char c, char value) {
     
     whiteCharacters[c] = value;
