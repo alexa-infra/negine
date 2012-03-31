@@ -11,10 +11,12 @@
 
 namespace base {
 
-
 Lexer::Lexer(const std::string &filename)
     : file_(filename)
     , maxTokenSize(256) 
+    , token(NULL)
+    , tokenChar(NULL)
+    , whiteCharacters(NULL)
 {
     token = new char[maxTokenSize];
     whiteCharacters = new char[128];
@@ -29,8 +31,8 @@ Lexer::Lexer(const std::string &filename)
     whiteCharacters['\n'] = 1;
     whiteCharacters['*'] = 1;
     whiteCharacters[':'] = 1;
-
 }
+
 Lexer::~Lexer(){
     delete[] token;
     delete[] whiteCharacters;
@@ -45,8 +47,7 @@ void Lexer::SkipWhiteSpace() {
     {
         char previousChar = file_.read_type<char>();
 
-        char ch = file_.read_type<char>();
-        file_.set_position(file_.position()-1);
+        char ch = file_.read_type_nomove<char>();
 
         if (ch == '#')
         {
@@ -72,8 +73,7 @@ void Lexer::SkipWhiteSpace() {
                 {
                     previousChar = file_.read_type<char>();
 
-                   ch = file_.read_type<char>();
-                   file_.set_position(file_.position()-1);
+                    ch = file_.read_type_nomove<char>();
 
                     if ((ch == '/') && (previousChar == '*'))
                         break;
@@ -139,7 +139,7 @@ i32 Lexer::HasMoreData() {
     
     return (file_.position() <= file_.size());
 }
-void   Lexer::SetWhiteCharValue(char c, char value) {
+void Lexer::SetWhiteCharValue(char c, char value) {
     
     whiteCharacters[c] = value;
 }

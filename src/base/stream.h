@@ -36,6 +36,14 @@ public:
     }
 
     template <typename TT>
+    TT read_type_nomove() {
+        TT ret;
+        T* pthis = static_cast<T*>(this);
+        pthis->read_impl(reinterpret_cast<u8*>(&ret), sizeof(TT), position_);
+        return ret;
+    }
+
+    template <typename TT>
     void read_template(TT& value) {
         value = read_type<TT>();
     }
