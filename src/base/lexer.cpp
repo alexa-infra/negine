@@ -19,6 +19,7 @@ Lexer::Lexer(const std::string &filename)
     , whiteCharacters(NULL)
 {
     token = new char[maxTokenSize];
+    memset(token, 0, maxTokenSize);
     whiteCharacters = new char[128];
     memset(whiteCharacters, 0, 128);
 
@@ -31,6 +32,7 @@ Lexer::Lexer(const std::string &filename)
     whiteCharacters['\n'] = 1;
     whiteCharacters['*'] = 1;
     whiteCharacters[':'] = 1;
+    whiteCharacters['/'] = 1;
 }
 
 Lexer::~Lexer(){
@@ -42,48 +44,42 @@ void Lexer::SkipWhiteSpace() {
     
     if (!HasMoreData())
         return;  
-
-    while(HasMoreData() && IsWhiteChar(*token))
+ 
+    char ch = file_.read_type_nomove<char>();
+    while(HasMoreData() && IsWhiteChar(ch))
     {
         char previousChar = file_.read_type<char>();
-
-        char ch = file_.read_type_nomove<char>();
+        ch = file_.read_type_nomove<char>();
 
         if (ch == '#')
         {
             SkipRestOfLine();
         }
         
-        if (ch == '/')
+        if ((ch == '/') && (previousChar == '/'))
         {
-            if(previousChar == '/')
-            {
-                SkipRestOfLine();
-                SkipWhiteSpace();
-                return;
-            }            
+            SkipRestOfLine();
+            SkipWhiteSpace();
+            return;
         }
         
-        if (ch == '*')
+        if ((ch == '*') && (previousChar == '/'))
         {
-            if(previousChar == '/')
+            //Skip until */ is found
+            while (HasMoreData())
             {
-                //Skip until */ is found
-                while (HasMoreData())
-                {
-                    previousChar = file_.read_type<char>();
+                previousChar = file_.read_type<char>();
+                ch = file_.read_type_nomove<char>();
 
-                    ch = file_.read_type_nomove<char>();
-
-                    if ((ch == '/') && (previousChar == '*'))
-                        break;
-                }
-                
-                if ( HasMoreData() )
-                {
-                    previousChar = file_.read_type<char>();
-                    SkipWhiteSpace();
-                }
+                if ((ch == '/') && (previousChar == '*'))
+                    break;
+            }
+            
+            if (HasMoreData())
+            {
+                file_.read_type<char>();
+                SkipWhiteSpace();
+                return;
             }
         }
     }
@@ -99,30 +95,35 @@ void Lexer::SkipRestOfLine() {
 
 string Lexer::ReadToken() {
     
-    SkipWhiteSpace();
-
     tokenChar = token;
     *tokenChar = '\0';
+    SkipWhiteSpace();
 
-    if (file_.read_type<char>() == '"') 
+
+    if (file_.read_type_nomove<char>() == '"') 
     {
-        *tokenChar++ = file_.read_type<char>();
-        while(HasMoreData() && *tokenChar != '"')
+        file_.read_type<char>();
+        while(HasMoreData())
         {
+            if (file_.read_type_nomove<char>() == '"')
+            {
+                file_.read_type<char>();
+                break;
+            }
             *tokenChar++ = file_.read_type<char>();
         }
-
-        *tokenChar++ = '\0';
-        return token;
     }
     else 
     {
-        while(HasMoreData() && !IsWhiteChar(*tokenChar))
-            *tokenChar++ = file_.read_type<char>();
+        *tokenChar = file_.read_type<char>();
+        while(HasMoreData() && !IsWhiteChar(file_.read_type_nomove<char>()))
+        {
+            *tokenChar++;
+            *tokenChar = file_.read_type<char>();
+        }
+        *tokenChar++;
     }
-
-    *tokenChar++ = '\0';
-
+    *tokenChar = '\0';
     return token;
 }
 
@@ -137,7 +138,7 @@ f32 Lexer::ReadReal() {
 
 i32 Lexer::HasMoreData() {
     
-    return (file_.position() <= file_.size());
+    return (file_.position() < file_.size());
 }
 void Lexer::SetWhiteCharValue(char c, char value) {
     
