@@ -27,13 +27,13 @@ struct Md5Vertex
 {
     math::Vector2 st;
 
-    i32 start;
-    i32 count;
+    u32 start;
+    u32 count;
 };
 
 struct Md5Triangle
 {
-    i32 index[3];
+    u32 index[3];
 };
 
 struct Md5Weight
@@ -73,7 +73,7 @@ struct Md5Mesh
 struct Md5Model
 {
     Md5Joint* baseSkel;
-    Md5Mesh* meshes;
+    Md5Mesh*  meshes;
 
     i32 num_joints;
     i32 num_meshes;

@@ -21,6 +21,7 @@ void readQuat(Lexer& reader, math::Quat& q)
 Entity* Entity::Load(const string& filename)
 {
     Lexer reader(filename);
+    u32 currentMeshIndex = 0;
 
     Md5Model model;
     while(reader.HasMoreData())
@@ -79,8 +80,84 @@ Entity* Entity::Load(const string& filename)
         else if (reader.CurrentToken() == "mesh")
         {
             reader.ReadToken(); // {
+            Md5Mesh &mesh  = model.meshes[currentMeshIndex];
+            while (reader.CurrentToken() != "}" && reader.HasMoreData())
+            {
+                reader.ReadToken();
+                if (reader.CurrentToken() == "shader")
+                {
+                    string materialName = reader.ReadToken();
+                }
+                else if (reader.CurrentToken() == "bumpShader")
+                {
+                    string materialName = reader.ReadToken();
+                }
+                else if (reader.CurrentToken() == "numverts")
+                {                  
+                    mesh.num_verts = (u32) reader.ReadFloat();
+                    if ( mesh.num_verts > 0)
+                    {
+                        mesh.vertices = new Md5Vertex [mesh.num_verts];
+                    }
+                }
+                else if (reader.CurrentToken() == "numtris")
+                {
+                     mesh.num_tris = (u32) reader.ReadFloat();
+                    if ( mesh.num_tris > 0)
+                    {
+                        mesh.triangles = new Md5Triangle [mesh.num_tris];
+                    }                    
+                }
+                else if (reader.CurrentToken() == "numweights")
+                {
+                    mesh.num_weights = (u32) reader.ReadFloat();
+                    if ( mesh.num_weights > 0)
+                    {
+                        mesh.weights = new Md5Weight [mesh.num_weights];
+                    }
+                }
+                else if (reader.CurrentToken() == "vert")
+                {
+                    //vert %d ( %f %f ) %d %d
+                    u32 vertIndex = (u32) reader.ReadFloat();
+                    reader.ReadToken();//(
 
-            reader.ReadToken(); // }
+                    Md5Vertex &vertex = mesh.vertices[vertIndex];
+                    vertex.st.x = reader.ReadFloat();
+                    vertex.st.y = reader.ReadFloat();
+
+                    reader.ReadToken();//)
+
+                    vertex.start = (u32) reader.ReadFloat();
+                    vertex.count = (u32) reader.ReadFloat();
+
+                }
+                else if (reader.CurrentToken() == "tri")
+                {
+                    // tri %d %d %d %d
+                    u32 triangleIndex = (u32) reader.ReadFloat();
+                    Md5Triangle &triangle = mesh.triangles[triangleIndex];
+
+                    triangle.index[0] = (u32) reader.ReadFloat();
+                    triangle.index[1] = (u32) reader.ReadFloat();
+                    triangle.index[2] = (u32) reader.ReadFloat();
+                }
+                else if (reader.CurrentToken() == "weight")
+                {
+                    //weight %d %d %f ( %f %f %f )
+                    u32 weightIndex = (u32) reader.ReadFloat();
+                    Md5Weight &weight = mesh.weights[weightIndex];
+
+                    weight.joint = (u32) reader.ReadFloat();
+                    weight.bias  = reader.ReadFloat();
+
+                    reader.ReadToken(); //(
+                    readVector(reader, weight.pos);
+                    reader.ReadToken(); //)
+
+                }
+            }
+            currentMeshIndex++;
         }
     }
 
