@@ -13,7 +13,7 @@ namespace base {
 
 Lexer::Lexer(const std::string &filename)
     : file_(filename)
-    , maxTokenSize(256) 
+    , maxTokenSize(512) 
     , token_(NULL)
     , whiteCharacters(NULL)
 {
@@ -111,7 +111,7 @@ const string& Lexer::ReadToken() {
 
     if (!HasMoreData())
         return token_str_;
-
+    
     if (file_.read_type_nomove<char>() == '"') 
     {
         file_.read_type<char>();
@@ -164,4 +164,4 @@ bool Lexer::CheckToken(const string &token) {
     return ReadToken()==token;
 }
 
-}
+} // namespace base
