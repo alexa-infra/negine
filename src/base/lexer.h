@@ -31,7 +31,7 @@ public:
 
     void   SkipWhiteSpace();
     void   SkipRestOfLine();
-    string ReadToken();
+    const string& ReadToken();
     const string& CurrentToken() const { return token_str_; }
     f32    ReadFloat();
     bool   HasMoreData() const;

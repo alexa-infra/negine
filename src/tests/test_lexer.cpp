@@ -26,6 +26,7 @@ protected:
         f << "thevalue" << std::endl;
         f << "/* block" << std::endl;
         f << " comment*/ value1" << std::endl;
+        f << "}";
         f.close();
     }
 
@@ -36,14 +37,17 @@ protected:
 
 TEST_F(LexerTest, Basic) {
     Lexer lex(filename);
-    EXPECT_EQ(lex.ReadToken(), "this");
-    EXPECT_EQ(lex.ReadToken(), "is");
-    EXPECT_EQ(lex.ReadToken(), "a");
-    EXPECT_EQ(lex.ReadToken(), "test");
-    EXPECT_EQ(lex.ReadToken(), "second");
-    EXPECT_EQ(lex.ReadToken(), "line");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "this");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "is");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "a");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "test");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "second");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "line");
     
-    EXPECT_EQ(lex.ReadToken(), "value");
-    EXPECT_EQ(lex.ReadToken(), "thevalue");
-    EXPECT_EQ(lex.ReadToken(), "value1");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "value");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "thevalue");
+    EXPECT_STREQ(lex.ReadToken().c_str(), "value1");
+
+    lex.ReadToken();
+    lex.ReadToken();
 }

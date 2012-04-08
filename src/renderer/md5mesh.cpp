@@ -1,5 +1,6 @@
 #include "md5mesh.h"
 #include "base/lexer.h"
+#include <string.h>
 
 namespace base {
 namespace opengl {
@@ -23,12 +24,15 @@ Entity* Entity::Load(const string& filename)
     Lexer reader(filename);
     u32 currentMeshIndex = 0;
 
-    Md5Model model;
+    Entity* entity = new Entity;
+    entity->object = new Md5Object;
+
+    Md5Model& model = entity->object->md5Model;
     while(reader.HasMoreData())
     {
         reader.ReadToken();
 
-        if (reader.CurrentToken() == "MD5Version")
+        if (strcmp(reader.CurrentToken().c_str(), "MD5Version") == 0)
         {
             u32 version = (u32) reader.ReadFloat();
             if ( version!=10 )
@@ -36,7 +40,7 @@ Entity* Entity::Load(const string& filename)
                 return NULL;
             }
         }
-        else if (reader.CurrentToken() == "numJoints")
+        else if (strcmp(reader.CurrentToken().c_str(), "numJoints") == 0)
         {
             model.num_joints = (u32) reader.ReadFloat();
             if (model.num_joints > 0)
@@ -44,7 +48,7 @@ Entity* Entity::Load(const string& filename)
                 model.baseSkel = new Md5Joint[model.num_joints];
             } 
         }
-        else if (reader.CurrentToken() == "numMeshes")
+        else if (strcmp(reader.CurrentToken().c_str(), "numMeshes") == 0)
         {
             model.num_meshes = (u32) reader.ReadFloat();
             if (model.num_meshes > 0)
@@ -52,7 +56,7 @@ Entity* Entity::Load(const string& filename)
                 model.meshes = new Md5Mesh[model.num_meshes];
             } 
         }
-        else if (reader.CurrentToken() == "joints")
+        else if (strcmp(reader.CurrentToken().c_str(), "joints") == 0)
         {
             reader.ReadToken(); // {
 
@@ -77,22 +81,22 @@ Entity* Entity::Load(const string& filename)
 
             reader.ReadToken(); // }
         }
-        else if (reader.CurrentToken() == "mesh")
+        else if (strcmp(reader.CurrentToken().c_str(), "mesh") == 0)
         {
             reader.ReadToken(); // {
             Md5Mesh &mesh  = model.meshes[currentMeshIndex];
-            while (reader.CurrentToken() != "}" && reader.HasMoreData())
+            while (strcmp(reader.CurrentToken().c_str(), "}") != 0 && reader.HasMoreData())
             {
                 reader.ReadToken();
-                if (reader.CurrentToken() == "shader")
+                if (strcmp(reader.CurrentToken().c_str(), "shader") == 0)
                 {
                     string materialName = reader.ReadToken();
                 }
-                else if (reader.CurrentToken() == "bumpShader")
+                else if (strcmp(reader.CurrentToken().c_str(), "bumpShader") == 0)
                 {
                     string materialName = reader.ReadToken();
                 }
-                else if (reader.CurrentToken() == "numverts")
+                else if (strcmp(reader.CurrentToken().c_str(), "numverts") == 0)
                 {                  
                     mesh.num_verts = (u32) reader.ReadFloat();
                     if ( mesh.num_verts > 0)
@@ -100,7 +104,7 @@ Entity* Entity::Load(const string& filename)
                         mesh.vertices = new Md5Vertex [mesh.num_verts];
                     }
                 }
-                else if (reader.CurrentToken() == "numtris")
+                else if (strcmp(reader.CurrentToken().c_str(), "numtris") == 0)
                 {
                      mesh.num_tris = (u32) reader.ReadFloat();
                     if ( mesh.num_tris > 0)
@@ -108,7 +112,7 @@ Entity* Entity::Load(const string& filename)
                         mesh.triangles = new Md5Triangle [mesh.num_tris];
                     }                    
                 }
-                else if (reader.CurrentToken() == "numweights")
+                else if (strcmp(reader.CurrentToken().c_str(), "numweights") == 0)
                 {
                     mesh.num_weights = (u32) reader.ReadFloat();
                     if ( mesh.num_weights > 0)
@@ -116,7 +120,7 @@ Entity* Entity::Load(const string& filename)
                         mesh.weights = new Md5Weight [mesh.num_weights];
                     }
                 }
-                else if (reader.CurrentToken() == "vert")
+                else if (strcmp(reader.CurrentToken().c_str(), "vert") == 0)
                 {
                     //vert %d ( %f %f ) %d %d
                     u32 vertIndex = (u32) reader.ReadFloat();
@@ -132,7 +136,7 @@ Entity* Entity::Load(const string& filename)
                     vertex.count = (u32) reader.ReadFloat();
 
                 }
-                else if (reader.CurrentToken() == "tri")
+                else if (strcmp(reader.CurrentToken().c_str(), "tri") == 0)
                 {
                     // tri %d %d %d %d
                     u32 triangleIndex = (u32) reader.ReadFloat();
@@ -142,7 +146,7 @@ Entity* Entity::Load(const string& filename)
                     triangle.index[1] = (u32) reader.ReadFloat();
                     triangle.index[2] = (u32) reader.ReadFloat();
                 }
-                else if (reader.CurrentToken() == "weight")
+                else if (strcmp(reader.CurrentToken().c_str(), "weight") == 0)
                 {
                     //weight %d %d %f ( %f %f %f )
                     u32 weightIndex = (u32) reader.ReadFloat();
@@ -161,7 +165,7 @@ Entity* Entity::Load(const string& filename)
         }
     }
 
-    return NULL;
+    return entity;
 }
 
 }

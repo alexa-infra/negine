@@ -59,6 +59,19 @@ struct Md5Mesh
     Md5Triangle* triangles;
     Md5Weight* weights;
 
+    Md5Mesh()
+    : vertices(NULL)
+    , triangles(NULL)
+    , weights(NULL)
+    {
+    }
+
+    ~Md5Mesh() {
+        delete[] vertices;
+        delete[] triangles;
+        delete[] weights;
+    }
+
     i32 num_verts;
     i32 num_tris;
     i32 num_weights;
@@ -75,6 +88,18 @@ struct Md5Model
     Md5Joint* baseSkel;
     Md5Mesh*  meshes;
 
+    Md5Model()
+    : baseSkel(NULL)
+    , meshes(NULL)
+    {
+        
+    }
+
+    ~Md5Model() {
+        delete[] meshes;
+        delete[] baseSkel;
+    }
+
     i32 num_joints;
     i32 num_meshes;
 };
@@ -82,7 +107,7 @@ struct Md5Model
 class Md5Anim
 {
 private:
-    Md5Anim();
+    
 public:
     i32 num_frames;
     i32 num_joints;
@@ -91,7 +116,8 @@ public:
     Md5Joint** skelFrames;
     Md5BoundingBox* bboxes;
 
-    ~Md5Anim();
+    Md5Anim() {}
+    ~Md5Anim() {}
 
     static Md5Anim* Load(const string& filename);
 };
@@ -112,13 +138,16 @@ class Material;
 class Entity
 {
 private:
-    Entity();
+    Material* material;
+
+    Entity() {}
 public:
-    ~Entity();
+    ~Entity() {
+        delete object;
+    }
 
     static Entity* Load(const string& filename);
-
-    Material* material;
+    
     Md5Object* object;
     math::Matrix4 transform;
 };

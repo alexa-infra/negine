@@ -52,6 +52,9 @@ void Lexer::SkipWhiteSpace() {
     while(HasMoreData() && IsWhiteChar(ch))
     {
         char previousChar = file_.read_type<char>();
+        
+        if (!HasMoreData())
+            break;
         ch = file_.read_type_nomove<char>();
 
         if (ch == '#')
@@ -72,6 +75,9 @@ void Lexer::SkipWhiteSpace() {
             while (HasMoreData())
             {
                 previousChar = file_.read_type<char>();
+                
+                if (!HasMoreData())
+                    break;
                 ch = file_.read_type_nomove<char>();
 
                 if ((ch == '/') && (previousChar == '*'))
@@ -97,11 +103,14 @@ void Lexer::SkipRestOfLine() {
 }
 
 
-string Lexer::ReadToken() {
+const string& Lexer::ReadToken() {
     
     char* tokenChar = token_;
     *tokenChar = '\0';
     SkipWhiteSpace();
+
+    if (!HasMoreData())
+        return token_str_;
 
     if (file_.read_type_nomove<char>() == '"') 
     {
@@ -127,7 +136,7 @@ string Lexer::ReadToken() {
         *tokenChar++;
     }
     *tokenChar = '\0';
-    return token_;
+    return token_str_;
 }
 
 bool Lexer::IsWhiteChar(char character) const {
