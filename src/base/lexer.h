@@ -32,12 +32,12 @@ public:
     void   SkipWhiteSpace();
     void   SkipRestOfLine();
     string ReadToken();
-    const string& GetCurrentToken() const { return token_str_; }
+    const string& CurrentToken() const { return token_str_; }
     f32    ReadFloat();
     bool   HasMoreData() const;
     void   SetWhiteCharValue(char c, char value);
     bool   IsWhiteChar(char character) const;
-
+    bool   CheckToken(const string &token);
 
 private:
 

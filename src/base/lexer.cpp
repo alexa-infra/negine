@@ -151,4 +151,8 @@ void Lexer::SetWhiteCharValue(char c, char value) {
     whiteCharacters[c] = value;
 }
 
+bool Lexer::CheckToken(const string &token) {
+    return ReadToken()==token;
+}
+
 }

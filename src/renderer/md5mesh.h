@@ -17,7 +17,7 @@ namespace opengl {
 
 struct Md5Joint
 {
-    char name[64];
+    string name;
     i32 parent;
     math::Vector3 pos;
     math::Quat orient;
@@ -63,8 +63,8 @@ struct Md5Mesh
     i32 num_tris;
     i32 num_weights;
 
-    char shader[256];
-    char bumpShader[256];
+    string shader;
+    string bumpShader;
 
     Vertex* vertexArray;
     Face* vertexIndices;

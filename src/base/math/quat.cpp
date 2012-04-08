@@ -314,6 +314,14 @@ Quat& Quat::operator/= (f32 _number)
     return *this;
 }
 
+void Quat::ComputeW()
+{
+    float t = 1.0f - (x * x) - (y * y) - (z * z);
+    if (t < 0.0f)
+        w = 0.0f;
+    else
+        w = -sqrt(t);
+}
 
 } // namespace base
 } // namespace math

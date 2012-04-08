@@ -59,6 +59,7 @@ public:
     f32 GetLength() const;
     f32 GetNorm() const;
 
+    void ComputeW();
 public:
     static Quat GetRotation(const Vector3& axis, f32 angle);
     static Quat GetRotationX(f32 angle);
