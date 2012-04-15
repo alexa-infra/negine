@@ -32,7 +32,7 @@ Entity* Entity::Load(const string& filename)
     {
         reader.ReadToken();
 
-        if (strcmp(reader.CurrentToken().c_str(), "MD5Version") == 0)
+        if (strcmp(reader.CurrentToken(), "MD5Version") == 0)
         {
             u32 version = (u32) reader.ReadFloat();
             if ( version!=10 )
@@ -40,7 +40,7 @@ Entity* Entity::Load(const string& filename)
                 return NULL;
             }
         }
-        else if (strcmp(reader.CurrentToken().c_str(), "numJoints") == 0)
+        else if (strcmp(reader.CurrentToken(), "numJoints") == 0)
         {
             model.num_joints = (u32) reader.ReadFloat();
             if (model.num_joints > 0)
@@ -48,7 +48,7 @@ Entity* Entity::Load(const string& filename)
                 model.baseSkel = new Md5Joint[model.num_joints];
             } 
         }
-        else if (strcmp(reader.CurrentToken().c_str(), "numMeshes") == 0)
+        else if (strcmp(reader.CurrentToken(), "numMeshes") == 0)
         {
             model.num_meshes = (u32) reader.ReadFloat();
             if (model.num_meshes > 0)
@@ -56,7 +56,7 @@ Entity* Entity::Load(const string& filename)
                 model.meshes = new Md5Mesh[model.num_meshes];
             } 
         }
-        else if (strcmp(reader.CurrentToken().c_str(), "joints") == 0)
+        else if (strcmp(reader.CurrentToken(), "joints") == 0)
         {
             reader.ReadToken(); // {
 
@@ -81,22 +81,22 @@ Entity* Entity::Load(const string& filename)
 
             reader.ReadToken(); // }
         }
-        else if (strcmp(reader.CurrentToken().c_str(), "mesh") == 0)
+        else if (strcmp(reader.CurrentToken(), "mesh") == 0)
         {
             reader.ReadToken(); // {
             Md5Mesh &mesh  = model.meshes[currentMeshIndex];
-            while (strcmp(reader.CurrentToken().c_str(), "}") != 0 && reader.HasMoreData())
+            while (strcmp(reader.CurrentToken(), "}") != 0 && reader.HasMoreData())
             {
                 reader.ReadToken();
-                if (strcmp(reader.CurrentToken().c_str(), "shader") == 0)
+                if (strcmp(reader.CurrentToken(), "shader") == 0)
                 {
                     string materialName = reader.ReadToken();
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "bumpShader") == 0)
+                else if (strcmp(reader.CurrentToken(), "bumpShader") == 0)
                 {
                     string materialName = reader.ReadToken();
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "numverts") == 0)
+                else if (strcmp(reader.CurrentToken(), "numverts") == 0)
                 {                  
                     mesh.num_verts = (u32) reader.ReadFloat();
                     if ( mesh.num_verts > 0)
@@ -104,7 +104,7 @@ Entity* Entity::Load(const string& filename)
                         mesh.vertices = new Md5Vertex [mesh.num_verts];
                     }
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "numtris") == 0)
+                else if (strcmp(reader.CurrentToken(), "numtris") == 0)
                 {
                      mesh.num_tris = (u32) reader.ReadFloat();
                     if ( mesh.num_tris > 0)
@@ -112,7 +112,7 @@ Entity* Entity::Load(const string& filename)
                         mesh.triangles = new Md5Triangle [mesh.num_tris];
                     }                    
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "numweights") == 0)
+                else if (strcmp(reader.CurrentToken(), "numweights") == 0)
                 {
                     mesh.num_weights = (u32) reader.ReadFloat();
                     if ( mesh.num_weights > 0)
@@ -120,7 +120,7 @@ Entity* Entity::Load(const string& filename)
                         mesh.weights = new Md5Weight [mesh.num_weights];
                     }
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "vert") == 0)
+                else if (strcmp(reader.CurrentToken(), "vert") == 0)
                 {
                     //vert %d ( %f %f ) %d %d
                     u32 vertIndex = (u32) reader.ReadFloat();
@@ -136,7 +136,7 @@ Entity* Entity::Load(const string& filename)
                     vertex.count = (u32) reader.ReadFloat();
 
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "tri") == 0)
+                else if (strcmp(reader.CurrentToken(), "tri") == 0)
                 {
                     // tri %d %d %d %d
                     u32 triangleIndex = (u32) reader.ReadFloat();
@@ -146,7 +146,7 @@ Entity* Entity::Load(const string& filename)
                     triangle.index[1] = (u32) reader.ReadFloat();
                     triangle.index[2] = (u32) reader.ReadFloat();
                 }
-                else if (strcmp(reader.CurrentToken().c_str(), "weight") == 0)
+                else if (strcmp(reader.CurrentToken(), "weight") == 0)
                 {
                     //weight %d %d %f ( %f %f %f )
                     u32 weightIndex = (u32) reader.ReadFloat();
@@ -166,6 +166,51 @@ Entity* Entity::Load(const string& filename)
     }
 
     return entity;
+}
+
+void Entity::GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint* skeleton)
+{
+    math::Vector3 tmpNormal;
+    math::Vector3 tmpVertex;
+    math::Vector3 normalAccumulator;
+
+    math::Vector3 tmpTangent;
+    math::Vector3 tangentAccumulator;
+     
+    /* Setup vertices */
+    mesh.vertexArray = new Vertex[mesh.num_verts];
+    Vertex* currentVertex = mesh.vertexArray;
+    for (int i = 0; i < mesh.num_verts; ++i)
+    {
+        
+        currentVertex->pos.set(0.0f);
+        normalAccumulator.set(0.0f);       
+        tangentAccumulator.set(0.0f);
+       
+    // Calculate final vertex to draw with weights 
+        for (int j = 0; j < mesh.vertices[i].count; j++)
+        {
+            Md5Weight& weight = mesh.weights[mesh.vertices[i].start + j];
+            const Md5Joint& joint = skeleton[weight.joint];
+            
+            // Calculate transformed vertex for this weight 
+            tmpVertex = joint.orient.RotatePoint(weight.pos);
+            currentVertex->pos += (joint.pos + tmpVertex) * weight.bias;
+
+            tmpNormal = joint.orient.RotatePoint(weight.normal);
+            normalAccumulator += tmpNormal;
+
+
+            tmpTangent = joint.orient.RotatePoint(weight.tangent);
+            tangentAccumulator += tmpTangent;
+
+        }
+
+        normalAccumulator.Normalize();
+        tangentAccumulator.Normalize();
+        currentVertex++;
+    }
+
 }
 
 }

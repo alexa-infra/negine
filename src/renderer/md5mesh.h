@@ -55,18 +55,22 @@ struct Md5BoundingBox
 
 struct Md5Mesh
 {
-    Md5Vertex* vertices;
+    Md5Vertex*   vertices;
     Md5Triangle* triangles;
-    Md5Weight* weights;
+    Md5Weight*   weights;
 
     Md5Mesh()
     : vertices(NULL)
     , triangles(NULL)
     , weights(NULL)
+    , vertexArray(NULL)
+    , vertexIndices(NULL)
     {
     }
 
     ~Md5Mesh() {
+        delete[] vertexArray;
+        delete[] vertexIndices;
         delete[] vertices;
         delete[] triangles;
         delete[] weights;
@@ -150,9 +154,11 @@ public:
     
     Md5Object* object;
     math::Matrix4 transform;
+
+    void GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint *skeleton);
 };
 
-// void GenerateGPUVertices (md5_mesh_t *mesh, const md5_joint_t *skeleton);
+ 
 // void GenerateLightingInfo (const md5_mesh_t *mesh,  md5_joint_t *skeleton);
 // void DrawSkeleton (const md5_joint_t *skeleton, int num_joints);
 
