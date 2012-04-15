@@ -21,6 +21,8 @@ struct Md5Joint
     i32 parent;
     math::Vector3 pos;
     math::Quat orient;
+
+    math::Vector3 translate(const math::Vector3& v) const;
 };
 
 struct Md5Vertex

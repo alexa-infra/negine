@@ -5,6 +5,11 @@
 namespace base {
 namespace opengl {
 
+math::Vector3 Md5Joint::translate(const math::Vector3& v) const
+{
+    return orient.RotatePoint(v) + pos;
+}
+
 void readVector(Lexer& reader, math::Vector3& vec)
 {
     vec.x = reader.ReadFloat();
@@ -168,58 +173,41 @@ Entity* Entity::Load(const string& filename)
     return entity;
 }
 
-void Entity::GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint* skeleton)
+void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
 {
-    math::Vector3 tmpNormal;
-    math::Vector3 tmpVertex;
-    math::Vector3 normalAccumulator;
-
-    math::Vector3 tmpTangent;
-    math::Vector3 tangentAccumulator;
-     
-    /* Setup vertices */
     mesh.vertexArray = new Vertex[mesh.num_verts];
     Vertex* currentVertex = mesh.vertexArray;
     for (int i = 0; i < mesh.num_verts; ++i)
     {
         currentVertex->tex = mesh.vertices[i].st;
+
         currentVertex->pos.set(0.0f);
-        normalAccumulator.set(0.0f);       
-        tangentAccumulator.set(0.0f);
+        currentVertex->n.set(0.0f);
+        currentVertex->tangent.set(0.0f);
        
-    // Calculate final vertex to draw with weights 
         for (int j = 0; j < mesh.vertices[i].count; j++)
         {
-            Md5Weight& weight = mesh.weights[mesh.vertices[i].start + j];
+            const Md5Weight& weight = mesh.weights[mesh.vertices[i].start + j];
             const Md5Joint& joint = skeleton[weight.joint];
             
-            // Calculate transformed vertex for this weight 
-            tmpVertex = joint.orient.RotatePoint(weight.pos);
-            currentVertex->pos += (joint.pos + tmpVertex) * weight.bias;
-
-            tmpNormal = joint.orient.RotatePoint(weight.normal);
-            normalAccumulator += tmpNormal;
-
-            tmpTangent = joint.orient.RotatePoint(weight.tangent);
-            tangentAccumulator += tmpTangent;
+            currentVertex->pos += joint.translate(weight.pos) * weight.bias;
+            currentVertex->n += joint.orient.RotatePoint(weight.normal);
+            currentVertex->tangent += joint.orient.RotatePoint(weight.tangent);
         }
 
-        normalAccumulator.Normalize();
-        currentVertex->n = normalAccumulator;
-        tangentAccumulator.Normalize();
-        currentVertex->tangent = tangentAccumulator;
+        currentVertex->n.Normalize();
+        currentVertex->tangent.Normalize();
 
         currentVertex++;
     }
 
     mesh.vertexIndices = new Face[mesh.num_tris];
-
     for (int i = 0; i<mesh.num_tris; i++)
     {
-        mesh.vertexIndices[i].index[0] = mesh.triangles[i].index[0];
-        mesh.vertexIndices[i].index[1] = mesh.triangles[i].index[1];
-        mesh.vertexIndices[i].index[2] = mesh.triangles[i].index[2];
-        
+        for (int j=0; j<3; j++)
+        {
+            mesh.vertexIndices[i].index[j] = (u16)mesh.triangles[i].index[j];
+        }
     }
 }
 
