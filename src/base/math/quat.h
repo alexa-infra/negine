@@ -44,9 +44,13 @@ public:
     Quat& operator*= (f32 scalar);
     Quat& operator/= (f32 scalar);
 
+    bool operator== (const Quat& q) const;
+    bool operator!= (const Quat& q) const;
+
     Quat GetInversed() const;
     Quat GetConjugated() const;
     Vector3 RotatePoint(const Vector3& v) const;
+    Vector3 getXYZ() const;
 
     void Set(const f32 *quat);
     void Set(const Vector3& axis, f32 angle);
@@ -62,6 +66,7 @@ public:
     f32 GetLength() const;
     f32 GetNorm() const;
 
+    void Normalize();
     void ComputeW();
 public:
     static Quat GetRotation(const Vector3& axis, f32 angle);
@@ -70,7 +75,13 @@ public:
     static Quat GetRotationZ(f32 angle);
     static Quat GetSlerp(const Quat& q0, const Quat& q1, f32 time);
     static Quat GetZero();
+
+    friend std::ostream& operator<< (std::ostream& o, const Quat& q);
 };
+
+inline std::ostream& operator<< (std::ostream& o, const Quat& q) {
+    return o << q.x << ' ' << q.y << ' ' << q.z << ' ' << q.w;
+}
 
 } // namespace base
 } // namespace math

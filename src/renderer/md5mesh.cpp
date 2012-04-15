@@ -209,7 +209,6 @@ void Entity::GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint* skeleton)
         tangentAccumulator.Normalize();
         currentVertex->tangent = tangentAccumulator;
 
-        std::cout<<currentVertex->pos<<std::endl;
         currentVertex++;
     }
 

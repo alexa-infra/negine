@@ -5,6 +5,7 @@
  **/
 #include "base/math/quat.h"
 #include <assert.h>
+#include "base/math/mathlib.h"
 
 namespace base {
 namespace math {
@@ -64,8 +65,24 @@ void Quat::Set(const Vector3& axis, f32 angle)
     (*this) = GetRotation(axis, angle);
 }
 
+void Quat::Normalize()
+{
+    f32 norm = GetNorm();
+    if (math::Equal(norm, 0.f))
+        return;
+    x /= norm;
+    y /= norm;
+    z /= norm;
+    w /= norm;
+}
+
 void Quat::Set(const Matrix4& _matrix)
 {
+}
+
+Vector3 Quat::getXYZ() const
+{
+    return Vector3(x, y, z);
 }
 
 Quat Quat::operator+ (const Quat& _q) const
@@ -115,7 +132,7 @@ Quat Quat::operator* (const Quat& _q) const
     return Quat(y * _q.z - z * _q.y + w * _q.x + x * _q.w,
                 z * _q.x - x * _q.z + w * _q.y + y * _q.w,
                 x * _q.y - y * _q.x + w * _q.z + z * _q.w,
-                w * _q.w - x * _q.x - y * _q.y - z * _q.z );
+                w * _q.w - x * _q.x - y * _q.y - z * _q.z);
 };
 
 Vector3 Quat::RotatePoint(const Vector3& v) const
@@ -124,6 +141,16 @@ Vector3 Quat::RotatePoint(const Vector3& v) const
     Quat inv = GetConjugated();
     Quat final = *this * p * inv;
     return Vector3(final.x, final.y, final.z);
+}
+
+bool Quat::operator== (const Quat& q) const
+{
+    return math::Equal(x, q.x) && math::Equal(y, q.y) && math::Equal(z, q.z) && math::Equal(w, q.w);
+}
+
+bool Quat::operator!= (const Quat& q) const
+{
+    return !math::Equal(x, q.x) || !math::Equal(y, q.y) || !math::Equal(z, q.z) || !math::Equal(w, q.w);
 }
 
 Quat Quat::GetInversed() const
@@ -169,7 +196,7 @@ Quat Quat::GetRotation(const Vector3& axis, f32 angle)
         q.x = axis.x*len*sinangle;
         q.y = axis.y*len*sinangle;
         q.z = axis.z*len*sinangle;
-        q.w = cos(angle/2.0f);
+        q.w = cosf(angle/2.0f);
     }
     else
     {
