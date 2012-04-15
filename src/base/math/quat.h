@@ -34,6 +34,7 @@ public:
     Quat operator* (const Quat& q) const;
     Quat operator* (const f32 scalar) const;
     Quat operator/ (const f32 scalar) const;
+    Quat operator* (const Vector3& v) const;
 
     Quat& operator+= (const Quat& q);
     Quat& operator-= (const Quat& q);
@@ -42,8 +43,9 @@ public:
     Quat& operator*= (f32 scalar);
     Quat& operator/= (f32 scalar);
 
-    Quat GetInversed();
-    Quat GetConjugated();
+    Quat GetInversed() const;
+    Quat GetConjugated() const;
+    Vector3 RotatePoint(const Vector3& v) const;
 
     void Set(const f32 *quat);
     void Set(const Vector3& axis, f32 angle);

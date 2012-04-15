@@ -123,12 +123,30 @@ Quat Quat::operator* (const Quat& _q) const
     return q;
 };
 
-Quat Quat::GetInversed()
+Quat Quat::operator* (const Vector3& v) const
+{
+    Quat q;
+    q.w = - (x * v.x) - (y * v.y) - (z * v.z);
+    q.x =   (w * v.x) + (y * v.z) - (z * v.y);
+    q.y =   (w * v.y) + (z * v.x) - (x * v.z);
+    q.z =   (w * v.z) + (x * v.y) - (y * v.x);
+    return q;
+}
+
+Vector3 Quat::RotatePoint(const Vector3& v) const
+{
+    Quat inv = GetInversed();
+    Quat tmp = inv * v;
+    Quat final = tmp * inv;
+    return Vector3(final.x, final.y, final.z);
+}
+
+Quat Quat::GetInversed() const
 {
     return GetConjugated()/GetNorm();
 }
 
-Quat Quat::GetConjugated()
+Quat Quat::GetConjugated() const
 {
     Quat q(*this);
 
