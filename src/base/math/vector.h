@@ -137,10 +137,11 @@ class Vector2 {
         normalized.Normalize();
         return normalized;
     }
-    inline f32 Dot(const Vector2& v) const {
-        return (x * v.x + y * v.y);
-    }
 };
+
+inline f32 Dot(const Vector2& a, const Vector2& b) {
+    return (a.x * b.x + a.y * b.y);
+}
 
 class Vector3 {
  public:
@@ -235,9 +236,6 @@ class Vector3 {
     inline Vector3 operator- () const {
         return Vector3( -x, -y, -z );
     }
-    inline Vector3 operator ^ (const Vector3& v) const {
-        return Vector3(y*v.z - z*v.y,  z*v.x - x*v.z, x*v.y - y*v.x);
-    }
     inline f32& operator[] (const int i) {
         return array[i];
     }
@@ -277,12 +275,17 @@ class Vector3 {
         normalized.Normalize();
         return normalized;
     }
-    inline f32 Dot(const Vector3& v) const {
-        return (x * v.x + y * v.y + z * v.z);
-    }
 
     friend std::ostream& operator<< (std::ostream& o, const Vector3& v);
 };
+
+inline Vector3 VectorProduct(const Vector3& a, const Vector3& b) {
+    return Vector3(a.y*b.z - a.z*b.y,  a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
+}
+
+inline f32 Dot(const Vector3& a, const Vector3& b) {
+    return (a.x * b.x + a.y * b.y + a.z * b.z);
+}
 
 inline std::ostream& operator<< (std::ostream& o, const Vector3& v) {
     return o << v.x << ' ' << v.y << ' ' << v.z;
@@ -429,9 +432,11 @@ class Vector4 {
         normalized.Normalize();
         return normalized;
     }
-    inline f32 Dot(const Vector4& v) const {
-        return (x * v.x + y * v.y + z * v.z + w * v.w);
-    }
 };
+
+inline f32 Dot(const Vector4& a, const Vector4& b) {
+    return (a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
+}
+
 }
 }

@@ -494,11 +494,11 @@ Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target) {
     }
 
     // compute the left vector
-    left = up ^ forward;  // cross product
+    left = VectorProduct(up, forward);  // cross product
     left.Normalize();
 
     // re-calculate the orthonormal up vector
-    up = forward ^ left;  // cross product
+    up = VectorProduct(forward, left);  // cross product
     up.Normalize();
 
     Matrix4 result(left, up, forward);
@@ -517,7 +517,7 @@ Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target, const Ve
     forward = target - position;
     forward.Normalize();
 
-    left = up ^ forward;  // cross product
+    left = VectorProduct(up, forward);  // cross product
     left.Normalize();
 
     Matrix4 result(left, up, forward);

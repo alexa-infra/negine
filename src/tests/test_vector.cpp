@@ -34,6 +34,6 @@ TEST(math, vector2d_unary_minus)
 
 TEST(math, vector2d_scalar)
 {
-    float res = v1.Dot(v2);
+    float res = Dot(v1, v2);
     EXPECT_FLOAT_EQ(res, 6.f);
 }
