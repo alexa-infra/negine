@@ -83,12 +83,20 @@ protected:
 class FileText {
 protected:
     std::fstream file_;
+    std::streambuf* sb_;
+    u32 size_;
+    u32 position_;
 public:
     FileText(const std::string& filename);
     virtual ~FileText();
     std::vector<std::string> read_lines();
     std::string read_all();
-    u32 size();
+
+    char current_char();
+    char bump_char();
+
+    u32 position() const { return position_; }
+    u32 size() const { return size_; }
 };
 
-}
+} // namespace base

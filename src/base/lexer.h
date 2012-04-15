@@ -16,14 +16,12 @@ namespace base {
 
 class Lexer {
 protected:
-    FileBinary file_;
+    FileText file_;
 
     const u32 maxTokenSize;
 
     char*   token_;
     char*   whiteCharacters;
-
-    u32     size;
 public: 
     Lexer(const std::string &filename);
     ~Lexer();

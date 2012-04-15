@@ -43,7 +43,7 @@ void FileBinary::write_impl(const u8* source, u32 size, u32 position) {
 std::istream& FileBinary::safeGetline(std::istream& is, std::string& t, u32& read_count)
 {
     t.clear();
-    std::istream::sentry se(is);
+//    std::istream::sentry se(is);
     std::streambuf* sb = is.rdbuf();
 
     for(read_count=1;;read_count++) {
@@ -65,8 +65,19 @@ std::istream& FileBinary::safeGetline(std::istream& is, std::string& t, u32& rea
     }
 }
 
-FileText::FileText(const std::string& filename) {
-    file_.open(filename.c_str(), std::ios::in | std::ios::out);
+FileText::FileText(const std::string& filename)
+    : sb_(NULL)
+    , size_(0)
+    , position_(0)
+{
+    file_.open(filename.c_str(), std::ios::binary | std::ios::in);
+    if (file_.good())
+    {
+        file_.seekg(0, std::ios::end);
+        size_ = static_cast<u32>(file_.tellg());
+        file_.seekg(0, std::ios::beg);
+        sb_ = file_.rdbuf();
+    }
 }
 
 FileText::~FileText() {
@@ -96,9 +107,13 @@ std::string FileText::read_all() {
     return ret;
 }
 
-u32 FileText::size() {
-    file_.seekg(0, std::ios::end);
-    return static_cast<u32>(file_.tellg());
+char FileText::current_char() {
+    return static_cast<char>(sb_->sgetc());
+}
+
+char FileText::bump_char() {
+    position_++;
+    return static_cast<char>(sb_->sbumpc());
 }
 
 } // namespace base
