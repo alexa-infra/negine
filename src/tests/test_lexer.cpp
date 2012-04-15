@@ -37,16 +37,16 @@ protected:
 
 TEST_F(LexerTest, Basic) {
     Lexer lex(filename);
-    EXPECT_STREQ(lex.ReadToken().c_str(), "this");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "is");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "a");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "test");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "second");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "line");
+    EXPECT_STREQ(lex.ReadToken(), "this");
+    EXPECT_STREQ(lex.ReadToken(), "is");
+    EXPECT_STREQ(lex.ReadToken(), "a");
+    EXPECT_STREQ(lex.ReadToken(), "test");
+    EXPECT_STREQ(lex.ReadToken(), "second");
+    EXPECT_STREQ(lex.ReadToken(), "line");
     
-    EXPECT_STREQ(lex.ReadToken().c_str(), "value");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "thevalue");
-    EXPECT_STREQ(lex.ReadToken().c_str(), "value1");
+    EXPECT_STREQ(lex.ReadToken(), "value");
+    EXPECT_STREQ(lex.ReadToken(), "thevalue");
+    EXPECT_STREQ(lex.ReadToken(), "value1");
 
     lex.ReadToken();
     lex.ReadToken();

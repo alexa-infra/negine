@@ -20,7 +20,6 @@ protected:
 
     const u32 maxTokenSize;
 
-    string  token_str_;
     char*   token_;
     char*   whiteCharacters;
 
@@ -31,13 +30,12 @@ public:
 
     void   SkipWhiteSpace();
     void   SkipRestOfLine();
-    const string& ReadToken();
-    const string& CurrentToken() const { return token_str_; }
+    const char* ReadToken();
+    const char* CurrentToken() const { return token_; }
     f32    ReadFloat();
     bool   HasMoreData() const;
     void   SetWhiteCharValue(char c, char value);
     bool   IsWhiteChar(char character) const;
-    bool   CheckToken(const string &token);
 
 private:
 
