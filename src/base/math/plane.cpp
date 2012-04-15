@@ -13,14 +13,14 @@ void Plane::set(const Vector3* points) {
 }
 
 void Plane::set(const Vector3& p1, const Vector3& p2, const Vector3& p3) {
-    normal_ = (p2 - p1) ^ (p3 - p1);
-    distance_ = -normal_.Dot(p1);
+    normal_ = VectorProduct(p2 - p1, p3 - p1);
+    distance_ = -Dot(normal_, p1);
     Normalize();
 }
 
 void Plane::set(const Vector3& normal, const Vector3& planePoint) {
     normal_ = normal;
-    distance_ = -normal.Dot(planePoint);
+    distance_ = -Dot(normal, planePoint);
     Normalize();
 }
 
@@ -37,7 +37,7 @@ Vector3 Plane::Projection(const Vector3& point) const {
 }
 
 f32 Plane::Distance(const Vector3& point) const {
-    return (normal_.Dot(point) + distance_);
+    return (Dot(normal_, point) + distance_);
 }
 
 void Plane::Normalize() {
