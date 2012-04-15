@@ -25,17 +25,18 @@ public:
 
 public:
     Quat();
+    Quat(const Quat& quat);
     Quat(const f32 *quat);
     Quat(f32 _x, f32 _y, f32 _z, f32 _w);
     Quat(const Vector3& axis, f32 angle);
+    Quat(const Vector3& v);
     Quat(const Matrix4& matrix);
     Quat operator+ (const Quat& q) const;
     Quat operator- (const Quat& q) const;
     Quat operator* (const Quat& q) const;
     Quat operator* (const f32 scalar) const;
     Quat operator/ (const f32 scalar) const;
-    Quat operator* (const Vector3& v) const;
-
+    
     Quat& operator+= (const Quat& q);
     Quat& operator-= (const Quat& q);
     Quat& operator*= (const Quat& q);

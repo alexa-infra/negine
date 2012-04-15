@@ -182,7 +182,7 @@ void Entity::GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint* skeleton)
     Vertex* currentVertex = mesh.vertexArray;
     for (int i = 0; i < mesh.num_verts; ++i)
     {
-        
+        currentVertex->tex = mesh.vertices[i].st;
         currentVertex->pos.set(0.0f);
         normalAccumulator.set(0.0f);       
         tangentAccumulator.set(0.0f);
@@ -200,17 +200,28 @@ void Entity::GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint* skeleton)
             tmpNormal = joint.orient.RotatePoint(weight.normal);
             normalAccumulator += tmpNormal;
 
-
             tmpTangent = joint.orient.RotatePoint(weight.tangent);
             tangentAccumulator += tmpTangent;
-
         }
 
         normalAccumulator.Normalize();
+        currentVertex->n = normalAccumulator;
         tangentAccumulator.Normalize();
+        currentVertex->tangent = tangentAccumulator;
+
+        std::cout<<currentVertex->pos<<std::endl;
         currentVertex++;
     }
 
+    mesh.vertexIndices = new Face[mesh.num_tris];
+
+    for (int i = 0; i<mesh.num_tris; i++)
+    {
+        mesh.vertexIndices[i].index[0] = mesh.triangles[i].index[0];
+        mesh.vertexIndices[i].index[1] = mesh.triangles[i].index[1];
+        mesh.vertexIndices[i].index[2] = mesh.triangles[i].index[2];
+        
+    }
 }
 
 }

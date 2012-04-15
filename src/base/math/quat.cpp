@@ -13,6 +13,11 @@ Quat::Quat()
 {
 }
 
+Quat::Quat(const Quat& _q)
+{
+    Set(_q.x, _q.y, _q.z, _q.w);
+}
+
 Quat::Quat(const f32 *_q)
 {
     Set(_q);
@@ -21,6 +26,11 @@ Quat::Quat(const f32 *_q)
 Quat::Quat(f32 _x, f32 _y, f32 _z, f32 _w)
 {
     Set(_x, _y, _z, _w);
+}
+
+Quat::Quat(const Vector3& v)
+{
+    Set(v.x, v.y, v.z, 0.0f);   
 }
 
 Quat::Quat(const Vector3& axis, f32 angle)
@@ -102,42 +112,17 @@ Quat Quat::operator- (const Quat& _q) const
 
 Quat Quat::operator* (const Quat& _q) const
 {
-    Quat q(*this);
-
-    f32 A, B, C, D, E, F, G, H;
-
-    A = (_q.w + _q.x) * (w + x);
-    B = (_q.z - _q.y) * (y - z);
-    C = (_q.x - _q.w) * (y + z);
-    D = (_q.y + _q.z) * (x - w);
-    E = (_q.x + _q.z) * (x + y);
-    F = (_q.x - _q.z) * (x - y);
-    G = (_q.w + _q.y) * (w - z);
-    H = (_q.w - _q.y) * (w + z);
-
-    q.w = B + (-E - F + G + H) * 0.5f;
-    q.x = A - ( E + F + G + H) * 0.5f; 
-    q.y =-C + ( E - F + G - H) * 0.5f;
-    q.z =-D + ( E - F - G + H) * 0.5f;
-
-    return q;
+    return Quat(y * _q.z - z * _q.y + w * _q.x + x * _q.w,
+                z * _q.x - x * _q.z + w * _q.y + y * _q.w,
+                x * _q.y - y * _q.x + w * _q.z + z * _q.w,
+                w * _q.w - x * _q.x - y * _q.y - z * _q.z );
 };
-
-Quat Quat::operator* (const Vector3& v) const
-{
-    Quat q;
-    q.w = - (x * v.x) - (y * v.y) - (z * v.z);
-    q.x =   (w * v.x) + (y * v.z) - (z * v.y);
-    q.y =   (w * v.y) + (z * v.x) - (x * v.z);
-    q.z =   (w * v.z) + (x * v.y) - (y * v.x);
-    return q;
-}
 
 Vector3 Quat::RotatePoint(const Vector3& v) const
 {
-    Quat inv = GetInversed();
-    Quat tmp = inv * v;
-    Quat final = tmp * inv;
+    Quat p(v);
+    Quat inv = GetConjugated();
+    Quat final = *this * p * inv;
     return Vector3(final.x, final.y, final.z);
 }
 
@@ -148,7 +133,7 @@ Quat Quat::GetInversed() const
 
 Quat Quat::GetConjugated() const
 {
-    Quat q(*this);
+    Quat q;
 
     q.x = -x;
     q.y = -y;

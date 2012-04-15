@@ -10,7 +10,10 @@
 #include <assert.h>
 #include <sstream>
 
+#include "renderer/md5mesh.h"
+
 using base::math::deg_to_rad;
+using base::opengl::Entity;
 
 Demo::Demo(i32 width, i32 height) 
     : texture_(NULL)
@@ -34,22 +37,38 @@ Demo::Demo(i32 width, i32 height)
     projection_ = camera_.GetProjection();
     modelTransform_.SetIdentity();
     modelTransform_.Translate(Vector3(0, 0, 150));
+    modelTransform_.RotateX(-90 * deg_to_rad);
+    modelTransform_.RotateZ(180 * deg_to_rad);
 
-    texture_ = texure_loader_.Load("european_fnt.tga");
+    //texture_ = texure_loader_.Load("european_fnt.tga");
+    texture_ = texure_loader_.Load("hellknight.png");
 
     program_ = LoadProgram("shader.shader");
     program_hud_ = LoadProgram("hud.shader");
     program_font_ = LoadProgram("font.shader");
 
-    std::vector<Mesh*> mesh_list 
-        = load_md3_se("european_fnt_v2.md3");
-    for (u32 i=0; i<mesh_list.size(); i++) {
+    //std::vector<Mesh*> mesh_list 
+    //    = load_md3_se("european_fnt_v2.md3");
+
+    Entity* entity = Entity::Load("hellknight.md5mesh");
+    entity->GenerateGPUVertices(entity->object->md5Model.meshes[0], entity->object->md5Model.baseSkel);
+    
+    VertexBuffer* vb = new VertexBufferGPU;
+    vb->SetData(entity->object->md5Model.meshes[0].vertexArray,
+        entity->object->md5Model.meshes[0].num_verts,
+        entity->object->md5Model.meshes[0].vertexIndices,
+        entity->object->md5Model.meshes[0].num_tris);
+    mesh_.push_back(vb);
+
+    /*for (u32 i=0; i<mesh_list.size(); i++) {
         Mesh* m = mesh_list[i];
         VertexBuffer* vb = new VertexBufferGPU;
         vb->SetData(m->vertexes, m->num_vertexes, m->faces, m->num_faces);
         mesh_.push_back(vb);
         delete m;
-    }
+    }*/
+
+    delete entity;
 
     //font test
     //string filename = "AlphaBetaBRK.ttf";
@@ -85,6 +104,8 @@ void Demo::OnFrame(void) {
     program_->Bind();
     AttributeBinding binding = program_->binding();
 
+    modelTransform_.RotateZ(20/60.f*deg_to_rad);
+
     program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
     program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
     program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
@@ -106,8 +127,8 @@ void Demo::OnFrame(void) {
     program_hud_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
     program_hud_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
-    ps_->update(frame_time);
-    ps_->Draw(binding);
+    //ps_->update(frame_time);
+    //ps_->Draw(binding);
     program_hud_->Unbind();
 
     program_font_->Bind();
@@ -118,7 +139,7 @@ void Demo::OnFrame(void) {
     program_font_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
     font_->SetText(Vector2(-50.f, 0.f), title_text_, Vector4(0.f, 0.f, 1.f, 1.f));
-    font_->Draw(binding);
+//    font_->Draw(binding);
 
     std::stringstream ss;
     //ss.precision(0);
