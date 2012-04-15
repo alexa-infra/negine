@@ -116,14 +116,14 @@ TextureLoader::~TextureLoader() {
 }
 
 void TextureLoader::ClearCache() {
-    for(auto it = cache_.begin(); it != cache_.end(); ++it) {
+    for(TextureCache::iterator it = cache_.begin(); it != cache_.end(); ++it) {
         delete it->second;
     }
     cache_.clear();
 }
 
 Texture* TextureLoader::Load(const std::string& filename) {
-    auto found = cache_.find(filename);
+    TextureCache::iterator found = cache_.find(filename);
     if (found != cache_.end()) {
         return found->second;
     }

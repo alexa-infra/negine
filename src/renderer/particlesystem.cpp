@@ -93,7 +93,7 @@ void ParticleSystem::add() {
 
 void ParticleSystem::Draw(AttributeBinding& binding) {
     vbo->BindAttributes(binding);
-    for (auto it = particles_active.begin(); it != particles_active.end(); ++it) {
+    for (ParticleList::iterator it = particles_active.begin(); it != particles_active.end(); ++it) {
         Particle* p = *it;
         vbo->DrawOnly(p->face, 2);
     }
@@ -116,7 +116,7 @@ void ParticleSystem::update(f32 frame_time) {
 
     Vector2 v[4];
     Vertex* vertex = vbo->Lock();
-    for (auto it = particles_active.begin(); it != particles_active.end();) {
+    for (ParticleList::iterator it = particles_active.begin(); it != particles_active.end();) {
         Particle* p = *it;
 
         p->life += frame_time;

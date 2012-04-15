@@ -16,7 +16,7 @@
 namespace base {
 namespace opengl {
 
-StringMap<VertexAttr, VertexAttr::Count>::Entry attr_map_str[VertexAttr::Count] = {
+StringMap<VertexAttr, VertexAttrs::Count>::Entry attr_map_str[VertexAttrs::Count] = {
     { "position",  VertexAttrs::tagPosition },
     { "tex",       VertexAttrs::tagTexture },
     { "col",       VertexAttrs::tagColor },
@@ -24,7 +24,7 @@ StringMap<VertexAttr, VertexAttr::Count>::Entry attr_map_str[VertexAttr::Count] 
     { "t",         VertexAttrs::tagTangent },
     { "bi",        VertexAttrs::tagBinormal }
 };
-StringMap<VertexAttr, VertexAttr::Count> attr_map(attr_map_str);
+StringMap<VertexAttr, VertexAttrs::Count> attr_map(attr_map_str);
 
 StringMap<UniformVar, UniformVars::Count>::Entry uni_map_str[UniformVars::Count] = {
     { "diffuse",            UniformVars::Diffuse },
@@ -50,9 +50,9 @@ Program::Program()
 }
 
 Program* Program::Create(const std::string& vs, const std::string& fs, std::string& status) {
-    std::unique_ptr<Shader> pvs(new Shader(ShaderTypes::VERTEX));
-    std::unique_ptr<Shader> pfs(new Shader(ShaderTypes::PIXEL));
-    std::unique_ptr<Program> pr(new Program);
+    std::auto_ptr<Shader> pvs(new Shader(ShaderTypes::VERTEX));
+    std::auto_ptr<Shader> pfs(new Shader(ShaderTypes::PIXEL));
+    std::auto_ptr<Program> pr(new Program);
     bool failed = false;
     if (!pvs->Compile(vs)) {
         status = pvs->status();

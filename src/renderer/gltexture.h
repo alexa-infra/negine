@@ -8,7 +8,7 @@
 
 #include "base/types.h"
 #include "renderer/glcontext.h"
-#include <unordered_map>
+#include <map>
 
 namespace base {
 namespace opengl {
@@ -168,7 +168,9 @@ private:
 };
 
 class TextureLoader {
-    std::unordered_map<std::string, Texture*, hash_string> cache_;
+    typedef std::map<std::string, Texture*> TextureCache;
+    TextureCache cache_;
+
 public:
     TextureLoader();
     ~TextureLoader();

@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include <unordered_map>
+#include <map>
 #include <functional>
 #include <algorithm>
 
@@ -30,7 +30,7 @@ template<class T, u32 N>
 class StringMap
 {
 public:
-    typedef std::unordered_map<std::string, T, hash_string> map_type;
+    typedef std::map<std::string, T> map_type;
 
 private:
     map_type entries_;

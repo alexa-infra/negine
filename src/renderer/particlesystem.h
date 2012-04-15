@@ -55,13 +55,14 @@ inline bool sort_particles_from_farest_to_nearest(Particle* first, Particle* sec
 
 class ParticleSystem {
 public:
+    typedef std::list<Particle*> ParticleList;
     ParticleSystemSetting settings;     //!< settings
     Texture* texture;                   //!< texture
     VertexBuffer* vbo;                  //!< vertexes
 
     Particle* particles;                    //!< all particles
-    std::list<Particle*> particles_free;     //!< not used particles
-    std::list<Particle*> particles_active;   //!< used particles
+    ParticleList particles_free;     //!< not used particles
+    ParticleList particles_active;   //!< used particles
 
     bool emission_active;       //!< emission is enabled
     u32 emission_rate;          //!< particles/second
