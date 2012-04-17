@@ -30,9 +30,8 @@ Entity* Entity::Load(const string& filename)
     u32 currentMeshIndex = 0;
 
     Entity* entity = new Entity;
-    entity->object = new Md5Object;
 
-    Md5Model& model = entity->object->md5Model;
+    Md5Model& model = entity->object.md5Model;
     while(reader.HasMoreData())
     {
         reader.ReadToken();
@@ -95,11 +94,7 @@ Entity* Entity::Load(const string& filename)
                 reader.ReadToken();
                 if (strcmp(reader.CurrentToken(), "shader") == 0)
                 {
-                    string materialName = reader.ReadToken();
-                }
-                else if (strcmp(reader.CurrentToken(), "bumpShader") == 0)
-                {
-                    string materialName = reader.ReadToken();
+                    mesh.shader = reader.ReadToken();
                 }
                 else if (strcmp(reader.CurrentToken(), "numverts") == 0)
                 {                  

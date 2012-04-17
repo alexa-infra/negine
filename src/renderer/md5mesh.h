@@ -83,7 +83,6 @@ struct Md5Mesh
     i32 num_weights;
 
     string shader;
-    string bumpShader;
 
     Vertex* vertexArray;
     Face* vertexIndices;
@@ -148,13 +147,11 @@ private:
 
     Entity() {}
 public:
-    ~Entity() {
-        delete object;
-    }
+    ~Entity() {}
 
     static Entity* Load(const string& filename);
     
-    Md5Object* object;
+    Md5Object object;
     math::Matrix4 transform;
 
     void GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint *skeleton);

@@ -51,13 +51,13 @@ Demo::Demo(i32 width, i32 height)
     //    = load_md3_se("european_fnt_v2.md3");
 
     Entity* entity = Entity::Load("hellknight.md5mesh");
-    entity->GenerateGPUVertices(entity->object->md5Model.meshes[0], entity->object->md5Model.baseSkel);
+    entity->GenerateGPUVertices(entity->object.md5Model.meshes[0], entity->object.md5Model.baseSkel);
     
     VertexBuffer* vb = new VertexBufferGPU;
-    vb->SetData(entity->object->md5Model.meshes[0].vertexArray,
-        entity->object->md5Model.meshes[0].num_verts,
-        entity->object->md5Model.meshes[0].vertexIndices,
-        entity->object->md5Model.meshes[0].num_tris);
+    vb->SetData(entity->object.md5Model.meshes[0].vertexArray,
+        entity->object.md5Model.meshes[0].num_verts,
+        entity->object.md5Model.meshes[0].vertexIndices,
+        entity->object.md5Model.meshes[0].num_tris);
     mesh_.push_back(vb);
 
     /*for (u32 i=0; i<mesh_list.size(); i++) {
