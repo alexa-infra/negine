@@ -1,0 +1,66 @@
+/**
+ * \file
+ * \brief       Md5 mesh animation loader
+ * \author      Alexey Vasilyev <alexa.infra@gmail.com>
+ *              Victor Sukochev  <sukochevvv@gmail.com>
+ * \copyright   MIT License
+ **/
+#pragma once
+
+#include "base/types.h"
+#include "md5mesh.h"
+#include "base/math/vector.h"
+#include "base/math/quat.h"
+
+namespace base {
+namespace opengl {
+
+/* Joint info */
+struct JointInfo
+{
+	string name;
+	i32 parent;
+	i32 flags;
+	i32 start_index;
+};
+
+/* Base frame joint */
+struct BaseframeJoint
+{
+	math::Vector3 pos;
+	math::Quat    orient;
+};
+
+class Md5Anim
+{
+private:
+    JointInfo* jointInfos;
+    BaseframeJoint* baseFrame;
+    u32 numAnimatedComponents;
+    f32 *animFrameData;
+
+public:
+    u32 num_frames;
+    u32 num_joints;
+    u32 frame_rate;
+
+    Md5Joint** skelFrames;
+    Md5BoundingBox* bboxes;
+
+    Md5Anim()
+    : jointInfos(0)
+    , baseFrame(0)
+    , numAnimatedComponents(0)
+    , animFrameData(0){}
+
+    ~Md5Anim();
+
+    void Load(const string& filename);
+    void BuildFrameSkeleton(u32 frameIndex);
+
+    void Update(Md5Model* model, u32 frameIndex, f32 interp_phase);
+};
+
+
+}
+}

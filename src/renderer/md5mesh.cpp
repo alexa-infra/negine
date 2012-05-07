@@ -101,7 +101,8 @@ Entity* Entity::Load(const string& filename)
                     mesh.num_verts = (u32) reader.ReadFloat();
                     if ( mesh.num_verts > 0)
                     {
-                        mesh.vertices = new Md5Vertex [mesh.num_verts];
+                        mesh.vertices    = new Md5Vertex [mesh.num_verts];
+                        mesh.vertexArray = new Vertex[mesh.num_verts];
                     }
                 }
                 else if (strcmp(reader.CurrentToken(), "numtris") == 0)
@@ -109,7 +110,8 @@ Entity* Entity::Load(const string& filename)
                      mesh.num_tris = (u32) reader.ReadFloat();
                     if ( mesh.num_tris > 0)
                     {
-                        mesh.triangles = new Md5Triangle [mesh.num_tris];
+                        mesh.vertexIndices = new Face[mesh.num_tris];
+                        mesh.triangles     = new Md5Triangle [mesh.num_tris];
                     }                    
                 }
                 else if (strcmp(reader.CurrentToken(), "numweights") == 0)
@@ -170,7 +172,7 @@ Entity* Entity::Load(const string& filename)
 
 void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
 {
-    mesh.vertexArray = new Vertex[mesh.num_verts];
+    
     Vertex* currentVertex = mesh.vertexArray;
     for (int i = 0; i < mesh.num_verts; ++i)
     {
@@ -196,7 +198,7 @@ void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
         currentVertex++;
     }
 
-    mesh.vertexIndices = new Face[mesh.num_tris];
+    
     for (int i = 0; i<mesh.num_tris; i++)
     {
         for (int j=0; j<3; j++)

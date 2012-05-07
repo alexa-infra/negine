@@ -16,6 +16,8 @@
 #include "renderer/particlesystem.h"
 #include "renderer/camera.h"
 #include "base/timer.h"
+#include "renderer/md5mesh.h"
+#include "renderer/md5anim.h"
 
 using base::math::Matrix4;
 using base::math::Vector2;
@@ -34,7 +36,9 @@ using base::opengl::AttributeBinding;
 using base::opengl::load_md3_se;
 using base::opengl::Mesh;
 using base::opengl::ParticleSystemSetting;
+using base::opengl::Entity;
 using base::Timer;
+using base::opengl::Md5Anim;
 
 class Demo : public Application {
 private:
@@ -62,6 +66,8 @@ private:
     Camera camera_;
 
     TextureLoader texure_loader_;
+
+    Entity* entity;
 public:
     Demo(i32 width = 640, i32 height = 480); 
     virtual ~Demo();

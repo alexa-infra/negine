@@ -13,7 +13,12 @@
 #include "base/math/quat.h"
 
 namespace base {
+
+class Lexer;
+
 namespace opengl {
+
+class Md5Anim;
 
 struct Md5Joint
 {
@@ -109,29 +114,11 @@ struct Md5Model
     i32 num_meshes;
 };
 
-class Md5Anim
-{
-private:
-    
-public:
-    i32 num_frames;
-    i32 num_joints;
-    i32 frameRate;
-
-    Md5Joint** skelFrames;
-    Md5BoundingBox* bboxes;
-
-    Md5Anim() {}
-    ~Md5Anim() {}
-
-    static Md5Anim* Load(const string& filename);
-};
-
 class Md5Object
 {
 public:
     Md5Model md5Model;
-    Md5Anim  md5Anim;
+    Md5Anim*  md5Anim;
 
     bool animated;
 
@@ -157,6 +144,8 @@ public:
     void GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint *skeleton);
 };
 
+void readVector(Lexer& reader, math::Vector3& vec);
+void readQuat(Lexer& reader, math::Quat& q);
  
 // void GenerateLightingInfo (const md5_mesh_t *mesh,  md5_joint_t *skeleton);
 // void DrawSkeleton (const md5_joint_t *skeleton, int num_joints);

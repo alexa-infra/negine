@@ -50,15 +50,19 @@ Demo::Demo(i32 width, i32 height)
     //std::vector<Mesh*> mesh_list 
     //    = load_md3_se("european_fnt_v2.md3");
 
-    Entity* entity = Entity::Load("hellknight.md5mesh");
+    entity = Entity::Load("hellknight.md5mesh");
+    entity->object.md5Anim = new Md5Anim;
+    entity->object.md5Anim->Load("hellknight_idle2.md5anim");
     entity->GenerateGPUVertices(entity->object.md5Model.meshes[0], entity->object.md5Model.baseSkel);
     
     VertexBuffer* vb = new VertexBufferGPU;
-    vb->SetData(entity->object.md5Model.meshes[0].vertexArray,
-        entity->object.md5Model.meshes[0].num_verts,
-        entity->object.md5Model.meshes[0].vertexIndices,
-        entity->object.md5Model.meshes[0].num_tris);
     mesh_.push_back(vb);
+
+     // vb->SetData(entity->object.md5Model.meshes[0].vertexArray,
+     //     entity->object.md5Model.meshes[0].num_verts,
+     //     entity->object.md5Model.meshes[0].vertexIndices,
+     //     entity->object.md5Model.meshes[0].num_tris);
+    
 
     /*for (u32 i=0; i<mesh_list.size(); i++) {
         Mesh* m = mesh_list[i];
@@ -67,8 +71,6 @@ Demo::Demo(i32 width, i32 height)
         mesh_.push_back(vb);
         delete m;
     }*/
-
-    delete entity;
 
     //font test
     //string filename = "AlphaBetaBRK.ttf";
@@ -90,6 +92,8 @@ Demo::~Demo() {
     delete font_;
     delete ps_;
     delete program_font_;
+    delete entity->object.md5Anim;
+    delete entity;
 }
 
 void Demo::OnFrame(void) {
@@ -110,9 +114,21 @@ void Demo::OnFrame(void) {
     program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
     program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
     
+
+    static u32 counter = 0;
+    counter++;
+    u32 frame  = counter/2;
+    f32 interp = (counter%2)/2.f;
+    entity->object.md5Anim->Update(&entity->object.md5Model, frame, interp);
+    entity->GenerateGPUVertices(entity->object.md5Model.meshes[0], entity->object.md5Model.baseSkel);
+    mesh_[0]->SetData(entity->object.md5Model.meshes[0].vertexArray,
+        entity->object.md5Model.meshes[0].num_verts,
+        entity->object.md5Model.meshes[0].vertexIndices,
+        entity->object.md5Model.meshes[0].num_tris);
+
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
-    }
+    };
 
     program_->Unbind();
     glDisable(GL_DEPTH_TEST);
