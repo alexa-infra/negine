@@ -81,6 +81,8 @@ Demo::Demo(i32 width, i32 height)
     ParticleSystemSetting ss;
     ps_ = new ParticleSystem(ss);
 
+    ps_renderer_ = new ParticleSystemRenderer(ps_);
+
     texture_ps_ = texure_loader_.Load("heart.png");
 }
 
@@ -90,6 +92,7 @@ Demo::~Demo() {
     delete program_;
     delete program_hud_;
     delete font_;
+    delete ps_renderer_;
     delete ps_;
     delete program_font_;
     delete entity->object.md5Anim;
@@ -143,7 +146,9 @@ void Demo::OnFrame(void) {
     program_hud_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
     program_hud_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
-    //ps_->update(frame_time);
+    ps_->update(frame_time);
+    ps_renderer_->Commit();
+    ps_renderer_->Draw(binding);
     //ps_->Draw(binding);
     program_hud_->Unbind();
 

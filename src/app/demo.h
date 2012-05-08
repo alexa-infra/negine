@@ -14,6 +14,7 @@
 #include "renderer/md3mesh.h"
 #include "renderer/spritefont.h"
 #include "renderer/particlesystem.h"
+#include "renderer/particlesystemrenderer.h"
 #include "renderer/camera.h"
 #include "base/timer.h"
 #include "renderer/md5mesh.h"
@@ -30,6 +31,7 @@ using base::opengl::VertexBufferGPU;
 using base::opengl::VertexBufferMemory;
 using base::opengl::SpriteFont;
 using base::opengl::ParticleSystem;
+using base::opengl::ParticleSystemRenderer;
 using base::opengl::Camera;
 using base::opengl::TextureLoader;
 using base::opengl::AttributeBinding;
@@ -52,6 +54,7 @@ private:
     std::vector<VertexBuffer*> mesh_;
     SpriteFont *font_;
     ParticleSystem* ps_;
+    ParticleSystemRenderer* ps_renderer_;
     Texture* texture_ps_;
 
     Matrix4 cameraTransform_;

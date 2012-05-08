@@ -5,8 +5,6 @@
  **/
 #include "renderer/particlesystem.h"
 
-#include "renderer/gltexture.h"
-#include "renderer/vertexbuffer.h"
 #include "base/math/rect.h"
 #include <list>
 #include <stdlib.h>
@@ -36,37 +34,15 @@ ParticleSystem::ParticleSystem(ParticleSystemSetting s) {
         particles[i].face = 2 * i;
         particles_free.push_back(&particles[i]);
     }
-    Vertex* v = new Vertex[s.max_count * 4];
-    Face* f = new Face[s.max_count * 2];
     emission_active = true;
     emission_rate = s.emission_rate;
     emission_timer = 0.f;
     lifetime = s.lifetime;
     settings = s;
-
-    for (u32 i=0, j=0; i<s.max_count * 2; i+=2, j+=4) {
-        f[i].index[0] = j;
-        f[i].index[1] = j+1;
-        f[i].index[2] = j+2;
-
-        f[i+1].index[0] = j+2;
-        f[i+1].index[1] = j+3;
-        f[i+1].index[2] = j;
-
-        v[j + 0].tex.set(0.f, 0.f);
-        v[j + 1].tex.set(1.f, 0.f);
-        v[j + 2].tex.set(1.f, 1.f);
-        v[j + 3].tex.set(0.f, 1.f);
-    }
-
-    vbo = new VertexBufferMemory(v, s.max_count * 4, f, s.max_count * 2);
-    delete[] v;
-    delete[] f;
 }
 
 ParticleSystem::~ParticleSystem() {
     delete[] particles;
-    delete vbo;
 }
 
 void ParticleSystem::add() {
@@ -79,8 +55,8 @@ void ParticleSystem::add() {
     p->life = 0;
 
     f32 direction = rand() / (f32)(RAND_MAX) * (2 * math::pi);
-    p->position = Vector2(position);
-    p->speed = Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX));
+    p->position = math::Vector2(position);
+    p->speed = math::Vector2(cosf(direction), sinf(direction)) * (rand() / (f32)(RAND_MAX));
     p->speed.Normalize();
     p->acceleration = 0.f;
 
@@ -89,15 +65,6 @@ void ParticleSystem::add() {
     p->color = settings.color_start;
 
     particles_active.push_back(p);
-}
-
-void ParticleSystem::Draw(AttributeBinding& binding) {
-    vbo->BindAttributes(binding);
-    for (ParticleList::iterator it = particles_active.begin(); it != particles_active.end(); ++it) {
-        Particle* p = *it;
-        vbo->DrawOnly(p->face, 2);
-    }
-    vbo->UnbindAttributes(binding);
 }
 
 void ParticleSystem::update(f32 frame_time) {
@@ -114,8 +81,6 @@ void ParticleSystem::update(f32 frame_time) {
         }
     }
 
-    Vector2 v[4];
-    Vertex* vertex = vbo->Lock();
     for (ParticleList::iterator it = particles_active.begin(); it != particles_active.end();) {
         Particle* p = *it;
 
@@ -135,26 +100,12 @@ void ParticleSystem::update(f32 frame_time) {
         p->color[2] = settings.color_start[2] * (1-t) + settings.color_end[2] * t;
         p->color[3] = settings.color_start[3] * (1-t) + settings.color_end[3] * t;
         
-        Vector2 ppos = p->position - Vector2(position);
+        math::Vector2 ppos = p->position - math::Vector2(position);
         ppos += p->speed * p->life;
-        p->position = ppos + Vector2(position);
-
-        base::math::RectF rectange(p->position, Vector2(p->size), p->rotation);
-        rectange.Points(v);
-
-        vertex[p->index + 0].pos = Vector3(v[0]);
-        vertex[p->index + 1].pos = Vector3(v[1]);
-        vertex[p->index + 2].pos = Vector3(v[2]);
-        vertex[p->index + 3].pos = Vector3(v[3]);
-
-        vertex[p->index + 0].color = p->color;
-        vertex[p->index + 1].color = p->color;
-        vertex[p->index + 2].color = p->color;
-        vertex[p->index + 3].color = p->color;
+        p->position = ppos + math::Vector2(position);
 
         ++it;
     }
-    vbo->Unlock();
 
     particles_active.sort(sort_particles_from_farest_to_nearest);
 }
