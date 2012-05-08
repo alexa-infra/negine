@@ -16,9 +16,9 @@ namespace opengl {
 class ParticleSystemRenderer {
     Texture* texture_;
     VertexBuffer* vbo_;
-    ParticleSystem* ps_;
+    resource::ParticleSystem* ps_;
 public:
-    ParticleSystemRenderer(ParticleSystem* ps);
+    ParticleSystemRenderer(resource::ParticleSystem* ps);
     ~ParticleSystemRenderer();
 
     void Commit();

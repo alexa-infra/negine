@@ -10,6 +10,11 @@
 namespace base {
 namespace opengl {
 
+using base::resource::ParticleSystem;
+using base::resource::ParticleSystemSetting;
+using base::resource::Particle;
+using base::resource::ParticleList;
+
 ParticleSystemRenderer::ParticleSystemRenderer(ParticleSystem* ps)
     : ps_(ps)
     , texture_(NULL)

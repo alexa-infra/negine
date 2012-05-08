@@ -11,7 +11,7 @@
 #include <list>
 
 namespace base {
-namespace opengl {
+namespace resource {
 
 struct ParticleSystemSetting {
     u32 max_count;

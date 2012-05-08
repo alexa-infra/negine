@@ -4,14 +4,10 @@
  * \copyright   MIT License
  **/
 #include "renderer/particlesystem.h"
-
-#include "base/math/rect.h"
-#include <list>
 #include <stdlib.h>
-#include <iostream>
 
 namespace base {
-namespace opengl {
+namespace resource {
 
 ParticleSystemSetting::ParticleSystemSetting()
     : max_count(1000)
