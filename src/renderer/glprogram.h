@@ -22,6 +22,9 @@ namespace UniformVars {
         Diffuse,
         Projection,
         Modelview,
+        CameraPos,
+        Bump,
+        LightPos,
 
         Count
     };

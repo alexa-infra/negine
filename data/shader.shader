@@ -3,35 +3,59 @@ attribute vec2 tex;
 attribute vec3 position;
 attribute vec4 col;
 attribute vec3 n;
+attribute vec3 t;
 
 uniform mat4 projection_matrix;
 uniform mat4 modelview_matrix;
+uniform vec3 light_pos;
+uniform vec3 camera_pos;
 
 varying vec2 tex0;
-varying vec3 normal;
-varying vec3 vertex_to_light_vector;
-varying vec4 color;
+varying vec3 eye;
+varying vec3 light;
+varying float distance;
+varying vec3 halfVec;
 
 void main(void) {
-    color = col;
+    vec3 bitan = cross(n, t);
+    vec3 light_in_model_space = vec3(modelview_matrix * vec4(light_pos, 1.0));
+    vec3 tmp = light_in_model_space - position;
+    distance = length(tmp);
+    light.x = dot(tmp, t);
+    light.y = dot(tmp, bitan);
+    light.z = dot(tmp, n);
+    light = normalize(light);
+
+    tmp = camera_pos - position;
+    halfVec.x = dot(tmp, t);
+    halfVec.y = dot(tmp, bitan);
+    halfVec.z = dot(tmp, n);
+    halfVec = normalize(halfVec);
+    halfVec = (halfVec + light) / 2.0;
+    halfVec = normalize(halfVec);
+
     tex0 = tex;
-    normal = normalize( vec3(modelview_matrix * vec4(n, 0.0)) );
-    
-    vec4 vertex_in_modelview_space = modelview_matrix * vec4(position, 1.0);
-    vertex_to_light_vector = normalize(vec3(0.0, 0.0, 0.0) - vec3(vertex_in_modelview_space));
 
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
 }
 
 -- pixel
 uniform sampler2D diffuse;
+uniform sampler2D bump;
+
 varying vec2 tex0;
-varying vec3 normal;
-varying vec3 vertex_to_light_vector;
-varying vec4 color;
+varying vec3 eye;
+varying vec3 light;
+varying float distance;
+varying vec3 halfVec;
 
 void main() {
-    vec4 DiffuseColor = texture2D(diffuse, tex0);// * color;
-    float DiffuseTerm = clamp(dot(normal, vertex_to_light_vector), 0.0, 1.0);
-    gl_FragColor = DiffuseColor;// * color; // * DiffuseTerm;
+    vec4 color_sample = texture2D(diffuse, tex0);
+    vec3 color = color_sample.rgb;
+    float alpha = color_sample.a;
+    vec3 bump_color = texture2D(bump, tex0).rgb * 2.0 - 1.0;
+    float lamberFactor  = max(dot(light, bump_color), 0.0);
+    float specFactor = max(pow(dot(halfVec, bump_color), 28.0), 0.0);
+
+    gl_FragColor = vec4(color * lamberFactor + vec3(1.0) * specFactor, alpha);
 }

@@ -29,13 +29,17 @@ StringMap<VertexAttr, VertexAttrs::Count> attr_map(attr_map_str);
 StringMap<UniformVar, UniformVars::Count>::Entry uni_map_str[UniformVars::Count] = {
     { "diffuse",            UniformVars::Diffuse },
     { "projection_matrix",  UniformVars::Projection },
-    { "modelview_matrix",   UniformVars::Modelview }
+    { "modelview_matrix",   UniformVars::Modelview },
+    { "camera_pos",         UniformVars::CameraPos },
+    { "bump",               UniformVars::Bump },
+    { "light_pos",          UniformVars::LightPos }
 };
 StringMap<UniformVar, UniformVars::Count> uni_map(uni_map_str);
 
 u32 UniformVars::get_tex_index(UniformVar var) {
     switch (var) {
         case UniformVars::Diffuse: return 0;
+        case UniformVars::Bump: return 1;
         default:
             return 0;
     }
@@ -184,6 +188,11 @@ void Program::set_uniform_param<Matrix4>(UniformVar uniform, u32 location, const
 template<>
 void Program::set_uniform_param<Vector4>(UniformVar uniform, u32 location, const Vector4& v) {
     glUniform4f(location, v.x, v.y, v.z, v.w);
+}
+
+template<>
+void Program::set_uniform_param<Vector3>(UniformVar uniform, u32 location, const Vector3& v) {
+    glUniform3f(location, v.x, v.y, v.z);
 }
 
 void Program::get_uniforms_list() {

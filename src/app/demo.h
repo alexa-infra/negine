@@ -45,6 +45,7 @@ using base::opengl::Md5Anim;
 class Demo : public Application {
 private:
     Texture* texture_;
+    Texture* texture_bump_;
     Program* program_;
     Program* program_hud_;
     Program* program_font_;

@@ -75,6 +75,7 @@ public:
 
     Mesh();
     ~Mesh();
+    void GenerateLightningInfo();
 };
 
 

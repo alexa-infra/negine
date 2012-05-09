@@ -133,6 +133,7 @@ private:
     Material* material;
 
     Entity() {}
+    void GenerateLightningInfo(Md5Mesh &mesh);
 public:
     ~Entity() {}
 

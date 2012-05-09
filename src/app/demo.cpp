@@ -21,7 +21,7 @@ Demo::Demo(i32 width, i32 height)
 {
     glViewport(0, 0, width, height); 
 
-    camera_.position = Vector3(0., 0., 0.);
+    camera_.position = Vector3(0.f, 0.f, 0.f);
     
     camera_.pitch = 0;
     camera_.head = 180 * deg_to_rad;
@@ -84,6 +84,8 @@ Demo::Demo(i32 width, i32 height)
     ps_renderer_ = new ParticleSystemRenderer(ps_);
 
     texture_ps_ = texure_loader_.Load("heart.png");
+
+    texture_bump_ = texure_loader_.Load("hellknight_local.png");
 }
 
 Demo::~Demo() {
@@ -114,9 +116,12 @@ void Demo::OnFrame(void) {
     modelTransform_.RotateZ(20/60.f*deg_to_rad);
 
     program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
+    program_->set_uniform(base::opengl::UniformVars::Bump, texture_bump_);
     program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
     program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
-    
+    program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position);
+    program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
+        
 
     static u32 counter = 0;
     counter++;
@@ -128,6 +133,7 @@ void Demo::OnFrame(void) {
         entity->object.md5Model.meshes[0].num_verts,
         entity->object.md5Model.meshes[0].vertexIndices,
         entity->object.md5Model.meshes[0].num_tris);
+
 
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
