@@ -6,8 +6,13 @@
  **/
 #pragma once
 
+#include "base/platform.h"
 #include "GL/glew.h"
+#ifdef OS_MAC
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include "base/types.h"
 

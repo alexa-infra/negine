@@ -49,7 +49,7 @@ SDLApp::SDLApp()
     if (!GLEW_VERSION_3_3)
     {
         std::cout << "OpenGL 3.3 is not supported." << std::endl;
-        assert(false);
+    //    assert(false);
     }
 
     assert(glGetError() == GL_NO_ERROR);

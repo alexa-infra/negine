@@ -32,6 +32,6 @@ target_link_libraries(negine
 if(WIN32)
     target_link_libraries(negine OpenGL32)
 endif(WIN32)
-if(UNIX)
+if(UNIX AND NOT APPLE)
     target_link_libraries(negine GL)
-endif(UNIX)
+endif()
