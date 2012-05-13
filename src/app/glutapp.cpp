@@ -75,7 +75,7 @@ GlutWindow::GlutWindow()
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 #ifdef OS_WIN
-    wglSwapInterval(1);
+    wglSwapIntervalEXT(1);
 #elif defined(OS_LINUX)
     glXSwapIntervalSGI(1);
 #endif

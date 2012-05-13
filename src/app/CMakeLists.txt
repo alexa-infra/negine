@@ -58,4 +58,7 @@ elseif (USE_GLUT)
     target_link_libraries(app 
         freeglut
     )
+	if(WIN32)
+		target_link_libraries(app winmm.lib)
+	endif()
 endif()
