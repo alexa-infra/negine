@@ -57,9 +57,9 @@ Matrix4::Matrix4(const Vector3& ax, const Vector3& ay, const Vector3& az) {
     zz = az.z;
     wz = 0.f;
     
-    wx = 0.f;
-    wy = 0.f;
-    wz = 0.f;
+    xw = 0.f;
+    yw = 0.f;
+    zw = 0.f;
     ww = 1.f;        
 }
 
