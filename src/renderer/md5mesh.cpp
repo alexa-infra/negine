@@ -174,7 +174,7 @@ void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
 {
     
     Vertex* currentVertex = mesh.vertexArray;
-    for (int i = 0; i < mesh.num_verts; ++i)
+    for (i32 i = 0; i < mesh.num_verts; ++i)
     {
         currentVertex->tex = mesh.vertices[i].st;
 
@@ -182,7 +182,7 @@ void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
         currentVertex->n.set(0.0f);
         currentVertex->tangent.set(0.0f);
        
-        for (int j = 0; j < mesh.vertices[i].count; j++)
+        for (u32 j = 0; j < mesh.vertices[i].count; j++)
         {
             const Md5Weight& weight = mesh.weights[mesh.vertices[i].start + j];
             const Md5Joint& joint = skeleton[weight.joint];
@@ -212,7 +212,7 @@ void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
 
 void Entity::GenerateLightningInfo(Md5Mesh &mesh)
 {
-    for ( u32 i = 0; i < mesh.num_tris; i++)
+    for ( i32 i = 0; i < mesh.num_tris; i++)
     {
         f32 d0[5], d1[5];
         Vertex* a;
@@ -265,7 +265,7 @@ void Entity::GenerateLightningInfo(Md5Mesh &mesh)
             v->binormal += tangents[1];
         }
     }
-    for (u32 i=0;i<mesh.num_verts;i++) 
+    for (i32 i=0;i<mesh.num_verts;i++) 
     {
         mesh.vertexArray[i].n.Normalize();
         f32 d = Dot(mesh.vertexArray[i].tangent, mesh.vertexArray[i].n);
