@@ -8,12 +8,12 @@
 #pragma once
 
 #include "base/types.h"
-#include "md5mesh.h"
+#include "renderer/md5mesh.h"
 #include "base/math/vector.h"
 #include "base/math/quat.h"
 
 namespace base {
-namespace opengl {
+namespace resource {
 
 /* Joint info */
 struct JointInfo

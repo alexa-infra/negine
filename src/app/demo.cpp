@@ -13,7 +13,6 @@
 #include "renderer/md5mesh.h"
 
 using base::math::deg_to_rad;
-using base::opengl::Entity;
 
 Demo::Demo(i32 width, i32 height) 
     : texture_(NULL)
@@ -53,16 +52,8 @@ Demo::Demo(i32 width, i32 height)
     entity = Entity::Load("hellknight.md5mesh");
     entity->object.md5Anim = new Md5Anim;
     entity->object.md5Anim->Load("hellknight_idle2.md5anim");
-    entity->GenerateGPUVertices(entity->object.md5Model.meshes[0], entity->object.md5Model.baseSkel);
     
-    VertexBuffer* vb = new VertexBufferGPU;
-    mesh_.push_back(vb);
-
-     // vb->SetData(entity->object.md5Model.meshes[0].vertexArray,
-     //     entity->object.md5Model.meshes[0].num_verts,
-     //     entity->object.md5Model.meshes[0].vertexIndices,
-     //     entity->object.md5Model.meshes[0].num_tris);
-    
+    md5_renderer_ = new Md5Renderer(&entity->object.md5Model);
 
     /*for (u32 i=0; i<mesh_list.size(); i++) {
         Mesh* m = mesh_list[i];
@@ -99,6 +90,7 @@ Demo::~Demo() {
     delete program_font_;
     delete entity->object.md5Anim;
     delete entity;
+    delete md5_renderer_;
 }
 
 void Demo::OnFrame(void) {
@@ -121,19 +113,15 @@ void Demo::OnFrame(void) {
     program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
     program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position);
     program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
-        
 
     static u32 counter = 0;
     counter++;
     u32 frame  = counter/2;
     f32 interp = (counter%2)/2.f;
     entity->object.md5Anim->Update(&entity->object.md5Model, frame, interp);
-    entity->GenerateGPUVertices(entity->object.md5Model.meshes[0], entity->object.md5Model.baseSkel);
-    mesh_[0]->SetData(entity->object.md5Model.meshes[0].vertexArray,
-        entity->object.md5Model.meshes[0].num_verts,
-        entity->object.md5Model.meshes[0].vertexIndices,
-        entity->object.md5Model.meshes[0].num_tris);
 
+    md5_renderer_->Commit();
+    md5_renderer_->Draw(binding);
 
     for (u32 i=0; i<mesh_.size(); i++) {
         mesh_[i]->Draw(binding);
@@ -154,7 +142,7 @@ void Demo::OnFrame(void) {
 
     ps_->update(frame_time);
     ps_renderer_->Commit();
-    ps_renderer_->Draw(binding);
+    //ps_renderer_->Draw(binding);
     //ps_->Draw(binding);
     program_hud_->Unbind();
 

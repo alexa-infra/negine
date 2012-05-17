@@ -7,7 +7,7 @@
 #include "gtest/gtest.h"
 #include "renderer/md5mesh.h"
 
-using base::opengl::Entity;
+using base::resource::Entity;
 
 TEST(mesh, md5_load)
 {
@@ -22,6 +22,5 @@ TEST(mesh, md5_load)
 TEST (mesh, GenerateGPUVertices)
 {
     Entity* entity = Entity::Load("hellknight.md5mesh");
-    entity->GenerateGPUVertices(entity->object.md5Model.meshes[0], entity->object.md5Model.baseSkel);
     delete entity;
 }

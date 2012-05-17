@@ -19,6 +19,7 @@
 #include "base/timer.h"
 #include "renderer/md5mesh.h"
 #include "renderer/md5anim.h"
+#include "renderer/md5renderer.h"
 
 using base::math::Matrix4;
 using base::math::Vector2;
@@ -38,9 +39,10 @@ using base::opengl::AttributeBinding;
 using base::opengl::load_md3_se;
 using base::opengl::Mesh;
 using base::resource::ParticleSystemSetting;
-using base::opengl::Entity;
+using base::resource::Entity;
+using base::opengl::Md5Renderer;
 using base::Timer;
-using base::opengl::Md5Anim;
+using base::resource::Md5Anim;
 
 class Demo : public Application {
 private:
@@ -57,6 +59,7 @@ private:
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
     Texture* texture_ps_;
+    Md5Renderer* md5_renderer_;
 
     Matrix4 cameraTransform_;
     Matrix4 modelTransform_;

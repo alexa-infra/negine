@@ -3,7 +3,7 @@
 #include <string.h>
 
 namespace base {
-namespace opengl {
+namespace resource {
 
 math::Vector3 Md5Joint::translate(const math::Vector3& v) const
 {
@@ -102,7 +102,6 @@ Entity* Entity::Load(const string& filename)
                     if ( mesh.num_verts > 0)
                     {
                         mesh.vertices    = new Md5Vertex [mesh.num_verts];
-                        mesh.vertexArray = new Vertex[mesh.num_verts];
                     }
                 }
                 else if (strcmp(reader.CurrentToken(), "numtris") == 0)
@@ -110,9 +109,8 @@ Entity* Entity::Load(const string& filename)
                      mesh.num_tris = (u32) reader.ReadFloat();
                     if ( mesh.num_tris > 0)
                     {
-                        mesh.vertexIndices = new Face[mesh.num_tris];
                         mesh.triangles     = new Md5Triangle [mesh.num_tris];
-                    }                    
+                    }
                 }
                 else if (strcmp(reader.CurrentToken(), "numweights") == 0)
                 {
@@ -170,112 +168,7 @@ Entity* Entity::Load(const string& filename)
     return entity;
 }
 
-void Entity::GenerateGPUVertices(Md5Mesh &mesh, const Md5Joint* skeleton)
-{
-    
-    Vertex* currentVertex = mesh.vertexArray;
-    for (i32 i = 0; i < mesh.num_verts; ++i)
-    {
-        currentVertex->tex = mesh.vertices[i].st;
 
-        currentVertex->pos.set(0.0f);
-        currentVertex->n.set(0.0f);
-        currentVertex->tangent.set(0.0f);
-       
-        for (u32 j = 0; j < mesh.vertices[i].count; j++)
-        {
-            const Md5Weight& weight = mesh.weights[mesh.vertices[i].start + j];
-            const Md5Joint& joint = skeleton[weight.joint];
-            
-            currentVertex->pos += joint.translate(weight.pos) * weight.bias;
-            currentVertex->n += joint.orient.RotatePoint(weight.normal);
-            currentVertex->tangent += joint.orient.RotatePoint(weight.tangent);
-        }
-
-        currentVertex->n.Normalize();
-        currentVertex->tangent.Normalize();
-
-        currentVertex++;
-    }
-
-    
-    for (int i = 0; i<mesh.num_tris; i++)
-    {
-        for (int j=0; j<3; j++)
-        {
-            mesh.vertexIndices[i].index[j] = (u16)mesh.triangles[i].index[j];
-        }
-    }
-
-    GenerateLightningInfo(mesh);
-}
-
-void Entity::GenerateLightningInfo(Md5Mesh &mesh)
-{
-    for ( i32 i = 0; i < mesh.num_tris; i++)
-    {
-        f32 d0[5], d1[5];
-        Vertex* a;
-        Vertex* b;
-        Vertex* c;
-
-        math::Vector3 temp, normal, tangents[2];
-
-        a = mesh.vertexArray + mesh.triangles[i].index[0];
-        b = mesh.vertexArray + mesh.triangles[i].index[1];
-        c = mesh.vertexArray + mesh.triangles[i].index[2];
-
-        d0[0] = b->pos.x - a->pos.x;
-        d0[1] = b->pos.y - a->pos.y;
-        d0[2] = b->pos.z - a->pos.z;
-        d0[3] = b->tex.x - a->tex.x;
-        d0[4] = b->tex.y - a->tex.y;
-
-        d1[0] = c->pos.x - a->pos.x;
-        d1[1] = c->pos.y - a->pos.y;
-        d1[2] = c->pos.z - a->pos.z;
-        d1[3] = c->tex.x - a->tex.x;
-        d1[4] = c->tex.y - a->tex.y;
-
-        normal = Vector3(
-            d1[1] * d0[2] - d1[2] * d0[1],
-            d1[2] * d0[0] - d1[0] * d0[2],
-            d1[0] * d0[1] - d1[1] * d0[0]
-        );
-        normal.Normalize();
-
-        tangents[0] = Vector3(
-            d0[0] * d1[4] - d0[4] * d1[0],
-            d0[1] * d1[4] - d0[4] * d1[1],
-            d0[2] * d1[4] - d0[4] * d1[2]
-        );
-        tangents[0].Normalize();
-
-        tangents[1] = Vector3(
-            d0[3] * d1[0] - d0[0] * d1[3],
-            d0[3] * d1[1] - d0[1] * d1[3],
-            d0[3] * d1[2] - d0[2] * d1[3]
-        );
-        tangents[1].Normalize();
-
-        for (int j=0;j<3; j++) {
-            Vertex* v = mesh.vertexArray + mesh.triangles[i].index[j];
-            v->n += normal;
-            v->tangent  += tangents[0];
-            v->binormal += tangents[1];
-        }
-    }
-    for (i32 i=0;i<mesh.num_verts;i++) 
-    {
-        mesh.vertexArray[i].n.Normalize();
-        f32 d = Dot(mesh.vertexArray[i].tangent, mesh.vertexArray[i].n);
-        mesh.vertexArray[i].tangent = mesh.vertexArray[i].tangent - mesh.vertexArray[i].n * d;
-        mesh.vertexArray[i].tangent.Normalize();
-        d = Dot(mesh.vertexArray[i].binormal, mesh.vertexArray[i].n);
-        mesh.vertexArray[i].binormal = mesh.vertexArray[i].binormal - mesh.vertexArray[i].n * d;
-        mesh.vertexArray[i].binormal.Normalize();
-    }
-}
 
 }
 }

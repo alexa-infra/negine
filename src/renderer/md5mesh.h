@@ -8,7 +8,6 @@
 #pragma once
 
 #include "base/types.h"
-#include "mesh.h"
 #include "base/math/vector.h"
 #include "base/math/quat.h"
 
@@ -16,7 +15,7 @@ namespace base {
 
 class Lexer;
 
-namespace opengl {
+namespace resource {
 
 class Md5Anim;
 
@@ -70,14 +69,10 @@ struct Md5Mesh
     : vertices(NULL)
     , triangles(NULL)
     , weights(NULL)
-    , vertexArray(NULL)
-    , vertexIndices(NULL)
     {
     }
 
     ~Md5Mesh() {
-        delete[] vertexArray;
-        delete[] vertexIndices;
         delete[] vertices;
         delete[] triangles;
         delete[] weights;
@@ -88,9 +83,6 @@ struct Md5Mesh
     i32 num_weights;
 
     string shader;
-
-    Vertex* vertexArray;
-    Face* vertexIndices;
 };
 
 struct Md5Model
@@ -133,7 +125,6 @@ private:
     Material* material;
 
     Entity() {}
-    void GenerateLightningInfo(Md5Mesh &mesh);
 public:
     ~Entity() {}
 
@@ -141,18 +132,10 @@ public:
     
     Md5Object object;
     math::Matrix4 transform;
-
-    void GenerateGPUVertices (Md5Mesh &mesh, const Md5Joint *skeleton);
 };
 
 void readVector(Lexer& reader, math::Vector3& vec);
 void readQuat(Lexer& reader, math::Quat& q);
  
-// void GenerateLightingInfo (const md5_mesh_t *mesh,  md5_joint_t *skeleton);
-// void DrawSkeleton (const md5_joint_t *skeleton, int num_joints);
-
-// int CheckAnimValidity (const md5_model_t *mdl,const md5_anim_t *anim);
-// void InterpolateSkeletons (int frameIndex,int numFrames, int num_joints, float interp,  md5_joint_t **joints, md5_joint_t *targetJoints);
-
 }
 }
