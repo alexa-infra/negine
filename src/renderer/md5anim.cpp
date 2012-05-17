@@ -14,7 +14,14 @@
 namespace base {
 namespace resource {
 
-//    Md5Anim() {}
+Md5Anim::Md5Anim()
+    : jointInfos(0)
+    , baseFrame(0)
+    , numAnimatedComponents(0)
+    , animFrameData(0)
+{
+}
+
 Md5Anim::~Md5Anim()
 {
     delete[] animFrameData;

@@ -15,20 +15,20 @@
 namespace base {
 namespace resource {
 
-/* Joint info */
+//! Joint info
 struct JointInfo
 {
-	string name;
-	i32 parent;
-	i32 flags;
-	i32 start_index;
+    string name;
+    i32 parent;
+    i32 flags;
+    i32 start_index;
 };
 
-/* Base frame joint */
+//! Base frame joint
 struct BaseframeJoint
 {
-	math::Vector3 pos;
-	math::Quat    orient;
+    math::Vector3 pos;
+    math::Quat    orient;
 };
 
 class Md5Anim
@@ -47,12 +47,7 @@ public:
     Md5Joint** skelFrames;
     Md5BoundingBox* bboxes;
 
-    Md5Anim()
-    : jointInfos(0)
-    , baseFrame(0)
-    , numAnimatedComponents(0)
-    , animFrameData(0){}
-
+    Md5Anim();
     ~Md5Anim();
 
     void Load(const string& filename);

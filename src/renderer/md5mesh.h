@@ -83,6 +83,8 @@ struct Md5Mesh
     i32 num_weights;
 
     string shader;
+
+    void Read(Lexer& reader);
 };
 
 struct Md5Model
@@ -104,6 +106,8 @@ struct Md5Model
 
     i32 num_joints;
     i32 num_meshes;
+
+    void Read(Lexer& reader);
 };
 
 class Md5Object
@@ -129,7 +133,7 @@ public:
     ~Entity() {}
 
     static Entity* Load(const string& filename);
-    
+
     Md5Object object;
     math::Matrix4 transform;
 };
