@@ -46,22 +46,16 @@ Demo::Demo(i32 width, i32 height)
     program_hud_ = LoadProgram("hud.shader");
     program_font_ = LoadProgram("font.shader");
 
-    //std::vector<Mesh*> mesh_list 
-    //    = load_md3_se("european_fnt_v2.md3");
+    Md3Model md3;
+    md3.Load("european_fnt_v2.md3");
+    md3_renderer_ = new Md3Renderer(&md3);
+    md3_renderer_->Commit();
 
     entity = Entity::Load("hellknight.md5mesh");
     entity->object.md5Anim = new Md5Anim;
     entity->object.md5Anim->Load("hellknight_idle2.md5anim");
     
     md5_renderer_ = new Md5Renderer(&entity->object.md5Model);
-
-    /*for (u32 i=0; i<mesh_list.size(); i++) {
-        Mesh* m = mesh_list[i];
-        VertexBuffer* vb = new VertexBufferGPU;
-        vb->SetData(m->vertexes, m->num_vertexes, m->faces, m->num_faces);
-        mesh_.push_back(vb);
-        delete m;
-    }*/
 
     //font test
     //string filename = "AlphaBetaBRK.ttf";
@@ -80,8 +74,6 @@ Demo::Demo(i32 width, i32 height)
 }
 
 Demo::~Demo() {
-    for (u32 i=0; i<mesh_.size(); i++)
-        delete mesh_[i];
     delete program_;
     delete program_hud_;
     delete font_;
@@ -91,6 +83,8 @@ Demo::~Demo() {
     delete entity->object.md5Anim;
     delete entity;
     delete md5_renderer_;
+
+    delete md3_renderer_;
 }
 
 void Demo::OnFrame(void) {
@@ -123,9 +117,7 @@ void Demo::OnFrame(void) {
     md5_renderer_->Commit();
     md5_renderer_->Draw(binding);
 
-    for (u32 i=0; i<mesh_.size(); i++) {
-        mesh_[i]->Draw(binding);
-    };
+    //md3_renderer_->Draw(binding);
 
     program_->Unbind();
     glDisable(GL_DEPTH_TEST);

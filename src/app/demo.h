@@ -21,23 +21,25 @@
 #include "renderer/md5anim.h"
 #include "renderer/md5renderer.h"
 
+#include "renderer/md3renderer.h"
+
 using base::math::Matrix4;
 using base::math::Vector2;
 using base::math::Vector3;
 using base::math::Vector4;
 using base::opengl::Texture;
 using base::opengl::Program;
-using base::opengl::VertexBuffer;
-using base::opengl::VertexBufferGPU;
-using base::opengl::VertexBufferMemory;
+
 using base::opengl::SpriteFont;
 using base::resource::ParticleSystem;
 using base::opengl::ParticleSystemRenderer;
 using base::opengl::Camera;
 using base::opengl::TextureLoader;
 using base::opengl::AttributeBinding;
-using base::opengl::load_md3_se;
-using base::opengl::Mesh;
+
+using base::resource::Md3Model;
+using base::opengl::Md3Renderer;
+
 using base::resource::ParticleSystemSetting;
 using base::resource::Entity;
 using base::opengl::Md5Renderer;
@@ -53,13 +55,13 @@ private:
     Program* program_font_;
     Matrix4 projection_;
     Matrix4 modelview_;
-    VertexBuffer* buffer_;
-    std::vector<VertexBuffer*> mesh_;
     SpriteFont *font_;
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
     Texture* texture_ps_;
     Md5Renderer* md5_renderer_;
+
+    Md3Renderer* md3_renderer_;
 
     Matrix4 cameraTransform_;
     Matrix4 modelTransform_;
