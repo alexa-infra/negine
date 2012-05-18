@@ -12,6 +12,8 @@
 
 #include "renderer/md5mesh.h"
 
+#define MD5
+
 using base::math::deg_to_rad;
 
 Demo::Demo(i32 width, i32 height) 
@@ -39,23 +41,31 @@ Demo::Demo(i32 width, i32 height)
     modelTransform_.RotateX(-90 * deg_to_rad);
     modelTransform_.RotateZ(180 * deg_to_rad);
 
-    //texture_ = texure_loader_.Load("european_fnt.tga");
+#ifdef MD3
+    texture_ = texure_loader_.Load("european_fnt.tga");
+#endif
+#ifdef MD5
     texture_ = texure_loader_.Load("hellknight.png");
+#endif
 
     program_ = LoadProgram("shader.shader");
     program_hud_ = LoadProgram("hud.shader");
     program_font_ = LoadProgram("font.shader");
 
+#ifdef MD3
     Md3Model md3;
     md3.Load("european_fnt_v2.md3");
     md3_renderer_ = new Md3Renderer(&md3);
     md3_renderer_->Commit();
+#endif
 
+#ifdef MD5
     entity = Entity::Load("hellknight.md5mesh");
     entity->object.md5Anim = new Md5Anim;
     entity->object.md5Anim->Load("hellknight_idle2.md5anim");
     
     md5_renderer_ = new Md5Renderer(&entity->object.md5Model);
+#endif
 
     //font test
     //string filename = "AlphaBetaBRK.ttf";
@@ -80,11 +90,16 @@ Demo::~Demo() {
     delete ps_renderer_;
     delete ps_;
     delete program_font_;
+
+#ifdef MD5
     delete entity->object.md5Anim;
     delete entity;
     delete md5_renderer_;
+#endif
 
+#ifdef MD3
     delete md3_renderer_;
+#endif
 }
 
 void Demo::OnFrame(void) {
@@ -108,6 +123,7 @@ void Demo::OnFrame(void) {
     program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position);
     program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
 
+#ifdef MD5
     static u32 counter = 0;
     counter++;
     u32 frame  = counter/2;
@@ -116,8 +132,11 @@ void Demo::OnFrame(void) {
 
     md5_renderer_->Commit();
     md5_renderer_->Draw(binding);
+#endif
 
-    //md3_renderer_->Draw(binding);
+#ifdef MD3
+    md3_renderer_->Draw(binding);
+#endif
 
     program_->Unbind();
     glDisable(GL_DEPTH_TEST);

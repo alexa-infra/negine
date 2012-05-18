@@ -3,8 +3,16 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
+#include "base/types.h"
 #include "app/demo.h"
 #include "luavm.h"
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+
+#ifdef OS_WIN
+#include <crtdbg.h>
+#endif
 
 int get_current_dir(lua_State* L) {
     std::string p = "not implemented";
@@ -13,6 +21,12 @@ int get_current_dir(lua_State* L) {
 }
 
 int main(int argc, char** argv) {
+
+#ifdef OS_WIN
+    //_CrtSetBreakAlloc(...);
+    _CrtMemState state;
+    _CrtMemCheckpoint(&state);
+#endif
     {
         LuaVM vm;
 //        vm.set_include("~/projects/negine/?.lua");
@@ -26,5 +40,8 @@ int main(int argc, char** argv) {
         Demo app;
         app.Run();
     }
+#ifdef OS_WIN
+    _CrtMemDumpAllObjectsSince(&state);
+#endif
     return 0;
 }

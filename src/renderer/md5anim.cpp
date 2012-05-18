@@ -15,17 +15,23 @@ namespace base {
 namespace resource {
 
 Md5Anim::Md5Anim()
-    : jointInfos(0)
-    , baseFrame(0)
+    : jointInfos(NULL)
+    , baseFrame(NULL)
     , numAnimatedComponents(0)
-    , animFrameData(0)
+    , animFrameData(NULL)
+    , num_frames(0)
+    , num_joints(0)
+    , frame_rate(0)
+    , skelFrames(NULL)
+    , bboxes(NULL)
 {
 }
 
 Md5Anim::~Md5Anim()
 {
-    delete[] animFrameData;
+    delete[] jointInfos;
     delete[] baseFrame;
+    delete[] animFrameData;
     delete[] bboxes;
 
     for (u32 i=0; i<num_frames;++i)
