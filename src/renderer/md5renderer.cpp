@@ -28,7 +28,7 @@ Md5Renderer::Md5Renderer(Md5Model* model)
 }
 
 Md5Renderer::~Md5Renderer() {
-    delete[] vb;
+    delete vb;
     delete[] vertexArray;
     delete[] vertexIndices;
 }
