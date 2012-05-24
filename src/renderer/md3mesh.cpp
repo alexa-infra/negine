@@ -59,7 +59,7 @@ Md3Model::~Md3Model()
 }
 
 void Md3Model::load_md3(FileBinary& file) {
-    u32 hdr_start = file.position();
+    /*u32 hdr_start = */file.position();
 
     hdr = file.read_type<Md3Header>();
     assert(hdr.ident == 0x33504449);
@@ -90,7 +90,7 @@ void Md3Model::load_md3(FileBinary& file) {
 //    file.set_position(hdr_start + hdr.ofs_surfaces);
     for (i32 i = 0; i<hdr.num_surfaces; i++)
     {
-        u32 surface_start = file.position();
+        /*u32 surface_start = */file.position();
         
         Md3MeshBase& mesh = meshes[i];
         Md3Surface& surface = mesh.surface;

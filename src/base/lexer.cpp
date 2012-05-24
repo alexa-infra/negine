@@ -24,16 +24,16 @@ Lexer::Lexer(const std::string &filename)
     whiteCharacters = new char[128];
     memset(whiteCharacters, 0, 128);
 
-    whiteCharacters[' '] = 1;
-    whiteCharacters['\t'] = 1;
-    whiteCharacters[','] = 1;
-//    whiteCharacters['('] = 1;
-//    whiteCharacters[')'] = 1;
-    whiteCharacters['\r'] = 1;
-    whiteCharacters['\n'] = 1;
-    whiteCharacters['*'] = 1;
-    whiteCharacters[':'] = 1;
-    whiteCharacters['/'] = 1;
+    whiteCharacters[(u8)' '] = 1;
+    whiteCharacters[(u8)'\t'] = 1;
+    whiteCharacters[(u8)','] = 1;
+//    whiteCharacters[(u8)'('] = 1;
+//    whiteCharacters[(u8)')'] = 1;
+    whiteCharacters[(u8)'\r'] = 1;
+    whiteCharacters[(u8)'\n'] = 1;
+    whiteCharacters[(u8)'*'] = 1;
+    whiteCharacters[(u8)':'] = 1;
+    whiteCharacters[(u8)'/'] = 1;
 }
 
 Lexer::~Lexer(){
@@ -126,7 +126,7 @@ const char* Lexer::ReadToken() {
 
 bool Lexer::IsWhiteChar(char character) const {
 
-    return whiteCharacters[character] == 1;
+    return whiteCharacters[(u8)character] == 1;
 }
 
 f32 Lexer::ReadFloat() {
@@ -142,7 +142,7 @@ bool Lexer::HasMoreData() const {
 
 void Lexer::SetWhiteCharValue(char c, char value) {
     
-    whiteCharacters[c] = value;
+    whiteCharacters[(u8)c] = value;
 }
 
 } // namespace base

@@ -14,9 +14,9 @@
 SDLApp::SDLApp()
     : mainwindow_(NULL)
     , run_(true)
+    , capture_(false)
     , width_(640)
     , height_(480)
-    , capture_(false)
 {
     SDL_Init(SDL_INIT_VIDEO);
  

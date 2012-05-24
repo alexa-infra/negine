@@ -859,7 +859,7 @@ int stbtt_FindGlyphIndex(const stbtt_fontinfo *info, int unicode_codepoint)
    } else if (format == 12 || format == 13) {
       stbtt_uint32 ngroups = ttULONG(data+index_map+12);
       stbtt_int32 low,high;
-      stbtt_uint16 g = 0;
+      //stbtt_uint16 g = 0;
       low = 0; high = (stbtt_int32)ngroups;
       // Binary search the right group.
       while (low < high) {

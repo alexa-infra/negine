@@ -28,14 +28,15 @@ namespace PixelTypes {
 }
 
 TextureInfo::TextureInfo()
-    : WrapT(TextureWraps::REPEAT)
+    : Type(TextureTypes::Texture2D)
+    , MagFilter(TextureMagFilters::LINEAR)
+    , MinFilter(TextureMinFilters::NEAREST_MIPMAP_LINEAR)
+    , WrapT(TextureWraps::REPEAT)
     , WrapS(TextureWraps::REPEAT)
     , WrapR(TextureWraps::REPEAT)
-    , MinFilter(TextureMinFilters::NEAREST_MIPMAP_LINEAR)
-    , MagFilter(TextureMagFilters::LINEAR)
-    , Type(TextureTypes::Texture2D)
+    , GenerateMipmap(true)
     , Pixel(PixelTypes::RGBA)
-    , GenerateMipmap(true) {
+     {
 }
 
 

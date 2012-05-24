@@ -16,9 +16,9 @@ using base::resource::Particle;
 using base::resource::ParticleList;
 
 ParticleSystemRenderer::ParticleSystemRenderer(ParticleSystem* ps)
-    : ps_(ps)
-    , texture_(NULL)
+    : texture_(NULL)
     , vbo_(NULL)
+    , ps_(ps)
 {
     const ParticleSystemSetting& settings = ps_->settings;
     Vertex* v = new Vertex[settings.max_count * 4];
