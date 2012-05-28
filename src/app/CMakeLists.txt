@@ -3,18 +3,12 @@ set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 
 set(APP_PATH ${SRC_PATH}/app)
 
-set(SRC
-    ${APP_PATH}/demo.h
-    ${APP_PATH}/demo.cpp
-    ${APP_PATH}/luavm.cpp
-    ${APP_PATH}/main.cpp
-)
+add_source_group("app" ${APP_PATH} SRC)
 if (USE_SDL)
-    list(APPEND SRC ${APP_PATH}/sdlapp.cpp)
+    add_source_group("sdl" ${APP_PATH}/sdl SRC)
 elseif (USE_GLUT)
-    list(APPEND SRC ${APP_PATH}/glutapp.cpp)    
+    add_source_group("glut" ${APP_PATH}/glut SRC)
 endif()
-source_group("app" FILES ${SRC})
 
 include_directories(
     ${TOOLS_PATH}

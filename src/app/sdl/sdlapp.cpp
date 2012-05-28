@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "app/sdlapp.h"
+#include "sdlapp.h"
 
 #include <iostream>
 #include <string>
