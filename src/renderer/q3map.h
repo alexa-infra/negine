@@ -128,23 +128,23 @@ class q3map {
 class q3maploader {
 public:
     FileBinary& f;
-    std::vector<q3texture> textures;
-    std::vector<q3plane> planes;
-    std::vector<q3node> nodes;
-    std::vector<q3leaf> leafs;
-    std::vector<q3vertex> vertexes;
-    std::vector<q3face> faces;
+    std::vector<q3texture>  textures;
+    std::vector<q3plane>    planes;
+    std::vector<q3node>     nodes;
+    std::vector<q3leaf>     leafs;
+    std::vector<q3vertex>   vertexes;
+    std::vector<q3face>     faces;
 
     q3maploader(FileBinary& file) : f(file) {
     }
     void load() {
         check_header();
-        textures = read<q3texture>(1);
-        planes = read<q3plane>(2);
-        nodes = read<q3node>(3);
-        leafs = read<q3leaf>(4);
-        vertexes = read<q3vertex>(10);
-        faces = read<q3face>(15);
+        textures    = read<q3texture>(1);
+        planes      = read<q3plane>(2);
+        nodes       = read<q3node>(3);
+        leafs       = read<q3leaf>(4);
+        vertexes    = read<q3vertex>(10);
+        faces       = read<q3face>(15);
     }
 
     void check_header() {

@@ -22,17 +22,15 @@ Demo::Demo(i32 width, i32 height)
 {
     glViewport(0, 0, width, height); 
 
-    camera_.position = Vector3(0.f, 0.f, 0.f);
+    camera_.set_position(Vector3(0.f, 0.f, 0.f));
     
-    camera_.pitch = 0;
-    camera_.head = 180 * deg_to_rad;
+    camera_.set_pitch(0);
+    camera_.set_head(180 * deg_to_rad);
         
-    camera_.aspect = width / (f32)height;
-    camera_.fov = 50;
-    camera_.zNear = 1;
-    camera_.zFar = 2000;
-
-    camera_.UpdateOrientation();
+    camera_.set_aspect(width / (f32)height);
+    camera_.set_fov(50);
+    camera_.set_zNear(1);
+    camera_.set_zFar(2000);
 
     cameraTransform_ = camera_.GetModelView(); 
     projection_ = camera_.GetProjection();
@@ -120,7 +118,7 @@ void Demo::OnFrame(void) {
     program_->set_uniform(base::opengl::UniformVars::Bump, texture_bump_);
     program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
     program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
-    program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position);
+    program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position());
     program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
 
 #ifdef MD5
@@ -191,9 +189,8 @@ void Demo::OnReshape(i32 width, i32 height) {
 }
 
 void Demo::OnMotion(i32 x, i32 y, i32 dx, i32 dy) {
-    camera_.head += deg_to_rad * dx;
-    camera_.pitch += deg_to_rad * dy;
-    camera_.UpdateOrientation();
+    camera_.set_head(camera_.head() + deg_to_rad * dx);
+    camera_.set_pitch(camera_.pitch() + deg_to_rad * dy);
     cameraTransform_ = camera_.GetModelView(); 
 
     cursor_.x += dx / (f32)width_ * 300.f;
@@ -216,16 +213,15 @@ void Demo::OnKeyboard(u8 key, i32 x, i32 y) {
     title_text_ = test;
 
     if (key == 'w') {
-        camera_.position += camera_.forward;
+        camera_.set_position(camera_.position() + camera_.forward());
     } else if (key == 's') {
-        camera_.position -= camera_.forward;
+        camera_.set_position(camera_.position() - camera_.forward());
     } else if (key == 'a') {
-        camera_.position -= camera_.right;
+        camera_.set_position(camera_.position() - camera_.right());
     } else if (key == 'd') {
-        camera_.position += camera_.right;
+        camera_.set_position(camera_.position() + camera_.right());
     }
     //std::cout << "camera: " << camera_.position << std::endl;
-    camera_.UpdateOrientation();
     cameraTransform_ = camera_.GetModelView();
 }
 
