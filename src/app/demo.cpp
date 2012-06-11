@@ -138,7 +138,7 @@ void Demo::OnFrame(void) {
     program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
 
 #if BSP
-    q3map_->render(camera_, binding, program_, texure_loader_);
+    q3map_->render(camera_, program_, texure_loader_);
 #endif
 
 #ifdef MD5
