@@ -99,4 +99,6 @@ public:
     u32 size() const { return size_; }
 };
 
+bool file_exists(const std::string& name);
+
 } // namespace base

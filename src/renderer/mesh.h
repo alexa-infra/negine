@@ -9,6 +9,7 @@
 #include "base/types.h"
 #include "base/math/vector.h"
 #include <list>
+#include <map>
 #include <vector>
 
 namespace base {
@@ -54,7 +55,7 @@ namespace VertexAttrs
 }
 typedef VertexAttrs::VertexAttr VertexAttr;
 
-typedef std::list< std::pair<VertexAttr, u32> > AttributeBinding;
+typedef std::map< VertexAttr, u32 > AttributeBinding;
 
 //! Triangle face
 struct Face

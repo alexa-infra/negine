@@ -250,7 +250,7 @@ void Program::get_attributes_list() {
                 << ", type: " << attrGLType << std::endl;
             continue;
         }
-        attr_binding_.push_back(std::make_pair(va, location));
+        attr_binding_.insert(std::make_pair(va, location));
     }
 
     delete [] attrName;

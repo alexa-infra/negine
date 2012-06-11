@@ -20,7 +20,7 @@ void Camera::refresh()
     UpdateOrientation();
     modelview_ = ModelView();
     clip_ = projection_ * modelview_;
-    UpdateFrustrum();
+    UpdateFrustum();
     dirty = false;
 }
 
@@ -54,7 +54,7 @@ void Camera::UpdateVectors(const Matrix4& orient)
     forward_ = orient * f;
 }
 
-void Camera::UpdateFrustrum()
+void Camera::UpdateFrustum()
 {
     Matrix4 m = clip_;
 	planes[0].set(m.array1d[3] - m.array1d[0], m.array1d[7] - m.array1d[4], m.array1d[11] - m.array1d[8],  m.array1d[15] - m.array1d[12]);
@@ -77,7 +77,7 @@ void ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, cons
     points[7] = m*Vector3(min_point.x, min_point.y, max_point.z);
 }
 
-bool Camera::IsInFrustrum(const Vector3& mmin, const Vector3& mmax)
+bool Camera::IsInFrustum(const Vector3& mmin, const Vector3& mmax)
 {
     const Matrix4& m = GetClipMatrix();
     Vector3 bbox[8];

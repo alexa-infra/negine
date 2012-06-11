@@ -22,6 +22,7 @@
 #include "renderer/md5renderer.h"
 
 #include "renderer/md3renderer.h"
+#include "renderer/q3map.h"
 
 using base::math::Matrix4;
 using base::math::Vector2;
@@ -45,6 +46,7 @@ using base::resource::Entity;
 using base::opengl::Md5Renderer;
 using base::Timer;
 using base::resource::Md5Anim;
+using base::opengl::q3maploader;
 
 class Demo : public Application {
 private:
@@ -73,6 +75,7 @@ private:
     f32 frame_diff_;
 
     Camera camera_;
+    q3maploader* q3map_;
 
     TextureLoader texure_loader_;
 

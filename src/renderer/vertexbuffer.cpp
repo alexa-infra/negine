@@ -45,19 +45,24 @@ void VertexBufferGPU::SetData(Vertex* vertexes, u16 vcount, Face* faces, u16 fco
 
     vertexes_->Bind(BufferTargets::Array);
     vertexes_->SetData(vertex_array_size(), (void*)vertexes, usage);
+    vertexes_->Unbind();
 
     indexes_->Bind(BufferTargets::ElementArray);
     indexes_->SetData(index_array_size(), (void*)faces, BufferUsages::StreamDraw);
+    indexes_->Unbind();
 }
 
 Vertex* VertexBufferGPU::Lock(BufferAccess access/* = BufferAccesses::ReadWrite*/) {
     vertexes_->Bind(BufferTargets::Array);
-    return (Vertex*)vertexes_->Map(access);
+    Vertex* vertex = (Vertex*)vertexes_->Map(access);
+    vertexes_->Unbind();
+    return vertex;
 }
 
 void VertexBufferGPU::Unlock() {
     vertexes_->Bind(BufferTargets::Array);
     vertexes_->Unmap();
+    vertexes_->Unbind();
 }
 
 void VertexBufferGPU::DrawOnly(u32 from_face, u32 count_faces) {

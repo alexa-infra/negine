@@ -12,7 +12,7 @@
 
 #include "renderer/md5mesh.h"
 
-#define MD5
+//#define MD5
 
 using base::math::deg_to_rad;
 
@@ -22,22 +22,27 @@ Demo::Demo(i32 width, i32 height)
 {
     glViewport(0, 0, width, height); 
 
-    camera_.set_position(Vector3(0.f, 0.f, 0.f));
+    GLint maxEl;
+    glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxEl);
+    std::cout << maxEl << std::endl;
+
+    camera_.set_position(Vector3(0, 860, -90));
+   // camera_.set_position(Vector3(0.f, 0.f, 500.f));
     
     camera_.set_pitch(0);
     camera_.set_head(180 * deg_to_rad);
         
     camera_.set_aspect(width / (f32)height);
-    camera_.set_fov(50);
-    camera_.set_zNear(1);
-    camera_.set_zFar(2000);
+    camera_.set_fov(base::math::pi / 4.f);
+    camera_.set_zNear(10);
+    camera_.set_zFar(5000);
 
     cameraTransform_ = camera_.GetModelView(); 
     projection_ = camera_.GetProjection();
     modelTransform_.SetIdentity();
-    modelTransform_.Translate(Vector3(0, 0, 150));
-    modelTransform_.RotateX(-90 * deg_to_rad);
-    modelTransform_.RotateZ(180 * deg_to_rad);
+  //  modelTransform_.Translate(Vector3(0, 0, 450));
+  //  modelTransform_.RotateX(-90 * deg_to_rad);
+  //  modelTransform_.RotateZ(180 * deg_to_rad);
 
 #ifdef MD3
     texture_ = texure_loader_.Load("european_fnt.tga");
@@ -78,7 +83,13 @@ Demo::Demo(i32 width, i32 height)
 
     texture_ps_ = texure_loader_.Load("heart.png");
 
+#ifdef MD5
     texture_bump_ = texure_loader_.Load("hellknight_local.png");
+#endif
+
+    base::FileBinary fb("q3dm7.bsp");
+    q3map_ = new q3maploader(fb);
+    q3map_->load();
 }
 
 Demo::~Demo() {
@@ -98,6 +109,7 @@ Demo::~Demo() {
 #ifdef MD3
     delete md3_renderer_;
 #endif
+    delete q3map_;
 }
 
 void Demo::OnFrame(void) {
@@ -114,12 +126,18 @@ void Demo::OnFrame(void) {
 
     modelTransform_.RotateZ(20/60.f*deg_to_rad);
 
+#if defined(MD5) || defined(MD3)
     program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
+#endif
+#if defined(MD5)
     program_->set_uniform(base::opengl::UniformVars::Bump, texture_bump_);
+#endif
     program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
     program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);
     program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position());
     program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
+
+    q3map_->render(camera_, binding, program_, texure_loader_);
 
 #ifdef MD5
     static u32 counter = 0;
@@ -220,8 +238,9 @@ void Demo::OnKeyboard(u8 key, i32 x, i32 y) {
         camera_.set_position(camera_.position() - camera_.right());
     } else if (key == 'd') {
         camera_.set_position(camera_.position() + camera_.right());
+    } else if (key == 'p') {
+        std::cout << "camera: " << camera_.position() << ", forward: " << camera_.forward() << std::endl;
     }
-    //std::cout << "camera: " << camera_.position << std::endl;
     cameraTransform_ = camera_.GetModelView();
 }
 

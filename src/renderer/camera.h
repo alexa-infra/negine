@@ -80,11 +80,11 @@ public:
         return clip_;
     }
 
-    bool IsInFrustrum(const Vector3& a, const Vector3& b);
+    bool IsInFrustum(const Vector3& a, const Vector3& b);
 private:
     void refresh();
     void UpdateOrientation();
-    void UpdateFrustrum();
+    void UpdateFrustum();
 
     Matrix4 Projection() const;
     Matrix4 ModelView() const;

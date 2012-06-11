@@ -8,6 +8,7 @@
 #define STBI_FAILURE_USERMSG
 #include "stb/stb_image.c"
 
+#include "base/stream.h"
 #include <iostream>
 
 namespace base {
@@ -128,8 +129,23 @@ Texture* TextureLoader::Load(const std::string& filename) {
     if (found != cache_.end()) {
         return found->second;
     }
+    std::string name;
+    if (file_exists(filename))
+        name = filename;
+    else if (file_exists(filename + ".jpg"))
+        name = filename + ".jpg";
+    else if (file_exists(filename + ".tga"))
+        name = filename + ".tga";
+    else if (file_exists(filename + ".png"))
+        name = filename + ".png";
+    else {
+        std::cout << filename << " not found" << std::endl;
+        cache_[filename] = NULL;
+        return NULL;
+    }
+    std::cout << "load texture: " << name << std::endl;
     TextureInfo tex_info;
-    tex_info.Filename = filename;
+    tex_info.Filename = name;
     tex_info.MinFilter = TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
 
