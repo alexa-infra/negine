@@ -60,7 +60,6 @@ private:
     SpriteFont *font_;
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
-    Texture* texture_ps_;
     Md5Renderer* md5_renderer_;
 
     Md3Renderer* md3_renderer_;

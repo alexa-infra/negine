@@ -77,11 +77,9 @@ Demo::Demo(i32 width, i32 height)
     title_text_ = "Just for test.";
 
     ParticleSystemSetting ss;
+    ss.texture = "heart.png";
     ps_ = new ParticleSystem(ss);
-
-    ps_renderer_ = new ParticleSystemRenderer(ps_);
-
-    texture_ps_ = texure_loader_.Load("heart.png");
+    ps_renderer_ = new ParticleSystemRenderer(ps_, &texure_loader_);
 
 #ifdef MD5
     texture_bump_ = texure_loader_.Load("hellknight_local.png");
@@ -163,14 +161,12 @@ void Demo::OnFrame(void) {
     program_hud_->Bind();
     binding = program_hud_->binding();
 
-    program_hud_->set_uniform(base::opengl::UniformVars::Diffuse, texture_ps_);
     program_hud_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
     program_hud_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
     ps_->update(frame_time);
     ps_renderer_->Commit();
-    //ps_renderer_->Draw(binding);
-    //ps_->Draw(binding);
+    //ps_renderer_->Draw(program_hud_);
     program_hud_->Unbind();
 
     program_font_->Bind();

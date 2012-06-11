@@ -5,6 +5,7 @@
  * \copyright   MIT License
  **/
 #include "particlesystemrenderer.h"
+#include "glprogram.h"
 #include "base/math/rect.h"
 
 namespace base {
@@ -15,7 +16,7 @@ using base::resource::ParticleSystemSetting;
 using base::resource::Particle;
 using base::resource::ParticleList;
 
-ParticleSystemRenderer::ParticleSystemRenderer(ParticleSystem* ps)
+ParticleSystemRenderer::ParticleSystemRenderer(ParticleSystem* ps, TextureLoader* loader)
     : texture_(NULL)
     , vbo_(NULL)
     , ps_(ps)
@@ -42,15 +43,20 @@ ParticleSystemRenderer::ParticleSystemRenderer(ParticleSystem* ps)
     vbo_ = new VertexBufferMemory(v, settings.max_count * 4, f, settings.max_count * 2);
     delete[] v;
     delete[] f;
+
+    texture_ = loader->Load(settings.texture);
 }
 
 ParticleSystemRenderer::~ParticleSystemRenderer()
 {
-    delete texture_;
     delete vbo_;
 }
 
-void ParticleSystemRenderer::Draw(AttributeBinding& binding) {
+void ParticleSystemRenderer::Draw(Program* program) {
+    const AttributeBinding& binding = program->binding();
+
+    program->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
+
     vbo_->BindAttributes(binding);
     for (ParticleList::iterator it = ps_->particles_active.begin(); it != ps_->particles_active.end(); ++it) {
         Particle* p = *it;

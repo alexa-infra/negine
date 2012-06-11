@@ -30,6 +30,8 @@ struct ParticleSystemSetting {
     u32 emission_rate;
     f32 lifetime;
 
+    std::string texture;
+
     ParticleSystemSetting();
 };
 

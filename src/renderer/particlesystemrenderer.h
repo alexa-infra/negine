@@ -13,16 +13,18 @@
 namespace base {
 namespace opengl {
 
+class Program;
+
 class ParticleSystemRenderer {
     Texture* texture_;
     VertexBuffer* vbo_;
     resource::ParticleSystem* ps_;
 public:
-    ParticleSystemRenderer(resource::ParticleSystem* ps);
+    ParticleSystemRenderer(resource::ParticleSystem* ps, TextureLoader* loader);
     ~ParticleSystemRenderer();
 
     void Commit();
-    void Draw(AttributeBinding& binding);
+    void Draw(Program* binding);
 };
 
 }
