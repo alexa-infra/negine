@@ -5,6 +5,7 @@
  * \copyright   MIT License
  **/
 #include "renderer/vertexbuffer.h"
+#include "renderer/statistics.h"
 #include <string.h>
 
 namespace base {
@@ -70,6 +71,7 @@ void VertexBufferGPU::DrawOnly(u32 from_face, u32 count_faces) {
         count_faces * 3,
         GL_UNSIGNED_SHORT,
         (Face*)0 + from_face); 
+    Stats::add_polygons(count_faces);
 }
 
 void VertexBufferGPU::BindAttributes(const AttributeBinding& binding) {
@@ -143,6 +145,7 @@ void VertexBufferMemory::DrawOnly(u32 from_face, u32 count_faces) {
         GL_UNSIGNED_SHORT,
         //(u16*)indexes_ + face_to_index(from_face)); 
         indexes_ + from_face);
+    Stats::add_polygons(count_faces);
 }
 
 void VertexBufferMemory::BindAttributes(const AttributeBinding& binding) {

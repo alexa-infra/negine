@@ -31,7 +31,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     cdata_ = new stbtt_bakedchar[96];
     stbtt_BakeFontBitmap((const u8*)ttf_buffer,
         0,
-        32.0,
+        16.0,
         temp_bitmap,
         512,
         512, 
@@ -92,7 +92,14 @@ void SpriteFont::SetText(const Vector2& position, const std::string& str, const 
     Vertex* vertexes_ = vbo_->Lock();
     for (u32 i=0; i<text_length_; i++) {
         u8 ch = str[i];
-            
+        
+        if (ch == '\n')
+        {
+            y -= 16.0f;
+            x = position.x;
+            continue;
+        }
+
         if (ch < 32 || ch > 128)
             ch = '?';
 

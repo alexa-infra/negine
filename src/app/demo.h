@@ -69,7 +69,6 @@ private:
     Timer timer_;
 
     Vector2 cursor_;
-    std::string title_text_;
 
     f32 frame_diff_;
 

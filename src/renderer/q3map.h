@@ -16,6 +16,7 @@
 #include "renderer/glcontext.h"
 #include "renderer/glprogram.h"
 #include "renderer/gltexture.h"
+#include "renderer/statistics.h"
 
 #include <deque>
 #include <set>
@@ -227,18 +228,19 @@ public:
         }
         std::vector<int> visibleFacesArr(visibleFaces.begin(), visibleFaces.end());
 
-        //glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         for (u32 i=0; i<visibleFacesArr.size(); i++) {
             int iface = leafFaces[visibleFacesArr[i]];
             const q3face& face = faces[iface];
             if (face.type != 1) continue;
-            //if (face.numOfVerts == 0) continue;
-            //if (face.faceVertexIndex < 0) continue;
-            //if (face.numOfVerts < 0) continue;
 
             Texture* t = txloader.Load((char*)textures[face.textureID].name);
             if (t == NULL) continue;
+
+            if (t->has_alpha())
+            {
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
 
             pr->set_uniform(base::opengl::UniformVars::Diffuse, t);
            
@@ -278,6 +280,10 @@ public:
                 sizeof(q3vertex),
                 (u8*)&(vertexes[face.vertexIndex].lightmapUV));
             glDrawElements(GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex]); 
+            Stats::add_polygons(face.numOfFaceIndices / 3);
+
+            if (t->has_alpha())
+                glDisable(GL_BLEND);
         }
     }
 };

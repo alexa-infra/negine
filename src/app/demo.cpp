@@ -9,10 +9,12 @@
 #include <iostream>
 #include <assert.h>
 #include <sstream>
+#include "renderer/statistics.h"
 
 #include "renderer/md5mesh.h"
 
 //#define MD5
+#define BSP 1
 
 using base::math::deg_to_rad;
 
@@ -22,12 +24,8 @@ Demo::Demo(i32 width, i32 height)
 {
     glViewport(0, 0, width, height); 
 
-    GLint maxEl;
-    glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxEl);
-    std::cout << maxEl << std::endl;
-
     camera_.set_position(Vector3(0, 860, -90));
-   // camera_.set_position(Vector3(0.f, 0.f, 500.f));
+//    camera_.set_position(Vector3(0.f, 0.f, 500.f));
     
     camera_.set_pitch(0);
     camera_.set_head(180 * deg_to_rad);
@@ -40,9 +38,9 @@ Demo::Demo(i32 width, i32 height)
     cameraTransform_ = camera_.GetModelView(); 
     projection_ = camera_.GetProjection();
     modelTransform_.SetIdentity();
-  //  modelTransform_.Translate(Vector3(0, 0, 450));
-  //  modelTransform_.RotateX(-90 * deg_to_rad);
-  //  modelTransform_.RotateZ(180 * deg_to_rad);
+//    modelTransform_.Translate(Vector3(0, 0, 450));
+//    modelTransform_.RotateX(-90 * deg_to_rad);
+//    modelTransform_.RotateZ(180 * deg_to_rad);
 
 #ifdef MD3
     texture_ = texure_loader_.Load("european_fnt.tga");
@@ -74,7 +72,6 @@ Demo::Demo(i32 width, i32 height)
     //string filename = "AlphaBetaBRK.ttf";
     string filename = "AmerikaSans.ttf";
     font_ = new SpriteFont(filename, 0, 100);
-    title_text_ = "Just for test.";
 
     ParticleSystemSetting ss;
     ss.texture = "heart.png";
@@ -85,9 +82,11 @@ Demo::Demo(i32 width, i32 height)
     texture_bump_ = texure_loader_.Load("hellknight_local.png");
 #endif
 
-    base::FileBinary fb("q3dm7.bsp");
+#if BSP
+    base::FileBinary fb("maps/q3dm6.bsp");
     q3map_ = new q3maploader(fb);
     q3map_->load();
+#endif
 }
 
 Demo::~Demo() {
@@ -107,7 +106,10 @@ Demo::~Demo() {
 #ifdef MD3
     delete md3_renderer_;
 #endif
+
+#if BSP
     delete q3map_;
+#endif
 }
 
 void Demo::OnFrame(void) {
@@ -122,7 +124,7 @@ void Demo::OnFrame(void) {
     program_->Bind();
     AttributeBinding binding = program_->binding();
 
-    modelTransform_.RotateZ(20/60.f*deg_to_rad);
+    //modelTransform_.RotateZ(20/60.f*deg_to_rad);
 
 #if defined(MD5) || defined(MD3)
     program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
@@ -135,7 +137,9 @@ void Demo::OnFrame(void) {
     program_->set_uniform(base::opengl::UniformVars::CameraPos, camera_.position());
     program_->set_uniform(base::opengl::UniformVars::LightPos, Vector3(40, 110, -200));
 
+#if BSP
     q3map_->render(camera_, binding, program_, texure_loader_);
+#endif
 
 #ifdef MD5
     static u32 counter = 0;
@@ -176,16 +180,15 @@ void Demo::OnFrame(void) {
     program_font_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
     program_font_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
 
-    font_->SetText(Vector2(-50.f, 0.f), title_text_, Vector4(0.f, 0.f, 1.f, 1.f));
-//    font_->Draw(binding);
-
     std::stringstream ss;
     //ss.precision(0);
     //ss.setf(std::ios::fixed,std::ios::floatfield);
     if (frame_diff_ > 0.f)
-        ss << (i32)(1.f / frame_diff_) << " fps";
+        ss << "fps: " << (i32)(1.f / frame_diff_) << '\n';
+    ss << "polygons: " << Stats::polygons() << '\n';
+    ss << "draw calls: " << Stats::drawcalls() << '\n';
     std::string text = ss.str();
-    font_->SetText(Vector2(-150.f, 150.f), text, Vector4(0.f, 0.f, 0.f, 1.f));
+    font_->SetText(Vector2(-140.f, 140.f), text, Vector4(0.f, 0.f, 0.f, 1.f));
     font_->Draw(binding);
     program_font_->Unbind();
 
@@ -222,10 +225,6 @@ void Demo::OnMotion(i32 x, i32 y, i32 dx, i32 dy) {
 }
 
 void Demo::OnKeyboard(u8 key, i32 x, i32 y) {
-    std::string test("Key pressed: ");
-    test += (char)key;
-    title_text_ = test;
-
     if (key == 'w') {
         camera_.set_position(camera_.position() + camera_.forward());
     } else if (key == 's') {
