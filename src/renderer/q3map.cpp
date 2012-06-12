@@ -24,7 +24,13 @@ bool q3visibility::isClusterVisible(i32 visCluster, i32 testCluster) const
 
 q3maploader::q3maploader(FileBinary& file)
     : f(file)
+    , visFaces(NULL)
 {
+}
+
+q3maploader::~q3maploader()
+{
+    delete[] visFaces;
 }
 
 void q3maploader::load() {
@@ -45,6 +51,8 @@ void q3maploader::load() {
     visibility.vecs = new u8[visibility.nVecs * visibility.szVecs];
     for(int i=0; i<visibility.nVecs * visibility.szVecs; i++)
         visibility.vecs[i] = f.read_type<u8>();
+
+    visFaces = new u8[faces.size()];
 }
 
 void q3maploader::check_header() {
@@ -79,28 +87,27 @@ void q3maploader::render(Camera& camera, Program* pr, TextureLoader& txloader) c
 
     i32 cameraLeafIndex = findLeaf(camera.position());
     const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
-    std::deque<int> visibleLeafs;
+    memset(visFaces, 0, faces.size());
+    std::deque<int> visibleFaces;
     for (u32 i=0; i<leafs.size(); i++) {
         const q3leaf& leaf = leafs[i];
         if (visibility.isClusterVisible(cameraLeaf.cluster, leaf.cluster)) {
             if (camera.IsInFrustum(Vector3(leaf.mins[0], leaf.mins[1], leaf.mins[2]), Vector3(leaf.maxs[0], leaf.maxs[1], leaf.maxs[2]))) {
-                visibleLeafs.push_back(i);
+                for (i32 j=0; j<leaf.numberOfLeafFaces; j++) {
+                    int faceIndex = leafFaces[leaf.leafFace + j];
+                    if (visFaces[faceIndex] == 0)
+                    {
+                        visibleFaces.push_back(faceIndex);
+                        visFaces[faceIndex] = 1;
+                    }
+                }
             }
         }
     }
-    std::set<int> visibleFaces;
-    for (u32 i=0; i<visibleLeafs.size(); i++) {
-        const q3leaf& leaf = leafs[visibleLeafs[i]];
-        for (i32 j=0; j<leaf.numberOfLeafFaces; j++) {
-            i32 faceIndex = leaf.leafFace + j;
-            visibleFaces.insert(faceIndex);
-        }
-    }
-    std::vector<int> visibleFacesArr(visibleFaces.begin(), visibleFaces.end());
 
-    for (u32 i=0; i<visibleFacesArr.size(); i++) {
-        int iface = leafFaces[visibleFacesArr[i]];
-        const q3face& face = faces[iface];
+    for (u32 i=0; i<visibleFaces.size(); i++) {
+        int faceIndex = visibleFaces[i];
+        const q3face& face = faces[faceIndex];
         if (face.type != 1) continue;
 
         Texture* t = txloader.Load((char*)textures[face.textureID].name);

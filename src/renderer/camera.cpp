@@ -57,12 +57,18 @@ void Camera::UpdateVectors(const Matrix4& orient)
 void Camera::UpdateFrustum()
 {
     Matrix4 m = clip_;
-	planes[0].set(m.array1d[3] - m.array1d[0], m.array1d[7] - m.array1d[4], m.array1d[11] - m.array1d[8],  m.array1d[15] - m.array1d[12]);
-	planes[1].set(m.array1d[3] + m.array1d[0], m.array1d[7] + m.array1d[4], m.array1d[11] + m.array1d[8],  m.array1d[15] + m.array1d[12]);
-	planes[2].set(m.array1d[3] + m.array1d[1], m.array1d[7] + m.array1d[5], m.array1d[11] + m.array1d[9],  m.array1d[15] + m.array1d[13]);
-	planes[3].set(m.array1d[3] - m.array1d[1], m.array1d[7] - m.array1d[5], m.array1d[11] - m.array1d[9],  m.array1d[15] - m.array1d[13]);
-	planes[4].set(m.array1d[3] - m.array1d[2], m.array1d[7] - m.array1d[6], m.array1d[11] - m.array1d[10], m.array1d[15] - m.array1d[14]);
-	planes[5].set(m.array1d[3] + m.array1d[2], m.array1d[7] + m.array1d[6], m.array1d[11] + m.array1d[10], m.array1d[15] + m.array1d[14]);
+    // right
+    planes_[0].set(m.array1d[3] - m.array1d[0], m.array1d[7] - m.array1d[4], m.array1d[11] - m.array1d[8],  m.array1d[15] - m.array1d[12]);
+    // left
+    planes_[1].set(m.array1d[3] + m.array1d[0], m.array1d[7] + m.array1d[4], m.array1d[11] + m.array1d[8],  m.array1d[15] + m.array1d[12]);
+    // bottom
+    planes_[2].set(m.array1d[3] + m.array1d[1], m.array1d[7] + m.array1d[5], m.array1d[11] + m.array1d[9],  m.array1d[15] + m.array1d[13]);
+    // top
+    planes_[3].set(m.array1d[3] - m.array1d[1], m.array1d[7] - m.array1d[5], m.array1d[11] - m.array1d[9],  m.array1d[15] - m.array1d[13]);
+    // far
+    planes_[4].set(m.array1d[3] - m.array1d[2], m.array1d[7] - m.array1d[6], m.array1d[11] - m.array1d[10], m.array1d[15] - m.array1d[14]);
+    // near
+    planes_[5].set(m.array1d[3] + m.array1d[2], m.array1d[7] + m.array1d[6], m.array1d[11] + m.array1d[10], m.array1d[15] + m.array1d[14]);
 }
 
 void ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, const Matrix4& m, Vector3* points)
@@ -77,6 +83,27 @@ void ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, cons
     points[7] = m*Vector3(min_point.x, min_point.y, max_point.z);
 }
 
+bool Camera::IsInFrustum(const Vector3& point)
+{
+    for(u32 i=0; i<6; i++) {
+        if (planes_[i].Distance(point) <= 0.f)
+            return false;
+    }
+    return true;
+}
+
+bool Camera::IsInFrustum2(const Vector3& mmin, const Vector3& mmax)
+{
+    const Matrix4& m = GetClipMatrix();
+    Vector3 bbox[8];
+    ConvertBoundingBox(mmin, mmax, m, bbox);
+    for (u32 i=0; i<8; i++) {
+        if (IsInFrustum(bbox[i]))
+            return true;
+    }
+    return false;
+}
+
 bool Camera::IsInFrustum(const Vector3& mmin, const Vector3& mmax)
 {
     const Matrix4& m = GetClipMatrix();
@@ -88,7 +115,7 @@ bool Camera::IsInFrustum(const Vector3& mmin, const Vector3& mmax)
     bool intersect = false;
     for(int i=0; i<6; i++)
     {
-        Vector3 n = planes[i].Normal();
+        Vector3 n = planes_[i].Normal();
         Vector3 nb = Vector3(Dot(n, axis1), Dot(n, axis2), Dot(n, axis3));
         Vector3 nn, np;
         if (nb.x < 0)
@@ -149,10 +176,10 @@ bool Camera::IsInFrustum(const Vector3& mmin, const Vector3& mmax)
                 }
             }
         }
-        if (planes[i].Distance(nn) > 0)
+        if (planes_[i].Distance(nn) > 0)
             return false;
-        if (planes[i].Distance(np) > 0)
-            intersect = true;
+        if (planes_[i].Distance(np) > 0)
+            return true;
     }
     //if (!intersect) then inside!!
     return true;

@@ -133,8 +133,10 @@ public:
     std::vector<q3face>     faces;
     std::vector<u32>        faceIndexes;
     q3visibility            visibility;
+    u8*                     visFaces;
 
     q3maploader(FileBinary& file);
+    ~q3maploader();
 
     void load();
 

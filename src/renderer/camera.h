@@ -20,7 +20,7 @@ using base::math::Plane;
 
 class Camera {
 private:
-    Plane planes[6];
+    Plane planes_[6];
     Matrix4 projection_;
     Matrix4 modelview_;
     Matrix4 clip_;
@@ -67,6 +67,8 @@ public:
     void set_zFar(f32 v) { zFar_ = v; dirty = true; }
     f32 zFar() const { return zFar_; }
 
+    const Plane* planes() const { return planes_; }
+
     const Matrix4& GetProjection() {
         if (dirty) refresh();
         return projection_;
@@ -80,7 +82,9 @@ public:
         return clip_;
     }
 
+    bool IsInFrustum(const Vector3& point);
     bool IsInFrustum(const Vector3& a, const Vector3& b);
+    bool IsInFrustum2(const Vector3& a, const Vector3& b);
 private:
     void refresh();
     void UpdateOrientation();

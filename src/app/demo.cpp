@@ -83,7 +83,7 @@ Demo::Demo(i32 width, i32 height)
 #endif
 
 #if BSP
-    base::FileBinary fb("maps/q3dm6.bsp");
+    base::FileBinary fb("maps/q3dm17.bsp");
     q3map_ = new q3maploader(fb);
     q3map_->load();
 #endif
