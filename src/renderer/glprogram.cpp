@@ -32,7 +32,8 @@ StringMap<UniformVar, UniformVars::Count>::Entry uni_map_str[UniformVars::Count]
     { "modelview_matrix",   UniformVars::Modelview },
     { "camera_pos",         UniformVars::CameraPos },
     { "bump",               UniformVars::Bump },
-    { "light_pos",          UniformVars::LightPos }
+    { "light_pos",          UniformVars::LightPos },
+    { "color",              UniformVars::Color }
 };
 StringMap<UniformVar, UniformVars::Count> uni_map(uni_map_str);
 

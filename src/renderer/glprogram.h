@@ -25,6 +25,7 @@ namespace UniformVars {
         CameraPos,
         Bump,
         LightPos,
+        Color,
 
         Count
     };

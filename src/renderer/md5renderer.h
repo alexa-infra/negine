@@ -16,6 +16,8 @@ namespace opengl {
 
 //! single mesh only
 class Md5Renderer {
+public:
+    resource::Md5BoundingBox boundingBox;
 private:
     Vertex* vertexArray;
     Face* vertexIndices;
@@ -32,6 +34,7 @@ private:
     void GenerateVertexes(resource::Md5Mesh &mesh, Vertex* vertexes);
     void GenerateIndexes(resource::Md5Mesh &mesh, Face* indexes);
     void GenerateLightningInfo(resource::Md5Mesh &mesh, Vertex* vertexes);
+    void UpdateBoundingBox(Vertex &vetex);
 };
 
 } // namespace base
