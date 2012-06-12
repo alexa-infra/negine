@@ -85,7 +85,7 @@ class Matrix4 {
 
     static Matrix4 GetPerspective(f32 fovy, f32 aspect, f32 zNear, f32 zFar);
     static Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist);
-    static Matrix4 LookAt(const Vector3& from_position, const Vector3& target);
+    static Matrix4 LookAtWithoutUp(const Vector3& from_position, const Vector3& target);
     static Matrix4 LookAt(const Vector3& from_position, const Vector3& target, const Vector3& up);
  private:
     void MatrixSwap(const u8& _a, const u8& _b);

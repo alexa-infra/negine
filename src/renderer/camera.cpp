@@ -31,15 +31,16 @@ Matrix4 Camera::Projection() const {
 
 Matrix4 Camera::ModelView() const {
     Vector3 lookAt = position_ + forward_;
+
     Matrix4 modelView = Matrix4::LookAt(position_, lookAt, up_);
     return modelView; 
 }
 
 void Camera::UpdateOrientation()
 {
-    Matrix4 headRot = Matrix4::GetRotationY(head_);
+    Matrix4 headRot  = Matrix4::GetRotationY(head_);
     Matrix4 pitchRot = Matrix4::GetRotationX(pitch_);
-    Matrix4 orientation = headRot * pitchRot;
+    Matrix4 orientation = pitchRot * headRot;
     UpdateVectors(orientation);
 }
 
@@ -49,8 +50,8 @@ void Camera::UpdateVectors(const Matrix4& orient)
     const Vector3 u(0, 1, 0);
     const Vector3 f(0, 0, 1);
 
-    right_ = orient * r;
-    up_ = orient * u;
+    right_   = orient * r;
+    up_      = orient * u;
     forward_ = orient * f;
 }
 

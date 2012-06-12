@@ -116,7 +116,7 @@ Matrix4 Matrix4::GetRotationX(const f32 &_angle) {
     _matrix.array2d[1][1]  = c;
     _matrix.array2d[1][2]  = -s;
     _matrix.array2d[2][1]  = s;
-    _matrix.array2d[2][2] = c;
+    _matrix.array2d[2][2]  = c;
 
     return _matrix;
 }
@@ -130,7 +130,7 @@ Matrix4 Matrix4::GetRotationY(const f32 &_angle) {
     _matrix.array2d[0][0]  = c;
     _matrix.array2d[0][2]  = s;
     _matrix.array2d[2][0]  = -s;
-    _matrix.array2d[2][2] = c;
+    _matrix.array2d[2][2]  = c;
 
     return _matrix;
 }
@@ -424,12 +424,9 @@ Matrix4 Matrix4::operator * (const f32 &_factor) const {
 }
 
 Vector3 Matrix4::operator * (const Vector3 &_vector) const {
-    return Vector3((array2d[0][0]*_vector.x) + (array2d[0][1]*_vector.y)
-            + (array2d[0][2] *_vector.z) + array2d[0][3],
-        (array2d[1][0]*_vector.x) + (array2d[1][1]*_vector.y)
-            + (array2d[1][2] *_vector.z) + array2d[1][3],
-        (array2d[2][0]*_vector.x) + (array2d[2][1]*_vector.y)
-            + (array2d[2][2]*_vector.z) + array2d[2][3]);
+    return Vector3((array2d[0][0] *_vector.x) + (array2d[0][1]*_vector.y) + (array2d[0][2] *_vector.z),
+                   (array2d[1][0] *_vector.x) + (array2d[1][1]*_vector.y) + (array2d[1][2] *_vector.z),
+                   (array2d[2][0] *_vector.x) + (array2d[2][1]*_vector.y) + (array2d[2][2] *_vector.z));
 }
 
 Vector4 Matrix4::operator * (const Vector4 &_vector) const {
@@ -466,7 +463,7 @@ Matrix4 Matrix4::GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist
     return m;
 }
 
-Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target) {
+Matrix4 Matrix4::LookAtWithoutUp(const Vector3& position, const Vector3& target) {
     Vector3 left;
     Vector3 up;
     Vector3 forward;
@@ -517,7 +514,7 @@ Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target, const Ve
     forward = target - position;
     forward.Normalize();
 
-    left = VectorProduct(up, forward);  // cross product
+    left = VectorProduct(forward, up);  // cross product
     left.Normalize();
 
     Matrix4 result(left, up, forward);

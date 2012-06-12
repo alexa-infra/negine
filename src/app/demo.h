@@ -77,6 +77,7 @@ private:
     f32 frame_diff_;
 
     Camera camera_;
+    WireBox* camera_wirebox_;
     q3maploader* q3map_;
 
     TextureLoader texure_loader_;
