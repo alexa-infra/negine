@@ -19,8 +19,8 @@ SDLApp::SDLApp()
     , width_(640)
     , height_(480)
 {
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
     // see SDL_GLprofile enumeration
     // e.g. SDL_GL_CONTEXT_PROFILE_ES2 for GLES
