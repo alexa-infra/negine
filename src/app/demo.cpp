@@ -80,7 +80,7 @@ Demo::Demo(i32 width, i32 height)
     //font test
     //string filename = "AlphaBetaBRK.ttf";
     string filename = "AmerikaSans.ttf";
-    font_ = new SpriteFont(filename, 0, 255);
+    font_ = new SpriteFont(filename, 14, 255);
 
     ParticleSystemSetting ss;
     ss.texture = "heart.png";
