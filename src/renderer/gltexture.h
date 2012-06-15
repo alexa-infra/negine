@@ -160,7 +160,7 @@ public:
     //! Generate texture object from texture info
     void GenerateFromBuffer(const TextureInfo& textureinfo, const u8* data);
 
-    bool has_alpha() const { return info_.Pixel & PixelTypes::A > 0; } 
+    bool has_alpha() const { return ((info_.Pixel & PixelTypes::A) > 0); } 
 private:
     void FromBuffer(const u8* data);
 

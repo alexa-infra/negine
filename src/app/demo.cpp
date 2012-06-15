@@ -281,6 +281,14 @@ void Demo::OnKeyboard(u8 key, i32 x, i32 y) {
 
 Program* Demo::LoadProgram(const std::string& filename) {
     std::string status;
+    if (!base::file_exists(filename)) {
+        std::cout 
+            << "File is not exists: "
+            << filename << '\n'
+            << std::endl;
+        assert(false);
+        return NULL;
+    }
     Program* program = Program::Create(filename, status);
     if (program == NULL) {
         std::cout

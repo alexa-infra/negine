@@ -19,7 +19,7 @@ TEST(q3map, Basic) {
     FileBinary fb(filename);
     q3maploader q3map(fb);
     q3map.load();
-    for (int i=0; i<q3map.textures.size(); i++) {
+    for (u32 i=0; i<q3map.textures.size(); i++) {
         std::cout << q3map.textures[i].name << std::endl;
     }
 }
