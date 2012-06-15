@@ -19,14 +19,25 @@ SDLApp::SDLApp()
     , width_(640)
     , height_(480)
 {
-    SDL_Init(SDL_INIT_VIDEO);
- 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+
+    // see SDL_GLprofile enumeration
+    // e.g. SDL_GL_CONTEXT_PROFILE_ES2 for GLES
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    // debug flag
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
  
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+        std::cout << "Unable to init SDL: " << SDL_GetError() << std::endl;
+        assert(false);
+    }
 
     mainwindow_ = SDL_CreateWindow(
         "SDL Demo",
@@ -52,6 +63,9 @@ SDLApp::SDLApp()
         std::cout << "OpenGL 3.3 is not supported." << std::endl;
     //    assert(false);
     }
+
+    const GLubyte* version = glGetString(GL_VERSION);
+    std::cout << "Current OpenGL version: " << version << std::endl;
 
     assert(glGetError() == GL_NO_ERROR);
     SDL_GL_SetSwapInterval(1);
