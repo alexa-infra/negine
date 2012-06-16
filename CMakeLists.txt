@@ -94,13 +94,21 @@ if(WIN32)
 endif(WIN32)
 set(CMAKE_DEBUG_POSTFIX "_d")
 
+if(USE_SDL)
+    add_definitions(-DSDL_ENGINE)
+elseif(USE_GLUT)
+    add_definitions(-DGLUT_ENGINE)
+endif()
+
 if(USE_GLUT)
   add_subdirectory(${TOOLS_PATH}/freeglut ${PROJECT_BINARY_DIR}/freeglut)
 endif(USE_GLUT)
 add_subdirectory(${TOOLS_PATH}/glew ${PROJECT_BINARY_DIR}/glew)
-add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
-add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)
+#add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
+#add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)
 
 add_subdirectory(${SRC_PATH} ${PROJECT_BINARY_DIR}/negine)
 add_subdirectory(${SRC_PATH}/app ${PROJECT_BINARY_DIR}/app)
 add_subdirectory(${TESTS_PATH} ${PROJECT_BINARY_DIR}/tests)
+
+add_subdirectory(${SRC_PATH}/demos ${PROJECT_BINARY_DIR}/demos)

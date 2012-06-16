@@ -8,16 +8,12 @@
 
 #include "base/types.h"
 
-#ifdef OS_WIN
-#  define SDL_MAIN_HANDLED
-#endif
-
-#include <SDL.h>
+struct SDL_Window;
 
 class SDLApp {
 protected:
     SDL_Window* mainwindow_;     //!< window handle
-    SDL_GLContext maincontext_;  //!< GL context
+    void* maincontext_;          //!< GL context
     bool run_;
     bool capture_;
     u32 width_;

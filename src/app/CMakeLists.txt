@@ -3,7 +3,7 @@ set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 
 set(APP_PATH ${SRC_PATH}/app)
 
-add_source_group("app" ${APP_PATH} SRC)
+#add_source_group("app" ${APP_PATH} SRC)
 if (USE_SDL)
     add_source_group("sdl" ${APP_PATH}/sdl SRC)
 elseif (USE_GLUT)
@@ -19,7 +19,7 @@ include_directories(
 
 add_definitions(-DGLEW_STATIC)
 
-add_executable(app
+add_library(app
     ${SRC}
 )
 add_dependencies(app

@@ -20,13 +20,9 @@ add_library(negine
     ${RENDERER_SRC}
 )
 add_dependencies(negine
-    lua
-    jsoncpp
     glew
 )
 target_link_libraries(negine 
-    lua
-    jsoncpp
     glew
 )
 if(WIN32)

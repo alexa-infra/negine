@@ -214,9 +214,9 @@ void Demo::OnFrame(void) {
     ss.precision(0);
     //ss.setf(std::ios::fixed,std::ios::floatfield);
     if (frame_diff_ > 0.f)
-        ss << "fps: " << (i32)(1.f / frame_diff_) << '\n';
-    ss << "polygons: " << Stats::polygons() << '\n';
-    ss << "draw calls: " << Stats::drawcalls() << '\n';
+        ss << "fps: "        << (i32)(1.f / frame_diff_) << '\n';
+    ss << "polygons: "       << Stats::polygons() << '\n';
+    ss << "draw calls: "     << Stats::drawcalls() << '\n';
     ss.precision(2);
     ss << "Forward vector: " << camera_.forward() << '\n';
     ss << "Up vector:"       << camera_.up()      << '\n';

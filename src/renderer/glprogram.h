@@ -111,5 +111,7 @@ private:
     DISALLOW_COPY_AND_ASSIGN(Program);
 };
 
+Program* LoadProgram(const std::string& filename);
+
 } // namespace opengl
 } // namespace base

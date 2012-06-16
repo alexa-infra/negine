@@ -257,5 +257,26 @@ void Program::get_attributes_list() {
     delete [] attrName;
 }
 
+Program* LoadProgram(const std::string& filename) {
+    std::string status;
+    if (!base::file_exists(filename)) {
+        std::cout 
+            << "File is not exists: "
+            << filename << '\n'
+            << std::endl;
+        assert(false);
+        return NULL;
+    }
+    Program* program = Program::Create(filename, status);
+    if (program == NULL) {
+        std::cout
+            << "Error on load shader program "
+            << filename << std::endl
+            << status << std::endl;
+        assert(false);
+    }
+    return program;
+}
+
 }
 }
