@@ -30,7 +30,7 @@ target_link_libraries(app
 )
 
 if (USE_SDL)
-    find_package(SDL 1.3) 
+    find_package(SDL2) 
     if(NOT SDL_FOUND)
         message(FATAL_ERROR "SDL is not found")
     endif()

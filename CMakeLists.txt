@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(negine)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+
 set(SRC_PATH ${negine_SOURCE_DIR}/src)
 set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 set(TESTS_PATH ${SRC_PATH}/tests)

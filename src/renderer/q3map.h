@@ -83,6 +83,33 @@ struct q3vertex {
     math::Vector2 lightmapUV;
     math::Vector3 normal;
     u8 color[4];
+
+    q3vertex operator*(f32 scalar) const {
+        q3vertex ret;
+        ret.pos = pos * scalar;
+        ret.surfaceUV = surfaceUV * scalar;
+        ret.lightmapUV = lightmapUV * scalar;
+        ret.normal = normal * scalar;
+        //ret.color = color * scalar;
+        return ret;
+    }
+    q3vertex operator+(const q3vertex& v) const {
+        q3vertex ret;
+        ret.pos = pos + v.pos;
+        ret.surfaceUV = surfaceUV + v.surfaceUV;;
+        ret.lightmapUV = lightmapUV + v.lightmapUV;
+        ret.normal = normal + v.normal;
+        //ret.color = color + v.color;
+        return ret;
+    }
+    q3vertex& operator=(const q3vertex& v) {
+        pos = v.pos;
+        surfaceUV = v.surfaceUV;
+        lightmapUV = v.lightmapUV;
+        normal = v.normal;
+        //color = v.color;
+        return *this;
+    }
 };
 
 struct q3brushside {
@@ -159,6 +186,9 @@ private:
         return items;
     }
     i32 findLeaf(const math::Vector3& camPos) const;
+
+    void render_polygons(const q3face& face, Program* pr) const; 
+    void render_patch(const q3face& face, Program* pr) const;
 };
 
 } // opengl

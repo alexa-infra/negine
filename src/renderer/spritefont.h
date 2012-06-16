@@ -23,6 +23,7 @@ namespace opengl {
     private:
         u32 max_chars_;             //!< maximum text length
         u32 text_length_;           //!< current text length
+		f32 font_height_;           //!< current font height
         VertexBuffer* vbo_;         //!< vertex buffer for drawing text
         Texture* texture_;          //!< font texture
         stbtt_bakedchar* cdata_;    //!< font data: ASCII 32..126 is 95 glyphs

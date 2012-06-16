@@ -12,7 +12,7 @@
 #  define SDL_MAIN_HANDLED
 #endif
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 class SDLApp {
 protected:

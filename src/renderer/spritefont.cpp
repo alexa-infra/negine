@@ -21,6 +21,8 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     : max_chars_(max_chars)
     , vbo_(NULL)
 {
+
+	font_height_ = height;
     base::FileBinary file(filename.c_str());
     u32 size = file.size();
     u8* ttf_buffer = new u8[size];
@@ -31,7 +33,7 @@ SpriteFont::SpriteFont(const std::string& filename, f32 height, u32 max_chars)
     cdata_ = new stbtt_bakedchar[96];
     stbtt_BakeFontBitmap((const u8*)ttf_buffer,
         0,
-        16.0,
+        font_height_,
         temp_bitmap,
         512,
         512, 
@@ -95,7 +97,7 @@ void SpriteFont::SetText(const Vector2& position, const std::string& str, const 
         
         if (ch == '\n')
         {
-            y -= 16.0f;
+            y -= font_height_;
             x = position.x;
             continue;
         }
@@ -111,28 +113,34 @@ void SpriteFont::SetText(const Vector2& position, const std::string& str, const 
             &x,     // current position 
             &y,
             &q,     // resulted quad
-            1);     // 1 tex coords for opengl (0 for d3d)
+            1 );     // 1 tex coords for opengl (0 for d3d)
 
         // note: x,y position is advanced by font character size
 
+		//f32 w = q.x1-q.x0;
+        f32 h = q.y1-q.y0;
+
+		q.y0 = y - h;
+		q.y1 = y;
+
         //VERTEX 0
-        vertexes_[vertex_index_].pos = Vector3(q.x0, q.y0, 0.0);
-        vertexes_[vertex_index_].tex = Vector2(q.s0, q.t1);
+        vertexes_[vertex_index_].pos   = Vector3(q.x0, q.y0, 0.0);
+        vertexes_[vertex_index_].tex   = Vector2(q.s0, q.t1);
         vertexes_[vertex_index_].color = color;
 
         //VERTEX 1
-        vertexes_[vertex_index_+1].pos = Vector3(q.x1, q.y0, 0.0);
-        vertexes_[vertex_index_+1].tex = Vector2(q.s1, q.t1);
+        vertexes_[vertex_index_+1].pos   = Vector3(q.x1, q.y0, 0.0);
+        vertexes_[vertex_index_+1].tex   = Vector2(q.s1, q.t1);
         vertexes_[vertex_index_+1].color = color;
 
         //VERTEX 2
-        vertexes_[vertex_index_+2].pos = Vector3(q.x1, q.y1, 0.0);
-        vertexes_[vertex_index_+2].tex = Vector2(q.s1, q.t0);
+        vertexes_[vertex_index_+2].pos   = Vector3(q.x1, q.y1, 0.0);
+        vertexes_[vertex_index_+2].tex   = Vector2(q.s1, q.t0);
         vertexes_[vertex_index_+2].color = color;
 
         //VERTEX 3
-        vertexes_[vertex_index_+3].pos = Vector3(q.x0, q.y1, 0.0);
-        vertexes_[vertex_index_+3].tex = Vector2(q.s0, q.t0);
+        vertexes_[vertex_index_+3].pos   = Vector3(q.x0, q.y1, 0.0);
+        vertexes_[vertex_index_+3].tex   = Vector2(q.s0, q.t0);
         vertexes_[vertex_index_+3].color = color;
 
         vertex_index_ += 4;
