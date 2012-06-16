@@ -136,7 +136,9 @@ void Demo::OnFrame(void) {
     program_->Bind();
     AttributeBinding binding = program_->binding();
 
+ #ifdef MD5
     modelTransform_.RotateZ(20/60.f*deg_to_rad);
+#endif
 
 #if defined(MD5) || defined(MD3)
     program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
@@ -171,6 +173,7 @@ void Demo::OnFrame(void) {
 
     program_->Unbind();
 
+#ifdef MD5
     program_wirebox_->Bind();
     program_wirebox_->set_uniform(base::opengl::UniformVars::Projection, projection_);
     program_wirebox_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);    
@@ -183,7 +186,7 @@ void Demo::OnFrame(void) {
     camera_wirebox_->Draw(program_wirebox_);
 
     program_wirebox_->Unbind();
-
+#endif
     glDisable(GL_DEPTH_TEST);
 
     glEnable(GL_BLEND);
