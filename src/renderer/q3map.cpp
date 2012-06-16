@@ -220,7 +220,7 @@ void Bezier::tessellate(u32 L) {
     vertex.resize(L1 * L1);
 
     // Compute the vertices
-    for (i32 i = 0; i <= L; ++i) {
+    for (u32 i = 0; i <= L; ++i) {
         const f32 a = i / (f32)L;
         const f32 b = 1 - a;
 
@@ -230,9 +230,9 @@ void Bezier::tessellate(u32 L) {
             controls[6] * (a * a);
     }
 
-    for (i32 i = 1; i <= L; ++i) {
+    for (u32 i = 1; i <= L; ++i) {
         const f32 a = i / (f32)L;
-        const f32 b = 1.0 - a;
+        const f32 b = 1.0f - a;
 
         q3vertex temp[3];
 
@@ -244,7 +244,7 @@ void Bezier::tessellate(u32 L) {
                 controls[k + 2] * (a * a);
         }
 
-        for(i32 j = 0; j <= L; ++j) {
+        for(u32 j = 0; j <= L; ++j) {
             const f32 a = j / (f32)L;
             const f32 b = 1.0f - a;
 
@@ -257,8 +257,8 @@ void Bezier::tessellate(u32 L) {
 
     // Compute the indices
     indexes.resize(L * (L + 1) * 2);
-    for (i32 row = 0; row < L; ++row) {
-        for(int col = 0; col <= L; ++col)   {
+    for (u32 row = 0; row < L; ++row) {
+        for(u32 col = 0; col <= L; ++col)   {
             indexes[(row * (L + 1) + col) * 2 + 1] = row * L1 + col;
             indexes[(row * (L + 1) + col) * 2] = (row + 1) * L1 + col;
         }
@@ -266,7 +266,7 @@ void Bezier::tessellate(u32 L) {
 
     trianglesPerRow.resize(L);
     rowIndexes.resize(L);
-    for (i32 row = 0; row < L; ++row) {
+    for (u32 row = 0; row < L; ++row) {
         trianglesPerRow[row] = 2 * L1;
         rowIndexes[row] = &indexes[row * 2 * L1];
     }
