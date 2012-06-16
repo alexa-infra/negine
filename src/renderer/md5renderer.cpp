@@ -76,6 +76,8 @@ void Md5Renderer::GenerateVertexes(Md5Mesh &mesh, Vertex* vertexes)
 
         currentVertex->n.Normalize();
         currentVertex->tangent.Normalize();
+        
+        UpdateBoundingBox(*currentVertex);
 
         currentVertex++;
     }
@@ -154,6 +156,39 @@ void Md5Renderer::GenerateLightningInfo(Md5Mesh &mesh, Vertex* vertexes)
         d = Dot(vertexes[i].binormal, vertexes[i].n);
         vertexes[i].binormal = vertexes[i].binormal - vertexes[i].n * d;
         vertexes[i].binormal.Normalize();
+    }
+}
+
+void Md5Renderer::UpdateBoundingBox(Vertex &vertex)
+{
+    if (boundingBox.min.x > vertex.pos.x)
+    {
+        boundingBox.min.x = vertex.pos.x;
+    }
+
+    if (boundingBox.min.y > vertex.pos.y)
+    {
+        boundingBox.min.y = vertex.pos.y;
+    }
+
+    if (boundingBox.min.z > vertex.pos.z)
+    {
+        boundingBox.min.z = vertex.pos.z;
+    }
+
+    if (boundingBox.max.x < vertex.pos.x)
+    {
+        boundingBox.max.x = vertex.pos.x;
+    }
+
+    if (boundingBox.max.y < vertex.pos.y)
+    {
+        boundingBox.max.y = vertex.pos.y;
+    }
+
+    if (boundingBox.max.z < vertex.pos.z)
+    {
+        boundingBox.max.z  = vertex.pos.z;
     }
 }
 

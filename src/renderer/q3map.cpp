@@ -109,7 +109,9 @@ void q3maploader::render(Camera& camera, Program* pr, TextureLoader& txloader) c
     for (u32 i=0; i<leafs.size(); i++) {
         const q3leaf& leaf = leafs[i];
         if (visibility.isClusterVisible(cameraLeaf.cluster, leaf.cluster)) {
-            if (camera.IsInFrustum(Vector3(leaf.mins[0], leaf.mins[1], leaf.mins[2]), Vector3(leaf.maxs[0], leaf.maxs[1], leaf.maxs[2]))) {
+            Vector3 mins(static_cast<f32>(leaf.mins[0]), static_cast<f32>(leaf.mins[1]), static_cast<f32>(leaf.mins[2]));
+            Vector3 maxs(static_cast<f32>(leaf.maxs[0]), static_cast<f32>(leaf.maxs[1]), static_cast<f32>(leaf.maxs[2]));
+            if (camera.IsInFrustum(mins, maxs)) {
                 for (i32 j=0; j<leaf.numberOfLeafFaces; j++) {
                     int faceIndex = leafFaces[leaf.leafFace + j];
                     if (visFaces[faceIndex] == 0)

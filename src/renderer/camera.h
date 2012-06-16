@@ -43,9 +43,9 @@ private:
 public:
     Camera();
 
-    const Vector3& forward() const { return forward_; }
-    const Vector3& right() const { return right_; }
-    const Vector3& up() const { return up_; }
+    const Vector3& forward() { if (dirty) refresh(); return forward_; }
+    const Vector3& right()   { if (dirty) refresh();return right_; }
+    const Vector3& up()  { if (dirty) refresh(); return up_; }
 
     void set_position(const Vector3& v) { position_ = v; dirty = true; }
     const Vector3& position() const { return position_; }

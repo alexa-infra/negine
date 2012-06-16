@@ -119,7 +119,7 @@ char FileText::bump_char() {
 bool file_exists(const std::string& name)
 {
     std::ifstream f(name.c_str());;
-    return f;
+    return f.good();
 }
 
 } // namespace base

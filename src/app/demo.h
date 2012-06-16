@@ -20,6 +20,7 @@
 #include "renderer/md5mesh.h"
 #include "renderer/md5anim.h"
 #include "renderer/md5renderer.h"
+#include "renderer/wirebox.h"
 
 #include "renderer/md3renderer.h"
 #include "renderer/q3map.h"
@@ -47,6 +48,7 @@ using base::opengl::Md5Renderer;
 using base::Timer;
 using base::resource::Md5Anim;
 using base::opengl::q3maploader;
+using base::opengl::WireBox;
 
 class Demo : public Application {
 private:
@@ -55,12 +57,14 @@ private:
     Program* program_;
     Program* program_hud_;
     Program* program_font_;
+    Program* program_wirebox_;
     Matrix4 projection_;
     Matrix4 modelview_;
     SpriteFont *font_;
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
     Md5Renderer* md5_renderer_;
+    WireBox* wire_box_;
 
     Md3Renderer* md3_renderer_;
 
@@ -73,11 +77,12 @@ private:
     f32 frame_diff_;
 
     Camera camera_;
+    WireBox* camera_wirebox_;
     q3maploader* q3map_;
 
     TextureLoader texure_loader_;
 
-    Entity* entity;
+    Entity*  entity;
 public:
     Demo(i32 width = 640, i32 height = 480); 
     virtual ~Demo();
