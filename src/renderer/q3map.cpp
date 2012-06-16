@@ -16,6 +16,18 @@ namespace opengl {
 
 void bind_attr(Program* pr, const q3vertex& vertexes);
 
+void swizzle(Vector3& v) {
+    f32 temp = v.y;
+    v.y = v.z;
+    v.z = -temp;
+}
+
+void swizzle(i32* v) {
+    f32 temp = v[1];
+    v[1] = v[2];
+    v[2] = -temp;
+}
+
 class Bezier {
 private:
     i32                     level;
@@ -61,6 +73,21 @@ void q3maploader::load() {
     vertexes    = read<q3vertex>(10);
     faces       = read<q3face>(13);
     faceIndexes = read<u32>(11);
+
+    for( size_t i=0; i<planes.size(); i++ )
+        swizzle(planes[i].normal);
+    for( size_t i=0; i<nodes.size(); i++ ) {
+        swizzle(nodes[i].mins);
+        swizzle(nodes[i].maxs);
+    }
+    for( size_t i=0; i<faces.size(); i++ ) {
+        swizzle(faces[i].normal);
+    }
+    for( size_t i=0; i<vertexes.size(); i++ ) {
+        swizzle(vertexes[i].pos);
+        swizzle(vertexes[i].normal);
+        vertexes[i].surfaceUV.x = 1 - vertexes[i].surfaceUV.x;
+    }
 
     q3lump lump_vis = read_lump(16);
     f.set_position(lump_vis.offset);
@@ -220,7 +247,7 @@ void Bezier::tessellate(u32 L) {
     vertex.resize(L1 * L1);
 
     // Compute the vertices
-    for (i32 i = 0; i <= L; ++i) {
+    for (u32 i = 0; i <= L; ++i) {
         const f32 a = i / (f32)L;
         const f32 b = 1 - a;
 
@@ -230,13 +257,13 @@ void Bezier::tessellate(u32 L) {
             controls[6] * (a * a);
     }
 
-    for (i32 i = 1; i <= L; ++i) {
+    for (u32 i = 1; i <= L; ++i) {
         const f32 a = i / (f32)L;
         const f32 b = 1.0 - a;
 
         q3vertex temp[3];
 
-        for (i32 j = 0; j < 3; ++j) {
+        for (u32 j = 0; j < 3; ++j) {
             int k = 3 * j;
             temp[j] =
                 controls[k + 0] * (b * b) + 
@@ -244,7 +271,7 @@ void Bezier::tessellate(u32 L) {
                 controls[k + 2] * (a * a);
         }
 
-        for(i32 j = 0; j <= L; ++j) {
+        for(u32 j = 0; j <= L; ++j) {
             const f32 a = j / (f32)L;
             const f32 b = 1.0f - a;
 
@@ -257,7 +284,7 @@ void Bezier::tessellate(u32 L) {
 
     // Compute the indices
     indexes.resize(L * (L + 1) * 2);
-    for (i32 row = 0; row < L; ++row) {
+    for (u32 row = 0; row < L; ++row) {
         for(int col = 0; col <= L; ++col)   {
             indexes[(row * (L + 1) + col) * 2 + 1] = row * L1 + col;
             indexes[(row * (L + 1) + col) * 2] = (row + 1) * L1 + col;
@@ -266,7 +293,7 @@ void Bezier::tessellate(u32 L) {
 
     trianglesPerRow.resize(L);
     rowIndexes.resize(L);
-    for (i32 row = 0; row < L; ++row) {
+    for (u32 row = 0; row < L; ++row) {
         trianglesPerRow[row] = 2 * L1;
         rowIndexes[row] = &indexes[row * 2 * L1];
     }
