@@ -8,7 +8,6 @@
 #include "base/timer.h"
 #include "renderer/particlesystem.h"
 #include "renderer/particlesystemrenderer.h"
-#include "renderer/camera.h"
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
 #include <assert.h>

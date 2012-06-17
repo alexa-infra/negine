@@ -9,19 +9,17 @@ namespace base {
 namespace opengl {
 
 Camera::Camera()
-    : dirty(true)
 {
 
 }
 
-void Camera::refresh()
+void Camera::Update()
 {
     projection_ = Projection();
     UpdateOrientation();
     modelview_ = ModelView();
     clip_ = projection_ * modelview_;
     UpdateFrustum();
-    dirty = false;
 }
 
 Matrix4 Camera::Projection() const {
@@ -72,7 +70,7 @@ void Camera::UpdateFrustum()
     planes_[5].set(m.array1d[3] + m.array1d[2], m.array1d[7] + m.array1d[6], m.array1d[11] + m.array1d[10], m.array1d[15] + m.array1d[14]);
 }
 
-void ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, const Matrix4& m, Vector3* points)
+void Camera::ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, const Matrix4& m, Vector3* points)
 {
     points[0] = m*Vector3(min_point.x, min_point.y, min_point.z);
     points[1] = m*Vector3(max_point.x, min_point.y, min_point.z);
@@ -84,7 +82,8 @@ void ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, cons
     points[7] = m*Vector3(min_point.x, min_point.y, max_point.z);
 }
 
-bool Camera::IsInFrustum(const Vector3& point)
+// TODO: fix me
+bool Camera::PointIsInFrustum(const Vector3& point) const
 {
     for(u32 i=0; i<6; i++) {
         if (planes_[i].Distance(point) <= 0.f)
@@ -93,19 +92,20 @@ bool Camera::IsInFrustum(const Vector3& point)
     return true;
 }
 
-bool Camera::IsInFrustum2(const Vector3& mmin, const Vector3& mmax)
+bool Camera::BoxIsInFrustumFull(const Vector3& mmin, const Vector3& mmax) const
 {
     const Matrix4& m = GetClipMatrix();
     Vector3 bbox[8];
     ConvertBoundingBox(mmin, mmax, m, bbox);
     for (u32 i=0; i<8; i++) {
-        if (IsInFrustum(bbox[i]))
+        if (PointIsInFrustum(bbox[i]))
             return true;
     }
     return false;
 }
 
-bool Camera::IsInFrustum(const Vector3& mmin, const Vector3& mmax)
+// TODO: Fast and buggy
+bool Camera::BoxIsInFrustumFast(const Vector3& mmin, const Vector3& mmax) const
 {
     const Matrix4& m = GetClipMatrix();
     Vector3 bbox[8];

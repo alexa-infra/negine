@@ -33,11 +33,12 @@ public:
         camera_.set_fov(base::math::pi / 4.f);
         camera_.set_zNear(10);
         camera_.set_zFar(5000);
+        camera_.Update();
 
         cameraTransform_ = camera_.GetModelView(); 
         projection_ = camera_.GetProjection();
 
-        base::FileBinary fb("maps/q3dm17.bsp");
+        base::FileBinary fb("maps/q3dm6.bsp");
         q3map_ = new q3maploader(fb);
         q3map_->load();
         
@@ -74,6 +75,7 @@ protected:
         {
             camera_.set_pitch(camera_.pitch() + deg_to_rad * dy);
         }
+        camera_.Update();
 
         cameraTransform_ = camera_.GetModelView(); 
     }
@@ -91,6 +93,7 @@ protected:
         } else if (key == 'd') {
             camera_.set_position(camera_.position() + camera_.right()   * speed);
         }
+        camera_.Update();
         cameraTransform_ = camera_.GetModelView();
     }
 

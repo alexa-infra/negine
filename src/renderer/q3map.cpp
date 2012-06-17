@@ -30,7 +30,7 @@ void swizzle(i32* v) {
 
 class Bezier {
 private:
-    i32                     level;
+    u32                     level;
     std::vector<q3vertex>   vertex;
     std::vector<u32>        indexes;
     std::vector<i32>        trianglesPerRow;
@@ -127,26 +127,24 @@ i32 q3maploader::findLeaf(const Vector3& camPos) const {
     return -index - 1;
 }
 
-void q3maploader::render(Camera& camera, Program* pr, TextureLoader& txloader) const {
+void q3maploader::render(const Camera& camera, Program* pr, TextureLoader& txloader) const {
 
-    i32 cameraLeafIndex = findLeaf(camera.position());
+    i32 cameraLeafIndex = findLeaf( camera.position() );
     const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
-    memset(visFaces, 0, faces.size());
+    memset( visFaces, 0, faces.size() );
     std::deque<int> visibleFaces;
-    for (u32 i=0; i<leafs.size(); i++) {
+    for ( u32 i=0; i<leafs.size(); i++ ) {
         const q3leaf& leaf = leafs[i];
-        if (visibility.isClusterVisible(cameraLeaf.cluster, leaf.cluster)) {
-            Vector3 mins(static_cast<f32>(leaf.mins[0]), static_cast<f32>(leaf.mins[1]), static_cast<f32>(leaf.mins[2]));
-            Vector3 maxs(static_cast<f32>(leaf.maxs[0]), static_cast<f32>(leaf.maxs[1]), static_cast<f32>(leaf.maxs[2]));
-            if (camera.IsInFrustum2(mins, maxs)) {
-                for (i32 j=0; j<leaf.numberOfLeafFaces; j++) {
-                    int faceIndex = leafFaces[leaf.leafFace + j];
-                    if (visFaces[faceIndex] == 0)
-                    {
-                        visibleFaces.push_back(faceIndex);
-                        visFaces[faceIndex] = 1;
-                    }
-                }
+        if ( !visibility.isClusterVisible( cameraLeaf.cluster, leaf.cluster ) )
+            continue;
+        if ( !camera.BoxIsInFrustumFull( leaf.mins, leaf.maxs ) )
+            continue;
+        for ( i32 j=0; j<leaf.numberOfLeafFaces; j++ ) {
+            int faceIndex = leafFaces[leaf.leafFace + j];
+            if ( visFaces[faceIndex] == 0 )
+            {
+                visibleFaces.push_back( faceIndex );
+                visFaces[faceIndex] = 1;
             }
         }
     }
@@ -179,9 +177,9 @@ void q3maploader::render_patch(const q3face& face, Program* pr) const
     i32 numOfPatchesHigh = (face.patchHeight - 1) >> 1;
     i32 patchWidth = face.patchWidth;
 
+    Bezier b;
     for (int y = 0; y < numOfPatchesHigh; y++) {
         for (int x = 0; x < numOfPatchesWide; x++) {
-            Bezier b;
             int offset = face.vertexIndex + (y * face.patchWidth << 1) + (x << 1);
 
             b.controls[0] = vertexes[offset];
@@ -303,7 +301,7 @@ void Bezier::render(Program* program) {
     AttributeBinding binding = program->binding();
     bind_attr(program, vertex[0]);
 
-    for(int i=0; i<level; i++)
+    for(u32 i=0; i<level; i++)
     {
         glDrawElements(GL_TRIANGLE_STRIP,
             trianglesPerRow[i],

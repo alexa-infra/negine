@@ -42,8 +42,8 @@ struct q3node {
     i32 planeIndex;
     i32 frontPlaneIndex;
     i32 backPlaneIndex;
-    i32 mins[3];
-    i32 maxs[3];
+    math::Vector3 mins;
+    math::Vector3 maxs;
 };
 
 namespace FaceTypes {
@@ -126,8 +126,8 @@ struct q3brush {
 struct q3leaf {
     i32 cluster;
     i32 area;
-    i32 mins[3];
-    i32 maxs[3];
+    math::Vector3 mins;
+    math::Vector3 maxs;
     i32 leafFace;
     i32 numberOfLeafFaces;
     i32 leafBrush;
@@ -167,7 +167,7 @@ public:
 
     void load();
 
-    void render(Camera& camera, Program* pr, TextureLoader& txloader) const;
+    void render(const Camera& camera, Program* pr, TextureLoader& txloader) const;
 private:
     void check_header();
 
