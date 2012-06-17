@@ -122,7 +122,10 @@ void SDLApp::Pump() {
                 }
                 break;
             case SDL_KEYDOWN:
-                OnKeyboard((u8)event.key.keysym.sym, 0, 0);
+                OnKeyboardDown((u8)event.key.keysym.sym);
+                break;
+            case SDL_KEYUP:
+                OnKeyboardUp((u8)event.key.keysym.sym);
                 break;
             default:
                 break;

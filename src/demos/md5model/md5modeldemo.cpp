@@ -144,7 +144,7 @@ protected:
         cameraTransform_ = camera_.GetModelView(); 
     }
 
-    void OnKeyboard(u8 key, i32 x, i32 y) {
+    void OnKeyboardDown(u8 key) {
 
         const f32 speed = 5.0f;
 

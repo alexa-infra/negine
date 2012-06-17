@@ -100,6 +100,13 @@ void q3maploader::load() {
     visFaces = new u8[faces.size()];
 }
 
+void q3maploader::PreloadTextures( TextureLoader& textureLoader ) {
+
+    for ( size_t i = 0; i < textures.size(); i++ ) {
+        textureLoader.Load( (char*)textures[i].name );
+    }
+}
+
 void q3maploader::check_header() {
     f.set_position(0);
     q3header hdr = f.read_type<q3header>();
@@ -132,12 +139,12 @@ void q3maploader::render(const Camera& camera, Program* pr, TextureLoader& txloa
     i32 cameraLeafIndex = findLeaf( camera.position() );
     const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
     memset( visFaces, 0, faces.size() );
-    std::deque<int> visibleFaces;
+    std::vector<int> visibleFaces;
     for ( u32 i=0; i<leafs.size(); i++ ) {
         const q3leaf& leaf = leafs[i];
         if ( !visibility.isClusterVisible( cameraLeaf.cluster, leaf.cluster ) )
             continue;
-        if ( !camera.BoxIsInFrustumFull( leaf.mins, leaf.maxs ) )
+        if ( !camera.BoxIsInFrustumFast( leaf.mins, leaf.maxs ) )
             continue;
         for ( i32 j=0; j<leaf.numberOfLeafFaces; j++ ) {
             int faceIndex = leafFaces[leaf.leafFace + j];
@@ -149,16 +156,19 @@ void q3maploader::render(const Camera& camera, Program* pr, TextureLoader& txloa
         }
     }
 
-    for (u32 i=0; i<visibleFaces.size(); i++) {
+    for ( u32 i=0; i<visibleFaces.size(); i++ ) {
         int faceIndex = visibleFaces[i];
         const q3face& face = faces[faceIndex];
-        Texture* t = txloader.Load((char*)textures[face.textureID].name);
-        if (t == NULL) continue;
+
+        Texture* t = txloader.Load( (char*)textures[face.textureID].name );
+        if ( t == NULL )
+            continue;
         pr->set_uniform(base::opengl::UniformVars::Diffuse, t);
-        if (face.type == 1) {
-            render_polygons(face, pr);
-        } else if (face.type == 2) {
-            render_patch(face, pr);
+
+        if ( face.type == 1 ) {
+            render_polygons( face, pr );
+        } else if ( face.type == 2 ) {
+            render_patch( face, pr );
         }
     }
 }

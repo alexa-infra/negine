@@ -166,6 +166,7 @@ public:
     ~q3maploader();
 
     void load();
+    void PreloadTextures( TextureLoader& textureLoader );
 
     void render(const Camera& camera, Program* pr, TextureLoader& txloader) const;
 private:

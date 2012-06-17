@@ -22,8 +22,10 @@ class Demo : public Application {
     TextureLoader texure_loader_;
     Matrix4 projection_;
     Matrix4 cameraTransform_;
+    u32 keypressed_;
 public:
     Demo() {
+        keypressed_ = 0;
         camera_.set_position(Vector3(0.f, 0.f, 500.f));
         
         camera_.set_pitch(0);
@@ -41,6 +43,7 @@ public:
         base::FileBinary fb("maps/q3dm6.bsp");
         q3map_ = new q3maploader(fb);
         q3map_->load();
+        q3map_->PreloadTextures( texure_loader_ );
         
         program_ = LoadProgram("shader.shader");
     }
@@ -51,6 +54,7 @@ public:
     }
 protected:
     void OnFrame() {
+        UpdateWorld();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -80,23 +84,44 @@ protected:
         cameraTransform_ = camera_.GetModelView(); 
     }
 
-    void OnKeyboard(u8 key, i32 x, i32 y) {
-
-        const f32 speed = 5.0f;
+    void OnKeyboardDown(u8 key) {
 
         if (key == 'w') {
-            camera_.set_position(camera_.position() + camera_.forward() * speed);
+            keypressed_ |= 1;
         } else if (key == 's') {
-            camera_.set_position(camera_.position() - camera_.forward() * speed);
+            keypressed_ |= 2;
         } else if (key == 'a') {
-            camera_.set_position(camera_.position() - camera_.right()   * speed);
+            keypressed_ |= 4;
         } else if (key == 'd') {
-            camera_.set_position(camera_.position() + camera_.right()   * speed);
+            keypressed_ |= 8;
         }
+    }
+    void OnKeyboardUp(u8 key) {
+
+        if (key == 'w') {
+            keypressed_ ^= 1;
+        } else if (key == 's') {
+            keypressed_ ^= 2;
+        } else if (key == 'a') {
+            keypressed_ ^= 4;
+        } else if (key == 'd') {
+            keypressed_ ^= 8;
+        }
+    }
+
+    void UpdateWorld() {
+        const f32 speed = 10.0f;
+        if (keypressed_ & 0x01)
+            camera_.set_position(camera_.position() + camera_.forward() * speed);
+        if (keypressed_ & 0x02)
+            camera_.set_position(camera_.position() - camera_.forward() * speed);
+        if (keypressed_ & 0x04)
+            camera_.set_position(camera_.position() - camera_.right()   * speed);
+        if (keypressed_ & 0x08)
+            camera_.set_position(camera_.position() + camera_.right()   * speed);
         camera_.Update();
         cameraTransform_ = camera_.GetModelView();
     }
-
 };
 
 int main() {

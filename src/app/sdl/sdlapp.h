@@ -27,6 +27,7 @@ protected:
     virtual void OnFrame();
     virtual void OnMotion(i32 x, i32 y, i32 dx, i32 dy);
     virtual void OnReshape(i32 width, i32 height);
-    virtual void OnKeyboard(u8 key, i32 x, i32 y) {}
+    virtual void OnKeyboardDown(u8 key) {}
+    virtual void OnKeyboardUp(u8 key) {}
     void Pump();
 };
