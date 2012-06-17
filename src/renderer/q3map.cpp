@@ -23,9 +23,9 @@ void swizzle(Vector3& v) {
 }
 
 void swizzle(i32* v) {
-    f32 temp = v[1];
+    f32 temp = (f32)v[1];
     v[1] = v[2];
-    v[2] = -temp;
+    v[2] = (i32)-temp;
 }
 
 class Bezier {
@@ -267,7 +267,7 @@ void Bezier::tessellate(u32 L) {
 
     for (u32 i = 1; i <= L; ++i) {
         const f32 a = i / (f32)L;
-        const f32 b = 1.0 - a;
+        const f32 b = 1.0f - a;
 
         q3vertex temp[3];
 
@@ -293,7 +293,7 @@ void Bezier::tessellate(u32 L) {
     // Compute the indices
     indexes.resize(L * (L + 1) * 2);
     for (u32 row = 0; row < L; ++row) {
-        for(int col = 0; col <= L; ++col)   {
+        for(u32 col = 0; col <= L; ++col)   {
             indexes[(row * (L + 1) + col) * 2 + 1] = row * L1 + col;
             indexes[(row * (L + 1) + col) * 2] = (row + 1) * L1 + col;
         }
