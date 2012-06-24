@@ -18,7 +18,7 @@ class Plane {
     f32 distance_;
  public:
     Plane();
-    explicit Plane(const Vector3* points) {
+    Plane(const Vector3* points) {
         set(points[0], points[1], points[2]);
     }
     Plane(const Vector3& p1, const Vector3& p2, const Vector3& p3) {
@@ -29,6 +29,9 @@ class Plane {
     }
     Plane(const f32& a, const f32& b, const f32& c, const f32& d) {
         set(a, b, c, d);
+    }
+    Plane(const Vector3& n, const f32& d) {
+        set(n.x, n.y, n.z, d);
     }
 
     void set(const Vector3* points);
@@ -45,6 +48,7 @@ class Plane {
 
     f32 Distance(const Vector3& point) const;
     Vector3 Projection(const Vector3& point) const;
+    i8 BoxOnPlaneSide(const Vector3& mmin, const Vector3& mmax) const;
  private:
     void Normalize();
 };

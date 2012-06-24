@@ -41,7 +41,7 @@ Vector3 Plane::Projection(const Vector3& point) const {
 }
 
 f32 Plane::Distance(const Vector3& point) const {
-    return (Dot(normal_, point) + distance_);
+    return (Dot(normal_, point) - distance_);
 }
 
 void Plane::Normalize() {
@@ -53,5 +53,26 @@ void Plane::Normalize() {
     normal_.z /= len;
     distance_ /= len;
 }
+
+i8 Plane::BoxOnPlaneSide(const Vector3& mmin, const Vector3& mmax) const {
+
+    Vector3 corners[2];
+    for ( i32 i=0; i<3; i++ ) {
+        if ( normal_[i] < 0 ) {
+            corners[0][i] = mmin[i];
+            corners[1][i] = mmax[i];
+        } else {
+            corners[1][i] = mmin[i];
+            corners[0][i] = mmax[i];
+        }
+    }
+    u8 sides = 0;
+    if ( Distance( corners[0] ) >= 0 )
+        sides = 1;
+    if ( Distance( corners[1] ) < 0 )
+        sides |= 2;
+    return sides;
+}
+
 }
 }

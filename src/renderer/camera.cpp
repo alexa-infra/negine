@@ -110,14 +110,14 @@ bool Camera::BoxIsInFrustumFast(const Vector3& mmin, const Vector3& mmax) const
     const Matrix4& m = GetClipMatrix();
     Vector3 bbox[8];
     ConvertBoundingBox(mmin, mmax, m, bbox);
-    Vector3 axis1 = bbox[1] - bbox[0];
-    Vector3 axis2 = bbox[5] - bbox[0];
-    Vector3 axis3 = bbox[7] - bbox[0];
+    const Vector3 axis1 = bbox[1] - bbox[0];
+    const Vector3 axis2 = bbox[5] - bbox[0];
+    const Vector3 axis3 = bbox[7] - bbox[0];
     bool intersect = false;
     for(int i=0; i<6; i++)
     {
-        Vector3 n = planes_[i].Normal();
-        Vector3 nb = Vector3(Dot(n, axis1), Dot(n, axis2), Dot(n, axis3));
+        const Vector3& n = planes_[i].Normal();
+        const Vector3 nb = Vector3(Dot(n, axis1), Dot(n, axis2), Dot(n, axis3));
         Vector3 nn, np;
         if (nb.x < 0)
         {

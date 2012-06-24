@@ -23,7 +23,7 @@ void swizzle(Vector3& v) {
 }
 
 void swizzle(i32* v) {
-    f32 temp = v[1];
+    i32 temp = v[1];
     v[1] = v[2];
     v[2] = -temp;
 }
@@ -49,12 +49,14 @@ bool q3visibility::isClusterVisible(i32 visCluster, i32 testCluster) const
     if (visCluster < 0) {
         return true;
     }
-    return (vecs[((visCluster * szVecs) + (testCluster >> 3))] & (1 << (testCluster & 7))) != 0;
+    return (vecs[visCluster * szVecs + (testCluster >> 3)] & (1 << (testCluster & 7))) != 0;
 }
 
 q3maploader::q3maploader(FileBinary& file)
     : f(file)
     , visFaces(NULL)
+    , _frame_index(0)
+    , _camera_cluster(-1)
 {
 }
 
@@ -75,29 +77,64 @@ void q3maploader::load() {
     faceIndexes = read<u32>(11);
 
     for( size_t i=0; i<planes.size(); i++ )
-        swizzle(planes[i].normal);
+        swizzle( planes[i].normal );
     for( size_t i=0; i<nodes.size(); i++ ) {
-        swizzle(nodes[i].mins);
-        swizzle(nodes[i].maxs);
+        swizzle( nodes[i].mmin );
+        swizzle( nodes[i].mmax );
     }
     for( size_t i=0; i<faces.size(); i++ ) {
-        swizzle(faces[i].normal);
+        swizzle( faces[i].normal );
     }
     for( size_t i=0; i<vertexes.size(); i++ ) {
-        swizzle(vertexes[i].pos);
-        swizzle(vertexes[i].normal);
+        swizzle( vertexes[i].pos );
+        swizzle( vertexes[i].normal );
         vertexes[i].surfaceUV.x = 1 - vertexes[i].surfaceUV.x;
     }
+    for( size_t i=0; i<leafs.size(); i++ ) {
+        swizzle( leafs[i].mins );
+        swizzle( leafs[i].maxs );
+    }
 
-    q3lump lump_vis = read_lump(16);
+    q3lump lump_vis = read_lump( 16 );
     f.set_position(lump_vis.offset);
     visibility.nVecs = f.read_type<i32>();
     visibility.szVecs = f.read_type<i32>();
-    visibility.vecs = new u8[visibility.nVecs * visibility.szVecs];
-    for(int i=0; i<visibility.nVecs * visibility.szVecs; i++)
-        visibility.vecs[i] = f.read_type<u8>();
+    i32 visDataSize = visibility.nVecs * visibility.szVecs;
+    visibility.vecs = new u8[visDataSize];
+    f.read(visibility.vecs, visDataSize);
 
     visFaces = new u8[faces.size()];
+
+    tree.resize(nodes.size() + leafs.size());
+    Node* firstNode = &tree.front();
+    Node* firstLeaf = firstNode + nodes.size();
+    for( size_t i=0; i<nodes.size(); i++ ) {
+        const q3node& node = nodes[i];
+        Node& treeNode = tree[i];
+        treeNode.maxs = node.maxs();
+        treeNode.mins = node.mins();
+        const q3plane& plane = planes[node.planeIndex];
+        treeNode.plane.set(plane.normal.x, plane.normal.y, plane.normal.z, plane.dist);
+
+        for( size_t j=0; j<2; j++ ) {
+            i32 p = node.children[j];
+            if ( p >= 0 )
+                treeNode.children[j] = firstNode + p;
+            else
+                treeNode.children[j] = firstLeaf + (-p-1);
+            treeNode.children[j]->parent = &treeNode;
+        }
+    }
+    for( size_t i=0; i<leafs.size(); i++ ) {
+        const q3leaf& leaf = leafs[i];
+        Node& treeNode = *(firstLeaf + i);
+        treeNode.maxs = leaf.maxv();
+        treeNode.mins = leaf.minv();
+        treeNode.cluster = leaf.cluster;
+        treeNode.area = leaf.area;
+        treeNode.firstFace = leaf.leafFace;
+        treeNode.numFaces = leaf.numberOfLeafFaces;
+    }
 }
 
 void q3maploader::PreloadTextures( TextureLoader& textureLoader ) {
@@ -124,7 +161,7 @@ i32 q3maploader::findLeaf(const Vector3& camPos) const {
     while (index >= 0) {
         const q3node&  node  = nodes[index];
         const q3plane& plane = planes[node.planeIndex];
-        const f32 distance = Dot(plane.normal, camPos) - plane.dist;
+        const f32 distance = plane.side(camPos);
         if (distance >= 0) {
             index = node.frontPlaneIndex;
         } else {
@@ -134,18 +171,16 @@ i32 q3maploader::findLeaf(const Vector3& camPos) const {
     return -index - 1;
 }
 
-void q3maploader::render(const Camera& camera, Program* pr, TextureLoader& txloader) const {
-
-    i32 cameraLeafIndex = findLeaf( camera.position() );
-    const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
-    memset( visFaces, 0, faces.size() );
-    std::vector<int> visibleFaces;
-    for ( u32 i=0; i<leafs.size(); i++ ) {
-        const q3leaf& leaf = leafs[i];
-        if ( !visibility.isClusterVisible( cameraLeaf.cluster, leaf.cluster ) )
-            continue;
-        if ( !camera.BoxIsInFrustumFast( leaf.mins, leaf.maxs ) )
-            continue;
+void q3maploader::findDrawLeafs(const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visibleFaces, int index) const {
+    if (index < 0)
+    {
+        const q3leaf& leaf = leafs[-index];
+        if ( !visibility.isClusterVisible( cameraLeaf.cluster, leaf.cluster ) ) {
+            return;
+        }
+        if ( !camera.BoxIsInFrustumFast( leaf.minv(), leaf.maxv() ) ) {
+            return;
+        }
         for ( i32 j=0; j<leaf.numberOfLeafFaces; j++ ) {
             int faceIndex = leafFaces[leaf.leafFace + j];
             if ( visFaces[faceIndex] == 0 )
@@ -155,9 +190,120 @@ void q3maploader::render(const Camera& camera, Program* pr, TextureLoader& txloa
             }
         }
     }
+    else
+    {
+        const q3node& node = nodes[index];
+        const q3plane& plane = planes[node.planeIndex];
+        if (plane.side(camera.position()) >= 0)
+        {
+            findDrawLeafs(camera, cameraLeaf, visibleFaces, node.frontPlaneIndex);
+            findDrawLeafs(camera, cameraLeaf, visibleFaces, node.backPlaneIndex);
+        }
+        else
+        {
+            findDrawLeafs(camera, cameraLeaf, visibleFaces, node.backPlaneIndex);
+            findDrawLeafs(camera, cameraLeaf, visibleFaces, node.frontPlaneIndex);
+        }
+    }
+}
 
-    for ( u32 i=0; i<visibleFaces.size(); i++ ) {
-        int faceIndex = visibleFaces[i];
+void q3maploader::ComputePossibleVisible( const Vector3& cameraPos ) {
+    i32 cameraLeafIndex = findLeaf( cameraPos );
+    const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
+    if ( cameraLeaf.cluster == _camera_cluster )
+        return;
+    _camera_cluster = cameraLeaf.cluster;
+    _frame_index++;
+    for( size_t i=nodes.size(); i<tree.size(); i++) {
+        if ( !visibility.isClusterVisible( cameraLeaf.cluster, tree[i].cluster ) )
+            continue;
+        tree[i].frame = _frame_index;
+        Node* parent = tree[i].parent;
+        while( parent != NULL ) {
+            parent->frame = _frame_index;
+            parent = parent->parent;
+        }
+    }
+}
+
+void q3maploader::AddVisibleNode( Node* node ) {
+    for ( i32 j=node->firstFace; j<node->firstFace+node->numFaces; j++ ) {
+        int faceIndex = leafFaces[j];
+        if ( visFaces[faceIndex] == 0 )
+        {
+            _visible_faces.push_back( faceIndex );
+            visFaces[faceIndex] = 1;
+        }
+    }
+}
+
+void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeMask ) {
+    if ( node->frame != _frame_index )
+        return;
+
+    for(u32 i=0; i<6; i++) {
+        u32 mask = 1 << i;
+        if ( planeMask & mask ) {
+            u8 r = camera.planes()[i].BoxOnPlaneSide( node->mins, node->maxs );
+            if ( r == 2 ) {
+                return; // culled
+            }
+            if ( r == 1 ) {
+                planeMask &= ~mask; // all descendants will also be in front
+            }
+        }
+    }
+/*
+    if ( !camera.BoxIsInFrustumFast( node->mins, node->maxs ) ) {
+        return;
+    }*/
+
+    for( u32 j=0; j<2; j++ ) {
+        if ( node->children[j] != NULL )
+            ComputeVisible_R( camera, node->children[j], planeMask );
+    }
+
+    if (node->children[0] == NULL && node->children[1] == NULL) {
+        AddVisibleNode( node );
+    }
+}
+
+void q3maploader::render(const Camera& camera, Program* pr, TextureLoader& txloader) {
+
+    memset( visFaces, 0, faces.size() );
+    _visible_faces.clear();
+    ComputePossibleVisible( camera.position() );
+    ComputeVisible_R( camera, &tree.front(), ( 1 << 7 )-1 );
+/*    i32 cameraLeafIndex = findLeaf( camera.position() );
+    const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
+    memset( visFaces, 0, faces.size() );
+    std::vector<int> visibleFaces;
+    findDrawLeafs(camera, cameraLeaf, visibleFaces, 0);
+*/
+
+/*    for ( u32 i=0; i<leafs.size(); i++ ) {
+        const q3leaf& leaf = leafs[i];
+        if ( !visibility.isClusterVisible( cameraLeaf.cluster, leaf.cluster ) ) {
+            clipped_vis += 1;
+            continue;
+        }
+        if ( !camera.BoxIsInFrustumFast( leaf.minv(), leaf.maxv() ) ) {
+            clipped_fr += 1;
+            continue;
+        }
+        for ( i32 j=0; j<leaf.numberOfLeafFaces; j++ ) {
+            int faceIndex = leafFaces[leaf.leafFace + j];
+            if ( visFaces[faceIndex] == 0 )
+            {
+                visibleFaces.push_back( faceIndex );
+                visFaces[faceIndex] = 1;
+            }
+        }
+    }
+    std::cout << "leaf: " << cameraLeaf.minv() << " " << cameraLeaf.maxv() << "clipped fr: " << clipped_fr << " clipped v:" << clipped_vis << " visible: " << visibleFaces.size() << std::endl;
+*/
+    for ( u32 i=0; i<_visible_faces.size(); i++ ) {
+        int faceIndex = _visible_faces[i];
         const q3face& face = faces[faceIndex];
 
         Texture* t = txloader.Load( (char*)textures[face.textureID].name );

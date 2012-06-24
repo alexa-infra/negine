@@ -8,6 +8,7 @@
 
 #include "base/types.h"
 #include "base/math/vector.h"
+#include "base/math/plane.h"
 #include "base/stream.h"
 
 namespace base {
@@ -36,14 +37,26 @@ struct q3texture {
 struct q3plane {
     math::Vector3 normal;
     f32 dist;
+
+    f32 side(const math::Vector3& v) const {
+        return math::Dot(normal, v) - dist;
+    }
 };
 
 struct q3node {
     i32 planeIndex;
-    i32 frontPlaneIndex;
-    i32 backPlaneIndex;
-    math::Vector3 mins;
-    math::Vector3 maxs;
+    union {
+        struct {
+            i32 frontPlaneIndex;
+            i32 backPlaneIndex;
+        };
+        i32 children[2];
+    };
+    i32 mmin[3];
+    i32 mmax[3];
+
+    math::Vector3 mins() const { return math::Vector3(mmin[0], mmin[1], mmin[2]); }
+    math::Vector3 maxs() const { return math::Vector3(mmax[0], mmax[1], mmax[2]); }
 };
 
 namespace FaceTypes {
@@ -126,12 +139,18 @@ struct q3brush {
 struct q3leaf {
     i32 cluster;
     i32 area;
-    math::Vector3 mins;
-    math::Vector3 maxs;
+    i32 mins[3];
+    i32 maxs[3];
     i32 leafFace;
     i32 numberOfLeafFaces;
     i32 leafBrush;
     i32 numberOfLeafBrushes;
+    math::Vector3 minv() const {
+        return math::Vector3(mins[0], mins[1], mins[2]);
+    }
+    math::Vector3 maxv() const {
+        return math::Vector3(maxs[0], maxs[1], maxs[2]);
+    }
 };
 
 struct q3visibility {
@@ -145,7 +164,24 @@ struct q3lightmap {
     u8 data[128][128][3];
 };
 
-class q3map {
+struct Node {
+    math::Plane     plane;
+    i32             cluster;
+    i32             area;
+    math::Vector3   maxs;
+    math::Vector3   mins;
+    Node*           children[2];
+    Node*           parent;
+    i32             firstFace;
+    i32             numFaces;
+    i32             frame;
+    Node() {
+        frame = -1;
+        parent = NULL;
+        children[0] = NULL;
+        children[1] = NULL;
+        cluster = -1;
+    }
 };
 
 class q3maploader {
@@ -162,13 +198,20 @@ public:
     q3visibility            visibility;
     u8*                     visFaces;
 
+    i32                     _camera_cluster;
+    i32                     _frame_index;
+    std::vector<int>        _visible_faces;
+
+    std::vector<Node>       tree;
+    std::vector<math::Plane> planes_;
+
     q3maploader(FileBinary& file);
     ~q3maploader();
 
     void load();
     void PreloadTextures( TextureLoader& textureLoader );
 
-    void render(const Camera& camera, Program* pr, TextureLoader& txloader) const;
+    void render(const Camera& camera, Program* pr, TextureLoader& txloader);
 private:
     void check_header();
 
@@ -180,16 +223,18 @@ private:
 
         const u32 count = lump.length / sizeof(T);
         std::vector<T> items(count);
-        for(u32 i=0; i<count; i++) {
-            f.set_position(lump.offset + i * sizeof(T));
-            items[i] = f.read_type<T>();
-        }
+        f.set_position(lump.offset);
+        f.read(reinterpret_cast<u8*>(&items.front()), sizeof(T)*count);
         return items;
     }
     i32 findLeaf(const math::Vector3& camPos) const;
 
     void render_polygons(const q3face& face, Program* pr) const; 
     void render_patch(const q3face& face, Program* pr) const;
+    void findDrawLeafs(const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visFaces, int index) const;
+    void ComputePossibleVisible( const math::Vector3& cameraPos ); 
+    void AddVisibleNode( Node* node );
+    void ComputeVisible_R( const Camera& camera, Node* node, u32 planeMask ); 
 };
 
 } // opengl
