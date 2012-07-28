@@ -41,7 +41,7 @@ Vector3 Plane::Projection(const Vector3& point) const {
 }
 
 f32 Plane::Distance(const Vector3& point) const {
-    return (Dot(normal_, point) - distance_);
+    return (Dot(normal_, point) + distance_);
 }
 
 void Plane::Normalize() {

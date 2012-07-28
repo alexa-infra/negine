@@ -55,19 +55,20 @@ void Camera::UpdateVectors(const Matrix4& orient)
 
 void Camera::UpdateFrustum()
 {
-    Matrix4 m = clip_;
+    const Matrix4& m = clip_;
+
     // right
-    planes_[0].set(m.array1d[3] - m.array1d[0], m.array1d[7] - m.array1d[4], m.array1d[11] - m.array1d[8],  m.array1d[15] - m.array1d[12]);
+    planes_[0].set(m[3] - m[0], m[7] - m[4], m[11] - m[8],  m[15] - m[12]);
     // left
-    planes_[1].set(m.array1d[3] + m.array1d[0], m.array1d[7] + m.array1d[4], m.array1d[11] + m.array1d[8],  m.array1d[15] + m.array1d[12]);
+    planes_[1].set(m[3] + m[0], m[7] + m[4], m[11] + m[8],  m[15] + m[12]);
     // bottom
-    planes_[2].set(m.array1d[3] + m.array1d[1], m.array1d[7] + m.array1d[5], m.array1d[11] + m.array1d[9],  m.array1d[15] + m.array1d[13]);
+    planes_[2].set(m[3] + m[1], m[7] + m[5], m[11] + m[9],  m[15] + m[13]);
     // top
-    planes_[3].set(m.array1d[3] - m.array1d[1], m.array1d[7] - m.array1d[5], m.array1d[11] - m.array1d[9],  m.array1d[15] - m.array1d[13]);
+    planes_[3].set(m[3] - m[1], m[7] - m[5], m[11] - m[9],  m[15] - m[13]);
     // far
-    planes_[4].set(m.array1d[3] - m.array1d[2], m.array1d[7] - m.array1d[6], m.array1d[11] - m.array1d[10], m.array1d[15] - m.array1d[14]);
+    planes_[4].set(m[3] - m[2], m[7] - m[6], m[11] - m[10], m[15] - m[14]);
     // near
-    planes_[5].set(m.array1d[3] + m.array1d[2], m.array1d[7] + m.array1d[6], m.array1d[11] + m.array1d[10], m.array1d[15] + m.array1d[14]);
+    planes_[5].set(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]);
 }
 
 void Camera::ConvertBoundingBox(const Vector3& min_point, const Vector3& max_point, const Matrix4& m, Vector3* points)

@@ -299,17 +299,17 @@ Matrix4 Quat::GetMatrix() const
     yy = y * y2;   yz = y * z2;   zz = z * z2;
     wx = w * x2;   wy = w * y2;   wz = w * z2;
 
-    m.array1d[0+0*4] = 1.0f - (yy + zz);
-    m.array1d[1+0*4] = xy - wz;
-    m.array1d[2+0*4] = xz + wy;
+    m[0+0*4] = 1.0f - (yy + zz);
+    m[1+0*4] = xy - wz;
+    m[2+0*4] = xz + wy;
 
-    m.array1d[0+1*4] = xy + wz;
-    m.array1d[1+1*4] = 1.0f - (xx + zz);
-    m.array1d[2+1*4] = yz - wx;
+    m[0+1*4] = xy + wz;
+    m[1+1*4] = 1.0f - (xx + zz);
+    m[2+1*4] = yz - wx;
 
-    m.array1d[0+2*4] = xz - wy;
-    m.array1d[1+2*4] = yz + wx;
-    m.array1d[2+2*4] = 1.0f - (xx + yy);
+    m[0+2*4] = xz - wy;
+    m[1+2*4] = yz + wx;
+    m[2+2*4] = 1.0f - (xx + yy);
 
     return m;
 }

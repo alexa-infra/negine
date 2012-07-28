@@ -58,6 +58,8 @@ class Matrix4 {
     void Invert();
     Matrix4 Inverted() { Matrix4 m(*this); m.Invert(); return m; }
 
+    f32& operator[](u32 index) { return array1d[index]; }
+    const f32& operator[](u32 index) const { return array1d[index]; }
  public:
     Matrix4& operator = (const Matrix4& m);
     Matrix4& operator *= (const Matrix4& m);
@@ -89,6 +91,15 @@ class Matrix4 {
     static Matrix4 LookAt(const Vector3& from_position, const Vector3& target, const Vector3& up);
  private:
     void MatrixSwap(const u8& _a, const u8& _b);
+
+    friend std::ostream& operator<< (std::ostream& o, const Matrix4& v);
 };
+
+inline std::ostream& operator<< ( std::ostream& o, const Matrix4& v ) {
+    for ( int i = 0; i < 16; i++ )
+        o << v[i] << ' ';
+    return o;
+}
+
 }
 }

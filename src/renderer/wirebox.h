@@ -16,21 +16,23 @@ namespace opengl {
 class WireBox
 {
 public:
-	void setMinPoint(math::Vector3 minPoint);
-	void setMaxPoint(math::Vector3 maxPoint);
-	const math::Vector3& getMinPoint() const;
-	const math::Vector3& getMaxPoint() const;
+    void setMinPoint(const math::Vector3& minPoint);
+    void setMaxPoint(const math::Vector3& maxPoint);
+    void setMinMaxPoints(const math::Vector3& minPoint, const math::Vector3& maxPoint);
+    const math::Vector3& getMinPoint() const;
+    const math::Vector3& getMaxPoint() const;
 private:
-	math::Vector3 minPoint_;
-	math::Vector3 maxPoint_;
-	math::Vector3 points[8];
+    math::Vector3 minPoint_;
+    math::Vector3 maxPoint_;
+    math::Vector3 points[8];
 
 public:
-	WireBox(math::Vector3 minPoint, math::Vector3 maxPoin);
-	~WireBox();
-	void Draw(Program* program);
-private:	
-	void update();
+    WireBox();
+    WireBox(math::Vector3 minPoint, math::Vector3 maxPoin);
+    ~WireBox();
+    void Draw(Program* program);
+private:
+    void update();
 };
 
 
