@@ -12,12 +12,13 @@
 #include "base/math/vector.h"
 #include "base/math/quat.h"
 
-namespace base {
-namespace resource {
+namespace base
+{
+namespace resource
+{
 
 //! Joint info
-struct JointInfo
-{
+struct JointInfo {
     string name;
     i32 parent;
     i32 flags;
@@ -25,8 +26,7 @@ struct JointInfo
 };
 
 //! Base frame joint
-struct BaseframeJoint
-{
+struct BaseframeJoint {
     math::Vector3 pos;
     math::Quat    orient;
 };
@@ -37,7 +37,7 @@ private:
     JointInfo* jointInfos;
     BaseframeJoint* baseFrame;
     u32 numAnimatedComponents;
-    f32 *animFrameData;
+    f32* animFrameData;
 
 public:
     u32 num_frames;
@@ -50,10 +50,10 @@ public:
     Md5Anim();
     ~Md5Anim();
 
-    void Load(const string& filename);
-    void BuildFrameSkeleton(u32 frameIndex);
+    void Load( const string& filename );
+    void BuildFrameSkeleton( u32 frameIndex );
 
-    void Update(Md5Model* model, u32 frameIndex, f32 interp_phase);
+    void Update( Md5Model* model, u32 frameIndex, f32 interp_phase );
 };
 
 

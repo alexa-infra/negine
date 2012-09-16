@@ -8,19 +8,23 @@
 
 #include "renderer/glcontext.h"
 
-namespace base {
-namespace opengl {
+namespace base
+{
+namespace opengl
+{
 
-namespace ShaderTypes {
-    enum ShaderType {
-        VERTEX = GL_VERTEX_SHADER,
-        PIXEL = GL_FRAGMENT_SHADER
-    };
+namespace ShaderTypes
+{
+enum ShaderType {
+    VERTEX = GL_VERTEX_SHADER,
+    PIXEL = GL_FRAGMENT_SHADER
+};
 }
 typedef ShaderTypes::ShaderType ShaderType;
 
 //! Shader object
-class Shader {
+class Shader
+{
 private:
     u32 id_;                    //!< Name of shader
     bool is_ok_;                //!< Creation status
@@ -28,29 +32,39 @@ private:
     GLenum shader_type_;        //!< Type of shader
     std::string status_;        //!< Status string
 public:
-    Shader(ShaderType shaderType);
+    Shader( ShaderType shaderType );
     ~Shader();
 
     //! Gets name of shader
-    u32 id() const { return id_; }
+    u32 id() const {
+        return id_;
+    }
 
     //! Gets creation status
-    bool is_ok() const { return is_ok_; }
+    bool is_ok() const {
+        return is_ok_;
+    }
 
     //! Gets compilation status
-    bool compiled() const { return compiled_; }
+    bool compiled() const {
+        return compiled_;
+    }
 
     //! Gets shader type
-    GLenum shader_type() const { return shader_type_; }
+    GLenum shader_type() const {
+        return shader_type_;
+    }
 
     //! Gets status string
-    const std::string& status() const { return status_; }
+    const std::string& status() const {
+        return status_;
+    }
 
     //! Compile shader from source
-    bool Compile(const std::string& source);
+    bool Compile( const std::string& source );
 
 private:
-    DISALLOW_COPY_AND_ASSIGN(Shader);
+    DISALLOW_COPY_AND_ASSIGN( Shader );
 };
 
 }

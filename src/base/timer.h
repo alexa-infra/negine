@@ -8,9 +8,11 @@
 
 #include "base/types.h"
 
-namespace base {
+namespace base
+{
 
-class Timer {
+class Timer
+{
 private:
     u64 start_time_;
 
@@ -21,7 +23,7 @@ public:
     f32 Elapsed();
 private:
     static u64 GetClock();
-    static f32 GetMillis(u64 range);
+    static f32 GetMillis( u64 range );
 };
 
 } // namespace base

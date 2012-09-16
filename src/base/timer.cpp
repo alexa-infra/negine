@@ -12,7 +12,8 @@
 # include <sys/time.h>
 #endif
 
-namespace base {
+namespace base
+{
 
 Timer::Timer()
 {
@@ -22,14 +23,14 @@ Timer::Timer()
 f32 Timer::Reset()
 {
     u64 new_time = GetClock();
-    f32 elapsed = GetMillis(new_time - start_time_);
+    f32 elapsed = GetMillis( new_time - start_time_ );
     start_time_ = new_time;
     return elapsed;
 }
 
 f32 Timer::Elapsed()
 {
-    return GetMillis(GetClock() - start_time_);
+    return GetMillis( GetClock() - start_time_ );
 }
 
 #ifdef OS_WIN
@@ -37,20 +38,18 @@ f32 Timer::Elapsed()
 u64 Timer::GetClock()
 {
     FILETIME ft;
-    GetSystemTimeAsFileTime(&ft);
-
+    GetSystemTimeAsFileTime( &ft );
     u64 res = 0;
     res |= ft.dwHighDateTime;
     res <<= 32;
     res |= ft.dwLowDateTime;
     res /= 10;
-    
     return res;
 }
 
-f32 Timer::GetMillis(u64 range)
+f32 Timer::GetMillis( u64 range )
 {
-    return (f32)(range / (f32)1000);
+    return ( f32 )( range / ( f32 )1000 );
 }
 
 #elif defined(OS_POSIX)
@@ -58,13 +57,13 @@ f32 Timer::GetMillis(u64 range)
 u64 Timer::GetClock()
 {
     timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday( &time, NULL );
     return time.tv_sec * 1000000 + time.tv_usec;
 }
 
-f32 Timer::GetMillis(u64 range)
+f32 Timer::GetMillis( u64 range )
 {
-    return (f32)(range / (f32)1000);
+    return ( f32 )( range / ( f32 )1000 );
 }
 
 #endif

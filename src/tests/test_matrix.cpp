@@ -11,14 +11,14 @@ using base::math::Matrix4;
 using base::math::Vector4;
 using base::math::pi;
 
-TEST(math, matrix4_1)
+TEST( math, matrix4_1 )
 {
-    Matrix4 a(Vector4(1.0f, 1.0f, 0.0f, 0.0f),
-              Vector4(1.0f, 1.0f, 0.0f, 1.0f),
-              Vector4(0.0f, 2.0f, 1.0f, 0.0f),
-              Vector4(3.0f, 1.0f, 0.0f, 1.0f));
+    Matrix4 a( Vector4( 1.0f, 1.0f, 0.0f, 0.0f ),
+               Vector4( 1.0f, 1.0f, 0.0f, 1.0f ),
+               Vector4( 0.0f, 2.0f, 1.0f, 0.0f ),
+               Vector4( 3.0f, 1.0f, 0.0f, 1.0f ) );
     Matrix4 b = a * Matrix4::Identity();
-    EXPECT_TRUE(a == b);
+    EXPECT_TRUE( a == b );
 }
 /*TEST(math, matrix4)
 {

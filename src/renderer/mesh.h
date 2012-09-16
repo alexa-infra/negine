@@ -12,16 +12,17 @@
 #include <map>
 #include <vector>
 
-namespace base {
-namespace opengl {
+namespace base
+{
+namespace opengl
+{
 
 using base::math::Vector2;
 using base::math::Vector3;
 using base::math::Vector4;
 
 //! Simple vertex
-struct Vertex
-{
+struct Vertex {
     Vector3 pos;        //!< Position in 3D space
     Vector3 n;          //!< Normal to surface
     Vector2 tex;        //!< Texture coordinates
@@ -34,32 +35,30 @@ struct Vertex
 
 namespace VertexAttrs
 {
-    //! Tags for vertex components
-    enum VertexAttr
-    {
-        tagPosition,
-        tagNormal,
-        tagTexture,
-        tagTangent,
-        tagBinormal,
-        tagColor,
+//! Tags for vertex components
+enum VertexAttr {
+    tagPosition,
+    tagNormal,
+    tagTexture,
+    tagTangent,
+    tagBinormal,
+    tagColor,
 
-        Count
-    };
+    Count
+};
 
-    //! Gets offset of attribute in vertex structure
-    uptr GetOffset(VertexAttr attr);
+//! Gets offset of attribute in vertex structure
+uptr GetOffset( VertexAttr attr );
 
-    //! Gets component count in attribute
-    u8 GetComponentCount(VertexAttr attr);
+//! Gets component count in attribute
+u8 GetComponentCount( VertexAttr attr );
 }
 typedef VertexAttrs::VertexAttr VertexAttr;
 
 typedef std::map< VertexAttr, u32 > AttributeBinding;
 
 //! Triangle face
-struct Face
-{
+struct Face {
     u16 index[3];       //!< Indexes of vertexes in vertex array
 };
 

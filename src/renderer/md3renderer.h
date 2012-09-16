@@ -10,8 +10,10 @@
 #include "renderer/mesh.h"
 #include <vector>
 
-namespace base {
-namespace opengl {
+namespace base
+{
+namespace opengl
+{
 
 class Md3Renderer
 {
@@ -20,14 +22,14 @@ class Md3Renderer
     std::vector<VertexBuffer*> vbs;
 
 public:
-    Md3Renderer(resource::Md3Model* m);
+    Md3Renderer( resource::Md3Model* m );
     ~Md3Renderer();
 
     void Commit();
 
-    void Draw(AttributeBinding& binding);
+    void Draw( AttributeBinding& binding );
 private:
-    static Vector3 DecodeNormal(const u8* normal);
+    static Vector3 DecodeNormal( const u8* normal );
 };
 
 }

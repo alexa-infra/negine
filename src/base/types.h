@@ -8,7 +8,7 @@
 
 #include "base/platform.h"
 
-// Define NULL if it does not defined at platform, note that 
+// Define NULL if it does not defined at platform, note that
 // NULL could be defined differently
 #if !defined(NULL)
 #   define NULL 0
@@ -46,7 +46,7 @@ typedef i64 iptr;
 typedef std::string string;
 
 struct hash_string {
-    size_t operator()(const std::string& x) const;
+    size_t operator()( const std::string& x ) const;
 };
 
 // A macro to disallow the copy constructor and operator= functions

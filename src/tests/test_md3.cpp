@@ -8,14 +8,14 @@
 
 using base::resource::Md3Model;
 
-TEST(mesh, md3_load_by_chunks)
+TEST( mesh, md3_load_by_chunks )
 {
     Md3Model model;
-    model.Load("european_fnt_v2.md3");
-    EXPECT_TRUE(true);
+    model.Load( "european_fnt_v2.md3" );
+    EXPECT_TRUE( true );
 }
 
-TEST(mesh, md3_load_by_memory)
+TEST( mesh, md3_load_by_memory )
 {
     //std::vector<Mesh*> mesh_;
     //mesh_ = load_md3_se("european_fnt_v2.md3");

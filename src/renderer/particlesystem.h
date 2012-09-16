@@ -10,8 +10,10 @@
 #include "base/math/vector.h"
 #include <list>
 
-namespace base {
-namespace resource {
+namespace base
+{
+namespace resource
+{
 
 struct ParticleSystemSetting {
     u32 max_count;
@@ -41,22 +43,24 @@ struct Particle {
 
     f32 life_time;
     f32 life;
-    
+
     math::Vector2 position;
     math::Vector2 speed;
     f32 acceleration;
-    
+
     f32 size;
     f32 rotation;
     math::Vector4 color;
 };
 typedef std::list<Particle*> ParticleList;
 
-inline bool sort_particles_from_farest_to_nearest(Particle* first, Particle* second) {
+inline bool sort_particles_from_farest_to_nearest( Particle* first, Particle* second )
+{
     return first->size < second->size;
 }
 
-class ParticleSystem {
+class ParticleSystem
+{
 public:
     ParticleSystemSetting settings;     //!< settings
     Particle* particles;                    //!< all particles
@@ -71,15 +75,15 @@ public:
 
     math::Vector3 position;           //!< center position
 public:
-    ParticleSystem(ParticleSystemSetting s);
+    ParticleSystem( ParticleSystemSetting s );
 
     ~ParticleSystem();
 
-    void update(f32 frame_time);
+    void update( f32 frame_time );
 protected:
     void add();
 private:
-    DISALLOW_COPY_AND_ASSIGN(ParticleSystem);
+    DISALLOW_COPY_AND_ASSIGN( ParticleSystem );
 };
 
 }

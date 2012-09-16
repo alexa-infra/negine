@@ -1,0 +1,13 @@
+--style=kr
+--indent=spaces=4
+--break-blocks
+--pad-oper
+--pad-paren-in
+--delete-empty-lines
+--add-brackets
+--convert-tabs
+--align-pointer=type
+# from 2.02 features:
+#--align-reference=type
+--lineend=linux
+

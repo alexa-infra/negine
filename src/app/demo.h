@@ -4,7 +4,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#pragma once 
+#pragma once
 
 #include "app/app.h"
 #include "renderer/gltexture.h"
@@ -50,7 +50,8 @@ using base::resource::Md5Anim;
 using base::opengl::q3maploader;
 using base::opengl::WireBox;
 
-class Demo : public Application {
+class Demo : public Application
+{
 private:
     Texture* texture_;
     Texture* texture_bump_;
@@ -60,7 +61,7 @@ private:
     Program* program_wirebox_;
     Matrix4 projection_;
     Matrix4 modelview_;
-    SpriteFont *font_;
+    SpriteFont* font_;
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
     Md5Renderer* md5_renderer_;
@@ -84,15 +85,15 @@ private:
 
     Entity*  entity;
 public:
-    Demo(i32 width = 640, i32 height = 480); 
+    Demo( i32 width = 640, i32 height = 480 );
     virtual ~Demo();
 protected:
-    void OnFrame(void);
-    void OnReshape(i32 width, i32 height);
-    void OnMotion(i32 x, i32 y, i32 dx, i32 dy);
-    void OnKeyboard(unsigned char key, int x, int y);
+    void OnFrame( void );
+    void OnReshape( i32 width, i32 height );
+    void OnMotion( i32 x, i32 y, i32 dx, i32 dy );
+    void OnKeyboard( unsigned char key, int x, int y );
 
 private:
-    Program* LoadProgram(const std::string& filename);
+    Program* LoadProgram( const std::string& filename );
 };
 

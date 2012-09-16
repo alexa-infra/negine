@@ -12,9 +12,11 @@
 #include "base/stream.h"
 
 
-namespace base {
+namespace base
+{
 
-class Lexer {
+class Lexer
+{
 protected:
     FileText file_;
 
@@ -22,18 +24,20 @@ protected:
 
     char*   token_;
     char*   whiteCharacters;
-public: 
-    Lexer(const std::string &filename);
+public:
+    Lexer( const std::string& filename );
     ~Lexer();
 
     void   SkipWhiteSpace();
     void   SkipRestOfLine();
     const char* ReadToken();
-    const char* CurrentToken() const { return token_; }
+    const char* CurrentToken() const {
+        return token_;
+    }
     f32    ReadFloat();
     bool   HasMoreData() const;
-    void   SetWhiteCharValue(char c, char value);
-    bool   IsWhiteChar(char character) const;
+    void   SetWhiteCharValue( char c, char value );
+    bool   IsWhiteChar( char character ) const;
 
 private:
 

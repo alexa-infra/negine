@@ -15,11 +15,12 @@ using std::ofstream;
 
 const char filename[] = "tempfile.txt";
 
-class LexerTest : public ::testing::Test {
+class LexerTest : public ::testing::Test
+{
 protected:
     static void SetUpTestCase() {
         ofstream f;
-        f.open (filename);
+        f.open ( filename );
         f << "            this is a test" << std::endl;
         f << "   second \"line\"" << std::endl;
         f << "value # with comment" << std::endl;
@@ -31,23 +32,22 @@ protected:
     }
 
     static void TearDownTestCase() {
-        remove(filename);
+        remove( filename );
     }
 };
 
-TEST_F(LexerTest, Basic) {
-    Lexer lex(filename);
-    EXPECT_STREQ(lex.ReadToken(), "this");
-    EXPECT_STREQ(lex.ReadToken(), "is");
-    EXPECT_STREQ(lex.ReadToken(), "a");
-    EXPECT_STREQ(lex.ReadToken(), "test");
-    EXPECT_STREQ(lex.ReadToken(), "second");
-    EXPECT_STREQ(lex.ReadToken(), "line");
-    
-    EXPECT_STREQ(lex.ReadToken(), "value");
-    EXPECT_STREQ(lex.ReadToken(), "thevalue");
-    EXPECT_STREQ(lex.ReadToken(), "value1");
-
+TEST_F( LexerTest, Basic )
+{
+    Lexer lex( filename );
+    EXPECT_STREQ( lex.ReadToken(), "this" );
+    EXPECT_STREQ( lex.ReadToken(), "is" );
+    EXPECT_STREQ( lex.ReadToken(), "a" );
+    EXPECT_STREQ( lex.ReadToken(), "test" );
+    EXPECT_STREQ( lex.ReadToken(), "second" );
+    EXPECT_STREQ( lex.ReadToken(), "line" );
+    EXPECT_STREQ( lex.ReadToken(), "value" );
+    EXPECT_STREQ( lex.ReadToken(), "thevalue" );
+    EXPECT_STREQ( lex.ReadToken(), "value1" );
     lex.ReadToken();
     lex.ReadToken();
 }

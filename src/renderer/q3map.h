@@ -12,12 +12,14 @@
 #include "base/stream.h"
 #include "renderer/wirebox.h"
 
-namespace base {
-namespace opengl {
+namespace base
+{
+namespace opengl
+{
 
-    class Camera;
-    class Program;
-    class TextureLoader;
+class Camera;
+class Program;
+class TextureLoader;
 
 struct q3header {
     u8 magic[4];
@@ -39,8 +41,8 @@ struct q3plane {
     math::Vector3 normal;
     f32 dist;
 
-    f32 side(const math::Vector3& v) const {
-        return math::Dot(normal, v) - dist;
+    f32 side( const math::Vector3& v ) const {
+        return math::Dot( normal, v ) - dist;
     }
 };
 
@@ -56,17 +58,22 @@ struct q3node {
     i32 mmin[3];
     i32 mmax[3];
 
-    math::Vector3 mins() const { return math::Vector3(mmin[0], mmin[1], mmin[2]); }
-    math::Vector3 maxs() const { return math::Vector3(mmax[0], mmax[1], mmax[2]); }
+    math::Vector3 mins() const {
+        return math::Vector3( mmin[0], mmin[1], mmin[2] );
+    }
+    math::Vector3 maxs() const {
+        return math::Vector3( mmax[0], mmax[1], mmax[2] );
+    }
 };
 
-namespace FaceTypes {
-    enum FaceType {
-        Polygon,
-        Patch,
-        Mesh,
-        Billboard
-    };
+namespace FaceTypes
+{
+enum FaceType {
+    Polygon,
+    Patch,
+    Mesh,
+    Billboard
+};
 }
 typedef FaceTypes::FaceType FaceType;
 
@@ -98,7 +105,7 @@ struct q3vertex {
     math::Vector3 normal;
     u8 color[4];
 
-    q3vertex operator*(f32 scalar) const {
+    q3vertex operator*( f32 scalar ) const {
         q3vertex ret;
         ret.pos = pos * scalar;
         ret.surfaceUV = surfaceUV * scalar;
@@ -107,7 +114,7 @@ struct q3vertex {
         //ret.color = color * scalar;
         return ret;
     }
-    q3vertex operator+(const q3vertex& v) const {
+    q3vertex operator+( const q3vertex& v ) const {
         q3vertex ret;
         ret.pos = pos + v.pos;
         ret.surfaceUV = surfaceUV + v.surfaceUV;;
@@ -116,7 +123,7 @@ struct q3vertex {
         //ret.color = color + v.color;
         return ret;
     }
-    q3vertex& operator=(const q3vertex& v) {
+    q3vertex& operator=( const q3vertex& v ) {
         pos = v.pos;
         surfaceUV = v.surfaceUV;
         lightmapUV = v.lightmapUV;
@@ -147,10 +154,10 @@ struct q3leaf {
     i32 leafBrush;
     i32 numberOfLeafBrushes;
     math::Vector3 minv() const {
-        return math::Vector3(mins[0], mins[1], mins[2]);
+        return math::Vector3( mins[0], mins[1], mins[2] );
     }
     math::Vector3 maxv() const {
-        return math::Vector3(maxs[0], maxs[1], maxs[2]);
+        return math::Vector3( maxs[0], maxs[1], maxs[2] );
     }
 };
 
@@ -158,7 +165,7 @@ struct q3visibility {
     i32 nVecs;
     i32 szVecs;
     u8* vecs;
-    bool isClusterVisible(i32 visCluster, i32 testCluster) const;
+    bool isClusterVisible( i32 visCluster, i32 testCluster ) const;
 };
 
 struct q3lightmap {
@@ -185,7 +192,8 @@ struct Node {
     }
 };
 
-class q3maploader {
+class q3maploader
+{
 public:
     FileBinary& f;
     std::vector<q3texture>  textures;
@@ -208,36 +216,35 @@ public:
     WireBox _wb;
     Program* _program;
 
-    q3maploader(FileBinary& file);
+    q3maploader( FileBinary& file );
     ~q3maploader();
 
     void load();
     void PreloadTextures( TextureLoader& textureLoader );
 
-    void render(const Camera& camera, Program* pr, TextureLoader& txloader);
+    void render( const Camera& camera, Program* pr, TextureLoader& txloader );
 private:
     void check_header();
 
-    q3lump read_lump(i32 index);
+    q3lump read_lump( i32 index );
 
     template<typename T>
-    std::vector<T> read(i32 lumpIndex) {
-        q3lump lump = read_lump(lumpIndex);
-
-        const u32 count = lump.length / sizeof(T);
-        std::vector<T> items(count);
-        f.set_position(lump.offset);
-        f.read(reinterpret_cast<u8*>(&items.front()), sizeof(T)*count);
+    std::vector<T> read( i32 lumpIndex ) {
+        q3lump lump = read_lump( lumpIndex );
+        const u32 count = lump.length / sizeof( T );
+        std::vector<T> items( count );
+        f.set_position( lump.offset );
+        f.read( reinterpret_cast<u8*>( &items.front() ), sizeof( T )*count );
         return items;
     }
-    i32 findLeaf(const math::Vector3& camPos) const;
+    i32 findLeaf( const math::Vector3& camPos ) const;
 
-    void render_polygons(const q3face& face, Program* pr) const; 
-    void render_patch(const q3face& face, Program* pr) const;
-    void findDrawLeafs(const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visFaces, int index) const;
-    void ComputePossibleVisible( const math::Vector3& cameraPos ); 
+    void render_polygons( const q3face& face, Program* pr ) const;
+    void render_patch( const q3face& face, Program* pr ) const;
+    void findDrawLeafs( const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visFaces, int index ) const;
+    void ComputePossibleVisible( const math::Vector3& cameraPos );
     void AddVisibleNode( Node* node );
-    void ComputeVisible_R( const Camera& camera, Node* node, u32 planeMask ); 
+    void ComputeVisible_R( const Camera& camera, Node* node, u32 planeMask );
 };
 
 } // opengl

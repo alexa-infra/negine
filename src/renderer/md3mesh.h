@@ -10,19 +10,21 @@
 #include "base/stream.h"
 #include <vector>
 
-namespace base {
-namespace resource {
+namespace base
+{
+namespace resource
+{
 
-// 
+//
 // http://en.wikipedia.org/wiki/MD3_(file_format)
-// MD3 is a model format used by the Quake 3 engine 
+// MD3 is a model format used by the Quake 3 engine
 // as well as its many mods. The format is used mostly
 // for player models and non-structural geometry
 // (non-static models) although it may be used for structural uses.
 // Unlike modern formats, animations are not bone based
 // but instead vertex based and are directly contained
 // within the file.
-// 
+//
 
 #define MD3_VERSION 15
 #define MD3_MAX_FRAMES 1024
@@ -34,8 +36,7 @@ namespace resource {
 
 #pragma pack(push, 1)
 
-struct  Md3Header
-{
+struct  Md3Header {
     u32 ident;          // Magic number. As a string reads "IDP3", or 0x33504449
     u32 version;        // 15 latest
     u8  name[64];       // null-terminated md3 name
@@ -51,8 +52,7 @@ struct  Md3Header
 };
 
 // signle animation frame
-struct  Md3Frame
-{
+struct  Md3Frame {
     f32 min_bounds[3];  // first corner of bounding box
     f32 max_bounds[3];  // second corner of bounding box
     f32 local_origin[3];// local origin, position
@@ -61,15 +61,13 @@ struct  Md3Frame
 };
 
 // attachment point for another md3 model
-struct  Md3Tag
-{
+struct  Md3Tag {
     u8  name[64];       // null-terminated name of tag
     f32 origin[3];      // position of tag
     f32 axis[3][3];     // rotation matrix
 };
 
-struct  Md3Surface
-{
+struct  Md3Surface {
     u32 ident;          // Magic number. As a string reads "IDP3", or 0x33504449
     u8  name[64];       // null-terminated name of surface
     i32 flags;          // ???
@@ -84,24 +82,20 @@ struct  Md3Surface
     i32 ofs_end;        // offset to end of surface object
 };
 
-struct  Md3Shader
-{
+struct  Md3Shader {
     u8  name[64];       // name of shader object
     i32 shader_index;   // ???
 };
 
-struct  Md3Triangle
-{
+struct  Md3Triangle {
     i32 indexes[3];     // indexes on triangles array, with clockwise winding
 };
 
-struct  Md3TexCoord
-{
+struct  Md3TexCoord {
     f32 st[2];          // st-coordinates (left-handed space)
 };
 
-struct  Md3Vertex
-{
+struct  Md3Vertex {
     i16 coord[3];       // x, y, and z coordinates in left-handed 3-space, scaled down by factor 1.0/64
     u8  normal[2];      // Zenith and azimuth angles of normal vector
 };
@@ -151,11 +145,11 @@ public:
     Md3Model();
     ~Md3Model();
 
-    void Load(const std::string& name);
+    void Load( const std::string& name );
 //    void Load2(const std::string& name);
 private:
 //    void load_md3(u8* data);
-    void load_md3(FileBinary& file);
+    void load_md3( FileBinary& file );
 };
 
 } // namespace resource

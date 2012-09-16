@@ -9,18 +9,18 @@
 
 using base::resource::Entity;
 
-TEST(mesh, md5_load)
+TEST( mesh, md5_load )
 {
-    Entity* entity = Entity::Load("hellknight.md5mesh");
-    EXPECT_TRUE(entity != NULL);
-    EXPECT_EQ(entity->object.md5Model.num_joints, 110);
-    EXPECT_EQ(entity->object.md5Model.num_meshes, 2);
-    EXPECT_EQ(entity->object.md5Model.meshes[0].num_verts, 1656);
+    Entity* entity = Entity::Load( "hellknight.md5mesh" );
+    EXPECT_TRUE( entity != NULL );
+    EXPECT_EQ( entity->object.md5Model.num_joints, 110 );
+    EXPECT_EQ( entity->object.md5Model.num_meshes, 2 );
+    EXPECT_EQ( entity->object.md5Model.meshes[0].num_verts, 1656 );
     delete entity;
 }
 
-TEST (mesh, GenerateGPUVertices)
+TEST ( mesh, GenerateGPUVertices )
 {
-    Entity* entity = Entity::Load("hellknight.md5mesh");
+    Entity* entity = Entity::Load( "hellknight.md5mesh" );
     delete entity;
 }

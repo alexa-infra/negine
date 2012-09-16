@@ -11,11 +11,14 @@
 #include "renderer/mesh.h"
 #include "renderer/vertexbuffer.h"
 
-namespace base {
-namespace opengl {
+namespace base
+{
+namespace opengl
+{
 
 //! single mesh only
-class Md5Renderer {
+class Md5Renderer
+{
 public:
     resource::Md5BoundingBox boundingBox;
 private:
@@ -24,17 +27,17 @@ private:
     VertexBuffer* vb;
     resource::Md5Model* md5;
 public:
-    Md5Renderer(resource::Md5Model* model);
+    Md5Renderer( resource::Md5Model* model );
     ~Md5Renderer();
 
     void Commit();
-    void Draw(AttributeBinding& binding);
+    void Draw( AttributeBinding& binding );
 
 private:
-    void GenerateVertexes(resource::Md5Mesh &mesh, Vertex* vertexes);
-    void GenerateIndexes(resource::Md5Mesh &mesh, Face* indexes);
-    void GenerateLightningInfo(resource::Md5Mesh &mesh, Vertex* vertexes);
-    void UpdateBoundingBox(Vertex &vetex);
+    void GenerateVertexes( resource::Md5Mesh& mesh, Vertex* vertexes );
+    void GenerateIndexes( resource::Md5Mesh& mesh, Face* indexes );
+    void GenerateLightningInfo( resource::Md5Mesh& mesh, Vertex* vertexes );
+    void UpdateBoundingBox( Vertex& vetex );
 };
 
 } // namespace base

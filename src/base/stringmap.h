@@ -11,17 +11,16 @@
 #include <functional>
 #include <algorithm>
 
-namespace base {
+namespace base
+{
 
 template<class T>
-struct map_data_compare : public std::binary_function<typename T::value_type, 
-                                                      typename T::mapped_type, 
-                                                      bool>
-{
+struct map_data_compare : public std::binary_function < typename T::value_type,
+        typename T::mapped_type,
+        bool > {
 public:
-    bool operator() (typename T::value_type &pair, 
-                     typename T::mapped_type i) const
-    {
+    bool operator() ( typename T::value_type& pair,
+                      typename T::mapped_type i ) const {
         return pair.second == i;
     }
 };
@@ -39,23 +38,29 @@ public:
         const char* key;
         T value;
     };
-    StringMap(const Entry* m) {
-        for (u32 i=0; i<N; i++) {
-            entries_[std::string(m[i].key)] = m[i].value;
+    StringMap( const Entry* m ) {
+        for ( u32 i = 0; i < N; i++ ) {
+            entries_[std::string( m[i].key )] = m[i].value;
         }
     }
-    bool to_string(const T& value, std::string& ret) {
-        typename map_type::iterator it = std::find_if(entries_.begin(), entries_.end(),
-            std::bind2nd(map_data_compare<map_type>(), value));
-        if (it == entries_.end())
+    bool to_string( const T& value, std::string& ret ) {
+        typename map_type::iterator it = std::find_if( entries_.begin(), entries_.end(),
+                                         std::bind2nd( map_data_compare<map_type>(), value ) );
+
+        if ( it == entries_.end() ) {
             return false;
+        }
+
         ret = it->first;
         return true;
     }
-    bool from_string(const std::string& key, T& ret) {
-        typename map_type::iterator it = entries_.find(key);
-        if (it == entries_.end())
+    bool from_string( const std::string& key, T& ret ) {
+        typename map_type::iterator it = entries_.find( key );
+
+        if ( it == entries_.end() ) {
             return false;
+        }
+
         ret = it->second;
         return true;
     }
