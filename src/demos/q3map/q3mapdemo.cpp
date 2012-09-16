@@ -61,7 +61,7 @@ public:
         //cubes_.push_back(c);
         buffer_ = new VertexBufferGPU(&vv[0], vv.size(), &ff[0], ff.size());
         
-        program_ = LoadProgram("shader.shader");
+        program_ = LoadProgram("q3map.shader");
     }
     virtual ~Demo() {
 

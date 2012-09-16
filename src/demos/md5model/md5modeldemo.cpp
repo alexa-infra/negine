@@ -54,7 +54,7 @@ public:
         modelTransform_ *= Matrix4::RotationX(-90 * deg_to_rad);
         modelTransform_ *= Matrix4::RotationZ(180 * deg_to_rad);
 
-        program_ = LoadProgram("shader.shader");
+        program_ = LoadProgram("bump.shader");
 
         texture_ = texure_loader_.Load("hellknight.png");
         texture_bump_ = texure_loader_.Load("hellknight_local.png");

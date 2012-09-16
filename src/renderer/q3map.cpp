@@ -321,7 +321,7 @@ void bind_attr(Program* pr, const q3vertex& vertex)
         GL_FALSE,
         sizeof(q3vertex),
         (const u8*)&vertex.surfaceUV);
-
+/*
     u32 bindNorm = binding[VertexAttrs::tagNormal];
     glVertexAttribPointer(
         bindNorm,
@@ -338,7 +338,7 @@ void bind_attr(Program* pr, const q3vertex& vertex)
         GL_FLOAT,
         GL_FALSE,
         sizeof(q3vertex),
-        (const u8*)&vertex.lightmapUV);
+        (const u8*)&vertex.lightmapUV);*/
 }
 
 void Bezier::tessellate(u32 L) {
