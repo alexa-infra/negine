@@ -183,7 +183,7 @@ void Program::set_uniform_param<Texture*>(UniformVar uniform, u32 location, Text
 
 template<>
 void Program::set_uniform_param<Matrix4>(UniformVar uniform, u32 location, const Matrix4& m) {
-    glUniformMatrix4fv(location, 1, GL_TRUE, m.array1d);
+    glUniformMatrix4fv(location, 1, GL_FALSE, reinterpret_cast<const f32*>(&m));
 }
 
 template<>

@@ -139,6 +139,12 @@ class Vector2 {
     }
 };
 
+inline Vector2 Normalize(const Vector2& v) {
+    Vector2 n = v;
+    n.SetLength(1.0f);
+    return n;
+}
+
 inline f32 Dot(const Vector2& a, const Vector2& b) {
     return (a.x * b.x + a.y * b.y);
 }
@@ -279,7 +285,13 @@ class Vector3 {
     friend std::ostream& operator<< (std::ostream& o, const Vector3& v);
 };
 
-inline Vector3 VectorProduct(const Vector3& a, const Vector3& b) {
+inline Vector3 Normalize(const Vector3& v) {
+    Vector3 n = v;
+    n.SetLength(1.0f);
+    return n;
+}
+
+inline Vector3 Cross(const Vector3& a, const Vector3& b) {
     return Vector3(a.y*b.z - a.z*b.y,  a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
 }
 
@@ -304,6 +316,7 @@ class Vector4 {
     Vector4() { set(0.f, 0.f, 0.f, 0.f); }
     Vector4(f32 vx, f32 vy, f32 vz, f32 vw) { set(vx, vy, vz, vw); }
     Vector4(const Vector4& v) { set(v.x, v.y, v.z, v.w); }
+    Vector4(const Vector3& v, f32 f) { set(v.x, v.y, v.z, f); }
     explicit Vector4(const Vector2& v) { set(v.x, v.y, 0.f, 0.f); }
     explicit Vector4(const Vector3& v) { set(v.x, v.y, v.z, 0.f); }
     explicit Vector4(const f32* v) { set(v); }
@@ -321,6 +334,10 @@ class Vector4 {
         y = v;
         z = v;
         w = v;
+    }
+
+    inline Vector3 xyz() const {
+        return Vector3(x, y, z);
     }
 
     inline Vector4& operator= (const Vector4& v) {
@@ -432,10 +449,26 @@ class Vector4 {
         normalized.Normalize();
         return normalized;
     }
+    friend std::ostream& operator<< (std::ostream& o, const Vector4& v);
 };
+
+inline Vector4 Normalize(const Vector4& v) {
+    Vector4 n = v;
+    n.SetLength(1.0f);
+    return n;
+}
 
 inline f32 Dot(const Vector4& a, const Vector4& b) {
     return (a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
+}
+
+inline std::ostream& operator<< (std::ostream& o, const Vector4& v)
+{
+    o << v.x << ' ';
+    o << v.y << ' ';
+    o << v.z << ' ';
+    o << v.w;
+    return o;
 }
 
 }

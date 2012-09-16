@@ -17,7 +17,7 @@ void Plane::set(const Vector3* points) {
 }
 
 void Plane::set(const Vector3& p1, const Vector3& p2, const Vector3& p3) {
-    normal_ = VectorProduct(p2 - p1, p3 - p1);
+    normal_ = Cross(p2 - p1, p3 - p1);
     distance_ = -Dot(normal_, p1);
     Normalize();
 }
@@ -71,6 +71,10 @@ i8 Plane::BoxOnPlaneSide(const Vector3& mmin, const Vector3& mmax) const {
         sides = 1;
     if ( Distance( corners[1] ) < 0 )
         sides |= 2;
+    // 0 - intersect
+    // 1 - both plus
+    // 2 - both minus
+    // 3 - intersect
     return sides;
 }
 

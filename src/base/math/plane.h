@@ -33,11 +33,17 @@ class Plane {
     Plane(const Vector3& n, const f32& d) {
         set(n.x, n.y, n.z, d);
     }
+    Plane(const Vector4& v) {
+        set(v.x, v.y, v.z, v.w);
+    }
 
     void set(const Vector3* points);
     void set(const Vector3& p1, const Vector3& p2, const Vector3& p3);
     void set(const Vector3& normal, const Vector3& planePoint);
     void set(const f32& a, const f32& b, const f32& c, const f32& d);
+    void set(const Vector4& v) {
+        set(v.x, v.y, v.z, v.w);
+    }
 
     f32 A() const { return normal_.x; }
     f32 B() const { return normal_.y; }

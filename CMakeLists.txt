@@ -29,7 +29,7 @@ macro(add_source_group FILTER_NAME SOURCE_PATH TARGET_LIST)
 endmacro(add_source_group)
 
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -std=c++98")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -fmax-errors=1 -std=c++98")
   add_definitions(-D_DEBUG)
 endif(UNIX)
 if(APPLE)

@@ -53,8 +53,8 @@ protected:
     
         program_->Bind();
 
-        program_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::GetOrtho(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
-        program_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity);
+        program_->set_uniform(base::opengl::UniformVars::Projection, Matrix4::Orthographic(-150.0, 150.0, -150.0, 150.0, -500.0, 500.0));
+        program_->set_uniform(base::opengl::UniformVars::Modelview, Matrix4::Identity());
 
         f32 frame_time = timer_.Elapsed() / 1000.0f;
         timer_.Reset();

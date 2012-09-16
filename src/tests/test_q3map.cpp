@@ -4,7 +4,7 @@
  * \brief       Test for BSP level loader
  * \copyright   MIT License
  **/
-#include "gtest/gtest.h"
+/*#include "gtest/gtest.h"
 #include "renderer/q3map.h"
 #include <iostream>
 #include <fstream>
@@ -22,4 +22,4 @@ TEST(q3map, Basic) {
     for (u32 i=0; i<q3map.textures.size(); i++) {
         std::cout << q3map.textures[i].name << std::endl;
     }
-}
+}*/

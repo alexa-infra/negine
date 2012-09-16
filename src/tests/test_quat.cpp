@@ -43,7 +43,7 @@ TEST(quat, cross_product)
     Quat b(v2.x, v2.y, v2.z, w2);
     
     Quat c = a * b;
-    Vector3 expectXYZ = VectorProduct(v1, v2) + v2 * w1 + v1 * w2;
+    Vector3 expectXYZ = Cross(v1, v2) + v2 * w1 + v1 * w2;
     f32 expectW = w1 * w2 - Dot(v1, v2);
     Quat expected(expectXYZ);
     expected.w = expectW; 

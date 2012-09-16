@@ -1,5 +1,5 @@
 /**
- * \file
+
  * \brief       Matrix 4x4 class
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
@@ -8,98 +8,82 @@
 
 #include "base/math/mathlib.h"
 #include "base/math/vector.h"
-#include "base/math/plane.h"
 
 namespace base {
 namespace math {
 
+//! 4x4 matrix, column-major order
 class Matrix4 {
- public:
-    union {
-        f32 array1d[16];
-        f32 array2d[4][4];
-        struct {
-            f32 xx, xy, xz, xw,
-                yx, yy, yz, yw,
-                zx, zy, zz, zw,
-                wx, wy, wz, ww;
-        };
-        struct {
-            f32 x[4];
-            f32 y[4];
-            f32 z[4];
-            f32 w[4];
-        };
-    };
-
- public:
-    Matrix4();
-    explicit Matrix4(const f32* matrix);
-    Matrix4(f32 vxx, f32 vxy, f32 vxz, f32 vxw,
-            f32 vyx, f32 vyy, f32 vyz, f32 vyw,
-            f32 vzx, f32 vzy, f32 vzz, f32 vzw,
-            f32 vwx, f32 vwy, f32 vwz, f32 vww);
-    Matrix4(const Vector3& col0, const Vector3& col1, const Vector3& col2);
-
-    void SetIdentity();
-
-    void Scale(const Vector3& scale);
-    void Translate(const Vector3& translation);
-
-    void Rotate(const Vector3& axis, const f32& angle);
-    void RotateX(const f32& angle);
-    void RotateY(const f32& angle);
-    void RotateZ(const f32& angle);
-
-    void Project(const Plane& plane);
-    void Reflect(const Plane& plane);
-
-    void Transpose();
-    void Invert();
-    Matrix4 Inverted() { Matrix4 m(*this); m.Invert(); return m; }
-
-    f32& operator[](u32 index) { return array1d[index]; }
-    const f32& operator[](u32 index) const { return array1d[index]; }
- public:
-    Matrix4& operator = (const Matrix4& m);
-    Matrix4& operator *= (const Matrix4& m);
-    Matrix4 operator * (const Matrix4& m) const;
-    Matrix4 operator * (const f32& s) const;
-    Vector3 operator * (const Vector3& v) const;
-    Vector4 operator * (const Vector4& v) const;
-    bool operator == (const Matrix4& m);
-    bool operator != (const Matrix4& m);
-
- public:
-    static const Matrix4 Identity;
-    static const Matrix4 Zero;
-
-    static Matrix4 GetScale(const Vector3& scale);
-    static Matrix4 GetTranslation(const Vector3& translation);
-
-    static Matrix4 GetRotation(const Vector3& axis, const f32& angle);
-    static Matrix4 GetRotationX(const f32& angle);
-    static Matrix4 GetRotationY(const f32& angle);
-    static Matrix4 GetRotationZ(const f32& angle);
-
-    static Matrix4 GetProjection(const Plane& plane);
-    static Matrix4 GetReflection(const Plane& plane);
-
-    static Matrix4 GetPerspective(f32 fovy, f32 aspect, f32 zNear, f32 zFar);
-    static Matrix4 GetOrtho(f32 left, f32 right, f32 bottom, f32 top, f32 nearDist, f32 farDist);
-    static Matrix4 LookAtWithoutUp(const Vector3& from_position, const Vector3& target);
-    static Matrix4 LookAt(const Vector3& from_position, const Vector3& target, const Vector3& up);
  private:
-    void MatrixSwap(const u8& _a, const u8& _b);
+    Vector4 column0_;
+    Vector4 column1_;
+    Vector4 column2_;
+    Vector4 column3_;
 
-    friend std::ostream& operator<< (std::ostream& o, const Matrix4& v);
+ public:
+    Matrix4() {}
+    Matrix4(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3);
+    Matrix4(const Matrix4& m);
+    Matrix4& operator =(const Matrix4& m);
+
+ public:
+    Matrix4& SetCol0(const Vector4& c);
+    Matrix4& SetCol1(const Vector4& c);
+    Matrix4& SetCol2(const Vector4& c);
+    Matrix4& SetCol3(const Vector4& c);
+    Matrix4& SetCol(u32 i, const Vector4& c);
+    Matrix4& SetRow(u32 i, const Vector4& r);
+    Matrix4& SetElem(u32 i, u32 j, f32 a);
+    const Vector4 Col0() const;
+    const Vector4 Col1() const;
+    const Vector4 Col2() const;
+    const Vector4 Col3() const;
+    const Vector4 Col(u32 i) const;
+    const Vector4 Row(u32 i) const;
+    f32 Elem(u32 i, u32 j) const;
+
+public:
+    const Matrix4 operator +(const Matrix4& m) const;
+    const Matrix4 operator -(const Matrix4& m) const;
+    const Matrix4 operator *(f32 s) const;
+    const Vector4 operator *(const Vector4& v) const;
+    const Vector4 operator *(const Vector3& v) const;
+    const Matrix4 operator *(const Matrix4& m) const;
+    bool operator ==(const Matrix4& m) const;
+    bool operator !=(const Matrix4& m) const;
+    
+ public:
+    Matrix4& operator +=(const Matrix4& m);
+    Matrix4& operator -=(const Matrix4& m);
+    Matrix4& operator *=(f32 s);
+    Matrix4& operator *=(const Matrix4& m);
+    
+ public:
+    static const Matrix4 Identity();
+    static const Matrix4 RotationX(f32 radians);
+    static const Matrix4 RotationY(f32 radians);
+    static const Matrix4 RotationZ(f32 radians);
+    static const Matrix4 Scale(const Vector3& sc);
+    static const Matrix4 Translation(const Vector3& tr);
+
+ public:
+    static const Matrix4 LookAt(const Vector3& eyePos, const Vector3& lookAtPos, const Vector3& up);
+    static const Matrix4 Perspective(f32 fovyRadians, f32 aspect, f32 zNear, f32 zFar);
+    static const Matrix4 Frustum(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
+    static const Matrix4 Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
+    
+  private:
+    friend std::ostream& operator<< (std::ostream& o, const Matrix4& m);
 };
 
-inline std::ostream& operator<< ( std::ostream& o, const Matrix4& v ) {
-    for ( int i = 0; i < 16; i++ )
-        o << v[i] << ' ';
-    return o;
-}
+const Matrix4 operator *(f32 s, const Matrix4& m);
+const Matrix4 Transpose(const Matrix4& m);
+const Matrix4 Inverse(const Matrix4& m);
+const Matrix4 AffineInverse(const Matrix4& m);
+const Matrix4 OrthoInverse(const Matrix4& m);
+f32 Determinant(const Matrix4& m);
 
 }
 }
+
+#include "base/math/matrix-inl.h"

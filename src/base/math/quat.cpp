@@ -288,8 +288,7 @@ Quat Quat::GetSlerp(const Quat& q0, const Quat& q1, f32 _time)
 
 Matrix4 Quat::GetMatrix() const
 {
-    Matrix4 m;
-    m = Matrix4::Identity;
+    Matrix4 m = Matrix4::Identity();
 
     f32 wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
     f32 s  = 2.0f/GetNorm();
@@ -299,17 +298,9 @@ Matrix4 Quat::GetMatrix() const
     yy = y * y2;   yz = y * z2;   zz = z * z2;
     wx = w * x2;   wy = w * y2;   wz = w * z2;
 
-    m[0+0*4] = 1.0f - (yy + zz);
-    m[1+0*4] = xy - wz;
-    m[2+0*4] = xz + wy;
-
-    m[0+1*4] = xy + wz;
-    m[1+1*4] = 1.0f - (xx + zz);
-    m[2+1*4] = yz - wx;
-
-    m[0+2*4] = xz - wy;
-    m[1+2*4] = yz + wx;
-    m[2+2*4] = 1.0f - (xx + yy);
+    m.SetCol1( Vector4(1.0f - (yy + zz), xy - wz, xz + wy, 0.0f) );
+    m.SetCol2( Vector4(xy + wz, 1.0f - (xx + zz), yz - wx, 0.0f) );
+    m.SetCol3( Vector4(xz - wy, yz + wx, 1.0f - (xx + yy), 0.0f) );
 
     return m;
 }

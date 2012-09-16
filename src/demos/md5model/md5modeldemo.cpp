@@ -42,17 +42,17 @@ public:
         camera_.set_head(180 * deg_to_rad);
             
         camera_.set_aspect(width_ / (f32)height_);
-        camera_.set_fov(base::math::pi / 4.f);
-        camera_.set_zNear(10);
-        camera_.set_zFar(5000);
+        camera_.set_fov(45.0f);
+        camera_.set_zNear(1);
+        camera_.set_zFar(1000);
         camera_.Update();
 
         cameraTransform_ = camera_.GetModelView(); 
         projection_ = camera_.GetProjection();
-        modelTransform_.SetIdentity();
-        modelTransform_.Translate(Vector3(0, 0, 450));
-        modelTransform_.RotateX(-90 * deg_to_rad);
-        modelTransform_.RotateZ(180 * deg_to_rad);
+        modelTransform_ = Matrix4::Identity();
+        modelTransform_ *= Matrix4::Translation(Vector3(0, 0, 450));
+        modelTransform_ *= Matrix4::RotationX(-90 * deg_to_rad);
+        modelTransform_ *= Matrix4::RotationZ(180 * deg_to_rad);
 
         program_ = LoadProgram("shader.shader");
 
@@ -94,7 +94,7 @@ protected:
         program_->set_uniform(base::opengl::UniformVars::Diffuse, texture_);
         program_->set_uniform(base::opengl::UniformVars::Bump, texture_bump_);
 
-        modelTransform_.RotateZ(20/60.f*deg_to_rad);
+        modelTransform_ *= Matrix4::RotationZ(20/60.f*deg_to_rad);
 
         program_->set_uniform(base::opengl::UniformVars::Projection, projection_);
         program_->set_uniform(base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_);

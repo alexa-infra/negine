@@ -10,6 +10,7 @@
 #include "base/math/vector.h"
 #include "base/math/plane.h"
 #include "base/stream.h"
+#include "renderer/wirebox.h"
 
 namespace base {
 namespace opengl {
@@ -204,6 +205,8 @@ public:
 
     std::vector<Node>       tree;
     std::vector<math::Plane> planes_;
+    WireBox _wb;
+    Program* _program;
 
     q3maploader(FileBinary& file);
     ~q3maploader();
