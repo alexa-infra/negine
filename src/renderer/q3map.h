@@ -11,6 +11,7 @@
 #include "base/math/plane.h"
 #include "base/stream.h"
 #include "renderer/wirebox.h"
+#include "renderer/gltexture.h"
 
 namespace base
 {
@@ -213,6 +214,7 @@ public:
 
     std::vector<Node>       tree;
     std::vector<math::Plane> planes_;
+    std::vector<Texture*>    lm_textures;
     WireBox _wb;
     Program* _program;
 

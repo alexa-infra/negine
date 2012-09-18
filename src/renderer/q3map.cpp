@@ -68,6 +68,8 @@ q3maploader::q3maploader( FileBinary& file )
 
 q3maploader::~q3maploader()
 {
+    for( int i = 0; i < lm_textures.size(); i++ )
+        delete lm_textures[i];
     delete[] visFaces;
 }
 
@@ -83,26 +85,6 @@ void q3maploader::load()
     faces       = read<q3face>( 13 );
     faceIndexes = read<u32>( 11 );
 
-//    for( size_t i=0; i<planes.size(); i++ )
-//        swizzle( planes[i].normal );
-//    for( size_t i=0; i<nodes.size(); i++ ) {
-//        swizzle( nodes[i].mmin );
-//        swizzle( nodes[i].mmax );
-//    }
-    for( size_t i = 0; i < faces.size(); i++ ) {
-//        swizzle( faces[i].normal );
-    }
-
-    for( size_t i = 0; i < vertexes.size(); i++ ) {
-//        swizzle( vertexes[i].pos );
-//        swizzle( vertexes[i].normal );
-//        vertexes[i].surfaceUV.x = 1 - vertexes[i].surfaceUV.x;
-    }
-
-//    for( size_t i=0; i<leafs.size(); i++ ) {
-//        swizzle( leafs[i].mins );
-//        swizzle( leafs[i].maxs );
-//    }
     q3lump lump_vis = read_lump( 16 );
     f.set_position( lump_vis.offset );
     visibility.nVecs = f.read_type<i32>();
@@ -110,10 +92,24 @@ void q3maploader::load()
     i32 visDataSize = visibility.nVecs * visibility.szVecs;
     visibility.vecs = new u8[visDataSize];
     f.read( visibility.vecs, visDataSize );
+    
     visFaces = new u8[faces.size()];
     tree.resize( nodes.size() + leafs.size() );
     Node* firstNode = &tree.front();
     Node* firstLeaf = firstNode + nodes.size();
+
+    std::vector<q3lightmap> lm = read<q3lightmap>( 14 );
+    lm_textures.resize( lm.size() );
+    TextureInfo ti;
+    ti.MinFilter = TextureMinFilters::LINEAR;
+    ti.GenerateMipmap = true;
+    ti.Pixel = PixelTypes::RGB;
+    for( int i = 0; i < lm.size(); i++ )
+    {
+        Texture*& t = lm_textures[i];
+        t = new Texture;
+        t->GenerateFromBuffer( ti, (u8*)lm[i].data );
+    }
 
     for( size_t i = 0; i < nodes.size(); i++ ) {
         const q3node& node = nodes[i];
@@ -300,6 +296,11 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
 
         pr->set_uniform( base::opengl::UniformVars::Diffuse, t );
 
+        if ( face.lightmapID >= 0 ) {
+            Texture* lightmap = lm_textures[face.lightmapID];
+            pr->set_uniform( base::opengl::UniformVars::Lightmap, t );
+        }
+
         if ( face.type == 1 ) {
             render_polygons( face, pr );
         } else if ( face.type == 2 ) {
@@ -370,7 +371,7 @@ void bind_attr( Program* pr, const q3vertex& vertex )
             GL_FALSE,
             sizeof(q3vertex),
             (const u8*)&vertex.normal);
-
+    */
         u32 bindLM = binding[VertexAttrs::tagTangent];
         glVertexAttribPointer(
             bindLM,
@@ -378,7 +379,7 @@ void bind_attr( Program* pr, const q3vertex& vertex )
             GL_FLOAT,
             GL_FALSE,
             sizeof(q3vertex),
-            (const u8*)&vertex.lightmapUV);*/
+            (const u8*)&vertex.lightmapUV);
 }
 
 void Bezier::tessellate( u32 L )

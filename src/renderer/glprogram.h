@@ -29,6 +29,7 @@ enum UniformVar {
     Bump,
     LightPos,
     Color,
+    Lightmap,
 
     Count
 };
