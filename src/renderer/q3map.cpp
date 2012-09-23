@@ -4,6 +4,7 @@
 #include <string.h>
 #include <deque>
 #include <set>
+#include <map>
 #include "renderer/camera.h"
 #include "renderer/glcontext.h"
 #include "renderer/glprogram.h"
@@ -285,30 +286,52 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
     ComputeVisible_R( camera, &tree.front(), ( 1 << 7 ) - 1 );
     //return;
 
+    typedef std::multimap<std::string, int> theMap;
+    typedef theMap::iterator theMapIter;
+    theMap sorted;
     for ( u32 i = 0; i < _visible_faces.size(); i++ ) {
         int faceIndex = _visible_faces[i];
         const q3face& face = faces[faceIndex];
-        Texture* t = txloader.Load( ( char* )textures[face.textureID].name );
+        std::string name( ( const char* )textures[face.textureID].name );
+        Texture* t = txloader.Load( name );
+        if ( t == NULL )
+            name = "checker.png";
+        sorted.insert( make_pair( name, faceIndex ) );
+    }
+  
+    //int switches = 0;
+    theMapIter ita, itb;
+    for ( ita = sorted.begin(); ita != sorted.end(); ita = itb ) {
+        const std::string& key = ( *ita ).first;
+        std::pair<theMapIter, theMapIter> keyRange = sorted.equal_range( key );
+        Texture* t = txloader.Load( key );
 
-        if ( t == NULL ) {
+        /*if ( t == NULL ) {
             t = txloader.Load( "checker.png" );
-        }
+        }*/
 
         pr->set_uniform( base::opengl::UniformVars::Diffuse, t );
 
-        if ( face.lightmapID >= 0 ) {
-            Texture* lightmap = lm_textures[face.lightmapID];
-            pr->set_uniform( base::opengl::UniformVars::Lightmap, t );
-        }
+      //  switches++;
+        for ( itb = keyRange.first; itb != keyRange.second; ++itb ) {
+            int faceIndex = ( *itb ).second;
+            const q3face& face = faces[faceIndex];
 
-        if ( face.type == 1 ) {
-            render_polygons( face, pr );
-        } else if ( face.type == 2 ) {
-            render_patch( face, pr );
+            if ( face.lightmapID >= 0 ) {
+                Texture* lightmap = lm_textures[face.lightmapID];
+                pr->set_uniform( base::opengl::UniformVars::Lightmap, t );
+            }
+
+            if ( face.type == 1 ) {
+                render_polygons( face, pr );
+            } else if ( face.type == 2 ) {
+                render_patch( face, pr );
+            }
         }
     }
 
-    std::cout << Stats::polygons() << std::endl;
+//    std::cout << switches << std::endl;
+//    std::cout << Stats::polygons() << std::endl;
 }
 
 void q3maploader::render_polygons( const q3face& face, Program* pr ) const
