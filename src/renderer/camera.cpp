@@ -43,7 +43,7 @@ void Camera::UpdateOrientation()
 {
     Matrix4 headRot  = Matrix4::RotationZ( head_ );
     Matrix4 pitchRot = Matrix4::RotationX( pitch_ );
-    Matrix4 orientation = pitchRot * headRot;
+    Matrix4 orientation = headRot * pitchRot;
     UpdateVectors( orientation );
 }
 

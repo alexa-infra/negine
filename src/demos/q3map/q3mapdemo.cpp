@@ -40,7 +40,8 @@ public:
         //camera_.set_position(Vector3(0, 0, 0));
         camera_.set_position( Vector3( 28.4461f, 41.9335f, 300.19f ) );
         camera_.set_pitch( 0 );
-        camera_.set_head( -math::pi );
+        //camera_.set_head( -math::pi );
+        camera_.set_head( 0 );
         camera_.set_aspect( width_ / ( f32 )height_ );
         camera_.set_fov( 45.f );
         camera_.set_zNear( 10 );
@@ -259,11 +260,13 @@ protected:
         }
 
         if ( keypressed_ & 16 ) {
-            camera_.set_pitch( camera_.pitch() + deg_to_rad );
+            if ( fabs( camera_.pitch() + deg_to_rad ) < math::pi / 2.0f )
+                camera_.set_pitch( camera_.pitch() + deg_to_rad );
         }
 
         if ( keypressed_ & 32 ) {
-            camera_.set_pitch( camera_.pitch() - deg_to_rad );
+            if ( fabs( camera_.pitch() - deg_to_rad ) < math::pi / 2.0f )
+                camera_.set_pitch( camera_.pitch() - deg_to_rad );
         }
 
         if ( keypressed_ & 64 ) {
