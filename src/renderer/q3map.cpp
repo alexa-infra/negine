@@ -105,6 +105,8 @@ void q3maploader::load()
     ti.MinFilter = TextureMinFilters::LINEAR;
     ti.GenerateMipmap = true;
     ti.Pixel = PixelTypes::RGB;
+    ti.Width = 512;
+    ti.Height = 512;
     for( int i = 0; i < lm.size(); i++ )
     {
         Texture*& t = lm_textures[i];

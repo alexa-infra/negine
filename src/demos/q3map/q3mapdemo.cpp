@@ -83,7 +83,6 @@ protected:
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
         glEnable( GL_DEPTH_TEST );
-        glDisable( GL_CULL_FACE );
         program_->Bind();
         program_->set_uniform( base::opengl::UniformVars::Projection, projection_ );
         program_->set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
