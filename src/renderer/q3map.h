@@ -60,10 +60,10 @@ struct q3node {
     i32 mmax[3];
 
     math::Vector3 mins() const {
-        return math::Vector3( mmin[0], mmin[1], mmin[2] );
+        return math::Vector3( static_cast<f32>(mmin[0]), static_cast<f32>(mmin[1]), static_cast<f32>(mmin[2]) );
     }
     math::Vector3 maxs() const {
-        return math::Vector3( mmax[0], mmax[1], mmax[2] );
+        return math::Vector3( static_cast<f32>(mmax[0]), static_cast<f32>(mmax[1]), static_cast<f32>(mmax[2]) );
     }
 };
 
@@ -155,10 +155,10 @@ struct q3leaf {
     i32 leafBrush;
     i32 numberOfLeafBrushes;
     math::Vector3 minv() const {
-        return math::Vector3( mins[0], mins[1], mins[2] );
+        return math::Vector3( static_cast<f32>(mins[0]), static_cast<f32>(mins[1]), static_cast<f32>(mins[2]) );
     }
     math::Vector3 maxv() const {
-        return math::Vector3( maxs[0], maxs[1], maxs[2] );
+        return math::Vector3( static_cast<f32>(maxs[0]), static_cast<f32>(maxs[1]), static_cast<f32>(maxs[2]) );
     }
 };
 

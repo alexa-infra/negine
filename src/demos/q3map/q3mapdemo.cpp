@@ -90,7 +90,7 @@ protected:
         Texture* t = texure_loader_.Load( "checker.png" );
         program_->set_uniform( base::opengl::UniformVars::Diffuse, t );
 
-        for ( int i = 0; i < cubes_.size(); i++ ) {
+        for ( u32 i = 0; i < cubes_.size(); i++ ) {
             const Cube& c = cubes_[i];
 
             if ( !InterFrustum( c ) ) {
@@ -140,29 +140,29 @@ protected:
         i32 face_start;
     };
     Cube AddCube( std::vector<Vertex>& v, std::vector<Face>& f, const math::Vector3& position ) {
-        i32 s = 10;
-        Vector3 v0 = Vector3( 0, 0, 0 ) + position;
-        Vector3 v1 = Vector3( 0, 0, s ) + position;
-        Vector3 v2 = Vector3( s, 0, s ) + position;
-        Vector3 v3 = Vector3( s, 0, 0 ) + position;
-        Vector3 v4 = Vector3( 0, s, 0 ) + position;
-        Vector3 v5 = Vector3( 0, s, s ) + position;
+        f32 s = 10;
+        Vector3 v0 = Vector3( 0.0f, 0.0f, 0.0f ) + position;
+        Vector3 v1 = Vector3( 0.0f, 0.0f, s ) + position;
+        Vector3 v2 = Vector3( s, 0.0f, s ) + position;
+        Vector3 v3 = Vector3( s, 0.0f, 0.0f ) + position;
+        Vector3 v4 = Vector3( 0.0f, s, 0.0f ) + position;
+        Vector3 v5 = Vector3( 0.0f, s, s ) + position;
         Vector3 v6 = Vector3( s, s, s ) + position;
-        Vector3 v7 = Vector3( s, s, 0 ) + position;
+        Vector3 v7 = Vector3( s, s, 0.0f ) + position;
         Cube cube;
         cube.face_start = f.size();
         cube.max = v6;
         cube.min = v0;
-        AddCubeSide( v, f, v0, v1, v2, v3, Vector3( 0, -1, 0 ) );
-        AddCubeSide( v, f, v1, v5, v6, v2, Vector3( 0, 0, 1 ) );
-        AddCubeSide( v, f, v5, v4, v7, v6, Vector3( 0, 0, 1 ) );
-        AddCubeSide( v, f, v4, v0, v3, v7, Vector3( 0, 0, -1 ) );
-        AddCubeSide( v, f, v0, v4, v5, v1, Vector3( -1, 0, 0 ) );
-        AddCubeSide( v, f, v2, v6, v7, v3, Vector3( 1, 0, 0 ) );
+        AddCubeSide( v, f, v0, v1, v2, v3, Vector3( 0.0f, -1.0f, 0.0f ) );
+        AddCubeSide( v, f, v1, v5, v6, v2, Vector3( 0.0f, 0.0f, 1.0f ) );
+        AddCubeSide( v, f, v5, v4, v7, v6, Vector3( 0.0f, 0.0f, 1.0f ) );
+        AddCubeSide( v, f, v4, v0, v3, v7, Vector3( 0.0f, 0.0f, -1.0f ) );
+        AddCubeSide( v, f, v0, v4, v5, v1, Vector3( -1.0f, 0.0f, 0.0f ) );
+        AddCubeSide( v, f, v2, v6, v7, v3, Vector3( 1.0f, 0.0f, 0.0f ) );
         return cube;
     }
     void SetVertexN( Vertex* v, const math::Vector3& n ) {
-        for( int i = 0; i < 4; i++ ) {
+        for( u32 i = 0; i < 4; i++ ) {
             v[i].n = n;
         }
     }

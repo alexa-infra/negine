@@ -69,7 +69,7 @@ q3maploader::q3maploader( FileBinary& file )
 
 q3maploader::~q3maploader()
 {
-    for( int i = 0; i < lm_textures.size(); i++ )
+    for( u32 i = 0; i < lm_textures.size(); i++ )
         delete lm_textures[i];
     delete[] visFaces;
 }
@@ -105,7 +105,7 @@ void q3maploader::load()
     ti.MinFilter = TextureMinFilters::LINEAR;
     ti.GenerateMipmap = true;
     ti.Pixel = PixelTypes::RGB;
-    for( int i = 0; i < lm.size(); i++ )
+    for( u32 i = 0; i < lm.size(); i++ )
     {
         Texture*& t = lm_textures[i];
         t = new Texture;
@@ -253,7 +253,7 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
     for ( u32 i = 0; i < 6; i++ ) {
         u32 mask = 1 << i;
 
-        if ( planeMask& mask == 0 ) {
+        if ( ( planeMask & mask ) == 0 ) {
             continue;
         }
 
@@ -423,7 +423,7 @@ void Bezier::tessellate( u32 L )
 
     for ( u32 i = 1; i <= L; ++i ) {
         const f32 a = i / ( f32 )L;
-        const f32 b = 1.0 - a;
+        const f32 b = 1.0f - a;
         q3vertex temp[3];
 
         for ( u32 j = 0; j < 3; ++j ) {
@@ -448,7 +448,7 @@ void Bezier::tessellate( u32 L )
     indexes.resize( L * ( L + 1 ) * 2 );
 
     for ( u32 row = 0; row < L; ++row ) {
-        for( int col = 0; col <= L; ++col )   {
+        for( u32 col = 0; col <= L; ++col )   {
             indexes[( row * ( L + 1 ) + col ) * 2 + 1] = row * L1 + col;
             indexes[( row * ( L + 1 ) + col ) * 2] = ( row + 1 ) * L1 + col;
         }
