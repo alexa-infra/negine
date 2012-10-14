@@ -16,23 +16,19 @@ namespace base
 namespace opengl
 {
 
-using base::math::Matrix4;
-using base::math::Vector3;
-using base::math::Plane;
-
 class Camera
 {
 private:
-    Plane planes_[6];
-    Matrix4 projection_;
-    Matrix4 modelview_;
-    Matrix4 clip_;
+    math::Plane planes_[6];
+    math::Matrix4 projection_;
+    math::Matrix4 modelview_;
+    math::Matrix4 clip_;
 
-    Vector3 forward_;
-    Vector3 right_;
-    Vector3 up_;
+    math::Vector3 forward_;
+    math::Vector3 right_;
+    math::Vector3 up_;
 
-    Vector3 position_;
+    math::Vector3 position_;
 
     f32 pitch_;
     f32 head_;
@@ -116,20 +112,11 @@ public:
         return clip_;
     }
 
-    bool PointIsInFrustum( const Vector3& point ) const;
-    bool BoxIsInFrustumFast( const Vector3& a, const Vector3& b ) const;
-    bool BoxIsInFrustumFull( const Vector3& a, const Vector3& b ) const;
-
     void Update();
 private:
     void UpdateOrientation();
     void UpdateFrustum();
 
-    Matrix4 Projection() const;
-    Matrix4 ModelView() const;
-
-    void UpdateVectors( const Matrix4& orient );
-    static void ConvertBoundingBox( const Vector3& min_point, const Vector3& max_point, const Matrix4& m, Vector3* points );
 private:
     DISALLOW_COPY_AND_ASSIGN( Camera );
 };
