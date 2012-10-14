@@ -40,20 +40,20 @@ private:
 public:
     Camera();
 
-    const Vector3& forward() const {
+    const math::Vector3& forward() const {
         return forward_;
     }
-    const Vector3& right() const {
+    const math::Vector3& right() const {
         return right_;
     }
-    const Vector3& up() const {
+    const math::Vector3& up() const {
         return up_;
     }
 
-    void set_position( const Vector3& v ) {
+    void set_position( const math::Vector3& v ) {
         position_ = v;
     }
-    const Vector3& position() const {
+    const math::Vector3& position() const {
         return position_;
     }
 
@@ -98,17 +98,17 @@ public:
         return zFar_;
     }
 
-    const Plane* planes() const {
+    const math::Plane* planes() const {
         return planes_;
     }
 
-    const Matrix4& GetProjection() const {
+    const math::Matrix4& GetProjection() const {
         return projection_;
     }
-    const Matrix4& GetModelView() const {
+    const math::Matrix4& GetModelView() const {
         return modelview_;
     }
-    const Matrix4& GetClipMatrix() const {
+    const math::Matrix4& GetClipMatrix() const {
         return clip_;
     }
 

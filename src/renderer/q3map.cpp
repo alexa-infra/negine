@@ -257,7 +257,7 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
             continue;
         }
 
-        const Plane& p = camera.planes()[i];
+        const math::Plane& p = camera.planes()[i];
 
         u8 r = p.BoxOnPlaneSide( mins, maxs );
 
