@@ -15,6 +15,9 @@ class Timer
 {
 private:
     u64 start_time_;
+#ifdef OS_WIN
+    u64 frequency_;
+#endif
 
 public:
     Timer();
@@ -22,8 +25,8 @@ public:
     f32 Reset();
     f32 Elapsed();
 private:
-    static u64 GetClock();
-    static f32 GetMillis( u64 range );
+    u64 GetClock();
+    f32 GetMillis( u64 range );
 };
 
 } // namespace base

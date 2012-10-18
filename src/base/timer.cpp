@@ -11,6 +11,7 @@
 #ifdef OS_POSIX
 # include <sys/time.h>
 #endif
+#include <assert.h>
 
 namespace base
 {
@@ -18,6 +19,14 @@ namespace base
 Timer::Timer()
 {
     start_time_ = GetClock();
+#ifdef OS_WIN
+    LARGE_INTEGER freq;
+    if ( QueryPerformanceFrequency( &freq ) == FALSE )
+    {
+        assert(false);
+    }
+    frequency_ = freq.QuadPart;
+#endif
 }
 
 f32 Timer::Reset()
@@ -37,19 +46,14 @@ f32 Timer::Elapsed()
 
 u64 Timer::GetClock()
 {
-    FILETIME ft;
-    GetSystemTimeAsFileTime( &ft );
-    u64 res = 0;
-    res |= ft.dwHighDateTime;
-    res <<= 32;
-    res |= ft.dwLowDateTime;
-    res /= 10;
-    return res;
+    LARGE_INTEGER time;
+    QueryPerformanceCounter(&time);
+    return time.QuadPart;
 }
 
 f32 Timer::GetMillis( u64 range )
 {
-    return ( f32 )( range / ( f32 )1000 );
+    return ( f32 )( range / ( frequency_ / 1000.0f ) );
 }
 
 #elif defined(OS_POSIX)
