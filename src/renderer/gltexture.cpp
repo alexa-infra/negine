@@ -54,12 +54,19 @@ TextureInfo::TextureInfo()
 Texture::Texture()
     : id_( 0 )
 {
-    glGenTextures( 1, &id_ );
 }
 
 Texture::~Texture()
 {
-    glDeleteTextures( 1, &id_ );
+    Destroy();
+}
+
+void Texture::Destroy()
+{
+    if ( id_ != 0 ) {
+        glDeleteTextures( 1, &id_ );
+        id_ = 0;
+    }
 }
 
 void Texture::Bind()
@@ -101,6 +108,9 @@ void Texture::GenerateFromFile( const TextureInfo& textureinfo )
 
 void Texture::FromBuffer( const u8* data )
 {
+    assert( id_ == 0 );
+    glGenTextures( 1, &id_ );
+
     if ( !info_.GenerateMipmap ) {
         assert( info_.MinFilter == TextureMinFilters::LINEAR
                 || info_.MinFilter == TextureMinFilters::NEAREST );

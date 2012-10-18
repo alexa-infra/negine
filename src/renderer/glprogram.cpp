@@ -54,60 +54,102 @@ u32 UniformVars::get_tex_index( UniformVar var )
 
 Program::Program()
     : program_id_( 0 )
-    , pixel_shader_( NULL )
-    , vertex_shader_( NULL )
-    , is_ok_( false )
 {
-    program_id_ = glCreateProgram();
 }
 
-Program* Program::Create( const std::string& vs, const std::string& fs, std::string& status )
+void Program::Destroy()
 {
-    std::auto_ptr<Shader> pvs( new Shader( ShaderTypes::VERTEX ) );
-    std::auto_ptr<Shader> pfs( new Shader( ShaderTypes::PIXEL ) );
-    std::auto_ptr<Program> pr( new Program );
-    bool failed = false;
-
-    if ( !pvs->Compile( vs ) ) {
-        status = pvs->status();
-        failed = true;
-    } else {
-        pr->vertex_shader_ = pvs.release();
+    if ( is_ok() ) {
+        glDetachShader( program_id_, vertex_shader_.id() );
+        glDetachShader( program_id_, pixel_shader_.id() );
     }
 
-    if ( !pfs->Compile( fs ) ) {
-        if ( !failed ) {
-            status = pfs->status();
-        } else {
-            status = status + pfs->status();
-        }
+    if ( program_id_ != 0 ) {
+        pixel_shader_.Destroy();
+        vertex_shader_.Destroy();
 
+        glDeleteProgram( program_id_ );
+        program_id_ = 0;
+    }
+}
+
+bool Program::CreateFromText( const std::string& vs, const std::string& fs, std::string& statusStr )
+{
+    assert( program_id_ == 0 );
+    program_id_ = glCreateProgram();
+
+    if ( program_id_ == 0 )
+        return false;
+
+    bool failed = false;
+
+    if ( !vertex_shader_.Create( ShaderTypes::VERTEX, vs ) ) {
+        statusStr = vertex_shader_.status();
         failed = true;
-    } else {
-        pr->pixel_shader_ = pfs.release();
+    }
+
+    if ( !pixel_shader_.Create( ShaderTypes::PIXEL, fs ) ) {
+        statusStr = statusStr + pixel_shader_.status();
+        failed = true;
     }
 
     if ( failed ) {
-        return NULL;
+        vertex_shader_.Destroy();
+        pixel_shader_.Destroy();
+        return false;
     }
 
-    pr->Link();
+    glAttachShader( program_id_, vertex_shader_.id() );
+    glAttachShader( program_id_, pixel_shader_.id() );
+    glLinkProgram( program_id_ );
+    
+    GLint linkStatus;
+    glGetProgramiv( program_id_, GL_LINK_STATUS, &linkStatus );
+    bool linked = ( linkStatus == GL_TRUE );
+    
+    if ( linked ){
+        get_uniforms_list();
+        get_attributes_list();
+    } else {
+        statusStr = this->status();
 
-    if ( !pr->is_ok() ) {
-        status = pr->status();
-        return NULL;
+        glDetachShader( program_id_, vertex_shader_.id() );
+        glDetachShader( program_id_, pixel_shader_.id() );
+        vertex_shader_.Destroy();
+        pixel_shader_.Destroy();
     }
 
-    return pr.release();
+    return linked;
 }
 
-Program* Program::Create( const std::string& filename, std::string& status )
+const std::string Program::status() const
+{
+    std::string result;
+    if ( program_id_ == 0 ) {
+        return result;
+    }
+
+    GLint len;
+    glGetProgramiv( program_id_, GL_INFO_LOG_LENGTH, &len );
+
+    if ( len == 0 ) {
+        return result;
+    }
+
+    result.resize( len );
+    char* buf = const_cast<char*>( result.c_str() );
+    glGetProgramInfoLog( program_id_, len, NULL, buf );
+
+    return result;
+}
+
+bool Program::CreateFromFile( const std::string& filename, std::string& status )
 {
     FileText file( filename );
     std::vector<std::string> lines = file.read_lines();
 
     if ( lines.size() == 0 ) {
-        return NULL;
+        return false;
     }
 
     u32 vertexBegin = 0;
@@ -124,7 +166,7 @@ Program* Program::Create( const std::string& filename, std::string& status )
     }
 
     if ( vertexBegin == pixelBegin ) {
-        return NULL;
+        return false;
     }
 
     u32 vertexEnd = 0;
@@ -150,14 +192,12 @@ Program* Program::Create( const std::string& filename, std::string& status )
         pixelSrc = pixelSrc + lines[i] + "\n";
     }
 
-    return Create( vertexSrc, pixelSrc, status );
+    return CreateFromText( vertexSrc, pixelSrc, status );
 }
 
 Program::~Program()
 {
-    delete pixel_shader_;
-    delete vertex_shader_;
-    glDeleteProgram( program_id_ );
+    Destroy();
 }
 
 void Program::Bind()
@@ -178,50 +218,7 @@ void Program::Unbind()
         glDisableVertexAttribArray( it->second );
     }
 
-//    glUseProgram(0);
-}
-
-void Program::Link()
-{
-    if ( vertex_shader_ != NULL ) {
-        glAttachShader( program_id_, vertex_shader_->id() );
-    }
-
-    if ( pixel_shader_ != NULL ) {
-        glAttachShader( program_id_, pixel_shader_->id() );
-    }
-
-    glLinkProgram( program_id_ );
-    GLint status;
-    glGetProgramiv( program_id_, GL_LINK_STATUS, &status );
-
-    if ( status != GL_FALSE ) {
-        is_ok_ = true;
-        get_uniforms_list();
-        get_attributes_list();
-        return;
-    }
-
-    GLint len;
-    glGetProgramiv( program_id_, GL_INFO_LOG_LENGTH, &len );
-    status_.resize( len );
-    char* buf = const_cast<char*>( status_.c_str() );
-    glGetProgramInfoLog( program_id_, len, NULL, buf );
-    is_ok_ = false;
-}
-
-void Program::Unlink()
-{
-    if ( pixel_shader_ != NULL ) {
-        glDetachShader( program_id_, pixel_shader_->id() );
-    }
-
-    if ( vertex_shader_ != NULL ) {
-        glDetachShader( program_id_, vertex_shader_->id() );
-    }
-
-    uni_binding_.clear();
-    attr_binding_.clear();
+    glUseProgram(0);
 }
 
 template<>
@@ -317,7 +314,7 @@ void Program::get_attributes_list()
     delete [] attrName;
 }
 
-Program* LoadProgram( const std::string& filename )
+void Program::CreateFromFileWithAssert( const std::string& filename )
 {
     std::string status;
 
@@ -327,20 +324,16 @@ Program* LoadProgram( const std::string& filename )
                 << filename << '\n'
                 << std::endl;
         assert( false );
-        return NULL;
+        return;
     }
 
-    Program* program = Program::Create( filename, status );
-
-    if ( program == NULL ) {
+    if ( !CreateFromFile( filename, status ) ) {
         std::cout
                 << "Error on load shader program "
                 << filename << std::endl
                 << status << std::endl;
         assert( false );
     }
-
-    return program;
 }
 
 }

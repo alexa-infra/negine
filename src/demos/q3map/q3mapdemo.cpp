@@ -19,7 +19,7 @@ using namespace base::opengl;
 class Demo : public Application
 {
 protected:
-    Program* program_;
+    Program program_;
     q3maploader* q3map_;
     Camera camera_;
     TextureLoader texure_loader_;
@@ -30,7 +30,6 @@ protected:
     std::vector<Cube> cubes_;
 public:
     Demo() {
-        program_ = NULL;
         buffer_ = NULL;
         q3map_ = NULL;
         keypressed_ = 0;
@@ -58,10 +57,10 @@ public:
         Cube c = AddCube( vv, ff, camera_.position() );
         //cubes_.push_back(c);
         buffer_ = new VertexBufferGPU( &vv[0], vv.size(), &ff[0], ff.size() );
-        program_ = LoadProgram( "q3map.shader" );
+        program_.CreateFromFileWithAssert( "q3map.shader" );
     }
     virtual ~Demo() {
-        delete program_;
+        program_.Destroy();
         delete q3map_;
         delete buffer_;
     }
@@ -83,11 +82,11 @@ protected:
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
         glEnable( GL_DEPTH_TEST );
-        program_->Bind();
-        program_->set_uniform( base::opengl::UniformVars::Projection, projection_ );
-        program_->set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
+        program_.Bind();
+        program_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
+        program_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
         Texture* t = texure_loader_.Load( "checker.png" );
-        program_->set_uniform( base::opengl::UniformVars::Diffuse, t );
+        program_.set_uniform( base::opengl::UniformVars::Diffuse, t );
 
         for ( u32 i = 0; i < cubes_.size(); i++ ) {
             const Cube& c = cubes_[i];
@@ -99,11 +98,11 @@ protected:
                 std::cout << "not culled" << std::endl;
             }
 
-            buffer_->Draw( program_->binding(), c.face_start, 12 );
+            buffer_->Draw( program_.binding(), c.face_start, 12 );
         }
 
-        q3map_->render( camera_, program_, texure_loader_ );
-        program_->Unbind();
+        q3map_->render( camera_, &program_, texure_loader_ );
+        program_.Unbind();
         assert( glGetError() == GL_NO_ERROR );
         Application::OnFrame();
     }

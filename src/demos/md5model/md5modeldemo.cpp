@@ -21,8 +21,8 @@ using namespace base::resource;
 
 class Demo : public Application
 {
-    Program*        program_;
-    Program*        program_wirebox_;
+    Program        program_;
+    Program        program_wirebox_;
     Camera          camera_;
     TextureLoader   texure_loader_;
     Matrix4         projection_;
@@ -51,14 +51,14 @@ public:
         modelTransform_ *= Matrix4::Translation( Vector3( 0, 0, 450 ) );
         modelTransform_ *= Matrix4::RotationX( -90 * deg_to_rad );
         modelTransform_ *= Matrix4::RotationZ( 180 * deg_to_rad );
-        program_ = LoadProgram( "bump.shader" );
+        program_.CreateFromFileWithAssert( "bump.shader" );
         texture_ = texure_loader_.Load( "hellknight.png" );
         texture_bump_ = texure_loader_.Load( "hellknight_local.png" );
         entity = Entity::Load( "hellknight.md5mesh" );
         entity->object.md5Anim = new Md5Anim;
         entity->object.md5Anim->Load( "hellknight_idle2.md5anim" );
         md5_renderer_ = new Md5Renderer( &entity->object.md5Model );
-        program_wirebox_ = LoadProgram( "wirebox.shader" );
+        program_wirebox_.CreateFromFileWithAssert( "wirebox.shader" );
         wire_box_ = new WireBox( md5_renderer_->boundingBox.min,
                                  md5_renderer_->boundingBox.max );
         f32 box_radius  = 600.0f;
@@ -66,7 +66,9 @@ public:
                                         Vector3( box_radius, box_radius, box_radius ) );
     }
     virtual ~Demo() {
-        delete program_;
+        program_.Destroy();
+        program_wirebox_.Destroy();
+
         delete entity->object.md5Anim;
         delete entity;
         delete wire_box_;
@@ -78,32 +80,32 @@ protected:
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
         glEnable( GL_DEPTH_TEST );
-        program_->Bind();
-        program_->set_uniform( base::opengl::UniformVars::Diffuse, texture_ );
-        program_->set_uniform( base::opengl::UniformVars::Bump, texture_bump_ );
+        program_.Bind();
+        program_.set_uniform( base::opengl::UniformVars::Diffuse, texture_ );
+        program_.set_uniform( base::opengl::UniformVars::Bump, texture_bump_ );
         modelTransform_ *= Matrix4::RotationZ( 20 / 60.f * deg_to_rad );
-        program_->set_uniform( base::opengl::UniformVars::Projection, projection_ );
-        program_->set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_ );
-        program_->set_uniform( base::opengl::UniformVars::CameraPos, camera_.position() );
-        program_->set_uniform( base::opengl::UniformVars::LightPos, Vector3( 40, 110, -200 ) );
+        program_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
+        program_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_ );
+        program_.set_uniform( base::opengl::UniformVars::CameraPos, camera_.position() );
+        program_.set_uniform( base::opengl::UniformVars::LightPos, Vector3( 40, 110, -200 ) );
         static u32 counter = 0;
         counter++;
         u32 frame  = counter / 2;
         f32 interp = ( counter % 2 ) / 2.f;
         entity->object.md5Anim->Update( &entity->object.md5Model, frame, interp );
         md5_renderer_->Commit();
-        AttributeBinding binding = program_->binding();
+        AttributeBinding binding = program_.binding();
         md5_renderer_->Draw( binding );
-        program_->Unbind();
-        program_wirebox_->Bind();
-        program_wirebox_->set_uniform( base::opengl::UniformVars::Projection, projection_ );
-        program_wirebox_->set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_ );
+        program_.Unbind();
+        program_wirebox_.Bind();
+        program_wirebox_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
+        program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_ );
         wire_box_->setMinPoint( md5_renderer_->boundingBox.min );
         wire_box_->setMaxPoint( md5_renderer_->boundingBox.max );
-        wire_box_->Draw( program_wirebox_ );
-        program_wirebox_->set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
-        camera_wirebox_->Draw( program_wirebox_ );
-        program_wirebox_->Unbind();
+        wire_box_->Draw( &program_wirebox_ );
+        program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
+        camera_wirebox_->Draw( &program_wirebox_ );
+        program_wirebox_.Unbind();
         assert( glGetError() == GL_NO_ERROR );
         Application::OnFrame();
     }

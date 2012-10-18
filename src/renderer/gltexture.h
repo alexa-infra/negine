@@ -146,14 +146,13 @@ class Texture
 protected:
     GLuint id_;         //!< Texture name
     TextureInfo info_;  //!< Current info
-    bool is_ok_;        //!< Creation status
 public:
     Texture();
     ~Texture();
 
     //! Gets creation status
     bool is_ok() const {
-        return is_ok_;
+        return id_ == 0;
     }
 
     //! Gets texture info
@@ -178,6 +177,8 @@ public:
     bool has_alpha() const {
         return ( ( info_.Pixel & PixelTypes::A ) > 0 );
     }
+
+    void Destroy();
 private:
     void FromBuffer( const u8* data );
 

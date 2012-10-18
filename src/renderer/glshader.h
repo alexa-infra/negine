@@ -27,13 +27,15 @@ class Shader
 {
 private:
     u32 id_;                    //!< Name of shader
-    bool is_ok_;                //!< Creation status
-    bool compiled_;             //!< Compilation status
     GLenum shader_type_;        //!< Type of shader
-    std::string status_;        //!< Status string
 public:
-    Shader( ShaderType shaderType );
+    Shader();
     ~Shader();
+
+    //! Compile shader from source
+    bool Create( ShaderType shaderType, const std::string& source );
+
+    void Destroy();
 
     //! Gets name of shader
     u32 id() const {
@@ -42,12 +44,7 @@ public:
 
     //! Gets creation status
     bool is_ok() const {
-        return is_ok_;
-    }
-
-    //! Gets compilation status
-    bool compiled() const {
-        return compiled_;
+        return id_ != 0;
     }
 
     //! Gets shader type
@@ -56,12 +53,7 @@ public:
     }
 
     //! Gets status string
-    const std::string& status() const {
-        return status_;
-    }
-
-    //! Compile shader from source
-    bool Compile( const std::string& source );
+    const std::string status() const;
 
 private:
     DISALLOW_COPY_AND_ASSIGN( Shader );

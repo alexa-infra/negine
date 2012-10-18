@@ -19,7 +19,7 @@ using namespace base::resource;
 
 class Demo : public Application
 {
-    Program* program_;
+    Program program_;
     TextureLoader texure_loader_;
 
     ParticleSystem* ps_;
@@ -33,10 +33,10 @@ public:
         ss.texture = "heart.png";
         ps_ = new ParticleSystem( ss );
         ps_renderer_ = new ParticleSystemRenderer( ps_, &texure_loader_ );
-        program_ = LoadProgram( "hud.shader" );
+        program_.CreateFromFileWithAssert( "hud.shader" );
     }
     virtual ~Demo() {
-        delete program_;
+        program_.Destroy();
         delete ps_renderer_;
         delete ps_;
     }
@@ -47,15 +47,15 @@ protected:
         glDisable( GL_DEPTH_TEST );
         glEnable( GL_BLEND );
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-        program_->Bind();
-        program_->set_uniform( base::opengl::UniformVars::Projection, Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 ) );
-        program_->set_uniform( base::opengl::UniformVars::Modelview, Matrix4::Identity() );
+        program_.Bind();
+        program_.set_uniform( base::opengl::UniformVars::Projection, Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 ) );
+        program_.set_uniform( base::opengl::UniformVars::Modelview, Matrix4::Identity() );
         f32 frame_time = timer_.Elapsed() / 1000.0f;
         timer_.Reset();
         ps_->update( frame_time );
         ps_renderer_->Commit();
-        ps_renderer_->Draw( program_ );
-        program_->Unbind();
+        ps_renderer_->Draw( &program_ );
+        program_.Unbind();
         assert( glGetError() == GL_NO_ERROR );
         Application::OnFrame();
     }
