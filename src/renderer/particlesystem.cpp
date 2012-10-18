@@ -59,8 +59,8 @@ void ParticleSystem::add()
     p->life = 0;
     f32 direction = rand() / ( f32 )( RAND_MAX ) * ( 2 * math::pi );
     p->position = math::Vector2( position );
-    p->speed = math::Vector2( cosf( direction ), sinf( direction ) ) * ( rand() / ( f32 )( RAND_MAX ) );
-    p->speed.Normalize();
+    p->speed = math::Vector2( cosf( direction ), sinf( direction ) );
+    p->speed *= settings.speed * ( rand() / ( f32 )( RAND_MAX ) );
     p->acceleration = 0.f;
     p->size = settings.size_start;
     p->rotation = 0.f;

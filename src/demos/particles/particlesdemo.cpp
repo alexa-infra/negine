@@ -29,6 +29,7 @@ class Demo : public Application
 public:
     Demo() {
         ParticleSystemSetting ss;
+        ss.speed = 2.0f;
         ss.texture = "heart.png";
         ps_ = new ParticleSystem( ss );
         ps_renderer_ = new ParticleSystemRenderer( ps_, &texure_loader_ );
