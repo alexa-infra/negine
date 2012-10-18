@@ -15,11 +15,16 @@
 #endif
 
 #if defined(OS_POSIX)
-#include <stdint.h>
+#   include <stdint.h>
 #elif defined(OS_WIN)
-#include "stdint/stdint.h"
+#   include <winsdkver.h>
+#   if WINVER_MAXVER >= 0x0602
+#       include <stdint.h>
+#   else
+#       include "stdint/stdint.h"
+#   endif
 #else
-#error Include stdint.h
+#   error Include stdint.h
 #endif
 
 typedef int8_t      i8;
