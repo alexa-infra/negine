@@ -16,6 +16,7 @@
 #include <assert.h>
 
 #include "GL/glew.h"
+#include "GL/wglew.h"
 #include "renderer/statistics.h"
 
 SDLApp::SDLApp()
@@ -25,6 +26,11 @@ SDLApp::SDLApp()
     , width_( 640 )
     , height_( 480 )
 {
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+        std::cout << "Unable to init SDL: " << SDL_GetError() << std::endl;
+        assert( false );
+    }
+
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
     // see SDL_GLprofile enumeration
@@ -35,11 +41,6 @@ SDLApp::SDLApp()
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
     SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8 );
-
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-        std::cout << "Unable to init SDL: " << SDL_GetError() << std::endl;
-        assert( false );
-    }
 
     mainwindow_ = SDL_CreateWindow(
                       "SDL Demo",
