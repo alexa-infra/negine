@@ -12,6 +12,7 @@
 #include <memory>
 #include "base/stream.h"
 #include "base/stringmap.h"
+#include "renderer/statistics.h"
 
 namespace base
 {
@@ -208,6 +209,8 @@ void Program::Bind()
     for( it = attr_binding_.begin(); it != attr_binding_.end(); ++it ) {
         glEnableVertexAttribArray( it->second );
     }
+
+    Stats::instance()->inc_program_switches();
 }
 
 void Program::Unbind()

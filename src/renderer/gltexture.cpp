@@ -10,6 +10,7 @@
 
 #include "base/stream.h"
 #include <iostream>
+#include "renderer/statistics.h"
 
 namespace base
 {
@@ -72,6 +73,7 @@ void Texture::Destroy()
 void Texture::Bind()
 {
     glBindTexture( info_.Type, id_ );
+    Stats::inc_texture_switches();
 }
 
 void Texture::GenerateFromBuffer( const TextureInfo& textureinfo, const u8* data )

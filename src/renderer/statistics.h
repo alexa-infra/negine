@@ -8,6 +8,8 @@ class Statistics
 private:
     u32 polygons_;
     u32 drawcalls_;
+    u32 program_switches_;
+    u32 texture_switches_;
 
 public:
     Statistics() {
@@ -17,6 +19,8 @@ public:
     void reset() {
         polygons_ = 0;
         drawcalls_ = 0;
+        texture_switches_ = 0;
+        program_switches_ = 0;
     }
 
     u32 polygons() const {
@@ -27,9 +31,25 @@ public:
         return drawcalls_;
     }
 
+    u32 texture_switches() const {
+        return texture_switches_;
+    }
+
+    u32 program_switches() const {
+        return program_switches_;
+    }
+
     void add_polygons( u32 p ) {
         polygons_ += p;
         drawcalls_++;
+    }
+
+    void inc_texture_switches() {
+        texture_switches_++;
+    }
+
+    void inc_program_switches() {
+        program_switches_++;
     }
 };
 
@@ -70,7 +90,12 @@ public:
     static u32 drawcalls() {
         return instance()->drawcalls();
     }
-
+    static void inc_program_switches() {
+        instance()->inc_program_switches();
+    }
+    static void inc_texture_switches() {
+        instance()->inc_texture_switches();
+    }
     static void add_polygons( u32 p ) {
         instance()->add_polygons( p );
     }
