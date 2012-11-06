@@ -100,6 +100,8 @@ elseif(USE_GLUT)
     add_definitions(-DGLUT_ENGINE)
 endif()
 
+link_directories(${TOOLS_PATH}/libs-win-vs2012)
+
 if(USE_GLUT)
   add_subdirectory(${TOOLS_PATH}/freeglut ${PROJECT_BINARY_DIR}/freeglut)
 endif(USE_GLUT)
