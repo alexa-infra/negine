@@ -102,7 +102,6 @@ endif()
 
 link_directories(${TOOLS_PATH}/libs-win-vs2012)
 
-add_subdirectory(${TOOLS_PATH}/glew ${PROJECT_BINARY_DIR}/glew)
 #add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
 #add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)
 

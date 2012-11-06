@@ -19,11 +19,9 @@ add_library(negine
     ${BASE_SRC}
     ${RENDERER_SRC}
 )
-add_dependencies(negine
-    glew
-)
 target_link_libraries(negine 
-    glew
+    debug glew_d
+    optimized glew
 )
 if(WIN32)
     target_link_libraries(negine OpenGL32)
