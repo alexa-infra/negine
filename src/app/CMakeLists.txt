@@ -45,7 +45,8 @@ elseif (USE_GLUT)
         ${TOOLS_PATH}/freeglut/include
     )
     target_link_libraries(app 
-        freeglut
+        debug freeglut_d.lib
+        optimized freeglut.lib
     )
     if(WIN32)
         target_link_libraries(app winmm.lib)
