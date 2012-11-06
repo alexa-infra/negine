@@ -100,7 +100,16 @@ elseif(USE_GLUT)
     add_definitions(-DGLUT_ENGINE)
 endif()
 
-link_directories(${TOOLS_PATH}/libs-win-vs2012)
+if(WIN32)
+    if (MSVC_VERSION EQUAL 1600)
+        link_directories(${TOOLS_PATH}/libs-win-vs2010)
+    endif()
+    if (MSVC_VERSION EQUAL 1700)
+        link_directories(${TOOLS_PATH}/libs-win-vs2012)
+    endif()
+endif()
+
+
 
 #add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
 #add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)

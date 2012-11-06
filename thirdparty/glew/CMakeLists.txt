@@ -1,11 +1,23 @@
+cmake_minimum_required(VERSION 2.8)
+project(glew)
 
-set(SRC_PATH ${negine_SOURCE_DIR})
-set(TOOLS_PATH ${SRC_PATH}/thirdparty)
+macro(add_source_group FILTER_NAME SOURCE_PATH TARGET_LIST)
+    file(GLOB TEMP_SRC
+        ${SOURCE_PATH}/*.h
+        ${SOURCE_PATH}/*.cpp
+        ${SOURCE_PATH}/*.cc
+        ${SOURCE_PATH}/*.c
+    )
+    source_group(${FILTER_NAME} FILES ${TEMP_SRC})
+    list(APPEND ${TARGET_LIST} ${TEMP_SRC})
+endmacro(add_source_group) 
 
-add_source_group("src"      ${TOOLS_PATH}/glew/src          SRC)
-add_source_group("include"  ${TOOLS_PATH}/glew/include/GL   SRC)
+set(SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-include_directories(${TOOLS_PATH}/glew/include)
+add_source_group("src"      ${SRC_PATH}/src          SRC)
+add_source_group("include"  ${SRC_PATH}/include/GL   SRC)
+
+include_directories(${SRC_PATH}/include)
 
 add_library(glew STATIC ${SRC})
 
