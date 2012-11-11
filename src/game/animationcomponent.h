@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/components.h"
+#include "game/component.h"
 #include "base/types.h"
 
 class AnimationComponent : public Component

@@ -1,7 +1,7 @@
 #include "game/gameobject.h"
 #include "game/componentfactory.h"
 #include "game/scene.h"
-#include "game/components.h"
+#include "game/component.h"
 
 GameObject::GameObject(const std::string& name, Scene& scene) 
 	: scene_(scene)

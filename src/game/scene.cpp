@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "base/stdext.h"
 #include "base/types.h"
-#include "game/components.h"
+#include "game/component.h"
 #include "game/gameobject.h"
 
 Scene::~Scene()
