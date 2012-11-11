@@ -1,6 +1,7 @@
 #include "game/componentfactory.h"
 #include "game/cameracomponent.h"
 #include "game/animationcomponent.h"
+#include "game/components.h"
 
 Component* ComponentFactoryRegistry::create(ComponentType type) const
 {

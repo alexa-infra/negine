@@ -3,7 +3,6 @@
 #include "game/componenttypes.h"
 #include <map>
 #include <list>
-#include <array>
 
 class Object;
 

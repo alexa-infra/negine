@@ -1,10 +1,12 @@
 #pragma once
 
-#include "game/components.h"
 #include <assert.h>
 #include "base/types.h"
 #include "base/singleton.h"
 #include "base/stdext.h"
+#include "game/componenttypes.h"
+
+class Component;
 
 class ComponentFactory
 {
