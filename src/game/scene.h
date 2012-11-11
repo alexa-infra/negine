@@ -9,8 +9,8 @@ class Component;
 typedef std::list<Component*> ComponentList;
 typedef std::map<ComponentType, ComponentList> ComponentMap;
 
-class Object;
-typedef std::map<std::string, Object*> ObjectMap;
+class GameObject;
+typedef std::map<std::string, GameObject*> ObjectMap;
 
 class Scene
 {
@@ -20,33 +20,33 @@ public:
 
 	~Scene();
 
-	Object* spawnObject(const std::string& name);
+	GameObject* spawnObject(const std::string& name);
 
-	Object* getObject(const std::string& name);
+	GameObject* getObject(const std::string& name);
 
 	void destroyObject(const std::string& name);
 
-	void destroyObject(Object* obj);
+	void destroyObject(GameObject* obj);
 
 private:
 	void clear();
 
-	void destroyObjectR(Object* obj);
+	void destroyObjectR(GameObject* obj);
 
 	void addComponent(Component* component);
 
-	void removeComponents(Object* obj);
+	void removeComponents(GameObject* obj);
 
-	friend class Object;
+	friend class GameObject;
 };
 
 /*
 
 Scene sc;
 
-Object* root = sc.getObject("root");
+GameObject* root = sc.getObject("root");
 
-Object* obj = sc.spawnObject("name");
+GameObject* obj = sc.spawnObject("name");
 obj.addComponent(camera);
 obj.addComponent(sprite);
 obj.setParent(root);

@@ -4,14 +4,14 @@
 #include <map>
 #include <list>
 
-class Object;
+class GameObject;
 
 class Component
 {
 public:
 	Component();
 
-	Object* object_;
+	GameObject* object_;
 	ComponentType type_;
 
 	template<typename T>

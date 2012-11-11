@@ -9,30 +9,30 @@ class Scene;
 class Component;
 typedef std::map<ComponentType, Component*> ComponentArray;
 
-class Object;
-typedef std::deque<Object*> ObjectList;
+class GameObject;
+typedef std::deque<GameObject*> ObjectList;
 
-class Object
+class GameObject
 {
 public:
-	Object(const std::string& name, Scene& scene);
+	GameObject(const std::string& name, Scene& scene);
 
 	ComponentArray components_;
-	Object* parent_;
+	GameObject* parent_;
 	ObjectList children_;
 	Scene& scene_;
 	std::string name_;
 
-	void setParent(Object* parent);
+	void setParent(GameObject* parent);
 
 	bool hasComponent(ComponentType type) const;
 
 	Component* addComponent(ComponentType type);
 private:
-	void removeChild(Object* obj);
+	void removeChild(GameObject* obj);
 
 	void reAttachComponentsR();
 
 	void reAttachComponents();
 };
-typedef std::map<std::string, Object*> ObjectMap;
+typedef std::map<std::string, GameObject*> ObjectMap;

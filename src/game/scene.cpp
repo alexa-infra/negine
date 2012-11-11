@@ -10,16 +10,16 @@ Scene::~Scene()
 	clear();
 }
 
-Object* Scene::spawnObject(const std::string& name)
+GameObject* Scene::spawnObject(const std::string& name)
 {
 	assert( map_contains<ObjectMap>(objects_, name) == false );
-	Object* obj = new Object(name, *this);
+	GameObject* obj = new GameObject(name, *this);
 	objects_[name] = obj;
 	return obj;
 }
 
-Object* Scene::getObject(const std::string& name) {
-	Object* obj;
+GameObject* Scene::getObject(const std::string& name) {
+	GameObject* obj;
 	bool result = try_find<ObjectMap>(objects_, name, obj);
 	assert( result == true );
 	return obj;
@@ -27,11 +27,11 @@ Object* Scene::getObject(const std::string& name) {
 
 void Scene::destroyObject(const std::string& name)
 {
-	Object* obj = getObject(name);
+	GameObject* obj = getObject(name);
 	destroyObjectR(obj);
 }
 
-void Scene::destroyObject(Object* obj)
+void Scene::destroyObject(GameObject* obj)
 {
 	destroyObjectR(obj);
 }
@@ -41,12 +41,12 @@ void Scene::clear()
 	while(!objects_.empty())
 	{
 		ObjectMap::iterator it = objects_.begin();
-		Object* obj = it->second;
+		GameObject* obj = it->second;
 		destroyObjectR(obj);
 	}
 }
 
-void Scene::destroyObjectR(Object* obj)
+void Scene::destroyObjectR(GameObject* obj)
 {
 	obj->setParent(nullptr);
 	objects_.erase(obj->name_);
@@ -54,7 +54,7 @@ void Scene::destroyObjectR(Object* obj)
 	for(ObjectList::iterator it = obj->children_.begin();
 		it != obj->children_.end();
 		++it) {
-		Object* child = *it;
+		GameObject* child = *it;
 		destroyObjectR(child);
 	}
 	delete obj;
@@ -65,7 +65,7 @@ void Scene::addComponent(Component* component)
 	components_[component->type_].push_back(component);
 }
 
-void Scene::removeComponents(Object* obj)
+void Scene::removeComponents(GameObject* obj)
 {
 	for(ComponentMap::iterator it=components_.begin();
 		it != components_.end(); ++it) {
