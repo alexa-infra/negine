@@ -11,6 +11,7 @@ using base::resource::Md5Model;
 using base::resource::Md5Model;
 using base::resource::Md5Joint;
 using base::resource::Md5Weight;
+using base::math::Vector3;
 
 namespace base
 {

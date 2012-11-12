@@ -29,7 +29,7 @@ public:
 
     void Draw( AttributeBinding& binding );
 private:
-    static Vector3 DecodeNormal( const u8* normal );
+    static math::Vector3 DecodeNormal( const u8* normal );
 };
 
 }

@@ -17,18 +17,14 @@ namespace base
 namespace opengl
 {
 
-using base::math::Vector2;
-using base::math::Vector3;
-using base::math::Vector4;
-
 //! Simple vertex
 struct Vertex {
-    Vector3 pos;        //!< Position in 3D space
-    Vector3 n;          //!< Normal to surface
-    Vector2 tex;        //!< Texture coordinates
-    Vector3 tangent;    //!< Tangent
-    Vector3 binormal;   //!< Binormal
-    Vector4 color;      //!< Color of vertex
+    math::Vector3 pos;        //!< Position in 3D space
+    math::Vector3 n;          //!< Normal to surface
+    math::Vector2 tex;        //!< Texture coordinates
+    math::Vector3 tangent;    //!< Tangent
+    math::Vector3 binormal;   //!< Binormal
+    math::Vector4 color;      //!< Color of vertex
 
     Vertex() {}
 };

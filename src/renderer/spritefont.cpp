@@ -14,6 +14,10 @@
 #include "renderer/gltexture.h"
 #include "renderer/vertexbuffer.h"
 
+using base::math::Vector2;
+using base::math::Vector3;
+using base::math::Vector4;
+
 namespace base
 {
 namespace opengl

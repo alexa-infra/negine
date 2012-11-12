@@ -10,6 +10,7 @@
 #include "statistics.h"
 
 using base::math::Vector3;
+using base::math::Vector4;
 
 namespace base
 {

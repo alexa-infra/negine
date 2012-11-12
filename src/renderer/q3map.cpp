@@ -12,6 +12,9 @@
 #include "renderer/gltexture.h"
 #include "renderer/statistics.h"
 
+using base::math::Vector3;
+using base::math::Vector4;
+
 namespace base
 {
 namespace opengl

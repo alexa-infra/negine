@@ -19,6 +19,8 @@ namespace base
 namespace opengl
 {
 
+using namespace math;
+
 StringMap<VertexAttr, VertexAttrs::Count>::Entry attr_map_str[VertexAttrs::Count] = {
     { "position",  VertexAttrs::tagPosition },
     { "tex",       VertexAttrs::tagTexture },

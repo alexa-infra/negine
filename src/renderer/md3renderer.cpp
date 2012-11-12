@@ -13,6 +13,8 @@ using base::resource::Md3TexCoord;
 using base::resource::Md3Model;
 using base::resource::Md3Surface;
 using base::math::pi;
+using base::math::Vector3;
+using base::math::Vector4;
 
 namespace base
 {

@@ -5,6 +5,8 @@ namespace base
 namespace opengl
 {
 
+using namespace math;
+
 CubeMesh::CubeMesh()
 	: buffer_(nullptr)
 {

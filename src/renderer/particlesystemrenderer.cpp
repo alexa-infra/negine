@@ -13,6 +13,9 @@ namespace base
 namespace opengl
 {
 
+using base::math::Vector2;
+using base::math::Vector3;
+using base::math::Vector4;
 using base::resource::ParticleSystem;
 using base::resource::ParticleSystemSetting;
 using base::resource::Particle;

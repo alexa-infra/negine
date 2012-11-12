@@ -15,7 +15,7 @@ private:
 	VertexBuffer* buffer_;
 public:
 	struct Cube {
-		Vector3 max, min;
+		math::Vector3 max, min;
 		i32 face_start;
 	};
 
@@ -29,18 +29,18 @@ private:
 	void SetVertexN( Vertex* v, const math::Vector3& n ) const;
 	void SetVertexUV( Vertex* v ) const;
 	void SetVertexPos( Vertex* v,
-				const Vector3& v0,
-				const Vector3& v1,
-				const Vector3& v2,
-				const Vector3& v3 ) const;
+				const math::Vector3& v0,
+				const math::Vector3& v1,
+				const math::Vector3& v2,
+				const math::Vector3& v3 ) const;
 	Face SetFace( i16 i1, i16 i2, i16 i3 ) const;
 	void AddCubeSide( std::vector<Vertex>& vert,
 						std::vector<Face>& face,
-							const Vector3& v0,
-							const Vector3& v1,
-							const Vector3& v2,
-							const Vector3& v3,
-							const Vector3& n ) const;
+							const math::Vector3& v0,
+							const math::Vector3& v1,
+							const math::Vector3& v2,
+							const math::Vector3& v3,
+							const math::Vector3& n ) const;
 };
 
 } // namespace opengl
