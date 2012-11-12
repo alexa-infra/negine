@@ -84,7 +84,12 @@ Component* GameObject::findSibling(ComponentType type) const
 	return component;
 }
 
-Component* GameObject::find(ComponentType type, GameObject* obj)
+Component* GameObject::findNearest(ComponentType type) const
+{
+	return find(type, this);
+}
+
+Component* GameObject::find(ComponentType type, const GameObject* obj)
 {
 	while(obj != nullptr)
 	{

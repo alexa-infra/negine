@@ -10,9 +10,7 @@ CameraComponent::CameraComponent()
 
 void CameraComponent::onAttach()
 {
-	Component* comp = object_->findSibling(ComponentTypes::Transform);
-	if (comp == nullptr)
-		comp = object_->findParent(ComponentTypes::Transform);
+	Component* comp = object_->findNearest(ComponentTypes::Transform);
 	if (comp == nullptr)
 	{
 		transform_ = nullptr;

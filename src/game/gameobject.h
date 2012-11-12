@@ -32,8 +32,10 @@ public:
 	Component* findParent(ComponentType type) const;
 
 	Component* findSibling(ComponentType type) const;
+
+	Component* findNearest(ComponentType type) const;
 private:
-	static Component* find(ComponentType type, GameObject* obj);
+	static Component* find(ComponentType type, const GameObject* obj);
 
 	void removeChild(GameObject* obj);
 
