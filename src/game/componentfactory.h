@@ -23,7 +23,9 @@ public:
 		return T::type();
 	}
 	Component* create() {
-		return new T;
+		T* t = new T;
+		t->type_ = T::type();
+		return t;
 	}
 };
 typedef std::map<ComponentType, ComponentFactory*> ComponentFactoryMap;

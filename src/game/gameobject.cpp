@@ -70,3 +70,28 @@ void GameObject::reAttachComponents()
 		component->onAttach();
 	}
 }
+
+Component* GameObject::findParent(ComponentType type) const
+{
+	return find(type, parent_);
+}
+
+Component* GameObject::findSibling(ComponentType type) const
+{
+	Component* component = nullptr;
+	if (!try_find<ComponentArray>(components_, type, component))
+		return nullptr;
+	return component;
+}
+
+Component* GameObject::find(ComponentType type, GameObject* obj)
+{
+	while(obj != nullptr)
+	{
+		Component* component = nullptr;
+		if (try_find<ComponentArray>(obj->components_, type, component))
+			return component;
+		obj = obj->parent_;
+	}
+	return nullptr;
+}

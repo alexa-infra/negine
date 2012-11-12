@@ -28,7 +28,13 @@ public:
 	bool hasComponent(ComponentType type) const;
 
 	Component* addComponent(ComponentType type);
+
+	Component* findParent(ComponentType type) const;
+
+	Component* findSibling(ComponentType type) const;
 private:
+	static Component* find(ComponentType type, GameObject* obj);
+
 	void removeChild(GameObject* obj);
 
 	void reAttachComponentsR();
