@@ -12,6 +12,8 @@ class TransformComponent : public Component
 public:
 	static ComponentType type() { return ComponentTypes::Transform; }
 
+	TransformComponent();
+
 	void onAttach();
 	void onDetach();
 

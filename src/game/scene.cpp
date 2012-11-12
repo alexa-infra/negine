@@ -51,9 +51,8 @@ void Scene::destroyObjectR(GameObject* obj)
 	obj->setParent(nullptr);
 	objects_.erase(obj->name_);
 	removeComponents(obj);
-	for(ObjectList::iterator it = obj->children_.begin();
-		it != obj->children_.end();
-		++it) {
+	while(!obj->children_.empty()) {
+		ObjectList::iterator it = obj->children_.begin();
 		GameObject* child = *it;
 		destroyObjectR(child);
 	}

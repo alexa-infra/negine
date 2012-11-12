@@ -1,6 +1,11 @@
 #include "game/transformcomponent.h"
 #include "game/gameobject.h"
 
+TransformComponent::TransformComponent()
+{
+	local_ = base::math::Matrix4::Identity();
+}
+
 void TransformComponent::onAttach()
 {
 	if (object_ == nullptr)

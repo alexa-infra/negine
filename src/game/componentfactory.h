@@ -49,7 +49,7 @@ public:
 	Component* create(ComponentType type) const;
 };
 
-class ComponentRegistry : base::Singleton<ComponentFactoryRegistry>
+class ComponentRegistry : public base::Singleton<ComponentFactoryRegistry>
 {
 public:
 	template<typename T>
