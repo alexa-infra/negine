@@ -209,7 +209,7 @@ inline Matrix4& Matrix4::operator *=( f32 s )
 
 inline Matrix4& Matrix4::operator *=( const Matrix4& m )
 {
-    *this = *this + m;
+    *this = *this * m;
     return *this;
 }
 
