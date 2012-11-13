@@ -51,7 +51,7 @@ public:
         base::FileBinary fb( "maps/q3dm6.bsp" );
         q3map_ = new q3maploader( fb );
         q3map_->load();
-        q3map_->PreloadTextures( texure_loader_ );
+        //q3map_->PreloadTextures( texure_loader_ );
         std::vector<Vertex> vv;
         std::vector<Face> ff;
         Cube c = AddCube( vv, ff, camera_.position() );
@@ -250,11 +250,11 @@ protected:
         }
 
         if ( keypressed_ & 4 ) {
-            camera_.set_position( camera_.position() + camera_.right()   * speed );
+            camera_.set_position( camera_.position() - camera_.right()   * speed );
         }
 
         if ( keypressed_ & 8 ) {
-            camera_.set_position( camera_.position() - camera_.right()   * speed );
+            camera_.set_position( camera_.position() + camera_.right()   * speed );
         }
 
         if ( keypressed_ & 16 ) {

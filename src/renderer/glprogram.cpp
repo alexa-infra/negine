@@ -325,7 +325,7 @@ void Program::CreateFromFileWithAssert( const std::string& filename )
 
     if ( !base::file_exists( filename ) ) {
         std::cout
-                << "File is not exists: "
+                << "File does not exist: "
                 << filename << '\n'
                 << std::endl;
         assert( false );

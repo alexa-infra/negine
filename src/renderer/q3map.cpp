@@ -24,16 +24,14 @@ void bind_attr( Program* pr, const q3vertex& vertexes );
 
 void swizzle( Vector3& v )
 {
-    f32 temp = v.y;
-    v.y = v.z;
-    v.z = -temp;
+    std::swap(v.y, v.z);
+    std::swap(v.z, v.x);
 }
 
 void swizzle( i32* v )
 {
-    i32 temp = v[1];
-    v[1] = v[2];
-    v[2] = -temp;
+    std::swap(v[1], v[2]);
+    std::swap(v[2], v[0]);
 }
 
 class Bezier
@@ -89,6 +87,27 @@ void q3maploader::load()
     faces       = read<q3face>( 13 );
     faceIndexes = read<u32>( 11 );
 
+    for( size_t i=0; i<planes.size(); i++ )
+        swizzle( planes[i].normal );
+    for( size_t i=0; i<nodes.size(); i++ ) {
+        swizzle( nodes[i].mmin );
+        swizzle( nodes[i].mmax );
+    }
+    for( size_t i = 0; i < faces.size(); i++ ) {
+        swizzle( faces[i].normal );
+    }
+
+    for( size_t i = 0; i < vertexes.size(); i++ ) {
+        swizzle( vertexes[i].pos );
+        swizzle( vertexes[i].normal );
+        //vertexes[i].surfaceUV.x = 1 - vertexes[i].surfaceUV.x;
+    }
+
+    for( size_t i=0; i<leafs.size(); i++ ) {
+        swizzle( leafs[i].mins );
+        swizzle( leafs[i].maxs );
+    }
+
     q3lump lump_vis = read_lump( 16 );
     f.set_position( lump_vis.offset );
     visibility.nVecs = f.read_type<i32>();
@@ -108,8 +127,9 @@ void q3maploader::load()
     ti.MinFilter = TextureMinFilters::LINEAR;
     ti.GenerateMipmap = true;
     ti.Pixel = PixelTypes::RGB;
-    ti.Width = 512;
-    ti.Height = 512;    for( u32 i = 0; i < lm.size(); i++ )    {
+    ti.Width = 128;
+    ti.Height = 128;
+    for( u32 i = 0; i < lm.size(); i++ )    {
         Texture*& t = lm_textures[i];
         t = new Texture;
         t->GenerateFromBuffer( ti, (u8*)lm[i].data );
@@ -334,7 +354,8 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
     }
 
 //    std::cout << switches << std::endl;
-//    std::cout << Stats::polygons() << std::endl;
+    std::cout << Stats::polygons() << " "
+		<< _visible_faces.size() << std::endl;
 }
 
 void q3maploader::render_polygons( const q3face& face, Program* pr ) const
