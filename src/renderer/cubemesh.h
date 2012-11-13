@@ -28,6 +28,7 @@ public:
 private:
 	void SetVertexN( Vertex* v, const math::Vector3& n ) const;
 	void SetVertexUV( Vertex* v ) const;
+	void SetVertexColor( Vertex* v ) const;
 	void SetVertexPos( Vertex* v,
 				const math::Vector3& v0,
 				const math::Vector3& v1,

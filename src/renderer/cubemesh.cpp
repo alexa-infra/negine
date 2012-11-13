@@ -13,7 +13,7 @@ CubeMesh::CubeMesh()
 	std::vector<Vertex> vv;
 	std::vector<Face> ff;
 	AddCube( vv, ff, Vector3( 0.0f ) );
-	buffer_ = new VertexBufferGPU( &vv.front(), vv.size(), &ff.front(), ff.size() );
+	buffer_ = new VertexBufferMemory( &vv.front(), vv.size(), &ff.front(), ff.size() );
 }
 
 CubeMesh::~CubeMesh()
@@ -65,6 +65,14 @@ void CubeMesh::SetVertexUV( Vertex* v ) const {
 	v[3].tex = math::Vector2( 0.0f, 1.0f );
 }
 
+void CubeMesh::SetVertexColor( Vertex* v ) const
+{
+	v[0].color = math::Vector4( 1.0f, 0.0f, 0.0f, 1.0f );
+	v[1].color = math::Vector4( 0.0f, 1.0f, 0.0f, 1.0f );
+	v[2].color = math::Vector4( 0.0f, 0.0f, 1.0f, 1.0f );
+	v[3].color = math::Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
+}
+
 void CubeMesh::SetVertexPos( Vertex* v, const Vector3& v0, const Vector3& v1, const Vector3& v2, const Vector3& v3 ) const {
 	v[0].pos = v0;
 	v[1].pos = v1;
@@ -91,6 +99,7 @@ void CubeMesh::AddCubeSide( std::vector<Vertex>& vert,
 	SetVertexPos( v, v0, v1, v2, v3 );
 	SetVertexUV( v );
 	SetVertexN( v, n );
+	SetVertexColor( v );
 	i16 i = static_cast<i16>( vert.size() );
 	face.push_back( SetFace( i + 0, i + 1, i + 2 ) );
 	face.push_back( SetFace( i + 2, i + 3, i + 0 ) );
