@@ -369,10 +369,10 @@ public:
         set( v.x, v.y, v.z, f );
     }
     explicit Vector4( const Vector2& v ) {
-        set( v.x, v.y, 0.f, 0.f );
+        set( v.x, v.y, 0.f, 1.f );
     }
     explicit Vector4( const Vector3& v ) {
-        set( v.x, v.y, v.z, 0.f );
+        set( v.x, v.y, v.z, 1.f );
     }
     explicit Vector4( const f32* v ) {
         set( v );

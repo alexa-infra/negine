@@ -35,10 +35,10 @@ void Camera::UpdateOrientation()
     Matrix4 headRot  = Matrix4::RotationZ( head_ );
     Matrix4 pitchRot = Matrix4::RotationX( pitch_ );
     Matrix4 orientation = headRot * pitchRot;
-    
+
     const Vector3 r( 1, 0, 0 );
-    const Vector3 u( 0, 0, 1 );
-    const Vector3 f( 0, -1, 0 );
+    const Vector3 u( 0, 1, 0 );
+    const Vector3 f( 0, 0, -1 );
 
     right_   = Vector3( orientation * r );
     up_      = Vector3( orientation * u );
