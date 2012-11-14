@@ -29,6 +29,13 @@ public:
 
 	Component* addComponent(ComponentType type);
 
+	template<typename T>
+	T* addComponentT()
+	{
+		Component* component = addComponent(T::type());
+		return dynamic_cast<T*>(component);
+	}
+
 	Component* findParent(ComponentType type) const;
 
 	Component* findSibling(ComponentType type) const;
