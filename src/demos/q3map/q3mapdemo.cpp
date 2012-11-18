@@ -51,7 +51,7 @@ public:
         base::FileBinary fb( "maps/q3dm6.bsp" );
         q3map_ = new q3maploader( fb );
         q3map_->load();
-        //q3map_->PreloadTextures( texure_loader_ );
+        q3map_->PreloadTextures( texure_loader_ );
         std::vector<Vertex> vv;
         std::vector<Face> ff;
         Cube c = AddCube( vv, ff, camera_.position() );
@@ -85,7 +85,8 @@ protected:
         program_.Bind();
         program_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
         program_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
-        Texture* t = texure_loader_.Load( "checker.png" );
+        program_.set_uniform( base::opengl::UniformVars::Clip, projection_ * cameraTransform_ );
+        /*Texture* t = texure_loader_.Load( "checker.png" );
         program_.set_uniform( base::opengl::UniformVars::Diffuse, t );
 
         for ( u32 i = 0; i < cubes_.size(); i++ ) {
@@ -99,7 +100,7 @@ protected:
             }
 
             buffer_->Draw( program_.binding(), c.face_start, 12 );
-        }
+        }*/
 
         q3map_->render( camera_, &program_, texure_loader_ );
         program_.Unbind();
@@ -239,7 +240,7 @@ protected:
     }
 
     void UpdateWorld() {
-        const f32 speed = 1.0f;
+        const f32 speed = 10.0f;
 
         if ( keypressed_ & 1 ) {
             camera_.set_position( camera_.position() + camera_.forward() * speed );

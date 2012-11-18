@@ -39,7 +39,8 @@ StringMap<UniformVar, UniformVars::Count>::Entry uni_map_str[UniformVars::Count]
     { "bump",               UniformVars::Bump },
     { "light_pos",          UniformVars::LightPos },
     { "color",              UniformVars::Color },
-    { "lightmap",           UniformVars::Lightmap }
+    { "lightmap",           UniformVars::Lightmap },
+    { "clip_matrix",        UniformVars::Clip }
 };
 StringMap<UniformVar, UniformVars::Count> uni_map( uni_map_str );
 
@@ -48,8 +49,10 @@ u32 UniformVars::get_tex_index( UniformVar var )
     switch ( var ) {
     case UniformVars::Diffuse:
         return 0;
-    case UniformVars::Bump:
+    case UniformVars::Lightmap:
         return 1;
+    case UniformVars::Bump:
+        return 2;
     default:
         return 0;
     }

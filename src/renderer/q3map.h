@@ -215,6 +215,7 @@ public:
     std::vector<Node>       tree;
     std::vector<math::Plane> planes_;
     std::vector<Texture*>    lm_textures;
+    std::vector<Texture*>    d_textures;
     WireBox _wb;
     Program* _program;
 

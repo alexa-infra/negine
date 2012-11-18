@@ -6,6 +6,7 @@ attribute vec2 t;
 
 uniform mat4 projection_matrix;
 uniform mat4 modelview_matrix;
+uniform mat4 clip_matrix;
 
 varying vec2 tex0;
 varying vec2 tex1;
@@ -13,7 +14,7 @@ varying vec2 tex1;
 void main(void) {
     tex0 = tex;
     tex1 = t;
-    gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
+    gl_Position = clip_matrix * vec4(position, 1.0);
 }
 
 -- pixel

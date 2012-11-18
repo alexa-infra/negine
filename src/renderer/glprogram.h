@@ -30,6 +30,7 @@ enum UniformVar {
     LightPos,
     Color,
     Lightmap,
+    Clip,
 
     Count
 };
@@ -74,7 +75,7 @@ public:
     void Unbind();
 
     //! Gets binding of attributes to vertex tags
-    const AttributeBinding& binding() {
+    AttributeBinding& binding() {
         return attr_binding_;
     }
 

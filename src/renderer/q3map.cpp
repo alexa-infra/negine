@@ -11,6 +11,7 @@
 #include "renderer/mesh.h"
 #include "renderer/gltexture.h"
 #include "renderer/statistics.h"
+#include "base/timer.h"
 
 using base::math::Vector3;
 using base::math::Vector4;
@@ -172,8 +173,12 @@ void q3maploader::load()
 
 void q3maploader::PreloadTextures( TextureLoader& textureLoader )
 {
+    Texture* checker = textureLoader.Load( "checker.png" );
+
+    d_textures.resize( textures.size() );
     for ( size_t i = 0; i < textures.size(); i++ ) {
-        textureLoader.Load( ( char* )textures[i].name );
+        Texture* t = textureLoader.Load( ( char* )textures[i].name );
+        d_textures[i] = (t == NULL) ? checker : t;
     }
 }
 
@@ -221,14 +226,12 @@ void q3maploader::ComputePossibleVisible( const Vector3& cameraPos )
 
     _camera_cluster = cameraLeaf.cluster;
     _frame_index++;
-    int vvisible = 0;
 
     for( size_t i = nodes.size(); i < tree.size(); i++ ) {
         if ( !visibility.isClusterVisible( cameraLeaf.cluster, tree[i].cluster ) ) {
             continue;
         }
 
-        vvisible++;
         tree[i].frame = _frame_index;
         Node* parent = tree[i].parent;
 
@@ -264,15 +267,8 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
         return;
     }
 
-    if ( node->children[0] == NULL && node->children[1] == NULL ) {
-        AddVisibleNode( node );
-        return;
-    }
-
     const Vector3& mins = node->mins;
-
     const Vector3& maxs = node->maxs;
-
     for ( u32 i = 0; i < 6; i++ ) {
         u32 mask = 1 << i;
 
@@ -293,6 +289,11 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
         }
     }
 
+    if ( node->children[0] == NULL && node->children[1] == NULL ) {
+        AddVisibleNode( node );
+        return;
+    }
+
     for( u32 j = 0; j < 2; j++ ) {
         if ( node->children[j] != NULL ) {
             ComputeVisible_R( camera, node->children[j], planeMask );
@@ -300,62 +301,80 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
     }
 }
 
+typedef std::pair<Texture*, int> TextureFace;
+bool comp_texture_array(const TextureFace& a, const TextureFace& b)
+{
+    return a.first < b.first;
+}
+
 void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txloader )
 {
+    Timer tt;
+    tt.Reset();
+
     memset( visFaces, 0, faces.size() );
     _visible_faces.clear();
+    _visible_faces.reserve( faces.size() );
     ComputePossibleVisible( camera.position() );
     _program = pr;
     ComputeVisible_R( camera, &tree.front(), ( 1 << 7 ) - 1 );
     //return;
+    float t1 = tt.Reset();
 
-    typedef std::multimap<std::string, int> theMap;
-    typedef theMap::iterator theMapIter;
-    theMap sorted;
-    for ( u32 i = 0; i < _visible_faces.size(); i++ ) {
+    std::vector<TextureFace> sorted;
+    size_t ii = _visible_faces.size();
+    sorted.reserve(ii);
+    for ( u32 i = 0; i < ii; i++ ) {
         int faceIndex = _visible_faces[i];
         const q3face& face = faces[faceIndex];
-        std::string name( ( const char* )textures[face.textureID].name );
-        Texture* t = txloader.Load( name );
-        if ( t == NULL )
-            name = "checker.png";
-        sorted.insert( make_pair( name, faceIndex ) );
+        Texture* t = d_textures[face.textureID];
+        sorted.push_back( std::pair<Texture*, int>( t, faceIndex ) );
     }
-  
-    //int switches = 0;
-    theMapIter ita, itb;
-    for ( ita = sorted.begin(); ita != sorted.end(); ita = itb ) {
-        const std::string& key = ( *ita ).first;
-        std::pair<theMapIter, theMapIter> keyRange = sorted.equal_range( key );
-        Texture* t = txloader.Load( key );
+    std::sort(sorted.begin(), sorted.end(), comp_texture_array);
+    float t2 = tt.Reset();
 
-        /*if ( t == NULL ) {
-            t = txloader.Load( "checker.png" );
-        }*/
+    int switches = 0;
+    int patches = 0;
 
-        pr->set_uniform( base::opengl::UniformVars::Diffuse, t );
+    u32 lightMapID = UINT_MAX;
+    u32 diffuesID = UINT_MAX;
+    for ( std::vector<TextureFace>::iterator ita = sorted.begin(); ita != sorted.end(); ++ita ) {
 
-      //  switches++;
-        for ( itb = keyRange.first; itb != keyRange.second; ++itb ) {
-            int faceIndex = ( *itb ).second;
-            const q3face& face = faces[faceIndex];
+        Texture* t = ( *ita ).first;
+        if (diffuesID != t->id())
+        {
+            pr->set_uniform( base::opengl::UniformVars::Diffuse, t );
+            diffuesID = t->id();
+            switches++;
+        }
 
-            if ( face.lightmapID >= 0 ) {
-                Texture* lightmap = lm_textures[face.lightmapID];
-                pr->set_uniform( base::opengl::UniformVars::Lightmap, t );
-            }
+        int faceIndex = ( *ita ).second;
+        const q3face& face = faces[faceIndex];
 
-            if ( face.type == 1 ) {
-                render_polygons( face, pr );
-            } else if ( face.type == 2 ) {
-                render_patch( face, pr );
-            }
+        if ( face.lightmapID >= 0 && lightMapID != face.lightmapID ) {
+            lightMapID = face.lightmapID;
+            Texture* lightmap = lm_textures[face.lightmapID];
+            pr->set_uniform( base::opengl::UniformVars::Lightmap, lightmap );
+            switches++;
+        }
+
+        if ( face.type == 1 ) {
+            render_polygons( face, pr );
+        } else if ( face.type == 2 ) {
+            render_patch( face, pr );
+            patches++;
         }
     }
+    float t3 = tt.Reset();
 
-//    std::cout << switches << std::endl;
-    std::cout << Stats::polygons() << " "
-		<< _visible_faces.size() << std::endl;
+    std::cout
+    << Stats::polygons() << " "
+    //<< _visible_faces.size() << " "
+    //<< switches << " "
+    << patches << " "
+    << Stats::drawcalls() << " "
+    << (int)t1 << " " << (int)t2 << " " << (int)t3 << " "
+    << std::endl;
 }
 
 void q3maploader::render_polygons( const q3face& face, Program* pr ) const
@@ -384,7 +403,7 @@ void q3maploader::render_patch( const q3face& face, Program* pr ) const
             b.controls[6] = vertexes[offset + ( patchWidth << 1 )];
             b.controls[7] = vertexes[offset + ( patchWidth << 1 ) + 1];
             b.controls[8] = vertexes[offset + ( patchWidth << 1 ) + 2];
-            b.tessellate( 5 );
+            b.tessellate( 8 );
             b.render( pr );
         }
     }
@@ -392,7 +411,7 @@ void q3maploader::render_patch( const q3face& face, Program* pr ) const
 
 void bind_attr( Program* pr, const q3vertex& vertex )
 {
-    AttributeBinding binding = pr->binding();
+    AttributeBinding& binding = pr->binding();
     u32 bindPos = binding[VertexAttrs::tagPosition];
     glVertexAttribPointer(
         bindPos,
@@ -433,7 +452,8 @@ void Bezier::tessellate( u32 L )
 {
     level = L;
     const u32 L1 = L + 1;
-    vertex.resize( L1 * L1 );
+    if (vertex.size() < L1 * L1)
+        vertex.resize( L1 * L1 );
 
     // Compute the vertices
     for ( u32 i = 0; i <= L; ++i ) {
@@ -489,7 +509,6 @@ void Bezier::tessellate( u32 L )
 
 void Bezier::render( Program* program )
 {
-    AttributeBinding binding = program->binding();
     bind_attr( program, vertex[0] );
 
     for( u32 i = 0; i < level; i++ ) {
