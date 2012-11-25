@@ -25,9 +25,6 @@ class Demo : public Application
     Program        program_wirebox_;
     Camera          camera_;
     TextureLoader   texure_loader_;
-    Matrix4         projection_;
-    Matrix4         modelview_;
-    Matrix4         cameraTransform_;
     Matrix4         modelTransform_;
     WireBox*        wire_box_;
     WireBox*        camera_wirebox_;
@@ -45,8 +42,6 @@ public:
         camera_.set_zNear( 1 );
         camera_.set_zFar( 1000 );
         camera_.Update();
-        cameraTransform_ = camera_.GetModelView();
-        projection_ = camera_.GetProjection();
         modelTransform_ = Matrix4::Identity();
         modelTransform_ *= Matrix4::Translation( Vector3( 0, 0, 450 ) );
         modelTransform_ *= Matrix4::RotationX( -90 * deg_to_rad );
@@ -84,8 +79,8 @@ protected:
         program_.set_uniform( base::opengl::UniformVars::Diffuse, texture_ );
         program_.set_uniform( base::opengl::UniformVars::Bump, texture_bump_ );
         modelTransform_ *= Matrix4::RotationZ( 20 / 60.f * deg_to_rad );
-        program_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
-        program_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_ );
+        program_.set_uniform( base::opengl::UniformVars::Projection, camera_.GetProjection() );
+        program_.set_uniform( base::opengl::UniformVars::Modelview, camera_.GetModelView() * modelTransform_ );
         program_.set_uniform( base::opengl::UniformVars::CameraPos, camera_.position() );
         program_.set_uniform( base::opengl::UniformVars::LightPos, Vector3( 40, 110, -200 ) );
         static u32 counter = 0;
@@ -98,12 +93,12 @@ protected:
         md5_renderer_->Draw( binding );
         program_.Unbind();
         program_wirebox_.Bind();
-        program_wirebox_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
-        program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ * modelTransform_ );
+        program_wirebox_.set_uniform( base::opengl::UniformVars::Projection, camera_.GetProjection() );
+        program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, camera_.GetModelView() * modelTransform_ );
         wire_box_->setMinPoint( md5_renderer_->boundingBox.min );
         wire_box_->setMaxPoint( md5_renderer_->boundingBox.max );
         wire_box_->Draw( &program_wirebox_ );
-        program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
+        program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, camera_.GetModelView() );
         camera_wirebox_->Draw( &program_wirebox_ );
         program_wirebox_.Unbind();
         assert( glGetError() == GL_NO_ERROR );
@@ -118,7 +113,6 @@ protected:
         }
 
         camera_.Update();
-        cameraTransform_ = camera_.GetModelView();
     }
 
     void OnKeyboardDown( u8 key ) {
@@ -135,7 +129,6 @@ protected:
         }
 
         camera_.Update();
-        cameraTransform_ = camera_.GetModelView();
     }
 
 };
