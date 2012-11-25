@@ -2,30 +2,37 @@
 
 #include <list>
 #include "game/component.h"
+#include "game/componentfactory.h"
 #include "base/math/matrix.h"
 
 class TransformComponent;
 typedef std::list<TransformComponent*> TransformComponentList;
 
-class TransformComponent : public Component
+class TransformComponent : public ComponentBase<ComponentTypes::Transform>
 {
 public:
-	static ComponentType type() { return ComponentTypes::Transform; }
-
 	TransformComponent();
 
 	void onAttach();
 	void onDetach();
 
-	void updateR();
+    const base::math::Matrix4& world();
+    const base::math::Matrix4& local() const { return local_; }
+    base::math::Matrix4& local() { 
+        dirty_ = true;
+        return local_;
+    }
 
-	TransformComponent* parentTransform_;
-	TransformComponentList dependent_;
-	bool dirty_;
-	base::math::Matrix4 world_;
-	base::math::Matrix4 local_;
-
-	const base::math::Matrix4& world();
-
-	void removeDependent(TransformComponent* comp);
+    bool isDirty() const
+    {
+        if (dirty_) return true;
+        if (parentTransform_ != nullptr) return parentTransform_->isDirty();
+        return false;
+    }
+private:
+    TransformComponent* parentTransform_;
+    bool dirty_;
+    base::math::Matrix4 world_;
+    base::math::Matrix4 local_;
 };
+REGISTER_COMPONENT(TransformComponent);

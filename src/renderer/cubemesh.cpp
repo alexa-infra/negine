@@ -30,15 +30,15 @@ CubeMesh::Cube CubeMesh::AddCube( std::vector<Vertex>& v,
 				std::vector<Face>& f,
 		const math::Vector3& position ) const
 {
-	f32 s = 10;
-	Vector3 v0 = Vector3( 0.0f, 0.0f, 0.0f ) + position;
-	Vector3 v1 = Vector3( 0.0f, 0.0f, s ) + position;
-	Vector3 v2 = Vector3( s, 0.0f, s ) + position;
-	Vector3 v3 = Vector3( s, 0.0f, 0.0f ) + position;
-	Vector3 v4 = Vector3( 0.0f, s, 0.0f ) + position;
-	Vector3 v5 = Vector3( 0.0f, s, s ) + position;
+	f32 s = 5;
+	Vector3 v0 = Vector3( -s, -s, -s ) + position;
+	Vector3 v1 = Vector3( -s, -s, s ) + position;
+	Vector3 v2 = Vector3( s, -s, s ) + position;
+	Vector3 v3 = Vector3( s, -s, -s ) + position;
+	Vector3 v4 = Vector3( -s, s, -s ) + position;
+	Vector3 v5 = Vector3( -s, s, s ) + position;
 	Vector3 v6 = Vector3( s, s, s ) + position;
-	Vector3 v7 = Vector3( s, s, 0.0f ) + position;
+	Vector3 v7 = Vector3( s, s, -s ) + position;
 	Cube cube;
 	cube.face_start = f.size();
 	cube.max = v6;

@@ -1,9 +1,10 @@
 #pragma once
 
 #include "game/component.h"
+#include "game/componentfactory.h"
 #include "base/types.h"
 
-class AnimationComponent : public Component
+class AnimationComponent : public ComponentBase<ComponentTypes::Animation>
 {
 public:
 	u32 frame_count_;
@@ -11,8 +12,6 @@ public:
 	u32 current_frame_;
 	u32 next_frame_;
 	f32 interp_phase_;
-
-	static ComponentType type() { return ComponentTypes::Animation; }
 
 	void onAttach() {}
 	void onDetach() {}
@@ -28,3 +27,4 @@ public:
 		next_frame_ = (current_frame_ + 1) % frame_count_;
 	}
 };
+REGISTER_COMPONENT(AnimationComponent);

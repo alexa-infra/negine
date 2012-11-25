@@ -1,22 +1,21 @@
 #pragma once
 
 #include "game/component.h"
+#include "game/componentfactory.h"
 #include "renderer/cubemesh.h"
 
 class TransformComponent;
 
-class MeshComponent : public Component
+class MeshComponent : public ComponentBase<ComponentTypes::Mesh>
 {
 public:
-	static ComponentType type() { return ComponentTypes::Mesh; }
-	
-	base::opengl::CubeMesh mesh_;
+    base::opengl::CubeMesh* mesh_;
+    TransformComponent* transform_;
 
-	TransformComponent* transform_;
+    MeshComponent();
 
-	void onAttach();
+    void onAttach();
 
-	void onDetach()
-	{
-	}
+    void onDetach();
 };
+REGISTER_COMPONENT(MeshComponent);

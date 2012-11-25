@@ -15,9 +15,19 @@
 #include "game/meshcomponent.h"
 #include "game/componentfactory.h"
 
+#include <sstream>
+
 using namespace base;
 using namespace base::math;
 using namespace base::opengl;
+
+template<typename T>
+std::string stringify(const T& val)
+{
+    std::stringstream ss;
+    ss << val;
+    return ss.str();
+}
 
 class Demo : public Application
 {
@@ -25,33 +35,43 @@ class Demo : public Application
 	Scene* scene_;
 public:
 	Demo() {
-		ComponentRegistry::init();
-
 		scene_ = new Scene;
 
 		GameObject* o1 = scene_->spawnObject("root");
 		GameObject* o2 = scene_->spawnObject("player");
-		GameObject* o3 = scene_->spawnObject("cube");
-		GameObject* o4 = scene_->spawnObject("subcube");
+        GameObject* o3 = scene_->spawnObject("node");
+		GameObject* grid = scene_->spawnObject("cubegrid");
 		o2->setParent(o1);
-		o3->setParent(o1);
-		o4->setParent(o3);
-		CameraComponent* camera = o2->addComponentT<CameraComponent>();
-		TransformComponent* cameraTransf = o2->addComponentT<TransformComponent>();
+        o3->setParent(o1);
+		grid->setParent(o3);
 
-		MeshComponent* mesh = o3->addComponentT<MeshComponent>();
-		TransformComponent* cubeTransf = o3->addComponentT<TransformComponent>();
+        CubeMesh* mesh = new CubeMesh;
+        for (i32 i=-5; i<5; i++) for (i32 j=-5; j<5; j++) for (i32 k=-5; k<5; k++)
+        {
+            std::stringstream ss;
+            ss << "cube" << i << "_" << j << "_" << k;
+            std::string name = ss.str();
+            ///name = name + stringify(i) + "_" + stringify(j) + "_" + stringify(k);
+            GameObject* cube = scene_->spawnObject(name);
+            cube->addComponentT<MeshComponent>()->mesh_ = mesh;
+            cube->setParent(grid);
+            cube->transform_->as<TransformComponent>()
+                ->local() *= Matrix4::Translation( Vector3( 12.0f * i, 12.0f * j, 12.0f * k ) );
+        }
+
+        CameraComponent* camera = o2->addComponentT<CameraComponent>();
+        TransformComponent* cameraTransf = o2->transform_->as<TransformComponent>();
+
+		//MeshComponent* mesh = grid->addComponentT<MeshComponent>();
+		TransformComponent* cubeTransf = o3->transform_->as<TransformComponent>();
 		
-		o4->addComponentT<MeshComponent>();
-		TransformComponent* subcubeTransf = o4->addComponentT<TransformComponent>();
-		subcubeTransf->local_ *= Matrix4::Translation( Vector3( 0, 20, 0 ) );
-		subcubeTransf->updateR();
+		//o4->addComponentT<MeshComponent>();
+		//TransformComponent* subcubeTransf = o4->transform_->as<TransformComponent>();
+		//subcubeTransf->local() *= Matrix4::Translation( Vector3( 0, 20, 0 ) );
 
-		cubeTransf->local_ *= Matrix4::Translation( Vector3( 0, 0, -40 ) );
-		cubeTransf->updateR();
+		cubeTransf->local() *= Matrix4::Translation( Vector3( 0, 0, -800 ) );
 
-		cameraTransf->local_ *= Matrix4::Translation( Vector3( 0, 0, 0 ) );
-		cameraTransf->updateR();
+		cameraTransf->local() *= Matrix4::Translation( Vector3( 0, 0, 0 ) );
 
 		camera->camera_.set_pitch( 0 );
 		camera->camera_.set_head( 0 );
@@ -102,12 +122,15 @@ protected:
 		ComponentList& cameras = scene_->components_[ComponentTypes::Camera];
 		ComponentList& meshes = scene_->components_[ComponentTypes::Mesh];
 
+        TransformComponent* grid = scene_->getObject("cubegrid")->transform_->as<TransformComponent>();
+        grid->local() *= Matrix4::RotationY( 30 / 60.f * deg_to_rad );
 		CameraComponent* cameraComponent = cameras.front()->as<CameraComponent>();
 		cameraComponent->update();
 		Camera& camera = cameraComponent->camera_;
 
 		program_.set_uniform( base::opengl::UniformVars::Projection, camera.GetProjection() );
 
+        u32 pos = 1;
 		for(ComponentList::iterator it = meshes.begin();
 			it != meshes.end();
 			++it)
@@ -115,13 +138,14 @@ protected:
 			Component* component = *it;
 			MeshComponent* mesh = component->as<MeshComponent>();
 
-			mesh->transform_->local_ *= Matrix4::RotationX( 30 / 60.f * deg_to_rad );
-			mesh->transform_->updateR();
+			//mesh->transform_->local() *= Matrix4::RotationX( 30 / 60.f * deg_to_rad * 500 /(f32)pos );
 
 			program_.set_uniform( base::opengl::UniformVars::Modelview,
 				camera.GetModelView() * mesh->transform_->world( ) );
 
-			mesh->mesh_.draw(program_.binding());
+			mesh->mesh_->draw(program_.binding());
+
+            pos+=1;
 		}
 
 		//

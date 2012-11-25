@@ -1,11 +1,6 @@
 #include "game/componentfactory.h"
 #include "game/component.h"
 
-#include "game/cameracomponent.h"
-#include "game/animationcomponent.h"
-#include "game/transformcomponent.h"
-#include "game/meshcomponent.h"
-
 Component* ComponentFactoryRegistry::create(ComponentType type) const
 {
 	ComponentFactory* factory = nullptr;
@@ -16,10 +11,6 @@ Component* ComponentFactoryRegistry::create(ComponentType type) const
 
 ComponentFactoryRegistry::ComponentFactoryRegistry()
 {
-	Register<CameraComponent>();
-	Register<AnimationComponent>();
-	Register<TransformComponent>();
-	Register<MeshComponent>();
 }
 
 ComponentFactoryRegistry::~ComponentFactoryRegistry()

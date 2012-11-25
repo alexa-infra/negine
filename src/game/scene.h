@@ -15,18 +15,18 @@ typedef std::map<std::string, GameObject*> ObjectMap;
 class Scene
 {
 public:
-	ComponentMap components_;
-	ObjectMap objects_;
+    ComponentMap components_;
+    ObjectMap objects_;
 
-	~Scene();
+    ~Scene();
 
-	GameObject* spawnObject(const std::string& name);
+    GameObject* spawnObject(const std::string& name, bool hasTransform = true);
 
-	GameObject* getObject(const std::string& name);
+    GameObject* getObject(const std::string& name);
 
-	void destroyObject(const std::string& name);
+    void destroyObject(const std::string& name);
 
-	void destroyObject(GameObject* obj);
+    void destroyObject(GameObject* obj);
 
 private:
 	void clear();

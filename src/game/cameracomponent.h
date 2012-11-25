@@ -1,15 +1,14 @@
 #pragma once
 
 #include "game/component.h"
+#include "game/componentfactory.h"
 #include "renderer/camera.h"
 
 class TransformComponent;
 
-class CameraComponent : public Component
+class CameraComponent : public ComponentBase<ComponentTypes::Camera>
 {
 public:
-	static ComponentType type() { return ComponentTypes::Camera; }
-	
 	base::opengl::Camera camera_;
 
 	CameraComponent();
@@ -18,9 +17,8 @@ public:
 
 	void onAttach();
 
-	void onDetach()
-	{
-	}
+	void onDetach();
 
 	void update();
 };
+REGISTER_COMPONENT(CameraComponent);
