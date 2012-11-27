@@ -107,6 +107,17 @@ bool Program::CreateFromText( const std::string& vs, const std::string& fs, std:
 
     glAttachShader( program_id_, vertex_shader_.id() );
     glAttachShader( program_id_, pixel_shader_.id() );
+
+    for (u32 i=0; i<VertexAttrs::Count; i++)
+    {
+        VertexAttr attr = (VertexAttr)i;
+        std::string name;
+        attr_map.to_string(attr, name);
+        glBindAttribLocation(program_id_, 
+            VertexAttrs::GetAttributeLocation(attr), 
+            name.c_str());
+    }
+
     glLinkProgram( program_id_ );
     
     GLint linkStatus;
@@ -209,23 +220,11 @@ Program::~Program()
 void Program::Bind()
 {
     glUseProgram( program_id_ );
-    AttributeBinding::const_iterator it;
-
-    for( it = attr_binding_.begin(); it != attr_binding_.end(); ++it ) {
-        glEnableVertexAttribArray( it->second );
-    }
-
     Stats::instance()->inc_program_switches();
 }
 
 void Program::Unbind()
 {
-    AttributeBinding::const_iterator it;
-
-    for( it = attr_binding_.begin(); it != attr_binding_.end(); ++it ) {
-        glDisableVertexAttribArray( it->second );
-    }
-
     glUseProgram(0);
 }
 
@@ -291,35 +290,6 @@ void Program::get_uniforms_list()
 
 void Program::get_attributes_list()
 {
-    GLint attrib_count, max_name_len = 0;
-    glGetProgramiv( program_id_, GL_ACTIVE_ATTRIBUTES, &attrib_count );
-    glGetProgramiv( program_id_, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_name_len );
-
-    if ( attrib_count == 0 || max_name_len == 0 ) {
-        return;
-    }
-
-    char* attrName = new char[max_name_len];
-
-    for ( i32 i = 0; i < attrib_count; ++i ) {
-        GLsizei attrNameLen = 0;
-        i32 attrSize = 0;
-        GLenum attrGLType = 0;
-        glGetActiveAttrib( program_id_, i, max_name_len, &attrNameLen, &attrSize, &attrGLType, attrName );
-        std::string name( attrName );
-        i32 location = glGetAttribLocation( program_id_, attrName );
-        VertexAttr va;
-
-        if ( !attr_map.from_string( name, va ) ) {
-            std::cout << "vertex attr not found. name: " << name
-                      << ", type: " << attrGLType << std::endl;
-            continue;
-        }
-
-        attr_binding_.insert( std::make_pair( va, location ) );
-    }
-
-    delete [] attrName;
 }
 
 void Program::CreateFromFileWithAssert( const std::string& filename )

@@ -26,8 +26,6 @@ protected:
     Matrix4 projection_;
     Matrix4 cameraTransform_;
     u32 keypressed_;
-    struct Cube;
-    std::vector<Cube> cubes_;
 public:
     Demo() {
         buffer_ = NULL;
@@ -52,11 +50,6 @@ public:
         q3map_ = new q3maploader( fb );
         q3map_->load();
         q3map_->PreloadTextures( texure_loader_ );
-        std::vector<Vertex> vv;
-        std::vector<Face> ff;
-        Cube c = AddCube( vv, ff, camera_.position() );
-        //cubes_.push_back(c);
-        buffer_ = new VertexBufferGPU( &vv[0], vv.size(), &ff[0], ff.size() );
         program_.CreateFromFileWithAssert( "q3map.shader" );
     }
     virtual ~Demo() {
@@ -65,18 +58,6 @@ public:
         delete buffer_;
     }
 protected:
-    bool InterFrustum( const Cube& c ) const {
-        for ( int i = 0; i < 6; i++ ) {
-            const Plane& p = camera_.planes()[i];
-            u8 r = p.BoxOnPlaneSide( c.min, c.max );
-
-            if ( r == 2 ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
     void OnFrame() {
         UpdateWorld();
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -86,91 +67,12 @@ protected:
         program_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
         program_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
         program_.set_uniform( base::opengl::UniformVars::Clip, projection_ * cameraTransform_ );
-        /*Texture* t = texure_loader_.Load( "checker.png" );
-        program_.set_uniform( base::opengl::UniformVars::Diffuse, t );
-
-        for ( u32 i = 0; i < cubes_.size(); i++ ) {
-            const Cube& c = cubes_[i];
-
-            if ( !InterFrustum( c ) ) {
-                std::cout << "culled" << std::endl;
-                continue;
-            } else {
-                std::cout << "not culled" << std::endl;
-            }
-
-            buffer_->Draw( program_.binding(), c.face_start, 12 );
-        }*/
-
         q3map_->render( camera_, &program_, texure_loader_ );
         program_.Unbind();
         assert( glGetError() == GL_NO_ERROR );
         Application::OnFrame();
     }
     VertexBuffer* buffer_;
-    void SetVertexPos( Vertex* v, const Vector3& v0, const Vector3& v1, const Vector3& v2, const Vector3& v3 ) {
-        v[0].pos = v0;
-        v[1].pos = v1;
-        v[2].pos = v2;
-        v[3].pos = v3;
-    }
-    Face SetFace( i16 i1, i16 i2, i16 i3 ) {
-        Face f;
-        f.index[0] = i1;
-        f.index[1] = i2;
-        f.index[2] = i3;
-        return f;
-    }
-    void AddCubeSide( std::vector<Vertex>& vert, std::vector<Face>& face, const Vector3& v0, const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& n ) {
-        Vertex v[4];
-        SetVertexPos( v, v0, v1, v2, v3 );
-        SetVertexUV( v );
-        SetVertexN( v, n );
-        i16 i = static_cast<i16>( vert.size() );
-        face.push_back( SetFace( i + 0, i + 1, i + 2 ) );
-        face.push_back( SetFace( i + 2, i + 3, i + 0 ) );
-
-        for( int j = 0; j < 4; j++ ) {
-            vert.push_back( v[j] );
-        }
-    }
-    struct Cube {
-        Vector3 max, min;
-        i32 face_start;
-    };
-    Cube AddCube( std::vector<Vertex>& v, std::vector<Face>& f, const math::Vector3& position ) {
-        f32 s = 10;
-        Vector3 v0 = Vector3( 0.0f, 0.0f, 0.0f ) + position;
-        Vector3 v1 = Vector3( 0.0f, 0.0f, s ) + position;
-        Vector3 v2 = Vector3( s, 0.0f, s ) + position;
-        Vector3 v3 = Vector3( s, 0.0f, 0.0f ) + position;
-        Vector3 v4 = Vector3( 0.0f, s, 0.0f ) + position;
-        Vector3 v5 = Vector3( 0.0f, s, s ) + position;
-        Vector3 v6 = Vector3( s, s, s ) + position;
-        Vector3 v7 = Vector3( s, s, 0.0f ) + position;
-        Cube cube;
-        cube.face_start = f.size();
-        cube.max = v6;
-        cube.min = v0;
-        AddCubeSide( v, f, v0, v1, v2, v3, Vector3( 0.0f, -1.0f, 0.0f ) );
-        AddCubeSide( v, f, v1, v5, v6, v2, Vector3( 0.0f, 0.0f, 1.0f ) );
-        AddCubeSide( v, f, v5, v4, v7, v6, Vector3( 0.0f, 0.0f, 1.0f ) );
-        AddCubeSide( v, f, v4, v0, v3, v7, Vector3( 0.0f, 0.0f, -1.0f ) );
-        AddCubeSide( v, f, v0, v4, v5, v1, Vector3( -1.0f, 0.0f, 0.0f ) );
-        AddCubeSide( v, f, v2, v6, v7, v3, Vector3( 1.0f, 0.0f, 0.0f ) );
-        return cube;
-    }
-    void SetVertexN( Vertex* v, const math::Vector3& n ) {
-        for( u32 i = 0; i < 4; i++ ) {
-            v[i].n = n;
-        }
-    }
-    void SetVertexUV( Vertex* v ) {
-        v[0].tex = math::Vector2( 0.0f, 0.0f );
-        v[1].tex = math::Vector2( 1.0f, 0.0f );
-        v[2].tex = math::Vector2( 1.0f, 1.0f );
-        v[3].tex = math::Vector2( 0.0f, 1.0f );
-    }
 
     void OnMotion( i32 x, i32 y, i32 dx, i32 dy ) {
         /*

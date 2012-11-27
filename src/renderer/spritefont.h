@@ -34,7 +34,7 @@ public:
     ~SpriteFont();
 
     void SetText( const math::Vector2& position, const std::string& text, const math::Vector4& color );
-    void Draw( const AttributeBinding& binding );
+    void Draw( );
     Texture* texture() const {
         return texture_;
     }

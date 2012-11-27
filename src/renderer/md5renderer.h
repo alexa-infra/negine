@@ -22,8 +22,7 @@ class Md5Renderer
 public:
     resource::Md5BoundingBox boundingBox;
 private:
-    Vertex* vertexArray;
-    Face* vertexIndices;
+    MeshExt* mesh_;
     VertexBuffer* vb;
     resource::Md5Model* md5;
 public:
@@ -31,13 +30,13 @@ public:
     ~Md5Renderer();
 
     void Commit();
-    void Draw( AttributeBinding& binding );
+    void Draw( );
 
 private:
-    void GenerateVertexes( resource::Md5Mesh& mesh, Vertex* vertexes );
-    void GenerateIndexes( resource::Md5Mesh& mesh, Face* indexes );
-    void GenerateLightningInfo( resource::Md5Mesh& mesh, Vertex* vertexes );
-    void UpdateBoundingBox( Vertex& vetex );
+    void GenerateVertexes( resource::Md5Mesh& mesh );
+    void GenerateIndexes( resource::Md5Mesh& mesh );
+    void GenerateLightningInfo( resource::Md5Mesh& mesh );
+    void UpdateBoundingBox( math::Vector3& vetex );
 };
 
 } // namespace base

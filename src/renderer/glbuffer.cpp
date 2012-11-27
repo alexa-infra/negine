@@ -16,7 +16,7 @@ GLBufferObject::GLBufferObject()
     , is_ok_( false )
 {
     glGenBuffers( 1, &id_ );
-    is_ok_ = ( glIsBuffer( id_ ) == GL_TRUE );
+    is_ok_ = id_ != 0;
 }
 
 GLBufferObject::~GLBufferObject()

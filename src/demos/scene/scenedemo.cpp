@@ -105,6 +105,7 @@ public:
 		std::string status;
 		bool result = program_.CreateFromText(vertexSh, fragmentSh, status);
 		assert(result);
+        assert( glGetError() == GL_NO_ERROR );
 	}
 	virtual ~Demo() {
 		delete scene_;
@@ -143,7 +144,7 @@ protected:
 			program_.set_uniform( base::opengl::UniformVars::Modelview,
 				camera.GetModelView() * mesh->transform_->world( ) );
 
-			mesh->mesh_->draw(program_.binding());
+			mesh->mesh_->draw();
 
             pos+=1;
 		}

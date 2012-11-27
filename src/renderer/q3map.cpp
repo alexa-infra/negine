@@ -411,8 +411,8 @@ void q3maploader::render_patch( const q3face& face, Program* pr ) const
 
 void bind_attr( Program* pr, const q3vertex& vertex )
 {
-    AttributeBinding& binding = pr->binding();
-    u32 bindPos = binding[VertexAttrs::tagPosition];
+    u32 bindPos = VertexAttrs::GetAttributeLocation(VertexAttrs::tagPosition);
+    glEnableVertexAttribArray(bindPos);
     glVertexAttribPointer(
         bindPos,
         3,
@@ -420,7 +420,8 @@ void bind_attr( Program* pr, const q3vertex& vertex )
         GL_FALSE,
         sizeof( q3vertex ),
         ( const u8* )&vertex.pos );
-    u32 bindTex = binding[VertexAttrs::tagTexture];
+    u32 bindTex = VertexAttrs::GetAttributeLocation(VertexAttrs::tagTexture);
+    glEnableVertexAttribArray(bindTex);
     glVertexAttribPointer(
         bindTex,
         2,
@@ -429,7 +430,7 @@ void bind_attr( Program* pr, const q3vertex& vertex )
         sizeof( q3vertex ),
         ( const u8* )&vertex.surfaceUV );
     /*
-        u32 bindNorm = binding[VertexAttrs::tagNormal];
+        u32 bindNorm = VertexAttrs::GetAttributeLocation(VertexAttrs::tagNormal);
         glVertexAttribPointer(
             bindNorm,
             3,
@@ -438,7 +439,8 @@ void bind_attr( Program* pr, const q3vertex& vertex )
             sizeof(q3vertex),
             (const u8*)&vertex.normal);
     */
-        u32 bindLM = binding[VertexAttrs::tagTangent];
+        u32 bindLM = VertexAttrs::GetAttributeLocation(VertexAttrs::tagTangent);
+        glEnableVertexAttribArray(bindLM);
         glVertexAttribPointer(
             bindLM,
             2,

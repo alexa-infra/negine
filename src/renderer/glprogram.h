@@ -51,7 +51,6 @@ protected:
     Shader pixel_shader_;       //!< Attached pixel shader
     Shader vertex_shader_;      //!< Attached vertex shader
 
-    AttributeBinding attr_binding_;  //!< attributes to vertex data binding
     UniformBinding uni_binding_;
     
 public:
@@ -73,11 +72,6 @@ public:
 
     //! Unbind program
     void Unbind();
-
-    //! Gets binding of attributes to vertex tags
-    AttributeBinding& binding() {
-        return attr_binding_;
-    }
 
     template<typename T>
     void set_uniform( UniformVar uniform, const T& val ) {

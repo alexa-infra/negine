@@ -18,7 +18,7 @@ namespace opengl
 class Md3Renderer
 {
     resource::Md3Model* model;
-    std::vector<Mesh*> meshes;
+    std::vector<MeshExt*> meshes;
     std::vector<VertexBuffer*> vbs;
 
 public:
@@ -27,7 +27,7 @@ public:
 
     void Commit();
 
-    void Draw( AttributeBinding& binding );
+    void Draw( );
 private:
     static math::Vector3 DecodeNormal( const u8* normal );
 };

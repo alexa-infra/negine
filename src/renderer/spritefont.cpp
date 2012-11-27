@@ -4,6 +4,7 @@
  *              Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
+/*
 #include "renderer/spritefont.h"
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb/stb_truetype.h"
@@ -150,3 +151,4 @@ SpriteFont::~SpriteFont()
 
 }//namespace opengl
 }//namespace base
+*/

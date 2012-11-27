@@ -1,5 +1,5 @@
 #include "renderer/cubemesh.h"
-
+#include <assert.h>
 namespace base
 {
 namespace opengl
@@ -10,24 +10,36 @@ using namespace math;
 CubeMesh::CubeMesh()
 	: buffer_(nullptr)
 {
-	std::vector<Vertex> vv;
-	std::vector<Face> ff;
-	AddCube( vv, ff, Vector3( 0.0f ) );
-	buffer_ = new VertexBufferMemory( &vv.front(), vv.size(), &ff.front(), ff.size() );
+    std::vector<CubeMesh::CubeVertex> vv;
+    std::vector<u32> ff;
+    AddCube( vv, ff, Vector3( 0.0f ) );
+    buffer_ = new VertexBuffer();
+    buffer_->SetVertexData(&vv.front(), vv.size() * sizeof(CubeVertex));
+    buffer_->SetIndexData(&ff.front(), ff.size() * sizeof(u32));
+    buffer_->EnableAttribute(VertexAttrs::tagPosition, sizeof(CubeVertex), (void*)offsetof(CubeVertex, position));
+    buffer_->EnableAttribute(VertexAttrs::tagNormal, sizeof(CubeVertex), (void*)offsetof(CubeVertex, normal));
+    //buffer_->EnableAttribute(VertexAttrs::tagTexture, sizeof(CubeVertex), (void*)offsetof(CubeVertex, tex));
+    buffer_->EnableAttribute(VertexAttrs::tagColor, sizeof(CubeVertex), (void*)offsetof(CubeVertex, color));
+    buffer_->Load();
 }
 
 CubeMesh::~CubeMesh()
 {
-	delete buffer_;
+    delete buffer_;
 }
 
-void CubeMesh::draw(const AttributeBinding& binding)
+void CubeMesh::draw()
 {
-	buffer_->Draw( binding );
+    buffer_->BindAttributes( );
+    glDrawElements(GL_TRIANGLES,
+        6 * 2 * 3,
+        GL_UNSIGNED_INT,
+        0);
+    buffer_->UnbindAttributes();
 }
 
-CubeMesh::Cube CubeMesh::AddCube( std::vector<Vertex>& v,
-				std::vector<Face>& f,
+CubeMesh::Cube CubeMesh::AddCube( std::vector<CubeMesh::CubeVertex>& v,
+				std::vector<u32>& f,
 		const math::Vector3& position ) const
 {
 	f32 s = 5;
@@ -52,20 +64,20 @@ CubeMesh::Cube CubeMesh::AddCube( std::vector<Vertex>& v,
 	return cube;
 }
 
-void CubeMesh::SetVertexN( Vertex* v, const math::Vector3& n ) const {
+void CubeMesh::SetVertexN( CubeMesh::CubeVertex* v, const math::Vector3& n ) const {
 	for( u32 i = 0; i < 4; i++ ) {
-		v[i].n = n;
+		v[i].normal = n;
 	}
 }
 
-void CubeMesh::SetVertexUV( Vertex* v ) const {
+void CubeMesh::SetVertexUV( CubeMesh::CubeVertex* v ) const {
 	v[0].tex = math::Vector2( 0.0f, 0.0f );
 	v[1].tex = math::Vector2( 1.0f, 0.0f );
 	v[2].tex = math::Vector2( 1.0f, 1.0f );
 	v[3].tex = math::Vector2( 0.0f, 1.0f );
 }
 
-void CubeMesh::SetVertexColor( Vertex* v ) const
+void CubeMesh::SetVertexColor( CubeMesh::CubeVertex* v ) const
 {
 	v[0].color = math::Vector4( 1.0f, 0.0f, 0.0f, 1.0f );
 	v[1].color = math::Vector4( 0.0f, 1.0f, 0.0f, 1.0f );
@@ -73,36 +85,34 @@ void CubeMesh::SetVertexColor( Vertex* v ) const
 	v[3].color = math::Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
 }
 
-void CubeMesh::SetVertexPos( Vertex* v, const Vector3& v0, const Vector3& v1, const Vector3& v2, const Vector3& v3 ) const {
-	v[0].pos = v0;
-	v[1].pos = v1;
-	v[2].pos = v2;
-	v[3].pos = v3;
+void CubeMesh::SetVertexPos( CubeMesh::CubeVertex* v, const Vector3& v0, const Vector3& v1, const Vector3& v2, const Vector3& v3 ) const {
+	v[0].position = v0;
+	v[1].position = v1;
+	v[2].position = v2;
+	v[3].position = v3;
 }
 
-Face CubeMesh::SetFace( i16 i1, i16 i2, i16 i3 ) const {
-	Face f;
-	f.index[0] = i1;
-	f.index[1] = i2;
-	f.index[2] = i3;
-	return f;
+void CubeMesh::SetFace( std::vector<u32>& face, u32 i1, u32 i2, u32 i3 ) const {
+    face.push_back(i1);
+    face.push_back(i2);
+    face.push_back(i3);
 }
-void CubeMesh::AddCubeSide( std::vector<Vertex>& vert,
-					std::vector<Face>& face,
+void CubeMesh::AddCubeSide( std::vector<CubeMesh::CubeVertex>& vert,
+					std::vector<u32>& face,
 						const Vector3& v0,
 						const Vector3& v1,
 						const Vector3& v2,
 						const Vector3& v3,
 						const Vector3& n ) const
 {
-	Vertex v[4];
+	CubeMesh::CubeVertex v[4];
 	SetVertexPos( v, v0, v1, v2, v3 );
 	SetVertexUV( v );
 	SetVertexN( v, n );
 	SetVertexColor( v );
-	i16 i = static_cast<i16>( vert.size() );
-	face.push_back( SetFace( i + 0, i + 1, i + 2 ) );
-	face.push_back( SetFace( i + 2, i + 3, i + 0 ) );
+	u32 i = vert.size();
+	SetFace( face, i + 0, i + 1, i + 2 );
+	SetFace( face, i + 2, i + 3, i + 0 );
 
 	for( int j = 0; j < 4; j++ ) {
 		vert.push_back( v[j] );

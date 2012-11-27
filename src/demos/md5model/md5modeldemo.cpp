@@ -89,8 +89,8 @@ protected:
         f32 interp = ( counter % 2 ) / 2.f;
         entity->object.md5Anim->Update( &entity->object.md5Model, frame, interp );
         md5_renderer_->Commit();
-        AttributeBinding binding = program_.binding();
-        md5_renderer_->Draw( binding );
+        
+        md5_renderer_->Draw( );
         program_.Unbind();
         program_wirebox_.Bind();
         program_wirebox_.set_uniform( base::opengl::UniformVars::Projection, camera_.GetProjection() );

@@ -21,6 +21,7 @@ class ParticleSystemRenderer
 {
     Texture* texture_;
     VertexBuffer* vbo_;
+    MeshExt* mesh_;
     resource::ParticleSystem* ps_;
 public:
     ParticleSystemRenderer( resource::ParticleSystem* ps, TextureLoader* loader );
