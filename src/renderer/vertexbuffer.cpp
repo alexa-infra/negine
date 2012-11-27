@@ -16,11 +16,13 @@ namespace opengl
 VertexBuffer::VertexBuffer()
     : vertexes_(nullptr)
     , indexes_(nullptr)
+    , vao_(0)
 {
 }
 
 VertexBuffer::~VertexBuffer()
 {
+    glDeleteVertexArrays(1, &vao_);
     delete vertexes_;
     delete indexes_;
 }
@@ -59,6 +61,21 @@ void VertexBuffer::SetIndexData( void* index, u32 indexCount )
 
 void VertexBuffer::BindAttributes( )
 {
+    assert(vao_ != 0);
+    glBindVertexArray(vao_);
+}
+
+void VertexBuffer::Load()
+{
+    assert(vertexes_ != nullptr && indexes_ != nullptr);
+    assert(enabledAttributes_[VertexAttrs::tagPosition].enabled_
+        || enabledAttributes_[VertexAttrs::tagNormal].enabled_
+        || enabledAttributes_[VertexAttrs::tagTexture].enabled_);
+
+    if (vao_ == 0)
+        glGenVertexArrays(1, &vao_);
+    glBindVertexArray(vao_);
+
     vertexes_->Bind( BufferTargets::Array );
 
     for (u32 i=0; i<VertexAttrs::Count; i++)
@@ -84,20 +101,12 @@ void VertexBuffer::BindAttributes( )
     }
 
     indexes_->Bind( BufferTargets::ElementArray );
-}
-
-void VertexBuffer::Load()
-{
-    assert(vertexes_ != nullptr && indexes_ != nullptr);
-    assert(enabledAttributes_[VertexAttrs::tagPosition].enabled_
-        || enabledAttributes_[VertexAttrs::tagNormal].enabled_
-        || enabledAttributes_[VertexAttrs::tagTexture].enabled_);
+    glBindVertexArray(0);
 }
 
 void VertexBuffer::UnbindAttributes( )
 {
-    indexes_->Unbind();
-    vertexes_->Unbind();
+    glBindVertexArray(0);
 }
 
 }

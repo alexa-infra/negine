@@ -8,7 +8,6 @@
 
 #include "renderer/mesh.h"
 #include "renderer/glbuffer.h"
-#include <array>
 
 namespace base
 {
@@ -41,6 +40,7 @@ public:
 private:
     GLBufferObject* vertexes_;      //!< Vertex buffer object
     GLBufferObject* indexes_;       //!< Index buffer object
+    GLuint vao_;
 
     struct EnabledAttribute
     {
