@@ -60,7 +60,7 @@ u32 GetSize( VertexAttr attr )
     case tagTangent:
         return sizeof(Vector3);
     case tagBinormal:
-        return sizeof(Vector2);
+        return sizeof(Vector3);
     case tagColor:
         return sizeof(Vector4);
     default:

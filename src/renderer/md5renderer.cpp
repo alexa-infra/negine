@@ -41,6 +41,7 @@ Md5Renderer::Md5Renderer( Md5Model* model )
 Md5Renderer::~Md5Renderer()
 {
     delete vb;
+    delete mesh_;
 }
 
 void Md5Renderer::Draw( )
@@ -48,7 +49,7 @@ void Md5Renderer::Draw( )
     vb->BindAttributes();
     glDrawElements(
         GL_TRIANGLES, mesh_->numIndexes(), 
-        GL_UNSIGNED_INT, (void*)0);
+        GL_UNSIGNED_SHORT, (void*)0);
     vb->UnbindAttributes();
 }
 
@@ -59,7 +60,7 @@ void Md5Renderer::Commit()
     GenerateIndexes( mesh );
     GenerateLightningInfo( mesh );
     vb->SetVertexData( mesh_->data(), mesh_->rawSize() );
-    vb->SetIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u32) );
+    vb->SetIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
     vb->Load();
 }
 
@@ -67,10 +68,9 @@ void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
 {
     const Md5Joint* skeleton = md5->baseSkel;
     math::Vector2* tex = mesh_->findAttributeTyped<math::Vector2>(VertexAttrs::tagTexture);
-    math::Vector3* tangent = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTexture);
+    math::Vector3* tangent = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTangent);
     math::Vector3* pos = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-    math::Vector3* n = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-    math::Vector4* color = mesh_->findAttributeTyped<math::Vector4>(VertexAttrs::tagColor);
+    math::Vector3* n = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagNormal);
 
     for ( i32 i = 0; i < mesh.num_verts; ++i ) {
         tex[i] = mesh.vertices[i].st;
@@ -97,7 +97,7 @@ void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
     u16* indicies = mesh_->indices();
     for ( int i = 0; i < mesh.num_tris; i++ ) {
         for ( int j = 0; j < 3; j++ ) {
-            indicies[i + j] = mesh.triangles[i].index[j];
+            indicies[3*i + j] = (u16)mesh.triangles[i].index[j];
         }
     }
 }
@@ -105,11 +105,10 @@ void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
 void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
 {
     math::Vector2* tex = mesh_->findAttributeTyped<math::Vector2>(VertexAttrs::tagTexture);
-    math::Vector3* tangent = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTexture);
-    math::Vector3* binormal = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTexture);
+    math::Vector3* tangent = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTangent);
+    math::Vector3* binormal = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagBinormal);
     math::Vector3* pos = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-    math::Vector3* n = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-    math::Vector4* color = mesh_->findAttributeTyped<math::Vector4>(VertexAttrs::tagColor);
+    math::Vector3* n = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagNormal);
 
     for ( i32 i = 0; i < mesh.num_tris; i++ ) {
         f32 d0[5], d1[5];

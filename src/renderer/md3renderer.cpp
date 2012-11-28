@@ -71,6 +71,7 @@ void Md3Renderer::Commit()
 
         math::Vector2* tex = mesh->findAttributeTyped<math::Vector2>(VertexAttrs::tagTexture);
         math::Vector3* pos = mesh->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
+        math::Vector3* n = mesh->findAttributeTyped<math::Vector3>(VertexAttrs::tagNormal);
         math::Vector4* color = mesh->findAttributeTyped<math::Vector4>(VertexAttrs::tagColor);
 
         for ( i32 j = 0; j < info.num_verts; j++ ) {
@@ -78,7 +79,7 @@ void Md3Renderer::Commit()
             tex[j].x = uv.st[0];
             tex[j].y = uv.st[1];
             Md3Vertex& vert = md3.vertexes[j];
-            pos[j] = DecodeNormal( vert.normal );
+            n[j] = DecodeNormal( vert.normal );
             pos[j].x = vert.coord[0] / 64.0f;
             pos[j].y = vert.coord[2] / 64.0f;
             pos[j].z = vert.coord[1] / 64.0f;
@@ -86,7 +87,7 @@ void Md3Renderer::Commit()
         }
 
         vbs[i]->SetVertexData( mesh->data(), mesh->rawSize());
-        vbs[i]->SetIndexData( mesh->indices(), mesh->numIndexes() * sizeof(u32));
+        vbs[i]->SetIndexData( mesh->indices(), mesh->numIndexes() * sizeof(u16));
         vbs[i]->Load();
     }
 }
@@ -96,8 +97,8 @@ void Md3Renderer::Draw( )
     for ( u32 i = 0; i < vbs.size(); i++ ) {
         vbs[i]->BindAttributes();
         glDrawElements(
-            GL_TRIANGLES, meshes[i]->numIndexes() * 3, 
-            GL_UNSIGNED_INT, (void*)0);
+            GL_TRIANGLES, meshes[i]->numIndexes(), 
+            GL_UNSIGNED_SHORT, (void*)0);
         vbs[i]->UnbindAttributes();
     }
 }
