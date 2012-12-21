@@ -2,6 +2,7 @@
 
 #include <deque>
 #include <map>
+#include <string>
 #include "game/componenttypes.h"
 
 class Scene;

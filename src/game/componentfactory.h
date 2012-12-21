@@ -75,3 +75,4 @@ struct ComponentRegistryHelper
 #define REGISTER_COMPONENT(Type) namespace {    \
         ComponentRegistryHelper<Type> register_##Type;    \
     }
+

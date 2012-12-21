@@ -336,8 +336,8 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
     int switches = 0;
     int patches = 0;
 
-    u32 lightMapID = UINT_MAX;
-    u32 diffuesID = UINT_MAX;
+    u32 lightMapID = 0xffffffff;
+    u32 diffuesID = 0xffffffff;
     for ( std::vector<TextureFace>::iterator ita = sorted.begin(); ita != sorted.end(); ++ita ) {
 
         Texture* t = ( *ita ).first;
