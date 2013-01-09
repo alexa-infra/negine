@@ -82,7 +82,7 @@ protected:
         program_.set_uniform( base::opengl::UniformVars::Projection, camera_.GetProjection() );
         program_.set_uniform( base::opengl::UniformVars::Modelview, camera_.GetModelView() * modelTransform_ );
         program_.set_uniform( base::opengl::UniformVars::CameraPos, camera_.position() );
-        program_.set_uniform( base::opengl::UniformVars::LightPos, Vector3( 40, 110, -200 ) );
+        program_.set_uniform( base::opengl::UniformVars::LightPos, camera_.position() );
         static u32 counter = 0;
         counter++;
         u32 frame  = counter / 2;

@@ -193,6 +193,9 @@ struct Node {
     }
 };
 
+// Use possible visible set
+//#define USE_PVS
+
 class q3maploader
 {
 public:
@@ -243,7 +246,7 @@ private:
     i32 findLeaf( const math::Vector3& camPos ) const;
 
     void render_polygons( const q3face& face, Program* pr ) const;
-    void render_patch( const q3face& face, Program* pr ) const;
+    void render_patch( const q3face& face, Program* pr, u32 lod ) const;
     void findDrawLeafs( const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visFaces, int index ) const;
     void ComputePossibleVisible( const math::Vector3& cameraPos );
     void AddVisibleNode( Node* node );

@@ -15,26 +15,35 @@ namespace base
 namespace opengl
 {
 
+namespace GLDataTypes
+{
+enum GLDataType {
+    Byte        = GL_BYTE,
+    UByte       = GL_UNSIGNED_BYTE,
+    Short       = GL_SHORT,
+    UShort      = GL_UNSIGNED_SHORT,
+    Int         = GL_INT,
+    UInt        = GL_UNSIGNED_INT,
+    Float       = GL_FLOAT,
+    Double      = GL_DOUBLE
+};
+u32 sizeInBytes(GLDataType dt);
+}
+typedef GLDataTypes::GLDataType GLDataType;
+
 namespace PixelTypes
 {
 //! Enumerates pixel types.
 enum PixelType {
-    R = ( 1 << 1 ),
-    G = ( 1 << 2 ),
-    B = ( 1 << 3 ),
-    A = ( 1 << 4 ),
+    R       = GL_RED,
+    RG      = GL_RG,
+    RGB     = GL_RGB,
+    RGBA    = GL_RGBA,
+    Depth   = GL_DEPTH_COMPONENT
 };
-
-const u32 Alpha = A;
-const u32 Gray = R;
-const u32 GrayAlpha = R | A;
-const u32 RGB = R | G | B;
-const u32 RGBA = R | G | B | A;
-const u32 Depth = R;
-
-GLenum GetGLType( u32 type );
+u32 componentCount(PixelType type);
 }
-typedef u32 PixelType;
+typedef PixelTypes::PixelType PixelType;
 
 namespace TextureUsages
 {
@@ -49,10 +58,8 @@ namespace TextureTypes
 {
 //! Texture type
 enum TextureType {
-    Texture1D = GL_TEXTURE_1D,
-    Texture2D = GL_TEXTURE_2D,
-    Texture3D = GL_TEXTURE_3D,
-    TextureCube = GL_TEXTURE_CUBE_MAP
+    Texture2D   = GL_TEXTURE_2D,
+    TextureRect = GL_TEXTURE_RECTANGLE
 };
 };
 typedef TextureTypes::TextureType TextureType;
@@ -62,30 +69,12 @@ namespace TextureMinFilters
 //! Texture minifying function is used whenever the pixel being textured
 //! maps to an area greater than one texture element.
 enum TextureMinFilter {
-    NEAREST = GL_NEAREST,   //!< Returns the value of the texture element
-    //!< that is nearest (in Manhattan distance)
-    //!< to the center of the pixel being textured.
-    LINEAR = GL_LINEAR,     //!< Returns the weighted average of the four
-    //!< texture elements that are closest to
-    //!< the center of the pixel being textured.
-    NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST, //!< Chooses the
-    //!< mipmap that most closely matches the size
-    //!< of the pixel being textured
-    //!< and uses the NEAREST criterion
-    LINEAR_MIPMAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST,  //!< Chooses the
-    //!< mipmap that most closely matches
-    //!< the size of the pixel being textured and
-    //!< uses the LINEAR criterion
-    NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR,  //!< Chooses the
-    //!< two mipmaps that most closely
-    //!< match the size of the pixel being textured
-    //!< and uses the NEAREST criterion, returns
-    //!< wighted average of two values
-    LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR     //!< Chooses the
-    //!< two mipmaps that most closely
-    //!< match the size of the pixel being textured
-    //!< and uses the LINEAR criterion, returns
-    //!< wighted average of two values
+    NEAREST                     = GL_NEAREST,
+    LINEAR                      = GL_LINEAR,
+    NEAREST_MIPMAP_NEAREST      = GL_NEAREST_MIPMAP_NEAREST,
+    LINEAR_MIPMAP_NEAREST       = GL_LINEAR_MIPMAP_NEAREST,
+    NEAREST_MIPMAP_LINEAR       = GL_NEAREST_MIPMAP_LINEAR,
+    LINEAR_MIPMAP_LINEAR        = GL_LINEAR_MIPMAP_LINEAR
 };
 }
 typedef TextureMinFilters::TextureMinFilter TextureMinFilter;
@@ -95,12 +84,8 @@ namespace TextureMagFilters
 //! Texture magnification function is used when the pixel being textured
 //! maps to an area less than or equal to one texture element.
 enum TextureMagFilter {
-    NEAREST = GL_NEAREST,   //!< Returns the value of the texture element
-    //!< that is nearest (in Manhattan distance) to the center of
-    //!< the pixel being textured.
-    LINEAR = GL_LINEAR      //!< Returns the weighted average of the four
-    //!< texture elements that are closest to the center of
-    //!< the pixel being textured.
+    NEAREST     = GL_NEAREST,
+    LINEAR      = GL_LINEAR
 };
 }
 typedef TextureMagFilters::TextureMagFilter TextureMagFilter;
@@ -109,13 +94,9 @@ namespace TextureWraps
 {
 //! Enumerates texture wrap modes
 enum TextureWrap {
-    CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,   //!< coordinates are clamped to the
-    //!< range 1/2 texel inside [0, 1]
-    MIRROR_REPEAT = GL_MIRRORED_REPEAT, //!< if integer part is even then
-    //!< use fractional part if integer part is odd then
-    //!< use (1-x) of fractional
-    REPEAT = GL_REPEAT                  //!< uses fractional part of
-    //!< coordinates only
+    CLAMP_TO_EDGE       = GL_CLAMP_TO_EDGE,
+    MIRROR_REPEAT       = GL_MIRRORED_REPEAT,
+    REPEAT              = GL_REPEAT
 };
 }
 typedef TextureWraps::TextureWrap TextureWrap;
@@ -134,10 +115,15 @@ struct TextureInfo {
     std::string Filename;                   //!< Source file name
     i32 Width;                              //!< Width of image
     i32 Height;                             //!< Height of image
-    i32 Depth;                              //!< Depth color
+    i32 ComponentCount;                     //!< Component count
     PixelType Pixel;                        //!< Pixel format
+    GLDataType DataType;
+    GLenum InternalType;
 
     TextureInfo();
+
+    u32 pixelSize() const { return PixelTypes::componentCount(Pixel) * GLDataTypes::sizeInBytes(DataType); }
+    u32 dataSize() const { return Width * Height * pixelSize(); }
 };
 
 //! Texture object
@@ -174,14 +160,14 @@ public:
     //! Generate texture object from texture info
     void GenerateFromBuffer( const TextureInfo& textureinfo, const u8* data );
 
-    bool has_alpha() const {
-        return ( ( info_.Pixel & PixelTypes::A ) > 0 );
-    }
+    void GenerateEmpty( const TextureInfo& textureinfo );
 
     void Destroy();
+
 private:
     void FromBuffer( const u8* data );
 
+    void setup();
 private:
     DISALLOW_COPY_AND_ASSIGN( Texture );
 };

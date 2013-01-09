@@ -109,6 +109,7 @@ void q3maploader::load()
         swizzle( leafs[i].maxs );
     }
 
+#ifdef USE_PVS
     q3lump lump_vis = read_lump( 16 );
     f.set_position( lump_vis.offset );
     visibility.nVecs = f.read_type<i32>();
@@ -116,7 +117,8 @@ void q3maploader::load()
     i32 visDataSize = visibility.nVecs * visibility.szVecs;
     visibility.vecs = new u8[visDataSize];
     f.read( visibility.vecs, visDataSize );
-    
+#endif
+
     visFaces = new u8[faces.size()];
     tree.resize( nodes.size() + leafs.size() );
     Node* firstNode = &tree.front();
@@ -263,9 +265,11 @@ void q3maploader::AddVisibleNode( Node* node )
 
 void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeMask )
 {
+#ifdef USE_PVS
     if ( node->frame != _frame_index ) {
         return;
     }
+#endif
 
     const Vector3& mins = node->mins;
     const Vector3& maxs = node->maxs;
@@ -315,7 +319,9 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
     memset( visFaces, 0, faces.size() );
     _visible_faces.clear();
     _visible_faces.reserve( faces.size() );
+#ifdef USE_PVS
     ComputePossibleVisible( camera.position() );
+#endif
     _program = pr;
     ComputeVisible_R( camera, &tree.front(), ( 1 << 7 ) - 1 );
     //return;
@@ -361,7 +367,9 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
         if ( face.type == 1 ) {
             render_polygons( face, pr );
         } else if ( face.type == 2 ) {
-            render_patch( face, pr );
+            auto v = camera.position() - vertexes[face.vertexIndex].pos;
+            render_patch( face, pr, static_cast<u32>(v.Length()) );
+            //render_patch( face, pr, 1 );
             patches++;
         }
     }
@@ -384,7 +392,7 @@ void q3maploader::render_polygons( const q3face& face, Program* pr ) const
     Stats::add_polygons( face.numOfFaceIndices / 3 );
 }
 
-void q3maploader::render_patch( const q3face& face, Program* pr ) const
+void q3maploader::render_patch( const q3face& face, Program* pr, u32 lod ) const
 {
     i32 numOfPatchesWide = ( face.patchWidth - 1 ) >> 1;
     i32 numOfPatchesHigh = ( face.patchHeight - 1 ) >> 1;
@@ -403,7 +411,12 @@ void q3maploader::render_patch( const q3face& face, Program* pr ) const
             b.controls[6] = vertexes[offset + ( patchWidth << 1 )];
             b.controls[7] = vertexes[offset + ( patchWidth << 1 ) + 1];
             b.controls[8] = vertexes[offset + ( patchWidth << 1 ) + 2];
-            b.tessellate( 8 );
+            if (lod > 1000)
+                b.tessellate( 1 );
+            else if (lod > 300)
+                b.tessellate( 5 );
+            else
+                b.tessellate( 8 );
             b.render( pr );
         }
     }

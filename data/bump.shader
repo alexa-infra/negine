@@ -18,8 +18,7 @@ varying vec3 halfVec;
 
 void main(void) {
     vec3 bitan = cross(n, t);
-    vec3 light_in_model_space = vec3(modelview_matrix * vec4(light_pos, 1.0));
-    vec3 tmp = light_in_model_space - position;
+    vec3 tmp = light - position;
     distance = length(tmp);
     light.x = dot(tmp, t);
     light.y = dot(tmp, bitan);
@@ -34,6 +33,7 @@ void main(void) {
     halfVec = (halfVec + light) / 2.0;
     halfVec = normalize(halfVec);
 
+    eye = camera_pos;
     tex0 = tex;
 
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
