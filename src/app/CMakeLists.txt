@@ -34,20 +34,32 @@ if (USE_SDL)
     include_directories(
         ${TOOLS_PATH}/SDL/include
     )
-    target_link_libraries(app 
-        debug SDL-static-debug.lib
-        optimized SDL-static.lib
-    )
+    if (WIN32)
+        target_link_libraries(app 
+            debug SDL-static-debug.lib
+            optimized SDL-static.lib
+        )
+    elseif(UNIX)
+        target_link_libraries(app
+            SDL2
+        )
+    endif()
 elseif (USE_GLUT)
     add_definitions(-DGLUT_ENGINE)
     add_definitions(-DFREEGLUT_STATIC -DFREEGLUT_LIB_PRAGMAS=0)
     include_directories(
         ${TOOLS_PATH}/freeglut/include
     )
-    target_link_libraries(app 
-        debug freeglut_d.lib
-        optimized freeglut.lib
-    )
+    if(WIN32)
+        target_link_libraries(app 
+            debug freeglut_d.lib
+            optimized freeglut.lib
+        )
+    elseif(UNIX)
+        target_link_libraries(app
+            freeglut
+        )
+    endif()
     if(WIN32)
         target_link_libraries(app winmm.lib)
     endif()

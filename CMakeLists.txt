@@ -29,7 +29,7 @@ macro(add_source_group FILTER_NAME SOURCE_PATH TARGET_LIST)
 endmacro(add_source_group)
 
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -fmax-errors=1 -std=c++98")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -fmax-errors=1 -std=c++0x")
   add_definitions(-D_DEBUG)
 endif(UNIX)
 if(APPLE)
@@ -107,6 +107,8 @@ if(WIN32)
     if (MSVC_VERSION EQUAL 1700)
         link_directories(${TOOLS_PATH}/libs-win-vs2012)
     endif()
+elseif(UNIX)
+    link_directories(${TOOLS_PATH}/libs-linux)
 endif()
 
 

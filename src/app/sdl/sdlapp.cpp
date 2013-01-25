@@ -16,7 +16,6 @@
 #include <assert.h>
 
 #include "GL/glew.h"
-#include "GL/wglew.h"
 #include "renderer/statistics.h"
 
 SDLApp::SDLApp()
