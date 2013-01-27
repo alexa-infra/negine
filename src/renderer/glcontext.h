@@ -14,6 +14,15 @@
 #include <GL/gl.h>
 #endif
 
+#ifdef __APPLE__
+#undef glGenVertexArrays
+#undef glDeleteVertexArrays
+#undef glBindVertexArray
+#define glGenVertexArrays      glGenVertexArraysAPPLE
+#define glDeleteVertexArrays   glDeleteVertexArraysAPPLE
+#define glBindVertexArray      glBindVertexArrayAPPLE
+#endif
+
 #include "base/types.h"
 
 namespace base

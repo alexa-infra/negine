@@ -11,6 +11,7 @@ class Component;
 class ComponentFactory
 {
 public:
+    virtual ~ComponentFactory() {}
     virtual ComponentType type() const = 0;
     virtual Component* create() const = 0;
 };
