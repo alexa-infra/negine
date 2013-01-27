@@ -63,8 +63,10 @@ bool q3visibility::isClusterVisible( i32 visCluster, i32 testCluster ) const
 q3maploader::q3maploader( FileBinary& file )
     : f( file )
     , visFaces( NULL )
+#ifdef USE_PVS
     , _frame_index( 1 )
     , _camera_cluster( -2 )
+#endif
 {
 }
 
@@ -316,7 +318,7 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
     _program = pr;
     ComputeVisible_R( camera, &tree.front(), ( 1 << 7 ) - 1 );
     //return;
-    float t1 = tt.Reset();
+    //float t1 = tt.Reset();
 
     std::vector<TextureFace> sorted;
     size_t ii = _visible_faces.size();
@@ -328,7 +330,7 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
         sorted.push_back( std::pair<Texture*, int>( t, faceIndex ) );
     }
     std::sort(sorted.begin(), sorted.end(), comp_texture_array);
-    float t2 = tt.Reset();
+    //float t2 = tt.Reset();
 
     int switches = 0;
     int patches = 0;
@@ -362,7 +364,7 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
             patches++;
         }
     }
-    float t3 = tt.Reset();
+    //float t3 = tt.Reset();
 
 //    std::cout
 //    << Stats::polygons() << " "

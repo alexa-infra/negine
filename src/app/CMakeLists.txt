@@ -30,10 +30,12 @@ target_link_libraries(app
 )
 
 if (USE_SDL)
+    find_package(SDL2 REQUIRED)
+    if (NOT SDL_FOUND)
+        message(FATAL ERROR "SDL not found")
+    endif()
+    include_directories(${SDL_INCLUDE_DIR})
     add_definitions(-DSDL_ENGINE)
-    include_directories(
-        ${TOOLS_PATH}/SDL/include
-    )
     if (WIN32)
         target_link_libraries(app 
             debug SDL-static-debug.lib
@@ -41,7 +43,7 @@ if (USE_SDL)
         )
     elseif(UNIX)
         target_link_libraries(app
-            SDL2
+            ${SDL_LIBRARY}
         )
     endif()
 elseif (USE_GLUT)
@@ -50,16 +52,10 @@ elseif (USE_GLUT)
     include_directories(
         ${TOOLS_PATH}/freeglut/include
     )
-    if(WIN32)
-        target_link_libraries(app 
-            debug freeglut_d.lib
-            optimized freeglut.lib
-        )
-    elseif(UNIX)
-        target_link_libraries(app
-            freeglut
-        )
-    endif()
+    target_link_libraries(app 
+        debug freeglut_d
+        optimized freeglut
+    )
     if(WIN32)
         target_link_libraries(app winmm.lib)
     endif()

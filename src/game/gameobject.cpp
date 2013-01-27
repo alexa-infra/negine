@@ -4,9 +4,10 @@
 #include "game/component.h"
 
 GameObject::GameObject(const std::string& name, Scene& scene) 
-    : scene_(scene)
+    : parent_(nullptr)
+    , scene_(scene)
     , name_(name)
-    , parent_(nullptr)
+    , transform_(nullptr)
 {
 }
 

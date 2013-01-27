@@ -24,8 +24,8 @@ using base::resource::ParticleList;
 ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, TextureLoader* loader )
     : texture_( NULL )
     , vbo_( NULL )
-    , ps_( ps )
     , mesh_(NULL)
+    , ps_( ps )
 {
     const ParticleSystemSetting& settings = ps_->settings;
 
