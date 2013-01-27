@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "md3mesh.h"
-#include <assert.h>
 
 namespace base
 {
@@ -64,8 +63,8 @@ void Md3Model::load_md3( FileBinary& file )
 {
     /*u32 hdr_start = */file.position();
     hdr = file.read_type<Md3Header>();
-    assert( hdr.ident == 0x33504449 );
-    assert( hdr.version == MD3_VERSION );
+    ASSERT( hdr.ident == 0x33504449 );
+    ASSERT( hdr.version == MD3_VERSION );
     frame_data = new Md3FrameData[hdr.num_frames];
 
 //    file.set_position(hdr_start + hdr.ofs_frames);
@@ -98,7 +97,7 @@ void Md3Model::load_md3( FileBinary& file )
         Md3MeshBase& mesh = meshes[i];
         Md3Surface& surface = mesh.surface;
         surface = file.read_type<Md3Surface>();
-        assert( surface.ident == 0x33504449 );
+        ASSERT( surface.ident == 0x33504449 );
         mesh.shaders = new Md3Shader[surface.num_shaders];
 
 //        file.set_position(surface_start + surface.ofs_shaders);

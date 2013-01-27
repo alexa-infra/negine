@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "base/math/quat.h"
-#include <assert.h>
 #include "base/math/mathlib.h"
 
 namespace base

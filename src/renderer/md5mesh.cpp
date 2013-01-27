@@ -1,7 +1,6 @@
 #include "md5mesh.h"
 #include "base/lexer.h"
 #include <string.h>
-#include <assert.h>
 
 namespace base
 {
@@ -46,9 +45,7 @@ void Md5Model::Read( Lexer& reader )
         if ( strcmp( reader.CurrentToken(), "MD5Version" ) == 0 ) {
             u32 version = ( u32 ) reader.ReadFloat();
 
-            if ( version != 10 ) {
-                assert( false );
-            }
+            ASSERT( version == 10 );
         } else if ( strcmp( reader.CurrentToken(), "numJoints" ) == 0 ) {
             num_joints = ( u32 ) reader.ReadFloat();
 

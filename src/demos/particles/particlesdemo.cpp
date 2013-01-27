@@ -10,7 +10,6 @@
 #include "renderer/particlesystemrenderer.h"
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
-#include <assert.h>
 
 using namespace base;
 using namespace base::math;

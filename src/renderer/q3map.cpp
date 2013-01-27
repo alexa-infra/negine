@@ -1,6 +1,5 @@
 #include "q3map.h"
 
-#include <assert.h>
 #include <string.h>
 #include <deque>
 #include <set>
@@ -184,8 +183,8 @@ void q3maploader::check_header()
 {
     f.set_position( 0 );
     q3header hdr = f.read_type<q3header>();
-    assert( strncmp( reinterpret_cast<char*>( hdr.magic ), "IBSP", 4 ) == 0 );
-    assert( hdr.version == 0x2e );
+    ASSERT( strncmp( reinterpret_cast<char*>( hdr.magic ), "IBSP", 4 ) == 0 );
+    ASSERT( hdr.version == 0x2e );
 }
 
 q3lump q3maploader::read_lump( i32 index )

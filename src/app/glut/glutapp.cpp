@@ -16,8 +16,6 @@
 #include "GL/glut.h"
 #include "GL/freeglut_ext.h"
 
-#include <assert.h>
-
 #include "renderer/statistics.h"
 
 GlutWindow* GlutWindow::window_ = NULL;

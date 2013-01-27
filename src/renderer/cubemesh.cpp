@@ -1,5 +1,5 @@
 #include "renderer/cubemesh.h"
-#include <assert.h>
+
 namespace base
 {
 namespace opengl

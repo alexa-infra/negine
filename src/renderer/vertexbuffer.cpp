@@ -61,14 +61,14 @@ void VertexBuffer::SetIndexData( void* index, u32 indexCount )
 
 void VertexBuffer::BindAttributes( )
 {
-    assert(vao_ != 0);
+    ASSERT(vao_ != 0);
     glBindVertexArray(vao_);
 }
 
 void VertexBuffer::Load()
 {
-    assert(vertexes_ != nullptr && indexes_ != nullptr);
-    assert(enabledAttributes_[VertexAttrs::tagPosition].enabled_
+    ASSERT(vertexes_ != nullptr && indexes_ != nullptr);
+    ASSERT(enabledAttributes_[VertexAttrs::tagPosition].enabled_
         || enabledAttributes_[VertexAttrs::tagNormal].enabled_
         || enabledAttributes_[VertexAttrs::tagTexture].enabled_);
 

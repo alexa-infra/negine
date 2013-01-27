@@ -61,3 +61,13 @@ struct hash_string {
    void operator=(const TypeName&)
 
 #include "base/log.h"
+
+#include <cassert>
+
+#ifdef _DEBUG
+#define ASSERT(x) assert(x)
+#define ENSURE(x) assert(x)
+#else
+#define ASSERT(x) {}
+#define ENSURE(x) (void)(x);
+#endif

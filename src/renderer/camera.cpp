@@ -5,7 +5,6 @@
  **/
 #include "renderer/camera.h"
 #include "base/math/vector.h"
-#include <cassert>
 
 namespace base
 {

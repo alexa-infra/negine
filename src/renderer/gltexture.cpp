@@ -124,7 +124,7 @@ void Texture::GenerateFromFile( const TextureInfo& textureinfo )
 
 void Texture::FromBuffer( const u8* data )
 {
-    assert( id_ == 0 );
+    ASSERT( id_ == 0 );
     glGenTextures( 1, &id_ );
 
     glBindTexture( info_.Type, id_ );
@@ -146,7 +146,7 @@ void Texture::FromBuffer( const u8* data )
 
 void Texture::GenerateEmpty( const TextureInfo& textureinfo )
 {
-    assert( id_ == 0 );
+    ASSERT( id_ == 0 );
     glGenTextures( 1, &id_ );
 
     glBindTexture( info_.Type, id_ );
@@ -170,7 +170,7 @@ void Texture::GenerateEmpty( const TextureInfo& textureinfo )
 void Texture::setup()
 {
     if ( !info_.GenerateMipmap ) {
-        assert( info_.MinFilter == TextureMinFilters::LINEAR
+        ASSERT( info_.MinFilter == TextureMinFilters::LINEAR
                 || info_.MinFilter == TextureMinFilters::NEAREST );
     }
 

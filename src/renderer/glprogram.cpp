@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "renderer/glprogram.h"
-#include <assert.h>
 #include <iostream>
 #include "base/math/vector.h"
 #include "base/math/matrix.h"
@@ -81,7 +80,7 @@ void Program::Destroy()
 
 bool Program::CreateFromText( const std::string& vs, const std::string& fs, std::string& statusStr )
 {
-    assert( program_id_ == 0 );
+    ASSERT( program_id_ == 0 );
     program_id_ = glCreateProgram();
 
     if ( program_id_ == 0 )

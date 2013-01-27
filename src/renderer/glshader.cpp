@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "renderer/glshader.h"
-#include <assert.h>
 
 namespace base
 {
@@ -31,7 +30,7 @@ void Shader::Destroy()
 
 bool Shader::Create( ShaderType shaderType, const std::string& source )
 {
-    assert( id_ == 0 );
+    ASSERT( id_ == 0 );
     shader_type_ = shaderType;
     id_ = glCreateShader( shader_type_ );
 

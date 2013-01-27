@@ -1,6 +1,6 @@
 #pragma once
 
-#include <assert.h>
+#include "base/types.h"
 
 namespace base
 {
@@ -13,11 +13,11 @@ protected:
     Singleton() {}
 public:
     static void init() {
-        assert( hasInstance() == false );
+        ASSERT( hasInstance() == false );
         instance_ = new Type;
     }
     static void shutdown() {
-        assert( hasInstance() == true );
+        ASSERT( hasInstance() == true );
         delete instance_;
         instance_ = nullptr;
     }
@@ -25,7 +25,7 @@ public:
         return instance_ != nullptr;
     }
     static Type* instance() {
-        assert( hasInstance() == true );
+        ASSERT( hasInstance() == true );
         return instance_;
     }
 };

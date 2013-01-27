@@ -1,6 +1,5 @@
 #pragma once
 
-#include <assert.h>
 #include "base/types.h"
 #include "base/singleton.h"
 #include "base/stdext.h"

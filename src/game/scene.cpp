@@ -1,5 +1,4 @@
 #include "game/scene.h"
-#include <assert.h>
 #include "base/stdext.h"
 #include "base/types.h"
 #include "game/component.h"
@@ -12,7 +11,7 @@ Scene::~Scene()
 
 GameObject* Scene::spawnObject(const std::string& name, bool hasTransform)
 {
-    assert( map_contains<ObjectMap>(objects_, name) == false );
+    ASSERT( map_contains<ObjectMap>(objects_, name) == false );
     GameObject* obj = new GameObject(name, *this);
     objects_[name] = obj;
     if (hasTransform)
@@ -23,7 +22,7 @@ GameObject* Scene::spawnObject(const std::string& name, bool hasTransform)
 GameObject* Scene::getObject(const std::string& name) {
     GameObject* obj;
     bool result = try_find<ObjectMap>(objects_, name, obj);
-    assert( result == true );
+    ASSERT( result == true );
     return obj;
 }
 

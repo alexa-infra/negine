@@ -27,7 +27,7 @@ bool GameObject::hasComponent(ComponentType type) const
 
 Component* GameObject::addComponent(ComponentType type)
 {
-    assert(components_[type] == nullptr);
+    ASSERT(components_[type] == nullptr);
     Component* comp = ComponentRegistry::create(type);
     comp->object_ = this;
     components_[type] = comp;

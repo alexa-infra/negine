@@ -7,7 +7,6 @@
 
 #include <string>
 #include <iostream>
-#include <assert.h>
 #include <sstream>
 #include "renderer/statistics.h"
 
@@ -261,7 +260,7 @@ Program* Demo::LoadProgram( const std::string& filename )
                 << "File is not exists: "
                 << filename << '\n'
                 << std::endl;
-        assert( false );
+        abort();
         return NULL;
     }
 
@@ -272,7 +271,7 @@ Program* Demo::LoadProgram( const std::string& filename )
                 << "Error on load shader program "
                 << filename << std::endl
                 << status << std::endl;
-        assert( false );
+        abort();
     }
 
     return program;

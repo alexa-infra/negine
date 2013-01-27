@@ -10,7 +10,6 @@
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
 #include "renderer/vertexbuffer.h"
-#include <assert.h>
 
 using namespace base;
 using namespace base::math;

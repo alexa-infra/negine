@@ -11,7 +11,6 @@
 #ifdef OS_POSIX
 # include <sys/time.h>
 #endif
-#include <assert.h>
 
 namespace base
 {
@@ -23,7 +22,8 @@ Timer::Timer()
     LARGE_INTEGER freq;
     if ( QueryPerformanceFrequency( &freq ) == FALSE )
     {
-        assert(false);
+        ERR("QueryPerformanceFrequency fails");
+        abort();
     }
     frequency_ = freq.QuadPart;
 #endif

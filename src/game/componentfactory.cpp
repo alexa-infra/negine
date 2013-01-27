@@ -5,7 +5,7 @@ Component* ComponentFactoryRegistry::create(ComponentType type) const
 {
 	ComponentFactory* factory = nullptr;
 	bool result = try_find<ComponentFactoryMap>(factories_, type, factory);
-	assert( result == true );
+	ASSERT( result == true );
 	return factory->create();
 }
 

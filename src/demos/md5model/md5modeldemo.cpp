@@ -12,7 +12,6 @@
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
 #include "renderer/wirebox.h"
-#include <assert.h>
 
 using namespace base;
 using namespace base::math;

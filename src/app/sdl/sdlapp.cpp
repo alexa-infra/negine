@@ -13,7 +13,6 @@
 
 #include <iostream>
 #include <string>
-#include <assert.h>
 
 #include "renderer/glcontext.h"
 #include "renderer/statistics.h"

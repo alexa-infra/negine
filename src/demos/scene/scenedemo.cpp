@@ -7,7 +7,6 @@
 #include "app/app.h"
 #include "renderer/camera.h"
 #include "renderer/glprogram.h"
-#include <assert.h>
 #include "game/scene.h"
 #include "game/gameobject.h"
 #include "game/cameracomponent.h"
@@ -104,7 +103,7 @@ public:
 
 		std::string status;
 		bool result = program_.CreateFromText(vertexSh, fragmentSh, status);
-		assert(result);
+		ASSERT(result);
                 GL_ASSERT();
 	}
 	virtual ~Demo() {
