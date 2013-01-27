@@ -17,26 +17,33 @@ namespace base
 namespace opengl
 {
 
-namespace PixelTypes
+u32 GLDataTypes::sizeInBytes(GLDataType dt)
 {
-GLenum GetGLType( u32 type )
-{
-    switch ( type ) {
-    case Alpha:
-        return GL_RED;
-    case Gray:
-        return GL_LUMINANCE;
-    case GrayAlpha:
-        return GL_LUMINANCE_ALPHA;
-    case RGB:
-        return GL_RGB;
-    case RGBA:
-        return GL_RGBA;
-        // return GL_ALPHA;
+    switch(dt)
+    {
+    case GLDataTypes::Byte:
+    case GLDataTypes::UByte:    return 1;
+    case GLDataTypes::Short:
+    case GLDataTypes::UShort:   return 2;
+    case GLDataTypes::Int:
+    case GLDataTypes::UInt:
+    case GLDataTypes::Float:    return 4;
+    case GLDataTypes::Double:   return 8;
+    default: return 0;
     }
-
-    return 0;
 }
+
+u32 PixelTypes::componentCount(PixelType type)
+{
+    switch(type)
+    {
+    case PixelTypes::R:         return 1;
+    case PixelTypes::RG:        return 2;
+    case PixelTypes::RGB:       return 3;
+    case PixelTypes::RGBA:      return 4;
+    case PixelTypes::Depth:     return 1;
+    default: return 0;
+    }
 }
 
 TextureInfo::TextureInfo()
@@ -48,9 +55,10 @@ TextureInfo::TextureInfo()
     , WrapR( TextureWraps::REPEAT )
     , GenerateMipmap( true )
     , Pixel( PixelTypes::RGBA )
+    , DataType( GLDataTypes::UByte )
+    , InternalType( GL_RGBA )
 {
 }
-
 
 Texture::Texture()
     : id_( 0 )
@@ -85,16 +93,22 @@ void Texture::GenerateFromBuffer( const TextureInfo& textureinfo, const u8* data
 void Texture::GenerateFromFile( const TextureInfo& textureinfo )
 {
     info_ = textureinfo;
-    u8* image = stbi_load( info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.Depth, 0 );
+    u8* image = stbi_load( info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.ComponentCount, 0 );
 
     if( image == NULL ) {
         std::cout << stbi_failure_reason() << std::endl;
         return;
     }
 
-    switch( info_.Depth ) {
+    // stbi - only 8bit formats are supported
+    info_.DataType = GLDataTypes::UByte;
+
+    switch( info_.ComponentCount ) {
     case 1:
-        info_.Pixel = PixelTypes::Alpha;
+        info_.Pixel = PixelTypes::R;
+        break;
+    case 2:
+        info_.Pixel = PixelTypes::RG;
         break;
     case 3:
         info_.Pixel = PixelTypes::RGB;
@@ -113,28 +127,57 @@ void Texture::FromBuffer( const u8* data )
     assert( id_ == 0 );
     glGenTextures( 1, &id_ );
 
+    glBindTexture( info_.Type, id_ );
+    setup();
+
+    glTexImage2D(
+        info_.Type,
+        0,
+        info_.InternalType,
+        info_.Width,
+        info_.Height,
+        0,
+        info_.Pixel,
+        info_.DataType,
+        data );
+//    if (info_.GenerateMipmap)
+//        glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void Texture::GenerateEmpty( const TextureInfo& textureinfo )
+{
+    assert( id_ == 0 );
+    glGenTextures( 1, &id_ );
+
+    glBindTexture( info_.Type, id_ );
+    setup();
+
+    u8* data = new u8[info_.dataSize()];
+
+    glTexImage2D(
+        info_.Type,
+        0,
+        info_.InternalType,
+        info_.Width,
+        info_.Height,
+        0,
+        info_.Pixel,
+        info_.DataType,
+        data );
+    delete[] data;
+}
+
+void Texture::setup()
+{
     if ( !info_.GenerateMipmap ) {
         assert( info_.MinFilter == TextureMinFilters::LINEAR
                 || info_.MinFilter == TextureMinFilters::NEAREST );
     }
 
-    glBindTexture( info_.Type, id_ );
     glTexParameteri( info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter );
     glTexParameteri( info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter );
     glTexParameteri( info_.Type, GL_TEXTURE_WRAP_S, info_.WrapS );
     glTexParameteri( info_.Type, GL_TEXTURE_WRAP_T, info_.WrapT );
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA,
-        info_.Width,
-        info_.Height,
-        0,
-        PixelTypes::GetGLType( info_.Pixel ),
-        GL_UNSIGNED_BYTE,
-        data );
-//    if (info_.GenerateMipmap)
-//        glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 TextureLoader::TextureLoader()
