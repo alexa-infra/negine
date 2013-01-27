@@ -96,7 +96,7 @@ void Texture::GenerateFromFile( const TextureInfo& textureinfo )
     u8* image = stbi_load( info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.ComponentCount, 0 );
 
     if( image == NULL ) {
-        std::cout << stbi_failure_reason() << std::endl;
+        ERR("Failed load image: %s", stbi_failure_reason());
         return;
     }
 
@@ -201,7 +201,6 @@ void TextureLoader::ClearCache()
 Texture* TextureLoader::Load( const std::string& filename )
 {
     TextureCache::iterator found = cache_.find( filename );
-
     if ( found != cache_.end() ) {
         return found->second;
     }
@@ -217,12 +216,12 @@ Texture* TextureLoader::Load( const std::string& filename )
     } else if ( file_exists( filename + ".png" ) ) {
         name = filename + ".png";
     } else {
-        std::cout << filename << " not found" << std::endl;
+        WARN("%s not found");
         cache_[filename] = NULL;
         return NULL;
     }
 
-    std::cout << "load texture: " << name << std::endl;
+    LOG("load texture: %s", name.c_str());
     TextureInfo tex_info;
     tex_info.Filename = name;
     tex_info.MinFilter = TextureMinFilters::LINEAR;

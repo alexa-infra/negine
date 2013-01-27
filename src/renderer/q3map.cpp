@@ -167,8 +167,6 @@ void q3maploader::load()
         treeNode.firstFace = leaf.leafFace;
         treeNode.numFaces = leaf.numberOfLeafFaces;
     }
-
-    std::cout << "Root max: " << tree.front().maxs << " min: " << tree.front().mins << std::endl;
 }
 
 void q3maploader::PreloadTextures( TextureLoader& textureLoader )
@@ -367,14 +365,14 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
     }
     float t3 = tt.Reset();
 
-    std::cout
-    << Stats::polygons() << " "
-    //<< _visible_faces.size() << " "
-    //<< switches << " "
-    << patches << " "
-    << Stats::drawcalls() << " "
-    << (int)t1 << " " << (int)t2 << " " << (int)t3 << " "
-    << std::endl;
+//    std::cout
+//    << Stats::polygons() << " "
+//    //<< _visible_faces.size() << " "
+//    //<< switches << " "
+//    << patches << " "
+//    << Stats::drawcalls() << " "
+//    << (int)t1 << " " << (int)t2 << " " << (int)t3 << " "
+//    << std::endl;
 }
 
 void q3maploader::render_polygons( const q3face& face, Program* pr ) const

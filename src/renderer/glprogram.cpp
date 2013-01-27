@@ -277,8 +277,7 @@ void Program::get_uniforms_list()
         UniformVar uni;
 
         if ( !uni_map.from_string( uniformName, uni ) ) {
-            std::cout << "uniform not found. name: " << uniformName
-                      << ", type: " << uniform_type << std::endl;
+            ERR("Uniform not found: '%s' (%d)", uniformName.c_str(), uniform_type);
             continue;
         }
 
@@ -297,20 +296,13 @@ void Program::CreateFromFileWithAssert( const std::string& filename )
     std::string status;
 
     if ( !base::file_exists( filename ) ) {
-        std::cout
-                << "File does not exist: "
-                << filename << '\n'
-                << std::endl;
-        assert( false );
-        return;
+        ERR("File not found %s", filename.c_str());
+        abort();
     }
 
     if ( !CreateFromFile( filename, status ) ) {
-        std::cout
-                << "Error on load shader program "
-                << filename << std::endl
-                << status << std::endl;
-        assert( false );
+        ERR("Error on load shader: %s @ %s", status.c_str(), filename.c_str());
+        abort();
     }
 }
 

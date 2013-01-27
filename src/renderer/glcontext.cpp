@@ -19,7 +19,7 @@ void glAssert(const char* file, int line)
     GLenum err = glGetError();
     if (err != GL_NO_ERROR)
     {
-        printf("GL error: %s [%x] @ %s, %d\n", glErrorToString(err), err, file, line);
+        ERR("GL error: %s [%x] @ %s, %d\n", glErrorToString(err), err, file, line);
         abort();
     }
 }

@@ -43,13 +43,12 @@ GlutWindow::GlutWindow()
     GLenum err = glewInit();
 
     if ( GLEW_OK != err ) {
-        std::cout << glewGetErrorString( err ) << std::endl;
-        assert( false );
+        ERR("Unable to load GLEW: %s", glewGetErrorString( err ));
+        abort();
     }
 
     if ( !GLEW_VERSION_3_3 ) {
-        std::cout << "OpenGL 3.3 is not supported." << std::endl;
-        assert( false );
+        WARN("OpenGL 3.3 is not supported.");
     }
 
     GL_ASSERT();

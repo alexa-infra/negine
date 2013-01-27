@@ -25,9 +25,10 @@ SDLApp::SDLApp()
     , width_( 640 )
     , height_( 480 )
 {
+    LOG("start");
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-        std::cout << "Unable to init SDL: " << SDL_GetError() << std::endl;
-        assert( false );
+        ERR("Unable to init SDL: %s", SDL_GetError());
+        abort();
     }
 
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
@@ -53,18 +54,16 @@ SDLApp::SDLApp()
     GLenum err = glewInit();
 
     if ( GLEW_OK != err ) {
-        std::cout << glewGetErrorString( err ) << std::endl;
-        assert( false );
+        ERR("Unable to load GLEW: %s", glewGetErrorString( err ));
+        abort();
     }
 
     if ( !GLEW_VERSION_3_3 ) {
-        std::cout << "OpenGL 3.3 is not supported." << std::endl;
-        //    assert(false);
+        WARN("OpenGL 3.3 is not supported.");
     }
 
     const GLubyte* version = glGetString( GL_VERSION );
-
-    std::cout << "Current OpenGL version: " << version << std::endl;
+    LOG("Current OpenGL version: %s", version);
 
     GL_ASSERT();
 
@@ -79,6 +78,7 @@ SDLApp::~SDLApp()
     SDL_GL_DeleteContext( maincontext_ );
     SDL_DestroyWindow( mainwindow_ );
     SDL_Quit();
+    LOG("quit");
 }
 
 void SDLApp::Pump()

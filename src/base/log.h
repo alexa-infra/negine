@@ -18,9 +18,9 @@ void writeLog(Log::Level level, const char* fmt, ...);
 void setLogLevel(Log::Level level);
 
 #define LOG_LEVEL(l, x, ...) ::base::writeLog(l, x, ##__VA_ARGS__)
-#define LOG(x, ...) LOG_LEVEL(Log::Info, x, ##__VA_ARGS__)
-#define WARN(x, ...) LOG_LEVEL(Log::Warning, x, ##__VA_ARGS__)
-#define ERR(x, ...) LOG_LEVEL(Log::Error, x, ##__VA_ARGS__)
+#define LOG(x, ...) LOG_LEVEL(::base::Log::Info, x, ##__VA_ARGS__)
+#define WARN(x, ...) LOG_LEVEL(::base::Log::Warning, x, ##__VA_ARGS__)
+#define ERR(x, ...) LOG_LEVEL(::base::Log::Error, x, ##__VA_ARGS__)
 
 class ConsoleLog : public Log
 {
