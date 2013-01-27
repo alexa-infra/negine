@@ -66,7 +66,7 @@ SDLApp::SDLApp()
 
     std::cout << "Current OpenGL version: " << version << std::endl;
 
-    assert( glGetError() == GL_NO_ERROR );
+    GL_ASSERT();
 
     SDL_GL_SetSwapInterval( 1 );
 

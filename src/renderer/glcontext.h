@@ -39,6 +39,13 @@ namespace base
 namespace opengl
 {
 
+void glAssert(const char* file, int line);
+#ifdef _DEBUG
+#define GL_ASSERT() ::base::opengl::glAssert(__FILE__, __LINE__)
+#else
+#define GL_ASSERT() {}
+#endif
+
 class TextureLoader;
 
 class DeviceContext

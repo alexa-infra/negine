@@ -105,7 +105,7 @@ public:
 		std::string status;
 		bool result = program_.CreateFromText(vertexSh, fragmentSh, status);
 		assert(result);
-        assert( glGetError() == GL_NO_ERROR );
+                GL_ASSERT();
 	}
 	virtual ~Demo() {
 		delete scene_;
@@ -151,7 +151,7 @@ protected:
 
 		//
 		program_.Unbind();
-		assert( glGetError() == GL_NO_ERROR );
+                GL_ASSERT();
 		Application::OnFrame();
 	}
 

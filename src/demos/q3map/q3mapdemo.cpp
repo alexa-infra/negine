@@ -69,7 +69,7 @@ protected:
         program_.set_uniform( base::opengl::UniformVars::Clip, projection_ * cameraTransform_ );
         q3map_->render( camera_, &program_, texure_loader_ );
         program_.Unbind();
-        assert( glGetError() == GL_NO_ERROR );
+        GL_ASSERT();
         Application::OnFrame();
     }
     VertexBuffer* buffer_;

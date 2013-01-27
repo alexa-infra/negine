@@ -190,7 +190,7 @@ void Demo::OnFrame( void )
     font_->Draw( binding );
     program_font_->Unbind();
     glDisable( GL_BLEND );
-    assert( glGetError() == GL_NO_ERROR );
+    GL_ASSERT();
     Application::OnFrame();
     frame_diff_ = timer_.Elapsed() / 1000.0f;
 }

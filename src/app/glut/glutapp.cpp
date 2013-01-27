@@ -52,7 +52,7 @@ GlutWindow::GlutWindow()
         assert( false );
     }
 
-    assert( glGetError() == GL_NO_ERROR );
+    GL_ASSERT();
     glutReshapeFunc( OnReshapeProc );
     glutKeyboardFunc( OnKeyboardProc );
     glutMouseFunc( OnMouseProc );

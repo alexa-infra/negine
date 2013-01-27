@@ -101,7 +101,7 @@ protected:
         program_wirebox_.set_uniform( base::opengl::UniformVars::Modelview, camera_.GetModelView() );
         camera_wirebox_->Draw( &program_wirebox_ );
         program_wirebox_.Unbind();
-        assert( glGetError() == GL_NO_ERROR );
+        GL_ASSERT();
         Application::OnFrame();
     }
 

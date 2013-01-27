@@ -56,7 +56,7 @@ protected:
         ps_renderer_->Commit();
         ps_renderer_->Draw( &program_ );
         program_.Unbind();
-        assert( glGetError() == GL_NO_ERROR );
+        GL_ASSERT();
         Application::OnFrame();
     }
 
