@@ -12,17 +12,12 @@
 # include <windows.h>
 #endif
 
-#include "GL/glew.h"
+#include "renderer/glcontext.h"
 #include "GL/glut.h"
 #include "GL/freeglut_ext.h"
 
 #include <assert.h>
 
-#ifdef OS_WIN
-#include "GL/wglew.h"
-#elif defined(OS_LINUX)
-#include "GL/glxew.h"
-#endif
 #include "renderer/statistics.h"
 
 GlutWindow* GlutWindow::window_ = NULL;

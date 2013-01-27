@@ -7,11 +7,20 @@
 #pragma once
 
 #include "base/platform.h"
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
 #include "GL/glew.h"
 #ifdef OS_MAC
 #include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
+#endif
+
+#ifdef OS_WIN
+#include "GL/wglew.h"
+#elif defined(OS_LINUX)
+#include "GL/glxew.h"
 #endif
 
 #ifdef __APPLE__
