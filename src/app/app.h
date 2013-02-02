@@ -8,7 +8,7 @@
 
 #if defined(SDL_ENGINE)
 #include "app/sdl/sdlapp.h"
-typedef SDLApp Application;
+typedef base::SDLApp Application;
 #elif defined(GLUT_ENGINE)
 #include "app/glut/glutapp.h"
 typedef GlutWindow Application;

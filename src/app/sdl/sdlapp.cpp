@@ -17,6 +17,8 @@
 #include "renderer/glcontext.h"
 #include "renderer/statistics.h"
 
+namespace base {
+
 SDLApp::SDLApp()
     : mainwindow_( NULL )
     , run_( true )
@@ -157,3 +159,5 @@ void SDLApp::OnMotion( i32 x, i32 y, i32 dx, i32 dy )
 void SDLApp::OnReshape( i32 width, i32 height )
 {
 }
+
+} // namespace base

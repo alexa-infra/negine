@@ -27,6 +27,10 @@
 #   error Include stdint.h
 #endif
 
+#include <string>
+
+namespace base {
+
 typedef int8_t      i8;
 typedef uint8_t     u8;
 typedef int16_t     i16;
@@ -47,12 +51,13 @@ typedef u64 uptr;
 typedef i64 iptr;
 #endif
 
-#include <string>
 typedef std::string string;
 
 struct hash_string {
     size_t operator()( const std::string& x ) const;
 };
+
+} // namespace base
 
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class

@@ -9,6 +9,7 @@
 using base::math::Vector3;
 using base::math::Quat;
 using base::math::Matrix4;
+using base::f32;
 
 TEST( quat, sum )
 {

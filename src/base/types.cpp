@@ -5,6 +5,8 @@
  **/
 #include "base/types.h"
 
+namespace base {
+
 size_t hash_string::operator()( const std::string& x ) const
 {
     const char* str = x.c_str();
@@ -18,3 +20,5 @@ size_t hash_string::operator()( const std::string& x ) const
 
     return hash;
 }
+
+} // namespace base

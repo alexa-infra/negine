@@ -3,6 +3,8 @@
 #include "base/types.h"
 #include "base/singleton.h"
 
+namespace base {
+
 class Statistics
 {
 private:
@@ -49,3 +51,5 @@ private:
     Stats();
     DISALLOW_COPY_AND_ASSIGN(Stats);
 };
+
+} // namespace base

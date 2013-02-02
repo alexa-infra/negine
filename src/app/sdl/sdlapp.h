@@ -10,6 +10,8 @@
 
 struct SDL_Window;
 
+namespace base {
+
 class SDLApp
 {
 protected:
@@ -32,3 +34,5 @@ protected:
     virtual void OnKeyboardUp( u8 key ) {}
     void Pump();
 };
+
+} // namespace base

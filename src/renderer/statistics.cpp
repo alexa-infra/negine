@@ -1,5 +1,7 @@
 #include "statistics.h"
 
+namespace base {
+
 Statistics::Statistics() {
     reset();
 }
@@ -39,3 +41,5 @@ void Statistics::inc_texture_switches() {
 void Statistics::inc_program_switches() {
     program_switches_++;
 }
+
+} // namespace base
