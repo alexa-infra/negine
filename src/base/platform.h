@@ -12,12 +12,22 @@
 
 #if defined(_WIN32) || defined(__WIN32__)
 #   define OS_WIN
-#elif defined(__APPLE_CC__)
+#elif defined(__APPLE__)
 #   define OS_MAC
 #elif defined(__linux__)
 #   define OS_LINUX
 #else
 #   error System is not supported
+#endif
+
+#if defined(OS_MAC)
+#   include <TargetConditionals.h>
+#   if TARGET_OS_IPHONE
+#       define OS_IPHONE
+#       if TARGET_IPHONE_SIMULATOR
+#           define OS_IPHONE_SIMULATOR
+#       endif
+#   endif
 #endif
 
 #if defined(OS_MAC) || defined(OS_LINUX)
