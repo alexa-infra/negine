@@ -1,4 +1,5 @@
 #include "base/sjson.h"
+#include "base/sjson-internal.h"
 #include <sstream>
 
 namespace base {
