@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <exception>
+#include <istream>
 
 namespace base {
 namespace sjson {
@@ -107,26 +108,26 @@ namespace sjson {
 
     struct ParseException : public std::exception
     {
-        u32 position;
+        i32 position;
         std::string text;
-        ParseException(const std::string& reason, u32 pos);
+        ParseException(const std::string& reason, i32 pos);
         virtual ~ParseException() {}
         const char* what() const throw() { return text.c_str(); }
     };
 
-    void skipWhiteSpace(const std::string& json, u32& index);
-    void checkBounds(const std::string& json, u32 index) throw(ParseException);
-    void skipComment(const std::string& json, u32& index) throw(ParseException);
-    void consume(const std::string& json, u32& index, const std::string& str) throw(ParseException);
-    char next(const std::string& json, u32& index) throw(ParseException);
-    Variant parseString(const std::string& json, u32& index) throw(ParseException);
-    Variant parseIdentifier(const std::string& json, u32& index) throw(ParseException);
+    void skipWhiteSpace(std::istream* json);
+    void checkBounds(std::istream* json) throw(ParseException);
+    void skipComment(std::istream* json) throw(ParseException);
+    void consume(std::istream* json, const std::string& str) throw(ParseException);
+    char next(std::istream* json) throw(ParseException);
+    Variant parseString(std::istream* json) throw(ParseException);
+    Variant parseIdentifier(std::istream* json) throw(ParseException);
     bool isIdentifier(char ch);
-    Variant parseNumber(const std::string& json, u32& index)throw(ParseException);
-    Variant parseValue(const std::string& json, u32& index) throw(ParseException);
-    Variant parseArray(const std::string& json, u32& index) throw(ParseException);
-    Variant parseRoot(const std::string& json) throw(ParseException);
-    Variant parseObject(const std::string& json, u32& index) throw(ParseException);
+    Variant parseNumber(std::istream* json)throw(ParseException);
+    Variant parseValue(std::istream* json) throw(ParseException);
+    Variant parseArray(std::istream* json) throw(ParseException);
+    Variant parseRoot(std::istream* json) throw(ParseException);
+    Variant parseObject(std::istream* json) throw(ParseException);
     bool parse(const std::string& json, Variant& obj);
 
 } // namespace sjson

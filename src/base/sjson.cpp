@@ -1,4 +1,5 @@
 #include "base/sjson.h"
+#include <sstream>
 
 namespace base {
 namespace sjson {
@@ -17,117 +18,124 @@ Variant::Variant(ValueType v)
     }
 }
 
-ParseException::ParseException(const std::string& reason, u32 pos)
+ParseException::ParseException(const std::string& reason, i32 pos)
     : position(pos)
     , text(reason)
 {
 }
 
-void skipWhiteSpace(const std::string& json, u32& index)
+void skipWhiteSpace(std::istream* json)
 {
-    while(index < json.length()) {
-        char ch = json[index];
+    while(json->good()) {
+        char ch = (char)json->peek();
+        if (!json->good() || ch == EOF)
+            break;
         if (ch == '/')
-            skipComment(json, index);
+            skipComment(json);
         else if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
-            index++;
+            json->get();
         else
             break;
     }
 }
 
-void checkBounds(const std::string& json, u32 index) throw(ParseException)
+void checkBounds(std::istream* json) throw(ParseException)
 {
-    if (index >= json.length())
-        throw ParseException("checkBounds fails", index);
+    int res = json->peek();
+    if (!json->good() || res == EOF)
+        throw ParseException("checkBounds fails", json->tellg());
 }
 
-void skipComment(const std::string& json, u32& index) throw(ParseException)
+void skipComment(std::istream* json) throw(ParseException)
 {
-    consume(json, index, "/");
-    checkBounds(json, index);
+    consume(json, "/");
+    checkBounds(json);
     
-    if (json[index] == '/') {
-        while(++index < json.length())
-            if (json[index] == '\n') {
-                index++;
+    char ch = (char)json->get();
+    if (ch == '/') {
+        while(json->good()) {
+            if ((char)json->get() == '\n') {
                 return;
             }
-    } else if (json[index] == '*') {
-        while(++index + 1 < json.length())
-            if (json[index] == '*' && json[index+1] == '/') {
-                index += 2;
+        }
+    } else if (ch == '*') {
+        while(json->good())
+            if ((char)json->get() == '*' && (char)json->get() == '/') {
                 return;
             }
-        checkBounds(json, ++index);
+        checkBounds(json);
     } else {
-        WARN("Wrong comment char '%c' at %d in '%s'", json[index], index, json.c_str());
-        throw ParseException("incorrect comment", index);
+        throw ParseException("incorrect comment", json->tellg());
     }
 }
 
-void consume(const std::string& json, u32& index, const std::string& str) throw(ParseException)
+void consume(std::istream* json, const std::string& str) throw(ParseException)
 {
-    for(u32 i=0; i<str.length(); i++, index++) {
-        checkBounds(json, index);
-        if (json[index] != str[i])
-            throw ParseException("wrong format, consumed: " + str, index);
+    for(u32 i=0; i<str.length(); i++) {
+        checkBounds(json);
+        char ch = (char)json->peek();
+        if (ch != str[i])
+            throw ParseException("wrong format, consumed: " + str, json->tellg());
+        json->get();
     }
 }
 
-char next(const std::string& json, u32& index) throw(ParseException)
+char next(std::istream* json) throw(ParseException)
 {
-    skipWhiteSpace(json, index);
-    checkBounds(json, index);
-    return json[index];
+    skipWhiteSpace(json);
+    checkBounds(json);
+    return (char)json->peek();
 }
 
-Variant parseString(const std::string& json, u32& index) throw(ParseException)
+Variant parseString(std::istream* json) throw(ParseException)
 {
-    consume(json, index, "\"");
+    consume(json, "\"");
     std::string ret;
-    while(index < json.length()) {
-        char ch = json[index];
+    while(json->good()) {
+        checkBounds(json);
+        char ch = (char)json->peek();
         if (ch == '"')
             break;
+        json->get();
         if (ch == '\\')
         {
-            checkBounds(json, ++index);
-            ch = json[index];
+            checkBounds(json);
+            ch = (char)json->get();
             if (ch == '"' || ch == '\\' || ch == '/')
                 ret.push_back(ch);
             else if (ch == 't') ret.push_back('\t');
             else if (ch == 'n') ret.push_back('\n');
             else if (ch == 'r') ret.push_back('\r');
-            else throw ParseException("wrong string escaping", index);
+            else throw ParseException("wrong string escaping", json->tellg());
         }
         else
         {
             ret.push_back(ch);
         }
-        index++;
     }
-    consume(json, index, "\"");
+    consume(json, "\"");
     return Variant(ret);
 }
 
-Variant parseIdentifier(const std::string& json, u32& index) throw(ParseException)
+Variant parseIdentifier(std::istream* json) throw(ParseException)
 {
-    char ch = next(json, index);
+    char ch = next(json);
     if (ch == '"')
-        return parseString(json, index);
+        return parseString(json);
     std::string ret;
-    while(index < json.length())
+    while(json->good())
     {
-        char ch = json[index];
+        char ch = (char)json->peek();
+        if (ch == EOF)
+            break;
         if (isIdentifier(ch))
             ret.push_back(ch);
         else
             break;
-        index++;
+        json->get();
     }
     if (ret.empty())
-        throw ParseException("empty identifier", index);
+        throw ParseException("empty identifier", json->tellg());
     return Variant(ret);
 }
 
@@ -136,16 +144,18 @@ bool isIdentifier(char ch)
     return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_');
 }
 
-Variant parseNumber(const std::string& json, u32& index)throw(ParseException)
+Variant parseNumber(std::istream* json) throw(ParseException)
 {
     const std::string chars("0123456789+-.eE");
     std::string ret;
-    while(index < json.length()) {
-        char ch = json[index];
+    while(json->good()) {
+        char ch = (char)json->peek();
+        if (!json->good() || ch == EOF)
+            break;
         if (chars.find(ch) == std::string::npos)
             break;
         ret.push_back(ch);
-        index++;
+        json->get();
     }
     if (ret.find('.') != std::string::npos ||
         ret.find('e') != std::string::npos ||
@@ -156,86 +166,85 @@ Variant parseNumber(const std::string& json, u32& index)throw(ParseException)
     return Variant((i64)atol(ret.c_str()));
 }
 
-Variant parseValue(const std::string& json, u32& index) throw(ParseException)
+Variant parseValue(std::istream* json) throw(ParseException)
 {
-    char ch = next(json, index);
+    char ch = next(json);
     if (ch == '"')
-        return parseString(json, index);
+        return parseString(json);
     if (ch == 't') {
-        consume(json, index, "true");
+        consume(json, "true");
         return Variant(true);
     }
     if (ch == 'f') {
-        consume(json, index, "false");
+        consume(json, "false");
         return Variant(false);
     }
     if (ch == 'n') {
-        consume(json, index, "null");
+        consume(json, "null");
         return Variant(typeNull);
     }
     if (ch == '{')
-        return parseObject(json, index);
+        return parseObject(json);
     if (ch == '[')
-        return parseArray(json, index);
+        return parseArray(json);
     if ((ch >= '0' && ch <= '9') || ch == '-')
-        return parseNumber(json, index);
-    throw ParseException("unknown value", index);
+        return parseNumber(json);
+    throw ParseException("unknown value", json->tellg());
 }
 
-Variant parseObject(const std::string& json, u32& index) throw(ParseException)
+Variant parseObject(std::istream* json) throw(ParseException)
 {
-    consume(json, index, "{");
+    consume(json, "{");
     Variant obj(typeDict);
-    while(next(json, index) != '}')
+    while(next(json) != '}')
     {
-        std::string key = parseIdentifier(json, index).asString();
+        std::string key = parseIdentifier(json).asString();
         if (obj.hasMember(key))
-            throw ParseException("duplicate key " + key, index);
-        skipWhiteSpace(json, index);
-        consume(json, index, "=");
-        skipWhiteSpace(json, index);
-        Variant value = parseValue(json, index);
+            throw ParseException("duplicate key " + key, json->tellg());
+        skipWhiteSpace(json);
+        consume(json, "=");
+        skipWhiteSpace(json);
+        Variant value = parseValue(json);
         obj[key] = value;
-        if (next(json, index) == ',')
-            index++;
+        if (next(json) == ',')
+            json->get();
     }
-    consume(json, index, "}");
+    consume(json, "}");
     return obj;
 }
 
-Variant parseArray(const std::string& json, u32& index) throw(ParseException)
+Variant parseArray(std::istream* json) throw(ParseException)
 {
-    consume(json, index, "[");
+    consume(json, "[");
     Variant arr(typeArray);
-    while(next(json, index) != ']')
+    while(next(json) != ']')
     {
-        Variant value = parseValue(json, index);
+        Variant value = parseValue(json);
         arr.asArray().push_back(value);
-        if (next(json, index) == ',')
-            index++;
+        if (next(json) == ',')
+            json->get();
     }
-    consume(json, index, "]");
+    consume(json, "]");
     return arr;
 }
 
-Variant parseRoot(const std::string& json) throw(ParseException)
+Variant parseRoot(std::istream* json) throw(ParseException)
 {
     Variant obj(typeDict);
-    u32 index = 0;
-    while(index < json.length())
+    while(json->good())
     {
-        skipWhiteSpace(json, index);
-        std::string key = parseIdentifier(json, index).asString();
-        skipWhiteSpace(json, index);
-        consume(json, index, "=");
-        skipWhiteSpace(json, index);
-        Variant value = parseValue(json, index);
+        skipWhiteSpace(json);
+        std::string key = parseIdentifier(json).asString();
+        skipWhiteSpace(json);
+        consume(json, "=");
+        skipWhiteSpace(json);
+        Variant value = parseValue(json);
         obj[key] = value;
-        skipWhiteSpace(json, index);
-        if (json[index] == ',') {
-            index++;
-            skipWhiteSpace(json, index);
-        }
+        skipWhiteSpace(json);
+        if ((char)json->peek() == ',') {
+            json->get();
+        } else if (json->peek() == EOF)
+            break;
     }
     return obj;
 }
@@ -244,7 +253,8 @@ bool parse(const std::string& json, Variant& obj)
 {
     try
     {
-        obj = parseRoot(json);
+        std::istringstream ss(json);
+        obj = parseRoot(&ss);
         return true;
     }
     catch(ParseException& e)
