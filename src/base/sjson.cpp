@@ -19,9 +19,8 @@ Variant::Variant(ValueType v)
     }
 }
 
-ParseException::ParseException(const std::string& reason, i32 pos)
-    : position(pos)
-    , text(reason)
+ParseException::ParseException(const std::string& reason)
+    : text(reason)
 {
 }
 
@@ -44,7 +43,7 @@ void checkBounds(std::istream* json) throw(ParseException)
 {
     int res = json->peek();
     if (!json->good() || res == EOF)
-        throw ParseException("checkBounds fails", json->tellg());
+        throw ParseException("checkBounds fails");
 }
 
 void skipComment(std::istream* json) throw(ParseException)
@@ -66,7 +65,7 @@ void skipComment(std::istream* json) throw(ParseException)
             }
         checkBounds(json);
     } else {
-        throw ParseException("incorrect comment", json->tellg());
+        throw ParseException("incorrect comment");
     }
 }
 
@@ -76,7 +75,7 @@ void consume(std::istream* json, const std::string& str) throw(ParseException)
         checkBounds(json);
         char ch = (char)json->peek();
         if (ch != str[i])
-            throw ParseException("wrong format, consumed: " + str, json->tellg());
+            throw ParseException("wrong format, consumed: " + str);
         json->get();
     }
 }
@@ -107,7 +106,7 @@ Variant parseString(std::istream* json) throw(ParseException)
             else if (ch == 't') ret.push_back('\t');
             else if (ch == 'n') ret.push_back('\n');
             else if (ch == 'r') ret.push_back('\r');
-            else throw ParseException("wrong string escaping", json->tellg());
+            else throw ParseException("wrong string escaping");
         }
         else
         {
@@ -136,7 +135,7 @@ Variant parseIdentifier(std::istream* json) throw(ParseException)
         json->get();
     }
     if (ret.empty())
-        throw ParseException("empty identifier", json->tellg());
+        throw ParseException("empty identifier");
     return Variant(ret);
 }
 
@@ -190,7 +189,7 @@ Variant parseValue(std::istream* json) throw(ParseException)
         return parseArray(json);
     if ((ch >= '0' && ch <= '9') || ch == '-')
         return parseNumber(json);
-    throw ParseException("unknown value", json->tellg());
+    throw ParseException("unknown value");
 }
 
 Variant parseObject(std::istream* json) throw(ParseException)
@@ -201,7 +200,7 @@ Variant parseObject(std::istream* json) throw(ParseException)
     {
         std::string key = parseIdentifier(json).asString();
         if (obj.hasMember(key))
-            throw ParseException("duplicate key " + key, json->tellg());
+            throw ParseException("duplicate key " + key);
         skipWhiteSpace(json);
         consume(json, "=");
         skipWhiteSpace(json);
@@ -252,15 +251,15 @@ Variant parseRoot(std::istream* json) throw(ParseException)
 
 bool parse(const std::string& json, Variant& obj)
 {
+    std::istringstream ss(json);
     try
     {
-        std::istringstream ss(json);
         obj = parseRoot(&ss);
         return true;
     }
     catch(ParseException& e)
     {
-        ERR("%s: %d", e.what(), e.position);
+        ERR("%s: %d", e.what(), ss.tellg());
         return false;
     }
 }

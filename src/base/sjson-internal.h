@@ -3,14 +3,18 @@
 #include "sjson.h"
 #include <exception>
 
+#ifdef COMPILER_MSVC
+// void f1(void) throw(int) {} - is not implemented :(
+#pragma warning( disable : 4290 )
+#endif 
+
 namespace base {
 namespace sjson {
 
     struct ParseException : public std::exception
     {
-        i32 position;
         std::string text;
-        ParseException(const std::string& reason, i32 pos);
+        ParseException(const std::string& reason);
         virtual ~ParseException() {}
         const char* what() const throw() { return text.c_str(); }
     };
