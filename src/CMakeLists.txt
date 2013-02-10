@@ -2,7 +2,7 @@ set(SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 
 add_source_group("base"         ${SRC_PATH}/base        BASE_SRC)
-add_source_group("base/math"    ${SRC_PATH}/base/math   MATH_SRC)
+add_source_group("math"         ${SRC_PATH}/math        MATH_SRC)
 add_source_group("render"       ${SRC_PATH}/render      RENDER_SRC)
 add_source_group("game"         ${SRC_PATH}/game        GAME_SRC)
 add_source_group("glew"         ${TOOLS_PATH}/glew/src  GLEW_SRC)
