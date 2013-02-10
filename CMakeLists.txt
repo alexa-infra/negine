@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(negine)
 
+include(cmake/internal_utils.cmake)
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 set(SRC_PATH ${negine_SOURCE_DIR}/src)
@@ -16,17 +18,6 @@ endif()
 if (NOT USE_SDL AND NOT USE_GLUT)
   message(FATAL_ERROR "use one engine: sdl or glut")
 endif()
-
-macro(add_source_group FILTER_NAME SOURCE_PATH TARGET_LIST)
-    file(GLOB TEMP_SRC
-        ${SOURCE_PATH}/*.h
-        ${SOURCE_PATH}/*.cpp
-        ${SOURCE_PATH}/*.cc
-        ${SOURCE_PATH}/*.c
-    )
-    source_group(${FILTER_NAME} FILES ${TEMP_SRC})
-    list(APPEND ${TARGET_LIST} ${TEMP_SRC})
-endmacro(add_source_group)
 
 if(UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=c++11 -stdlib=libc++")
