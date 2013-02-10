@@ -10,6 +10,8 @@ include_directories(
 
 add_executable(q3map_demo
     q3mapdemo.cpp
+    q3map.cpp
+    q3map.h
 )
 
 add_dependencies(q3map_demo

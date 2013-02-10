@@ -5,7 +5,7 @@
  * \copyright   MIT License
  **/
 #include "app/app.h"
-#include "renderer/q3map.h"
+#include "q3map.h"
 #include "renderer/camera.h"
 #include "renderer/gltexture.h"
 #include "renderer/glprogram.h"
