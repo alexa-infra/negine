@@ -117,7 +117,6 @@ endif()
 
 
 #add_subdirectory(${TOOLS_PATH}/lua ${PROJECT_BINARY_DIR}/lua)
-#add_subdirectory(${TOOLS_PATH}/jsoncpp ${PROJECT_BINARY_DIR}/jsoncpp)
 
 add_subdirectory(${SRC_PATH} ${PROJECT_BINARY_DIR}/negine)
 add_subdirectory(${SRC_PATH}/app ${PROJECT_BINARY_DIR}/app)
