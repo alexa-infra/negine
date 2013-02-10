@@ -342,7 +342,7 @@ void writeValue(std::ostream* json, const Variant& v, u32 tabs)
     if (v.isString())
         writeString(json, v.asString());
     else if (v.isBool())
-        *json << v.asBool() ? "true" : "false";
+        *json << (v.asBool() ? "true" : "false");
     else if (v.isInt())
         *json << v.asInt<i64>();
     else if (v.isFloat())
