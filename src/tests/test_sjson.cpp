@@ -26,7 +26,7 @@ void testSkipSpaces(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::skipWhiteSpace(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
 }
 
@@ -80,7 +80,7 @@ void testSkipComment(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::skipComment(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
 }
 
@@ -117,7 +117,7 @@ void testConsume(const char* str, const char* check, i32& index)
 {
     std::istringstream ss(str);
     sjson::consume(&ss, check);
-    index = ss.tellg();
+    index = static_cast<i32>(ss.tellg());
     if (index == -1) index = strlen(str);
 }
 
@@ -162,7 +162,7 @@ sjson::Variant testParseString(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::Variant ret = sjson::parseString(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
 }
@@ -202,7 +202,7 @@ sjson::Variant testParseIdentifier(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::Variant ret = sjson::parseIdentifier(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
 }
@@ -239,7 +239,7 @@ sjson::Variant testParseNumber(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::Variant ret = sjson::parseNumber(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
 }
@@ -264,7 +264,7 @@ sjson::Variant testParseValue(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::Variant ret = sjson::parseValue(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
 }
@@ -321,7 +321,7 @@ sjson::Variant testParseObject(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::Variant ret = sjson::parseObject(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
 }
@@ -389,7 +389,7 @@ sjson::Variant testParseArray(const char* str, i32& pos)
 {
     std::istringstream ss(str);
     sjson::Variant ret = sjson::parseArray(&ss);
-    pos = ss.tellg();
+    pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
 }

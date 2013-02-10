@@ -24,3 +24,7 @@ target_link_libraries(tests
 if(UNIX)
   target_link_libraries(tests pthread)
 endif(UNIX)
+
+if(WIN32)
+	add_definitions(-D_VARIADIC_MAX=10)
+endif()
