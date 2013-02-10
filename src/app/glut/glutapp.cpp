@@ -12,11 +12,11 @@
 # include <windows.h>
 #endif
 
-#include "renderer/glcontext.h"
+#include "render/glcontext.h"
 #include "GL/glut.h"
 #include "GL/freeglut_ext.h"
 
-#include "renderer/statistics.h"
+#include "render/statistics.h"
 
 GlutWindow* GlutWindow::window_ = NULL;
 

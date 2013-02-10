@@ -3,8 +3,8 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/mesh.h"
-#include "renderer/vertexbuffer.h"
+#include "render/mesh.h"
+#include "render/vertexbuffer.h"
 
 using base::math::Vector2;
 using base::math::Vector3;

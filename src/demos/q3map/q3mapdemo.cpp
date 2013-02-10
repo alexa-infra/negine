@@ -6,10 +6,10 @@
  **/
 #include "app/app.h"
 #include "q3map.h"
-#include "renderer/camera.h"
-#include "renderer/gltexture.h"
-#include "renderer/glprogram.h"
-#include "renderer/vertexbuffer.h"
+#include "render/camera.h"
+#include "render/gltexture.h"
+#include "render/glprogram.h"
+#include "render/vertexbuffer.h"
 
 using namespace base;
 using namespace base::math;

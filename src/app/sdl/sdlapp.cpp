@@ -14,8 +14,8 @@
 #include <iostream>
 #include <string>
 
-#include "renderer/glcontext.h"
-#include "renderer/statistics.h"
+#include "render/glcontext.h"
+#include "render/statistics.h"
 
 namespace base {
 

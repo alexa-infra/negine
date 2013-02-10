@@ -4,7 +4,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/md3renderer.h"
+#include "render/md3renderer.h"
 
 using base::resource::Md3FrameData;
 using base::resource::Md3Mesh;

@@ -10,8 +10,8 @@
 #include "base/math/vector.h"
 #include "base/math/plane.h"
 #include "base/stream.h"
-#include "renderer/wirebox.h"
-#include "renderer/gltexture.h"
+#include "render/wirebox.h"
+#include "render/gltexture.h"
 
 namespace base
 {

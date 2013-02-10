@@ -7,23 +7,23 @@
 #pragma once
 
 #include "app/app.h"
-#include "renderer/gltexture.h"
-#include "renderer/glprogram.h"
+#include "render/gltexture.h"
+#include "render/glprogram.h"
 #include "base/math/matrix.h"
-#include "renderer/vertexbuffer.h"
-#include "renderer/md3mesh.h"
-#include "renderer/spritefont.h"
-#include "renderer/particlesystem.h"
-#include "renderer/particlesystemrenderer.h"
-#include "renderer/camera.h"
+#include "render/vertexbuffer.h"
+#include "render/md3mesh.h"
+#include "render/spritefont.h"
+#include "render/particlesystem.h"
+#include "render/particlesystemrenderer.h"
+#include "render/camera.h"
 #include "base/timer.h"
-#include "renderer/md5mesh.h"
-#include "renderer/md5anim.h"
-#include "renderer/md5renderer.h"
-#include "renderer/wirebox.h"
+#include "render/md5mesh.h"
+#include "render/md5anim.h"
+#include "render/md5renderer.h"
+#include "render/wirebox.h"
 
-#include "renderer/md3renderer.h"
-#include "renderer/q3map.h"
+#include "render/md3renderer.h"
+#include "render/q3map.h"
 
 using base::math::Matrix4;
 using base::math::Vector2;

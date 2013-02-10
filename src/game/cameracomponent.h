@@ -2,7 +2,7 @@
 
 #include "game/component.h"
 #include "game/componentfactory.h"
-#include "renderer/camera.h"
+#include "render/camera.h"
 
 class TransformComponent;
 

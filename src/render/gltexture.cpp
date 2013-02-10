@@ -3,14 +3,14 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/gltexture.h"
+#include "render/gltexture.h"
 
 #define STBI_FAILURE_USERMSG
 #include "stb/stb_image.c"
 
 #include "base/stream.h"
 #include <iostream>
-#include "renderer/statistics.h"
+#include "render/statistics.h"
 
 namespace base
 {

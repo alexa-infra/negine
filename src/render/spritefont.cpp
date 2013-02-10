@@ -5,15 +5,15 @@
  * \copyright   MIT License
  **/
 /*
-#include "renderer/spritefont.h"
+#include "render/spritefont.h"
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "stb/stb_truetype.h"
 #define STBI_HEADER_FILE_ONLY
 #include "stb/stb_image.c"
 #include <iostream>
 #include "base/stream.h"
-#include "renderer/gltexture.h"
-#include "renderer/vertexbuffer.h"
+#include "render/gltexture.h"
+#include "render/vertexbuffer.h"
 
 using base::math::Vector2;
 using base::math::Vector3;

@@ -5,8 +5,8 @@
  * \copyright   MIT License
  **/
 #include "app/app.h"
-#include "renderer/camera.h"
-#include "renderer/glprogram.h"
+#include "render/camera.h"
+#include "render/glprogram.h"
 #include "game/scene.h"
 #include "game/gameobject.h"
 #include "game/cameracomponent.h"

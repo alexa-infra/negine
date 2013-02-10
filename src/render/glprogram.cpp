@@ -3,15 +3,15 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/glprogram.h"
+#include "render/glprogram.h"
 #include <iostream>
 #include "base/math/vector.h"
 #include "base/math/matrix.h"
-#include "renderer/gltexture.h"
+#include "render/gltexture.h"
 #include <memory>
 #include "base/stream.h"
 #include "base/stringmap.h"
-#include "renderer/statistics.h"
+#include "render/statistics.h"
 
 namespace base
 {

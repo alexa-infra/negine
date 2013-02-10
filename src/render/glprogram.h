@@ -6,11 +6,11 @@
  **/
 #pragma once
 
-#include "renderer/glcontext.h"
-#include "renderer/glshader.h"
+#include "render/glcontext.h"
+#include "render/glshader.h"
 #include <map>
 #include <string>
-#include "renderer/mesh.h"
+#include "render/mesh.h"
 #include "base/math/matrix.h"
 
 namespace base

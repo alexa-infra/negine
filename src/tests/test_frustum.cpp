@@ -5,7 +5,7 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "renderer/camera.h"
+#include "render/camera.h"
 
 using base::opengl::Camera;
 using base::math::Plane;

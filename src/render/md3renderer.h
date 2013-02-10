@@ -5,9 +5,9 @@
  * \copyright   MIT License
  **/
 #pragma once
-#include "renderer/md3mesh.h"
-#include "renderer/vertexbuffer.h"
-#include "renderer/mesh.h"
+#include "render/md3mesh.h"
+#include "render/vertexbuffer.h"
+#include "render/mesh.h"
 #include <vector>
 
 namespace base

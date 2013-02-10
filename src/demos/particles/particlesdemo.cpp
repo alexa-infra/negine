@@ -6,10 +6,10 @@
  **/
 #include "app/app.h"
 #include "base/timer.h"
-#include "renderer/particlesystem.h"
-#include "renderer/particlesystemrenderer.h"
-#include "renderer/gltexture.h"
-#include "renderer/glprogram.h"
+#include "render/particlesystem.h"
+#include "render/particlesystemrenderer.h"
+#include "render/gltexture.h"
+#include "render/glprogram.h"
 
 using namespace base;
 using namespace base::math;

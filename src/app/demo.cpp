@@ -8,9 +8,9 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "renderer/statistics.h"
+#include "render/statistics.h"
 
-#include "renderer/md5mesh.h"
+#include "render/md5mesh.h"
 
 #define MD5
 #define BSP 0

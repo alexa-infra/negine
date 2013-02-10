@@ -4,8 +4,8 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/vertexbuffer.h"
-#include "renderer/statistics.h"
+#include "render/vertexbuffer.h"
+#include "render/statistics.h"
 #include <string.h>
 
 namespace base

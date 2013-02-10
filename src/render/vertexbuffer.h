@@ -6,8 +6,8 @@
  **/
 #pragma once
 
-#include "renderer/mesh.h"
-#include "renderer/glbuffer.h"
+#include "render/mesh.h"
+#include "render/glbuffer.h"
 
 namespace base
 {

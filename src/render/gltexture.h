@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "renderer/glcontext.h"
+#include "render/glcontext.h"
 #include <map>
 
 namespace base

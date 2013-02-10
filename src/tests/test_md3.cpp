@@ -4,7 +4,7 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "renderer/md3mesh.h"
+#include "render/md3mesh.h"
 
 using base::resource::Md3Model;
 

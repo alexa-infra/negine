@@ -4,12 +4,12 @@
 #include <deque>
 #include <set>
 #include <map>
-#include "renderer/camera.h"
-#include "renderer/glcontext.h"
-#include "renderer/glprogram.h"
-#include "renderer/mesh.h"
-#include "renderer/gltexture.h"
-#include "renderer/statistics.h"
+#include "render/camera.h"
+#include "render/glcontext.h"
+#include "render/glprogram.h"
+#include "render/mesh.h"
+#include "render/gltexture.h"
+#include "render/statistics.h"
 #include "base/timer.h"
 
 using base::math::Vector3;

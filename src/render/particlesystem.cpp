@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/particlesystem.h"
+#include "render/particlesystem.h"
 #include <stdlib.h>
 
 namespace base

@@ -7,9 +7,9 @@
 #pragma once
 
 #include "base/types.h"
-#include "renderer/md5mesh.h"
-#include "renderer/mesh.h"
-#include "renderer/vertexbuffer.h"
+#include "render/md5mesh.h"
+#include "render/mesh.h"
+#include "render/vertexbuffer.h"
 
 namespace base
 {

@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/camera.h"
+#include "render/camera.h"
 #include "base/math/vector.h"
 
 namespace base

@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/glshader.h"
+#include "render/glshader.h"
 
 namespace base
 {

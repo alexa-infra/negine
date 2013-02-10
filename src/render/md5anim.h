@@ -8,7 +8,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "renderer/md5mesh.h"
+#include "render/md5mesh.h"
 #include "base/math/vector.h"
 #include "base/math/quat.h"
 

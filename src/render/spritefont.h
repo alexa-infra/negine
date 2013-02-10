@@ -10,7 +10,7 @@
 #include "base/types.h"
 #include "stb/stb_truetype.h"
 #include "base/math/vector.h"
-#include "renderer/mesh.h"
+#include "render/mesh.h"
 
 namespace base
 {

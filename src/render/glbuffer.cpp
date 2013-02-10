@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/glbuffer.h"
+#include "render/glbuffer.h"
 
 namespace base
 {

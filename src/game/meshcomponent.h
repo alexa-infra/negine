@@ -2,7 +2,7 @@
 
 #include "game/component.h"
 #include "game/componentfactory.h"
-#include "renderer/cubemesh.h"
+#include "render/cubemesh.h"
 
 class TransformComponent;
 

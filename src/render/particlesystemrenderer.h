@@ -6,9 +6,9 @@
  **/
 #pragma once
 
-#include "renderer/gltexture.h"
-#include "renderer/vertexbuffer.h"
-#include "renderer/particlesystem.h"
+#include "render/gltexture.h"
+#include "render/vertexbuffer.h"
+#include "render/particlesystem.h"
 
 namespace base
 {

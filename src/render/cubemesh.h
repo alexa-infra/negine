@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "renderer/mesh.h"
-#include "renderer/vertexbuffer.h"
+#include "render/mesh.h"
+#include "render/vertexbuffer.h"
 
 namespace base
 {

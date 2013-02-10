@@ -5,7 +5,7 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "renderer/md5mesh.h"
+#include "render/md5mesh.h"
 
 using base::resource::Entity;
 

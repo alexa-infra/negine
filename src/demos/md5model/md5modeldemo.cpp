@@ -5,13 +5,13 @@
  * \copyright   MIT License
  **/
 #include "app/app.h"
-#include "renderer/md5mesh.h"
-#include "renderer/md5anim.h"
-#include "renderer/md5renderer.h"
-#include "renderer/camera.h"
-#include "renderer/gltexture.h"
-#include "renderer/glprogram.h"
-#include "renderer/wirebox.h"
+#include "render/md5mesh.h"
+#include "render/md5anim.h"
+#include "render/md5renderer.h"
+#include "render/camera.h"
+#include "render/gltexture.h"
+#include "render/glprogram.h"
+#include "render/wirebox.h"
 
 using namespace base;
 using namespace base::math;

@@ -4,7 +4,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "renderer/md5renderer.h"
+#include "render/md5renderer.h"
 
 using base::resource::Md5Mesh;
 using base::resource::Md5Model;
