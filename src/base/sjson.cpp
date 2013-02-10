@@ -264,5 +264,103 @@ bool parse(const std::string& json, Variant& obj)
     }
 }
 
+void writeTabs(std::ostream* json, u32 tabs)
+{
+    for (u32 t=0; t<tabs; t++) *json << '\t';
+}
+
+void writeString(std::ostream* json, const std::string& str)
+{
+    *json << '"';
+    for(u32 i=0; i<str.length(); i++)
+    {
+        char ch = str[i];
+        if (ch == '\t') *json << "\\t";
+        else if (ch == '\n') *json << "\\n";
+        else if (ch == '\r') *json << "\\r";
+        else if (ch == '"') *json << "\\\"";
+        else *json << ch;
+    }
+    *json << '"';
+}
+
+void writeIdentifier(std::ostream* json, const std::string& str)
+{
+    for (u32 i=0; i<str.length(); i++)
+        if (!isIdentifier(str[i]))
+        {
+            writeString(json, str);
+            return;
+        }
+    for(u32 i=0; i<str.length(); i++)
+        *json << str[i];
+}
+
+void writeArray(std::ostream* json, const Variant::Array& val, u32 tabs)
+{
+    *json << '[';
+    if (val.size() > 0)
+    {
+        *json << '\n';
+        for(u32 i=0; i<val.size(); i++)
+        {
+            writeTabs(json, tabs);
+            writeValue(json, val[i], tabs + 1);
+            *json << '\n';
+        }
+        writeTabs(json, tabs-1);
+    }
+    *json << ']';
+}
+
+void writeMap(std::ostream* json, const Variant::Map& val, u32 tabs)
+{
+    for(Variant::Map::const_iterator it=val.begin(); it!=val.end(); ++it)
+    {
+        writeTabs(json, tabs);
+        writeIdentifier(json, it->first);
+        *json << " = ";
+        writeValue(json, it->second, tabs + 1);
+        *json << '\n';
+    }
+}
+
+void writeObject(std::ostream* json, const Variant::Map& val, u32 tabs)
+{
+    *json << '{';
+    if (val.size() > 0)
+    {
+        *json << '\n';
+        writeMap(json, val, tabs);
+        writeTabs(json, tabs-1);
+    }
+    *json << '}';
+}
+
+void writeValue(std::ostream* json, const Variant& v, u32 tabs)
+{
+    if (v.isString())
+        writeString(json, v.asString());
+    else if (v.isBool())
+        *json << v.asBool() ? "true" : "false";
+    else if (v.isInt())
+        *json << v.asInt<i64>();
+    else if (v.isFloat())
+        *json << v.asFloat<f64>();
+    else if (v.isNull())
+        *json << "null";
+    else if (v.isArray())
+        writeArray(json, v.asArray(), tabs);
+    else if (v.isMap())
+        writeObject(json, v.asMap(), tabs);
+}
+
+std::string write(const Variant& v)
+{
+    std::ostringstream ss;
+    writeMap(&ss, v.asMap(), 0);
+    return ss.str();
+}
+
 } // namespace sjson
 } // namespace base

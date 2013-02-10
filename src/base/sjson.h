@@ -5,7 +5,6 @@
 #include <memory>
 #include <map>
 #include <vector>
-#include <istream>
 
 namespace base {
 namespace sjson {
@@ -64,7 +63,7 @@ namespace sjson {
             return type == typeNull;
         }
 
-        bool& asBool() {
+        bool& asBool() const {
             ASSERT(isBool());
             return *boolVal;
         }
@@ -106,6 +105,7 @@ namespace sjson {
     };
 
     bool parse(const std::string& json, Variant& obj);
+    std::string write(const Variant& v);
 
 } // namespace sjson
 } // namespace base

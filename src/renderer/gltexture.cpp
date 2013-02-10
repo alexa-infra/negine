@@ -216,7 +216,7 @@ Texture* TextureLoader::Load( const std::string& filename )
     } else if ( file_exists( filename + ".png" ) ) {
         name = filename + ".png";
     } else {
-        WARN("%s not found");
+        WARN("%s not found", filename.c_str());
         cache_[filename] = NULL;
         return NULL;
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sjson.h"
+#include <istream>
 #include <exception>
 
 #ifdef COMPILER_MSVC
@@ -32,6 +33,14 @@ namespace sjson {
     Variant parseArray(std::istream* json) throw(ParseException);
     Variant parseRoot(std::istream* json) throw(ParseException);
     Variant parseObject(std::istream* json) throw(ParseException);
+
+    void writeTabs(std::ostream* json, u32 tabs);
+    void writeString(std::ostream* json, const std::string& str);
+    void writeIdentifier(std::ostream* json, const std::string& str);
+    void writeArray(std::ostream* json, const Variant::Array& val, u32 tabs);
+    void writeMap(std::ostream* json, const Variant::Map& val, u32 tabs);
+    void writeObject(std::ostream* json, const Variant::Map& val, u32 tabs);
+    void writeValue(std::ostream* json, const Variant& v, u32 tabs);
 
 } // namespace sjson
 } // namespace base
