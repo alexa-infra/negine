@@ -6,7 +6,7 @@
  **/
 #pragma once
 
-#include "base/math/mathlib.h"
+#include "math/mathlib.h"
 #include <iostream>
 
 namespace base

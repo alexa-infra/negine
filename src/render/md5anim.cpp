@@ -9,7 +9,7 @@
 #include "md5anim.h"
 #include <string.h>
 #include "base/lexer.h"
-#include "base/math/quat.h"
+#include "math/quat.h"
 
 namespace base
 {

@@ -7,8 +7,8 @@
 #pragma once
 
 #include "base/types.h"
-#include "base/math/vector.h"
-#include "base/math/plane.h"
+#include "math/vector.h"
+#include "math/plane.h"
 #include "base/stream.h"
 #include "render/wirebox.h"
 #include "render/gltexture.h"

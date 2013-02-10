@@ -4,8 +4,8 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "base/math/matrix.h"
-#include "base/math/vector.h"
+#include "math/matrix.h"
+#include "math/vector.h"
 
 using base::math::Matrix4;
 using base::math::Vector4;

@@ -6,7 +6,7 @@
  **/
 #include "particlesystemrenderer.h"
 #include "glprogram.h"
-#include "base/math/rect.h"
+#include "math/rect.h"
 
 namespace base
 {

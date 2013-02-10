@@ -4,7 +4,7 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "base/math/quat.h"
+#include "math/quat.h"
 
 using base::math::Vector3;
 using base::math::Quat;

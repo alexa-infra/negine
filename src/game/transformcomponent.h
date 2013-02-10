@@ -3,7 +3,7 @@
 #include <list>
 #include "game/component.h"
 #include "game/componentfactory.h"
-#include "base/math/matrix.h"
+#include "math/matrix.h"
 
 class TransformComponent;
 typedef std::list<TransformComponent*> TransformComponentList;

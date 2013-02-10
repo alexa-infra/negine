@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "base/math/plane.h"
+#include "math/plane.h"
 
 namespace base
 {

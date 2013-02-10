@@ -4,7 +4,7 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "base/math/rect.h"
+#include "math/rect.h"
 
 TEST( math, rect )
 {

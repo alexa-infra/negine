@@ -9,7 +9,7 @@
 #include "app/app.h"
 #include "render/gltexture.h"
 #include "render/glprogram.h"
-#include "base/math/matrix.h"
+#include "math/matrix.h"
 #include "render/vertexbuffer.h"
 #include "render/md3mesh.h"
 #include "render/spritefont.h"

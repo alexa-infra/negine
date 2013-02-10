@@ -7,7 +7,7 @@
  **/
 
 #include "glcontext.h"
-#include "base/math/vector.h"
+#include "math/vector.h"
 #include "glprogram.h"
 
 namespace base

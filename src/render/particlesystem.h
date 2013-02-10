@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "base/math/vector.h"
+#include "math/vector.h"
 #include <list>
 
 namespace base

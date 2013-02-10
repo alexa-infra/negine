@@ -6,8 +6,8 @@
  **/
 #pragma once
 
-#include "base/math/mathlib.h"
-#include "base/math/vector.h"
+#include "math/mathlib.h"
+#include "math/vector.h"
 
 namespace base
 {
@@ -89,4 +89,4 @@ f32 Determinant( const Matrix4& m );
 }
 }
 
-#include "base/math/matrix-inl.h"
+#include "math/matrix-inl.h"

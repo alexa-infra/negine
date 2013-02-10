@@ -4,7 +4,7 @@
  * \copyright   MIT License
  **/
 #include "render/camera.h"
-#include "base/math/vector.h"
+#include "math/vector.h"
 
 namespace base
 {

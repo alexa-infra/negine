@@ -5,8 +5,8 @@
  **/
 #include "render/glprogram.h"
 #include <iostream>
-#include "base/math/vector.h"
-#include "base/math/matrix.h"
+#include "math/vector.h"
+#include "math/matrix.h"
 #include "render/gltexture.h"
 #include <memory>
 #include "base/stream.h"

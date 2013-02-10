@@ -6,8 +6,8 @@
  **/
 #pragma once
 
-#include "base/math/mathlib.h"
-#include "base/math/vector.h"
+#include "math/mathlib.h"
+#include "math/vector.h"
 
 namespace base
 {

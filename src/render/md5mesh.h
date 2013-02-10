@@ -8,8 +8,8 @@
 #pragma once
 
 #include "base/types.h"
-#include "base/math/vector.h"
-#include "base/math/quat.h"
+#include "math/vector.h"
+#include "math/quat.h"
 
 namespace base
 {

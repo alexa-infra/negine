@@ -11,7 +11,7 @@
 #include <map>
 #include <string>
 #include "render/mesh.h"
-#include "base/math/matrix.h"
+#include "math/matrix.h"
 
 namespace base
 {

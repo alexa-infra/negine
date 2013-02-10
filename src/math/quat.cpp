@@ -3,8 +3,8 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "base/math/quat.h"
-#include "base/math/mathlib.h"
+#include "math/quat.h"
+#include "math/mathlib.h"
 
 namespace base
 {
