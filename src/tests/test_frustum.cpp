@@ -15,7 +15,7 @@ using base::math::pi;
 
 const Vector3 r( 1, 0, 0 );
 const Vector3 u( 0, 1, 0 );
-const Vector3 f( 0, 0, 1 );
+const Vector3 f( 0, 0, -1 );
 
 TEST( CameraFrustum, Basic )
 {
@@ -31,19 +31,59 @@ TEST( CameraFrustum, Basic )
     EXPECT_EQ( cam.forward(), f );
     EXPECT_EQ( cam.up(), u );
     EXPECT_EQ( cam.right(), r );
-    const Vector3 p( 0.0f, 0.0f, 20.f );
+    const Vector3 p( 0.0f, 0.0f, -20.f );
 
-    for ( int i = 0; i < 6; i++ ) {
-        std::cout << i << std::endl;
-        EXPECT_TRUE( cam.planes()[i].Distance( p ) > 0 );
-    }
+    EXPECT_TRUE( cam.planes()[0].Distance( p ) > 0 );
+    EXPECT_TRUE( cam.planes()[1].Distance( p ) > 0 );
+    EXPECT_TRUE( cam.planes()[2].Distance( p ) > 0 );
+    EXPECT_TRUE( cam.planes()[3].Distance( p ) > 0 );
+    EXPECT_TRUE( cam.planes()[4].Distance( p ) > 0 );
+    EXPECT_TRUE( cam.planes()[5].Distance( p ) > 0 );
+}
+
+TEST( CameraFrustum, PlaneDistance )
+{
+    const Plane p( 0, 0, 1, -10 );
+    EXPECT_FLOAT_EQ( 5.0f, p.Distance( Vector3(0, 0, 15) ) );
+    EXPECT_FLOAT_EQ( -5.0f, p.Distance( Vector3(0, 0, 5) ) );
+    EXPECT_FLOAT_EQ( 0.0f, p.Distance( Vector3(0, 0, 10) ) );
+
+    const Plane p1( 0, 0, 2, -10 );
+    EXPECT_FLOAT_EQ( 10.0f, p1.Distance( Vector3(0, 0, 15) ) );
+    EXPECT_FLOAT_EQ( -10.0f, p1.Distance( Vector3(0, 0, -5) ) );
+    EXPECT_FLOAT_EQ( 5.0f, p1.Distance( Vector3(0, 0, 10) ) );
+
+    const Plane p2( 0, 0, 1, 10 );
+    EXPECT_FLOAT_EQ( 15.0f, p2.Distance( Vector3(0, 0, 5) ) );
+    EXPECT_FLOAT_EQ( 5.0f, p2.Distance( Vector3(0, 0, -5) ) );
+    EXPECT_FLOAT_EQ( -5.0f, p2.Distance( Vector3(0, 0, -15) ) );
+
+    const Plane p3( 0, 0, -1, -10 );
+    EXPECT_FLOAT_EQ( -15.0f, p3.Distance( Vector3(0, 0, 5) ) );
+    EXPECT_FLOAT_EQ( -5.0f, p3.Distance( Vector3(0, 0, -5) ) );
+    EXPECT_FLOAT_EQ( 5.0f, p3.Distance( Vector3(0, 0, -15) ) );
 }
 
 TEST( CameraFrustum, Planes )
 {
-    const Plane p( 0, 0, 1, 0 );
-    EXPECT_EQ( p.BoxOnPlaneSide( Vector3( 1, 1, 1 ), Vector3( 5, 5, 5 ) ), 1 );
-    EXPECT_EQ( p.BoxOnPlaneSide( Vector3( -5, -5, -5 ), Vector3( -1, -1, -1 ) ), 2 );
-    EXPECT_EQ( p.BoxOnPlaneSide( Vector3( -5, -5, -5 ), Vector3( 1, 1, 1 ) ), 3 );
-    EXPECT_EQ( p.BoxOnPlaneSide( Vector3( 1, 1, 1 ), Vector3( -5, -5, -5 ) ), 0 );
+    const Plane p( 0, 0, 1, -10 );
+    EXPECT_EQ( 0, p.BoxOnPlaneSide( Vector3( 1, 1, 1 ),     Vector3( 15, 15, 15 )      ) );
+    EXPECT_EQ( 1, p.BoxOnPlaneSide( Vector3( 15, 15, 15 ),  Vector3( 20, 20, 20 )   ) );
+    EXPECT_EQ( 2, p.BoxOnPlaneSide( Vector3( 0, 0, 0 ),  Vector3( 1, 1, 1 )      ) );
+
+    const Plane p1( 0, 0, -1, 10 );
+    EXPECT_EQ( 0, p1.BoxOnPlaneSide( Vector3( 1, 1, 1 ),     Vector3( 15, 15, 15 )      ) );
+    EXPECT_EQ( 2, p1.BoxOnPlaneSide( Vector3( 15, 15, 15 ),  Vector3( 20, 20, 20 )   ) );
+    EXPECT_EQ( 1, p1.BoxOnPlaneSide( Vector3( 0, 0, 0 ),  Vector3( 1, 1, 1 )      ) );
+
+    const Plane p2( 0, 0, 1, 10 );
+    EXPECT_EQ( 0, p2.BoxOnPlaneSide( Vector3( -15, -15, -15 ),     Vector3( 15, 15, 15 )      ) );
+    EXPECT_EQ( 1, p2.BoxOnPlaneSide( Vector3( 15, 15, 15 ),  Vector3( 20, 20, 20 )   ) );
+    EXPECT_EQ( 2, p2.BoxOnPlaneSide( Vector3( -15, -15, -15 ),  Vector3( -16, -16, -16 )      ) );
+
+    const Plane p3( 0, 0, -1, -10 );
+    EXPECT_EQ( 0, p3.BoxOnPlaneSide( Vector3( -15, -15, -15 ),     Vector3( 15, 15, 15 )      ) );
+    EXPECT_EQ( 2, p3.BoxOnPlaneSide( Vector3( 15, 15, 15 ),  Vector3( 20, 20, 20 )   ) );
+    EXPECT_EQ( 1, p3.BoxOnPlaneSide( Vector3( -15, -15, -15 ),  Vector3( -16, -16, -16 )      ) );
+
 }
