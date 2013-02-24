@@ -34,6 +34,10 @@ namespace sjson {
     Variant parseRoot(std::istream* json) throw(ParseException);
     Variant parseObject(std::istream* json) throw(ParseException);
 
+    Variant parseValueJSON(std::istream* json) throw(ParseException);
+    Variant parseArrayJSON(std::istream* json) throw(ParseException);
+    Variant parseObjectJSON(std::istream* json) throw(ParseException);
+
     void writeTabs(std::ostream* json, u32 tabs);
     void writeString(std::ostream* json, const std::string& str);
     void writeIdentifier(std::ostream* json, const std::string& str);
@@ -42,5 +46,8 @@ namespace sjson {
     void writeObject(std::ostream* json, const Variant::Map& val, u32 tabs);
     void writeValue(std::ostream* json, const Variant& v, u32 tabs);
 
+    void writeArrayJSON(std::ostream* json, const Variant::Array& val, u32 tabs);
+    void writeObjectJSON(std::ostream* json, const Variant::Map& val, u32 tabs);
+    void writeValueJSON(std::ostream* json, const Variant& v, u32 tabs);
 } // namespace sjson
 } // namespace base

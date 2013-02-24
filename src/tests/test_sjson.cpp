@@ -18,6 +18,19 @@ TEST( sjson, simple )
     SUCCEED();
 }
 
+TEST( sjson, simpleJSON )
+{
+    sjson::Variant root;
+    bool result = sjson::parseJSON(" { \"property1\" : 123, \"property2\" : \"abc\", \"property3\" : { \"a\" : 123, \"b\" : false, \"c\" : null, \"d\" : [ 1, 2, 3, 4, 5 ], \"e\" : [], \"f\" : {} } }", root);
+    ASSERT_TRUE(result);
+    ASSERT_TRUE(root.isMap());
+    EXPECT_TRUE(root.hasMember("property1"));
+    EXPECT_TRUE(root.hasMember("property2"));
+
+    std::string res = sjson::writeJSON(root);
+    SUCCEED();
+}
+
 TEST( sjson, fail )
 {
     sjson::Variant root;

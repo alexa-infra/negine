@@ -192,6 +192,32 @@ Variant parseValue(std::istream* json) throw(ParseException)
     throw ParseException("unknown value");
 }
 
+Variant parseValueJSON(std::istream* json) throw(ParseException)
+{
+    char ch = next(json);
+    if (ch == '"')
+        return parseString(json);
+    if (ch == 't') {
+        consume(json, "true");
+        return Variant(true);
+    }
+    if (ch == 'f') {
+        consume(json, "false");
+        return Variant(false);
+    }
+    if (ch == 'n') {
+        consume(json, "null");
+        return Variant(typeNull);
+    }
+    if (ch == '{')
+        return parseObjectJSON(json);
+    if (ch == '[')
+        return parseArrayJSON(json);
+    if ((ch >= '0' && ch <= '9') || ch == '-')
+        return parseNumber(json);
+    throw ParseException("unknown value");
+}
+
 Variant parseObject(std::istream* json) throw(ParseException)
 {
     consume(json, "{");
@@ -213,6 +239,29 @@ Variant parseObject(std::istream* json) throw(ParseException)
     return obj;
 }
 
+Variant parseObjectJSON(std::istream* json) throw(ParseException)
+{
+    consume(json, "{");
+    Variant obj(typeDict);
+    while(next(json) != '}')
+    {
+        if (obj.size() > 0) {
+            consume(json, ",");
+            skipWhiteSpace(json);
+        }
+        std::string key = parseString(json).asString();
+        if (obj.hasMember(key))
+            throw ParseException("duplicate key " + key);
+        skipWhiteSpace(json);
+        consume(json, ":");
+        skipWhiteSpace(json);
+        Variant value = parseValueJSON(json);
+        obj[key] = value;
+    }
+    consume(json, "}");
+    return obj;
+}
+
 Variant parseArray(std::istream* json) throw(ParseException)
 {
     consume(json, "[");
@@ -223,6 +272,23 @@ Variant parseArray(std::istream* json) throw(ParseException)
         arr.asArray().push_back(value);
         if (next(json) == ',')
             json->get();
+    }
+    consume(json, "]");
+    return arr;
+}
+
+Variant parseArrayJSON(std::istream* json) throw(ParseException)
+{
+    consume(json, "[");
+    Variant arr(typeArray);
+    while(next(json) != ']')
+    {
+        if (arr.size() > 0) {
+            consume(json, ",");
+            skipWhiteSpace(json);
+        }
+        Variant value = parseValue(json);
+        arr.asArray().push_back(value);
     }
     consume(json, "]");
     return arr;
@@ -256,6 +322,24 @@ bool parse(const std::string& json, Variant& obj)
     {
         obj = parseRoot(&ss);
         return true;
+    }
+    catch(ParseException& e)
+    {
+        ERR("%s: %d", e.what(), ss.tellg());
+        return false;
+    }
+}
+
+bool parseJSON(const std::string& json, Variant& obj)
+{
+    std::istringstream ss(json);
+    try
+    {
+        obj = parseValueJSON(&ss);
+        if (obj.isArray() || obj.isMap())
+            return true;
+        ERR("array or object is expected");
+        return false;
     }
     catch(ParseException& e)
     {
@@ -313,6 +397,25 @@ void writeArray(std::ostream* json, const Variant::Array& val, u32 tabs)
     *json << ']';
 }
 
+void writeArrayJSON(std::ostream* json, const Variant::Array& val, u32 tabs)
+{
+    *json << '[';
+    if (val.size() > 0)
+    {
+        *json << '\n';
+        for(u32 i=0; i<val.size(); i++)
+        {
+            writeTabs(json, tabs);
+            writeValueJSON(json, val[i], tabs + 1);
+            if (i != val.size()-1)
+                *json << ',';
+            *json << '\n';
+        }
+        writeTabs(json, tabs-1);
+    }
+    *json << ']';
+}
+
 void writeMap(std::ostream* json, const Variant::Map& val, u32 tabs)
 {
     for(Variant::Map::const_iterator it=val.begin(); it!=val.end(); ++it)
@@ -337,6 +440,25 @@ void writeObject(std::ostream* json, const Variant::Map& val, u32 tabs)
     *json << '}';
 }
 
+void writeObjectJSON(std::ostream* json, const Variant::Map& val, u32 tabs)
+{
+    *json << '{';
+    if (val.size() > 0)
+    {
+        *json << '\n';
+        for(Variant::Map::const_iterator it=val.begin(); it!=val.end(); ++it)
+        {
+            writeTabs(json, tabs);
+            writeString(json, it->first);
+            *json << ": ";
+            writeValueJSON(json, it->second, tabs + 1);
+            *json << '\n';
+        }
+        writeTabs(json, tabs-1);
+    }
+    *json << '}';
+}
+
 void writeValue(std::ostream* json, const Variant& v, u32 tabs)
 {
     if (v.isString())
@@ -355,10 +477,37 @@ void writeValue(std::ostream* json, const Variant& v, u32 tabs)
         writeObject(json, v.asMap(), tabs);
 }
 
+void writeValueJSON(std::ostream* json, const Variant& v, u32 tabs)
+{
+    if (v.isString())
+        writeString(json, v.asString());
+    else if (v.isBool())
+        *json << (v.asBool() ? "true" : "false");
+    else if (v.isInt())
+        *json << v.asInt<i64>();
+    else if (v.isFloat())
+        *json << v.asFloat<f64>();
+    else if (v.isNull())
+        *json << "null";
+    else if (v.isArray())
+        writeArrayJSON(json, v.asArray(), tabs);
+    else if (v.isMap())
+        writeObjectJSON(json, v.asMap(), tabs);
+}
+
 std::string write(const Variant& v)
 {
     std::ostringstream ss;
     writeMap(&ss, v.asMap(), 0);
+    return ss.str();
+}
+
+std::string writeJSON(const Variant& v)
+{
+    std::ostringstream ss;
+    ASSERT(v.isMap() || v.isArray());
+    if (v.isMap()) writeObjectJSON(&ss, v.asMap(), 1);
+    if (v.isArray()) writeArrayJSON(&ss, v.asArray(), 1);
     return ss.str();
 }
 

@@ -100,12 +100,18 @@ namespace sjson {
             return asArray()[idx];
         }
         size_t size() const {
-            return asArray().size();
+            ASSERT(isMap() || isArray());
+            if (isMap()) return asMap().size();
+            if (isArray()) return asArray().size();
+            return 0;
         }
     };
 
     bool parse(const std::string& json, Variant& obj);
     std::string write(const Variant& v);
+
+    bool parseJSON(const std::string& json, Variant& obj);
+    std::string writeJSON(const Variant& v);
 
 } // namespace sjson
 } // namespace base
