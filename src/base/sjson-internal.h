@@ -16,7 +16,7 @@ namespace sjson {
     {
         std::string text;
         ParseException(const std::string& reason);
-        virtual ~ParseException() {}
+        virtual ~ParseException() noexcept(true) {}
         const char* what() const throw() { return text.c_str(); }
     };
 
