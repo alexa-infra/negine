@@ -95,7 +95,7 @@ i8 Plane::BoxOnPlaneSide( const Vector3& mmin, const Vector3& mmax ) const
     // 1 - both plus
     // 2 - both minus
     // 3 - intersect
-    return sides;
+    return sides % 3;
 }
 
 }
