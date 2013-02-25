@@ -7,6 +7,8 @@
 #ifdef COMPILER_MSVC
 // void f1(void) throw(int) {} - is not implemented :(
 #pragma warning( disable : 4290 )
+// noexcept is not implemented
+#define noexcept throw()
 #endif 
 
 namespace base {
@@ -16,8 +18,8 @@ namespace sjson {
     {
         std::string text;
         ParseException(const std::string& reason);
-        virtual ~ParseException() noexcept(true) {}
-        const char* what() const throw() { return text.c_str(); }
+        virtual ~ParseException() noexcept {}
+        const char* what() const noexcept { return text.c_str(); }
     };
 
     void skipWhiteSpace(std::istream* json);
