@@ -33,7 +33,7 @@ SDLApp::SDLApp()
     }
 
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
     // see SDL_GLprofile enumeration
     // e.g. SDL_GL_CONTEXT_PROFILE_ES2 for GLES
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
@@ -59,8 +59,8 @@ SDLApp::SDLApp()
         abort();
     }
 
-    if ( !GLEW_VERSION_3_3 ) {
-        WARN("OpenGL 3.3 is not supported.");
+    if ( !GLEW_VERSION_3_2 ) {
+        WARN("OpenGL 3.2 is not supported.");
     }
 
     const GLubyte* version = glGetString( GL_VERSION );

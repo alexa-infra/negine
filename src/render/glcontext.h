@@ -23,14 +23,14 @@
 #include "GL/glxew.h"
 #endif
 
-#ifdef __APPLE__
-#undef glGenVertexArrays
-#undef glDeleteVertexArrays
-#undef glBindVertexArray
-#define glGenVertexArrays      glGenVertexArraysAPPLE
-#define glDeleteVertexArrays   glDeleteVertexArraysAPPLE
-#define glBindVertexArray      glBindVertexArrayAPPLE
-#endif
+//#ifdef __APPLE__
+//#undef glGenVertexArrays
+//#undef glDeleteVertexArrays
+//#undef glBindVertexArray
+//#define glGenVertexArrays      glGenVertexArraysAPPLE
+//#define glDeleteVertexArrays   glDeleteVertexArraysAPPLE
+//#define glBindVertexArray      glBindVertexArrayAPPLE
+//#endif
 
 #include "base/types.h"
 

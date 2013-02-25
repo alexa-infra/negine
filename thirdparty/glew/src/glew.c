@@ -267,12 +267,27 @@ static GLboolean _glewSearchExtension (const char* name, const GLubyte *start, c
 {
   const GLubyte* p;
   GLuint len = _glewStrLen((const GLubyte*)name);
-  p = start;
-  while (p < end)
+  if (!GLEW_VERSION_3_0)
   {
-    GLuint n = _glewStrCLen(p, ' ');
-    if (len == n && _glewStrSame((const GLubyte*)name, p, n)) return GL_TRUE;
-    p += n+1;
+    p = start;
+    while (p < end)
+    {
+      GLuint n = _glewStrCLen(p, ' ');
+      if (len == n && _glewStrSame((const GLubyte*)name, p, n)) return GL_TRUE;
+      p += n+1;
+    }
+  }
+  else
+  {
+    GLint numExtensions, i;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+    for(i=0; i<numExtensions; i++)
+    {
+      p = (GLubyte*)glGetStringi(GL_EXTENSIONS, i);
+      if (len == _glewStrLen(p))
+        if (_glewStrSame((const GLubyte*)name, p, len))
+          return GL_TRUE;
+    }
   }
   return GL_FALSE;
 }
@@ -8869,10 +8884,13 @@ GLboolean GLEWAPIENTRY glewGetExtension (const char* name)
 {    
   const GLubyte* start;
   const GLubyte* end;
-  start = (const GLubyte*)glGetString(GL_EXTENSIONS);
-  if (start == 0)
-    return GL_FALSE;
-  end = start + _glewStrLen(start);
+  if (!GLEW_VERSION_3_0)
+  {
+    start = (const GLubyte*)glGetString(GL_EXTENSIONS);
+    if (start == 0)
+      return GL_FALSE;
+    end = start + _glewStrLen(start);
+  }
   return _glewSearchExtension(name, start, end);
 }
 
@@ -8928,11 +8946,13 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   }
 
   /* query opengl extensions string */
-  extStart = glGetString(GL_EXTENSIONS);
-  if (extStart == 0)
-    extStart = (const GLubyte*)"";
-  extEnd = extStart + _glewStrLen(extStart);
-
+  if (!GLEW_VERSION_3_0)
+  {
+    extStart = glGetString(GL_EXTENSIONS);
+    if (extStart == 0)
+      extStart = (const GLubyte*)"";
+    extEnd = extStart + _glewStrLen(extStart);
+  }
   /* initialize extensions */
 #ifdef GL_VERSION_1_2
   if (glewExperimental || GLEW_VERSION_1_2) CONST_CAST(GLEW_VERSION_1_2) = !_glewInit_GL_VERSION_1_2(GLEW_CONTEXT_ARG_VAR_INIT);
