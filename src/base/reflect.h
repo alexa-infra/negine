@@ -120,7 +120,7 @@ public:
         json = sjson::write(root);
     }
 private:
-    void pushNode(const std::string& name, sjson::Variant& node);
+    void pushNode(const std::string& name, const sjson::Variant& node);
 
     sjson::Variant& currentNode();
 

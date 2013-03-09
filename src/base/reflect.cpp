@@ -23,7 +23,7 @@ void oarchive::reflect(const std::string& name, f32& object) {
     pushNode(name, sjson::Variant(static_cast<f64>(object)));
 }
 
-void oarchive::pushNode(const std::string& name, sjson::Variant& node)
+void oarchive::pushNode(const std::string& name, const sjson::Variant& node)
 {
     sjson::Variant& current = currentNode();
     if(current.isMap())
