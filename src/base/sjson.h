@@ -96,7 +96,18 @@ namespace sjson {
         Variant& operator[](const std::string& name) {
             return asMap()[name];
         }
+        const Variant& operator[](const std::string& name) const {
+            const Map& mmap = asMap();
+            Map::const_iterator found = mmap.find(name);
+            if (found != mmap.end())
+                return found->second;
+            static Variant retNull(ValueType::typeNull);
+            return retNull;
+        }
         Variant& operator[](const int idx) {
+            return asArray()[idx];
+        }
+        const Variant& operator[](const int idx) const {
             return asArray()[idx];
         }
         size_t size() const {
