@@ -1,7 +1,6 @@
 #pragma once
 
 #include <type_traits>
-#include <algorithm>
 
 namespace base {
 
@@ -37,7 +36,7 @@ public:
 
     ~any() { delete content; }
 
-    any& swap(any& rhs) { std::swap(content, rhs.content); return *this; }
+    any& swap(any& rhs);
     any& operator=(any rhs) { rhs.swap(*this); return *this; }
     template<typename ValueType>
     any& operator=(const ValueType& value) { any(value).swap(*this); return *this; }
