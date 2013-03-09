@@ -8906,6 +8906,8 @@ GLenum GLEWAPIENTRY glewContextInit (GLEW_CONTEXT_ARG_DEF_LIST)
   GLint major, minor;
   const GLubyte* extStart;
   const GLubyte* extEnd;
+  extStart = 0;
+  extEnd = 0;
   /* query opengl version */
   s = glGetString(GL_VERSION);
   dot = _glewStrCLen(s, '.');
