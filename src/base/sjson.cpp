@@ -5,6 +5,10 @@
 namespace base {
 namespace sjson {
 
+Variant::Variant() : type(typeNull)
+{
+}
+
 Variant::Variant(ValueType v)
     : type(v)
 {
@@ -17,6 +21,101 @@ Variant::Variant(ValueType v)
     case typeArray:     arrVal = std::make_shared<Array>();         break;
     default: break;
     }
+}
+
+Variant::Variant(bool val) : type(typeBool) {
+    boolVal = std::make_shared<bool>(val);
+}
+
+Variant::Variant(i64 val) : type(typeInt) {
+    intVal = std::make_shared<i64>(val);
+}
+
+Variant::Variant(f64 val) : type(typeFloat) {
+    floatVal = std::make_shared<f64>(val);
+}
+
+Variant::Variant(const std::string& val) : type(typeString) {
+    strVal = std::make_shared<std::string>(val);
+}
+
+bool Variant::isBool() const {
+    return type == typeBool && boolVal;
+}
+
+bool Variant::isInt() const {
+    return type == typeInt && intVal;
+}
+
+bool Variant::isFloat() const {
+    return type == typeFloat && floatVal;
+}
+
+bool Variant::isString() const {
+    return type == typeString && strVal;
+}
+
+bool Variant::isMap() const {
+    return type == typeDict && mapVal;
+}
+
+bool Variant::isArray() const {
+    return type == typeArray && arrVal;
+}
+bool Variant::isNull() const {
+    return type == typeNull;
+}
+
+bool& Variant::asBool() const {
+    ASSERT(isBool());
+    return *boolVal;
+}
+
+std::string& Variant::asString() const {
+    ASSERT(isString());
+    return *strVal;
+}
+
+Variant::Array& Variant::asArray() const {
+    ASSERT(isArray());
+    return *arrVal;
+}
+
+Variant::Map& Variant::asMap() const {
+    ASSERT(isMap());
+    return *mapVal;
+}
+
+bool Variant::hasMember(const std::string& name) const {
+    return asMap().count(name) == 1;
+}
+
+Variant& Variant::operator[](const std::string& name) {
+    return asMap()[name];
+}
+
+const Variant& Variant::operator[](const std::string& name) const {
+    const Map& mmap = asMap();
+    Map::const_iterator found = mmap.find(name);
+    if (found != mmap.end())
+        return found->second;
+    static Variant retNull(ValueType::typeNull);
+    return retNull;
+}
+
+Variant& Variant::operator[](const int idx) {
+    return asArray()[idx];
+}
+
+const Variant& Variant::operator[](const int idx) const {
+    return asArray()[idx];
+}
+
+size_t Variant::size() const {
+    ASSERT(isMap() || isArray());
+    if (isMap()) return asMap().size();
+    if (isArray()) return asArray().size();
+    return 0;
 }
 
 ParseException::ParseException(const std::string& reason)

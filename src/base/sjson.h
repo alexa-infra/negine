@@ -14,63 +14,38 @@ namespace sjson {
     };
 
     struct Variant {
-        ValueType type;
-
+    public:
         typedef std::map<std::string, Variant> Map;
         typedef std::vector<Variant> Array;
-        
+
+    private:
+        ValueType type;
+
         std::shared_ptr<bool>           boolVal;
         std::shared_ptr<i64>            intVal;
         std::shared_ptr<f64>            floatVal;
         std::shared_ptr<std::string>    strVal;
         std::shared_ptr<Map>            mapVal;
         std::shared_ptr<Array>          arrVal;
-
-        Variant() : type(typeNull) {}
+    public:
+        Variant();
         explicit Variant(ValueType v);
-        explicit Variant(bool val) : type(typeBool) {
-            boolVal = std::make_shared<bool>(val);
-        }
-        explicit Variant(i64 val) : type(typeInt) {
-            intVal = std::make_shared<i64>(val);
-        }
-        explicit Variant(f64 val) : type(typeFloat) {
-            floatVal = std::make_shared<f64>(val);
-        }
-        explicit Variant(const std::string& val) : type(typeString) {
-            strVal = std::make_shared<std::string>(val);
-        }
+        explicit Variant(bool val);
+        explicit Variant(i64 val);
+        explicit Variant(f64 val);
+        explicit Variant(const std::string& val);
 
-        bool isBool() const {
-            return type == typeBool && boolVal;
-        }
-        bool isInt() const {
-            return type == typeInt && intVal;
-        }
-        bool isFloat() const {
-            return type == typeFloat && floatVal;
-        }
-        bool isString() const {
-            return type == typeString && strVal;
-        }
-        bool isMap() const {
-            return type == typeDict && mapVal;
-        }
-        bool isArray() const {
-            return type == typeArray && arrVal;
-        }
-        bool isNull() const {
-            return type == typeNull;
-        }
+        bool isBool() const;
+        bool isInt() const;
+        bool isFloat() const;
+        bool isString() const;
+        bool isMap() const;
+        bool isArray() const;
+        bool isNull() const;
 
-        bool& asBool() const {
-            ASSERT(isBool());
-            return *boolVal;
-        }
-        std::string& asString() const {
-            ASSERT(isString());
-            return *strVal;
-        }
+        bool& asBool() const;
+        std::string& asString() const;
+
         template<typename T>
         T asInt() const {
             ASSERT(isInt());
@@ -81,41 +56,16 @@ namespace sjson {
             ASSERT(isFloat());
             return static_cast<T>(*floatVal);
         }
-        Array& asArray() const {
-            ASSERT(isArray());
-            return *arrVal;
-        }
-        Map& asMap() const {
-            ASSERT(isMap());
-            return *mapVal;
-        }
 
-        bool hasMember(const std::string& name) const {
-            return asMap().count(name) == 1;
-        }
-        Variant& operator[](const std::string& name) {
-            return asMap()[name];
-        }
-        const Variant& operator[](const std::string& name) const {
-            const Map& mmap = asMap();
-            Map::const_iterator found = mmap.find(name);
-            if (found != mmap.end())
-                return found->second;
-            static Variant retNull(ValueType::typeNull);
-            return retNull;
-        }
-        Variant& operator[](const int idx) {
-            return asArray()[idx];
-        }
-        const Variant& operator[](const int idx) const {
-            return asArray()[idx];
-        }
-        size_t size() const {
-            ASSERT(isMap() || isArray());
-            if (isMap()) return asMap().size();
-            if (isArray()) return asArray().size();
-            return 0;
-        }
+        Array& asArray() const;
+        Map& asMap() const;
+
+        bool hasMember(const std::string& name) const;
+        Variant& operator[](const std::string& name);
+        const Variant& operator[](const std::string& name) const;
+        Variant& operator[](const int idx);
+        const Variant& operator[](const int idx) const;
+        size_t size() const;
     };
 
     bool parse(const std::string& json, Variant& obj);
