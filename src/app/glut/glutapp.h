@@ -9,6 +9,8 @@
 #include "base/types.h"
 #include "base/timer.h"
 
+namespace base {
+
 class GlutWindow
 {
 private:
@@ -67,3 +69,4 @@ protected:
     bool capture_;
 };
 
+}

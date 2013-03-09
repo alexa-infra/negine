@@ -11,7 +11,7 @@
 typedef base::SDLApp Application;
 #elif defined(GLUT_ENGINE)
 #include "app/glut/glutapp.h"
-typedef GlutWindow Application;
+typedef base::GlutWindow Application;
 #else
 #error Window system is not defined
 #endif

@@ -18,6 +18,7 @@
 
 #include "render/statistics.h"
 
+using namespace base;
 GlutWindow* GlutWindow::window_ = NULL;
 
 GlutWindow::GlutWindow()
@@ -32,9 +33,18 @@ GlutWindow::GlutWindow()
     glutInitDisplayMode( GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE );
     glutInitWindowSize( width_, height_ );
     glutInitWindowPosition( 100, 100 );
-//    glutInitContextVersion(3, 3);
-//    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE | GLUT_DEBUG);
-//    glutInitContextProfile(GLUT_CORE_PROFILE);
+
+    // my personal configuration, temporary
+    #ifdef OS_WIN
+        glutInitContextVersion(3, 1);
+        glutInitContextFlags(/*GLUT_FORWARD_COMPATIBLE | */GLUT_DEBUG);
+        glutInitContextProfile(GLUT_CORE_PROFILE);
+    #elif defined(OS_MAC)
+        glutInitContextVersion(3, 2);
+        glutInitContextFlags(/*GLUT_FORWARD_COMPATIBLE | */GLUT_DEBUG);
+        glutInitContextProfile(GLUT_CORE_PROFILE);
+    #elif defined(OS_LINUX)
+    #endif
     window_ = this;
     window_id_ = glutCreateWindow( "GlutWindow" );
     glewExperimental = GL_TRUE;
