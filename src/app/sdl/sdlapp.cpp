@@ -33,7 +33,7 @@ SDLApp::SDLApp()
     }
 
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
     // see SDL_GLprofile enumeration
     // e.g. SDL_GL_CONTEXT_PROFILE_ES2 for GLES
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
@@ -51,6 +51,10 @@ SDLApp::SDLApp()
                       SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
                   );
     maincontext_ = SDL_GL_CreateContext( mainwindow_ );
+    if (!maincontext_) {
+        ERR("SDL error: %s", SDL_GetError());
+        abort();
+    }
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
 
@@ -59,8 +63,8 @@ SDLApp::SDLApp()
         abort();
     }
 
-    if ( !GLEW_VERSION_3_2 ) {
-        WARN("OpenGL 3.2 is not supported.");
+    if ( !GLEW_VERSION_3_1 ) {
+        WARN("OpenGL 3.1 is not supported.");
     }
 
     const GLubyte* version = glGetString( GL_VERSION );
