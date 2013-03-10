@@ -49,11 +49,11 @@ u32 PixelTypes::componentCount(PixelType type)
 TextureInfo::TextureInfo()
     : Type( TextureTypes::Texture2D )
     , MagFilter( TextureMagFilters::LINEAR )
-    , MinFilter( TextureMinFilters::NEAREST_MIPMAP_LINEAR )
+    , MinFilter( TextureMinFilters::LINEAR )
     , WrapT( TextureWraps::REPEAT )
     , WrapS( TextureWraps::REPEAT )
     , WrapR( TextureWraps::REPEAT )
-    , GenerateMipmap( true )
+    , GenerateMipmap( false )
     , Pixel( PixelTypes::RGBA )
     , DataType( GLDataTypes::UByte )
     , InternalType( GL_RGBA )
@@ -140,8 +140,7 @@ void Texture::FromBuffer( const u8* data )
         info_.Pixel,
         info_.DataType,
         data );
-//    if (info_.GenerateMipmap)
-//        glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture( info_.Type, 0 );
 }
 
 void Texture::GenerateEmpty( const TextureInfo& textureinfo )
@@ -151,9 +150,7 @@ void Texture::GenerateEmpty( const TextureInfo& textureinfo )
 
     glBindTexture( info_.Type, id_ );
     setup();
-
-    u8* data = new u8[info_.dataSize()];
-
+    
     glTexImage2D(
         info_.Type,
         0,
@@ -163,8 +160,8 @@ void Texture::GenerateEmpty( const TextureInfo& textureinfo )
         0,
         info_.Pixel,
         info_.DataType,
-        data );
-    delete[] data;
+        NULL );
+    glBindTexture( info_.Type, 0 );
 }
 
 void Texture::setup()
@@ -172,6 +169,9 @@ void Texture::setup()
     if ( !info_.GenerateMipmap ) {
         ASSERT( info_.MinFilter == TextureMinFilters::LINEAR
                 || info_.MinFilter == TextureMinFilters::NEAREST );
+        ASSERT( info_.Width == info_.Height );
+    } else {
+        glGenerateMipmap( info_.Type );
     }
 
     glTexParameteri( info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter );
