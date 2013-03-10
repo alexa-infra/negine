@@ -7,7 +7,7 @@
 #pragma once
 
 #include "render/glcontext.h"
-#include "render/glshader.h"
+#include "render/shader.h"
 #include <map>
 #include <string>
 #include "render/mesh.h"
@@ -18,7 +18,7 @@ namespace base
 namespace opengl
 {
 
-//! Program uniform information
+//! GpuProgram uniform information
 namespace UniformVars
 {
 enum UniformVar {
@@ -43,7 +43,7 @@ typedef std::map<UniformVar, u32> UniformBinding;
 using base::math::Matrix4;
 
 //! Shader program object
-class Program
+class GpuProgram
 {
 protected:
     GLuint program_id_;         //!< Name of program object
@@ -54,8 +54,8 @@ protected:
     UniformBinding uni_binding_;
     
 public:
-    Program();
-    ~Program();
+    GpuProgram();
+    ~GpuProgram();
 
     void Create();
     void Destroy();
@@ -110,7 +110,7 @@ protected:
     //! Populate list of active attributes
     void get_attributes_list();
 private:
-    DISALLOW_COPY_AND_ASSIGN( Program );
+    DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };
 
 

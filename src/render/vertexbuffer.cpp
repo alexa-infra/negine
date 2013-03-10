@@ -44,7 +44,7 @@ void VertexBuffer::EnableAttributeMesh( const MeshExt* mesh )
 void VertexBuffer::SetVertexData( void* vertexes, u32 vertexCount )
 {
     if (vertexes_ == nullptr)
-        vertexes_ = new GLBufferObject;
+        vertexes_ = new BufferObject;
     vertexes_->Bind( BufferTargets::Array );
     vertexes_->SetData( vertexCount, vertexes, BufferUsages::DynamicDraw );
     vertexes_->Unbind();
@@ -53,7 +53,7 @@ void VertexBuffer::SetVertexData( void* vertexes, u32 vertexCount )
 void VertexBuffer::SetIndexData( void* index, u32 indexCount )
 {
     if (indexes_ == nullptr)
-        indexes_ = new GLBufferObject;
+        indexes_ = new BufferObject;
     indexes_->Bind( BufferTargets::ElementArray );
     indexes_->SetData( indexCount, index, BufferUsages::DynamicDraw );
     indexes_->Unbind();

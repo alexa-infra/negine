@@ -3,11 +3,11 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "render/glprogram.h"
+#include "render/gpuprogram.h"
 #include <iostream>
 #include "math/vector.h"
 #include "math/matrix.h"
-#include "render/gltexture.h"
+#include "render/texture.h"
 #include <memory>
 #include "base/stream.h"
 #include "base/stringmap.h"
@@ -57,12 +57,12 @@ u32 UniformVars::get_tex_index( UniformVar var )
     }
 }
 
-Program::Program()
+GpuProgram::GpuProgram()
     : program_id_( 0 )
 {
 }
 
-void Program::Destroy()
+void GpuProgram::Destroy()
 {
     if ( is_ok() ) {
         glDetachShader( program_id_, vertex_shader_.id() );
@@ -78,7 +78,7 @@ void Program::Destroy()
     }
 }
 
-bool Program::CreateFromText( const std::string& vs, const std::string& fs, std::string& statusStr )
+bool GpuProgram::CreateFromText( const std::string& vs, const std::string& fs, std::string& statusStr )
 {
     ASSERT( program_id_ == 0 );
     program_id_ = glCreateProgram();
@@ -138,7 +138,7 @@ bool Program::CreateFromText( const std::string& vs, const std::string& fs, std:
     return linked;
 }
 
-const std::string Program::status() const
+const std::string GpuProgram::status() const
 {
     std::string result;
     if ( program_id_ == 0 ) {
@@ -159,7 +159,7 @@ const std::string Program::status() const
     return result;
 }
 
-bool Program::CreateFromFile( const std::string& filename, std::string& status )
+bool GpuProgram::CreateFromFile( const std::string& filename, std::string& status )
 {
     FileText file( filename );
     std::vector<std::string> lines = file.read_lines();
@@ -211,24 +211,24 @@ bool Program::CreateFromFile( const std::string& filename, std::string& status )
     return CreateFromText( vertexSrc, pixelSrc, status );
 }
 
-Program::~Program()
+GpuProgram::~GpuProgram()
 {
     Destroy();
 }
 
-void Program::Bind()
+void GpuProgram::Bind()
 {
     glUseProgram( program_id_ );
     Stats::instance()->inc_program_switches();
 }
 
-void Program::Unbind()
+void GpuProgram::Unbind()
 {
     glUseProgram(0);
 }
 
 template<>
-void Program::set_uniform_param<Texture*>( UniformVar uniform, u32 location, Texture* const& t )
+void GpuProgram::set_uniform_param<Texture*>( UniformVar uniform, u32 location, Texture* const& t )
 {
     u32 sampler_index = get_tex_index( uniform );
     glActiveTexture( GL_TEXTURE0 + sampler_index );
@@ -237,24 +237,24 @@ void Program::set_uniform_param<Texture*>( UniformVar uniform, u32 location, Tex
 }
 
 template<>
-void Program::set_uniform_param<Matrix4>( UniformVar uniform, u32 location, const Matrix4& m )
+void GpuProgram::set_uniform_param<Matrix4>( UniformVar uniform, u32 location, const Matrix4& m )
 {
     glUniformMatrix4fv( location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
 }
 
 template<>
-void Program::set_uniform_param<Vector4>( UniformVar uniform, u32 location, const Vector4& v )
+void GpuProgram::set_uniform_param<Vector4>( UniformVar uniform, u32 location, const Vector4& v )
 {
     glUniform4f( location, v.x, v.y, v.z, v.w );
 }
 
 template<>
-void Program::set_uniform_param<Vector3>( UniformVar uniform, u32 location, const Vector3& v )
+void GpuProgram::set_uniform_param<Vector3>( UniformVar uniform, u32 location, const Vector3& v )
 {
     glUniform3f( location, v.x, v.y, v.z );
 }
 
-void Program::get_uniforms_list()
+void GpuProgram::get_uniforms_list()
 {
     GLint uniform_count, max_name_length = 0;
     glGetProgramiv( program_id_, GL_ACTIVE_UNIFORMS, &uniform_count );
@@ -286,11 +286,11 @@ void Program::get_uniforms_list()
     delete[] buffer;
 }
 
-void Program::get_attributes_list()
+void GpuProgram::get_attributes_list()
 {
 }
 
-void Program::CreateFromFileWithAssert( const std::string& filename )
+void GpuProgram::CreateFromFileWithAssert( const std::string& filename )
 {
     std::string status;
 

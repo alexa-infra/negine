@@ -5,7 +5,7 @@
  * \copyright   MIT License
  **/
 #include "particlesystemrenderer.h"
-#include "glprogram.h"
+#include "gpuprogram.h"
 #include "math/rect.h"
 
 namespace base
@@ -67,7 +67,7 @@ ParticleSystemRenderer::~ParticleSystemRenderer()
     delete mesh_;
 }
 
-void ParticleSystemRenderer::Draw( Program* program )
+void ParticleSystemRenderer::Draw( GpuProgram* program )
 {
     program->set_uniform( base::opengl::UniformVars::Diffuse, texture_ );
     vbo_->BindAttributes( );

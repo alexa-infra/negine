@@ -61,15 +61,15 @@ enum BufferAccess {
 typedef BufferAccesses::BufferAccess BufferAccess;
 
 //! Wraps Buffer Object
-class GLBufferObject
+class BufferObject
 {
 private:
     GLuint id_;     //!< Buffer identifier
     GLenum target_; //!< Currently mapped type format
     bool is_ok_;    //!< Is buffer created
 public:
-    GLBufferObject();
-    ~GLBufferObject();
+    BufferObject();
+    ~BufferObject();
 
     //! Gets name of buffer
     GLuint id() const {
@@ -105,7 +105,7 @@ public:
     void Clear();
 
 private:
-    DISALLOW_COPY_AND_ASSIGN( GLBufferObject );
+    DISALLOW_COPY_AND_ASSIGN( BufferObject );
 };
 
 }

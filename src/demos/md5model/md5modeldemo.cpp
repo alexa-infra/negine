@@ -9,8 +9,8 @@
 #include "render/md5anim.h"
 #include "render/md5renderer.h"
 #include "render/camera.h"
-#include "render/gltexture.h"
-#include "render/glprogram.h"
+#include "render/texture.h"
+#include "render/gpuprogram.h"
 #include "render/wirebox.h"
 
 using namespace base;
@@ -20,8 +20,8 @@ using namespace base::resource;
 
 class Demo : public Application
 {
-    Program        program_;
-    Program        program_wirebox_;
+    GpuProgram        program_;
+    GpuProgram        program_wirebox_;
     Camera          camera_;
     TextureLoader   texure_loader_;
     Matrix4         modelTransform_;

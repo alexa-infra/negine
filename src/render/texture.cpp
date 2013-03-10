@@ -3,7 +3,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "render/gltexture.h"
+#include "render/texture.h"
 
 #define STBI_FAILURE_USERMSG
 #include "stb/stb_image.c"

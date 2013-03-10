@@ -7,7 +7,7 @@
 #pragma once
 
 #include "render/mesh.h"
-#include "render/glbuffer.h"
+#include "render/bufferobject.h"
 
 namespace base
 {
@@ -38,8 +38,8 @@ public:
     //! Unbind attributes
     void UnbindAttributes( );
 private:
-    GLBufferObject* vertexes_;      //!< Vertex buffer object
-    GLBufferObject* indexes_;       //!< Index buffer object
+    BufferObject* vertexes_;      //!< Vertex buffer object
+    BufferObject* indexes_;       //!< Index buffer object
     GLuint vao_;
 
     struct EnabledAttribute

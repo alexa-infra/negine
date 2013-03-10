@@ -6,7 +6,7 @@
  **/
 #include "app/app.h"
 #include "render/camera.h"
-#include "render/glprogram.h"
+#include "render/gpuprogram.h"
 #include "game/scene.h"
 #include "game/gameobject.h"
 #include "game/cameracomponent.h"
@@ -30,7 +30,7 @@ std::string stringify(const T& val)
 
 class Demo : public Application
 {
-	Program        program_;
+	GpuProgram        program_;
 	Scene* scene_;
 public:
 	Demo() {

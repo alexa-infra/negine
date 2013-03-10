@@ -12,7 +12,7 @@
 #include "stb/stb_image.c"
 #include <iostream>
 #include "base/stream.h"
-#include "render/gltexture.h"
+#include "render/texture.h"
 #include "render/vertexbuffer.h"
 
 using base::math::Vector2;

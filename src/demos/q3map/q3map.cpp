@@ -6,9 +6,9 @@
 #include <map>
 #include "render/camera.h"
 #include "render/glcontext.h"
-#include "render/glprogram.h"
+#include "render/gpuprogram.h"
 #include "render/mesh.h"
-#include "render/gltexture.h"
+#include "render/texture.h"
 #include "render/statistics.h"
 #include "base/timer.h"
 
@@ -20,7 +20,7 @@ namespace base
 namespace opengl
 {
 
-void bind_attr( Program* pr, const q3vertex& vertexes );
+void bind_attr( GpuProgram* pr, const q3vertex& vertexes );
 
 void swizzle( Vector3& v )
 {
@@ -47,7 +47,7 @@ public:
     q3vertex                controls[9];
 
     void tessellate( u32 level );
-    void render( Program* program );
+    void render( GpuProgram* program );
 };
 
 
@@ -306,7 +306,7 @@ bool comp_texture_array(const TextureFace& a, const TextureFace& b)
     return a.first < b.first;
 }
 
-void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txloader )
+void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& txloader )
 {
     Timer tt;
     tt.Reset();
@@ -376,14 +376,14 @@ void q3maploader::render( const Camera& camera, Program* pr, TextureLoader& txlo
 //    << std::endl;
 }
 
-void q3maploader::render_polygons( const q3face& face, Program* pr ) const
+void q3maploader::render_polygons( const q3face& face, GpuProgram* pr ) const
 {
     bind_attr( pr, vertexes[face.vertexIndex] );
     glDrawElements( GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex] );
     Stats::add_polygons( face.numOfFaceIndices / 3 );
 }
 
-void q3maploader::render_patch( const q3face& face, Program* pr ) const
+void q3maploader::render_patch( const q3face& face, GpuProgram* pr ) const
 {
     i32 numOfPatchesWide = ( face.patchWidth - 1 ) >> 1;
     i32 numOfPatchesHigh = ( face.patchHeight - 1 ) >> 1;
@@ -408,7 +408,7 @@ void q3maploader::render_patch( const q3face& face, Program* pr ) const
     }
 }
 
-void bind_attr( Program* pr, const q3vertex& vertex )
+void bind_attr( GpuProgram* pr, const q3vertex& vertex )
 {
     u32 bindPos = VertexAttrs::GetAttributeLocation(VertexAttrs::tagPosition);
     glEnableVertexAttribArray(bindPos);
@@ -508,7 +508,7 @@ void Bezier::tessellate( u32 L )
     }
 }
 
-void Bezier::render( Program* program )
+void Bezier::render( GpuProgram* program )
 {
     bind_attr( program, vertex[0] );
 

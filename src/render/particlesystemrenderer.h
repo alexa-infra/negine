@@ -6,7 +6,7 @@
  **/
 #pragma once
 
-#include "render/gltexture.h"
+#include "render/texture.h"
 #include "render/vertexbuffer.h"
 #include "render/particlesystem.h"
 
@@ -15,7 +15,7 @@ namespace base
 namespace opengl
 {
 
-class Program;
+class GpuProgram;
 
 class ParticleSystemRenderer
 {
@@ -28,7 +28,7 @@ public:
     ~ParticleSystemRenderer();
 
     void Commit();
-    void Draw( Program* binding );
+    void Draw( GpuProgram* binding );
 };
 
 }

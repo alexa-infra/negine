@@ -8,8 +8,8 @@
 #include "base/timer.h"
 #include "render/particlesystem.h"
 #include "render/particlesystemrenderer.h"
-#include "render/gltexture.h"
-#include "render/glprogram.h"
+#include "render/texture.h"
+#include "render/gpuprogram.h"
 
 using namespace base;
 using namespace base::math;
@@ -18,7 +18,7 @@ using namespace base::resource;
 
 class Demo : public Application
 {
-    Program program_;
+    GpuProgram program_;
     TextureLoader texure_loader_;
 
     ParticleSystem* ps_;

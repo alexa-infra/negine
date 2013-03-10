@@ -7,8 +7,8 @@
 #include "app/app.h"
 #include "q3map.h"
 #include "render/camera.h"
-#include "render/gltexture.h"
-#include "render/glprogram.h"
+#include "render/texture.h"
+#include "render/gpuprogram.h"
 #include "render/vertexbuffer.h"
 
 using namespace base;
@@ -18,7 +18,7 @@ using namespace base::opengl;
 class Demo : public Application
 {
 protected:
-    Program program_;
+    GpuProgram program_;
     q3maploader* q3map_;
     Camera camera_;
     TextureLoader texure_loader_;

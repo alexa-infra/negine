@@ -3,14 +3,14 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "render/glbuffer.h"
+#include "render/bufferobject.h"
 
 namespace base
 {
 namespace opengl
 {
 
-GLBufferObject::GLBufferObject()
+BufferObject::BufferObject()
     : id_( 0 )
     , target_( 0 )
     , is_ok_( false )
@@ -19,58 +19,58 @@ GLBufferObject::GLBufferObject()
     is_ok_ = id_ != 0;
 }
 
-GLBufferObject::~GLBufferObject()
+BufferObject::~BufferObject()
 {
     if ( is_ok_ ) {
         glDeleteBuffers( 1, &id_ );
     }
 }
 
-void GLBufferObject::Bind( BufferTarget target )
+void BufferObject::Bind( BufferTarget target )
 {
     glBindBuffer( target_ = target, id_ );
 }
 
-void GLBufferObject::Unbind()
+void BufferObject::Unbind()
 {
     glBindBuffer( target_, 0 );
 }
 
-void GLBufferObject::BindBase( BufferTarget target, u32 index )
+void BufferObject::BindBase( BufferTarget target, u32 index )
 {
     glBindBufferBase( target_ = target, index, id_ );
 }
 
-void GLBufferObject::BindRange( BufferTarget target, u32 index, void* offset, void* size )
+void BufferObject::BindRange( BufferTarget target, u32 index, void* offset, void* size )
 {
     glBindBufferRange( target_ = target, index, id_, ( GLintptr )offset, ( GLsizeiptr )size );
 }
 
-void* GLBufferObject::Map( BufferAccess access_type )
+void* BufferObject::Map( BufferAccess access_type )
 {
     return glMapBuffer( target_, access_type );
 }
-bool GLBufferObject::Unmap()
+bool BufferObject::Unmap()
 {
     return ( glUnmapBuffer( target_ ) == GL_TRUE );
 }
 
-void GLBufferObject::SetData( u32 size, const void* data_ptr, BufferUsage usage )
+void BufferObject::SetData( u32 size, const void* data_ptr, BufferUsage usage )
 {
     glBufferData( target_, size, data_ptr, usage );
 }
 
-void GLBufferObject::SetSubData( u32 offset, u32 size, const void* data_ptr )
+void BufferObject::SetSubData( u32 offset, u32 size, const void* data_ptr )
 {
     glBufferSubData( target_, offset, size, data_ptr );
 }
 
-void GLBufferObject::GetSubData( u32 offset, u32 size, void* data_ptr )
+void BufferObject::GetSubData( u32 offset, u32 size, void* data_ptr )
 {
     glGetBufferSubData( target_, offset, size, data_ptr );
 }
 
-void GLBufferObject::Clear()
+void BufferObject::Clear()
 {
     glBufferData( target_, 0, NULL, 0 );
 }

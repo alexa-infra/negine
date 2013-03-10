@@ -11,7 +11,7 @@
 #include "math/plane.h"
 #include "base/stream.h"
 #include "render/wirebox.h"
-#include "render/gltexture.h"
+#include "render/texture.h"
 
 namespace base
 {
@@ -19,7 +19,7 @@ namespace opengl
 {
 
 class Camera;
-class Program;
+class GpuProgram;
 class TextureLoader;
 
 struct q3header {
@@ -220,7 +220,7 @@ public:
     std::vector<Texture*>    lm_textures;
     std::vector<Texture*>    d_textures;
     WireBox _wb;
-    Program* _program;
+    GpuProgram* _program;
 
     q3maploader( FileBinary& file );
     ~q3maploader();
@@ -228,7 +228,7 @@ public:
     void load();
     void PreloadTextures( TextureLoader& textureLoader );
 
-    void render( const Camera& camera, Program* pr, TextureLoader& txloader );
+    void render( const Camera& camera, GpuProgram* pr, TextureLoader& txloader );
 private:
     void check_header();
 
@@ -245,8 +245,8 @@ private:
     }
     i32 findLeaf( const math::Vector3& camPos ) const;
 
-    void render_polygons( const q3face& face, Program* pr ) const;
-    void render_patch( const q3face& face, Program* pr ) const;
+    void render_polygons( const q3face& face, GpuProgram* pr ) const;
+    void render_patch( const q3face& face, GpuProgram* pr ) const;
     void findDrawLeafs( const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visFaces, int index ) const;
     void ComputePossibleVisible( const math::Vector3& cameraPos );
     void AddVisibleNode( Node* node );

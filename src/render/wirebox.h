@@ -8,7 +8,7 @@
 
 #include "glcontext.h"
 #include "math/vector.h"
-#include "glprogram.h"
+#include "gpuprogram.h"
 
 namespace base
 {
@@ -32,7 +32,7 @@ public:
     WireBox();
     WireBox( math::Vector3 minPoint, math::Vector3 maxPoin );
     ~WireBox();
-    void Draw( Program* program );
+    void Draw( GpuProgram* program );
 private:
     void update();
 };
