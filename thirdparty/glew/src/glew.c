@@ -8882,8 +8882,8 @@ static GLboolean _glewInit_GL_WIN_swap_hint (GLEW_CONTEXT_ARG_DEF_INIT)
 
 GLboolean GLEWAPIENTRY glewGetExtension (const char* name)
 {    
-  const GLubyte* start;
-  const GLubyte* end;
+  const GLubyte* start = 0;
+  const GLubyte* end = 0;
   if (!GLEW_VERSION_3_0)
   {
     start = (const GLubyte*)glGetString(GL_EXTENSIONS);
