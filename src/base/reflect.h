@@ -62,6 +62,17 @@ public:
             ar.reflectObject(root, obj);
         }
     }
+    
+    template<typename T>
+    static void deserializeFile(const std::string& filename, T& obj)
+    {
+        sjson::Variant root;
+        if (sjson::readFile(filename, root))
+        {
+            iarchive ar;
+            ar.reflectObject(root, obj);
+        }
+    }
 private:
     const sjson::Variant& currentNode(const std::string& name);
     
@@ -118,6 +129,14 @@ public:
         oarchive ar;
         sjson::Variant root = ar.reflectObject(obj);
         json = sjson::write(root);
+    }
+    
+    template<typename T>
+    static void serializeFile(const std::string& filename, T& obj)
+    {
+        oarchive ar;
+        sjson::Variant root = ar.reflectObject(obj);
+        sjson::writeFile(filename, root);
     }
 private:
     void pushNode(const std::string& name, const sjson::Variant& node);

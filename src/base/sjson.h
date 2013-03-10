@@ -68,11 +68,11 @@ namespace sjson {
         size_t size() const;
     };
 
-    bool parse(const std::string& json, Variant& obj);
-    std::string write(const Variant& v);
-
-    bool parseJSON(const std::string& json, Variant& obj);
-    std::string writeJSON(const Variant& v);
+    bool parse(const std::string& json, Variant& obj, bool simplified = true);
+    std::string write(const Variant& v, bool simplified = true);
+    
+    bool readFile(const std::string& filename, Variant& obj, bool simplified = true);
+    void writeFile(const std::string& filename, Variant& obj, bool simplified = true);
 
 } // namespace sjson
 } // namespace base

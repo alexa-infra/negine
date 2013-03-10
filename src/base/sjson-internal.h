@@ -51,5 +51,8 @@ namespace sjson {
     void writeArrayJSON(std::ostream* json, const Variant::Array& val, u32 tabs);
     void writeObjectJSON(std::ostream* json, const Variant::Map& val, u32 tabs);
     void writeValueJSON(std::ostream* json, const Variant& v, u32 tabs);
+    
+    bool parse(const std::istream* json, Variant& obj, bool simplified = true);
+    void write(std::ostream* json, const Variant& v, bool simplified = true);
 } // namespace sjson
 } // namespace base

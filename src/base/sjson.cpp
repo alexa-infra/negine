@@ -1,6 +1,7 @@
 #include "base/sjson.h"
 #include "base/sjson-internal.h"
 #include <sstream>
+#include <fstream>
 
 namespace base {
 namespace sjson {
@@ -414,35 +415,27 @@ Variant parseRoot(std::istream* json) throw(ParseException)
     return obj;
 }
 
-bool parse(const std::string& json, Variant& obj)
+bool parse(std::istream* ss, Variant& obj, bool simplified)
 {
-    std::istringstream ss(json);
     try
     {
-        obj = parseRoot(&ss);
+        if (simplified)
+        {
+            obj = parseRoot(ss);
+        }
+        else
+        {
+            obj = parseValueJSON(ss);
+            if (obj.isArray() || obj.isMap())
+                return true;
+            ERR("array or object is expected");
+            return false;
+        }
         return true;
     }
     catch(ParseException& e)
     {
-        ERR("%s: %d", e.what(), ss.tellg());
-        return false;
-    }
-}
-
-bool parseJSON(const std::string& json, Variant& obj)
-{
-    std::istringstream ss(json);
-    try
-    {
-        obj = parseValueJSON(&ss);
-        if (obj.isArray() || obj.isMap())
-            return true;
-        ERR("array or object is expected");
-        return false;
-    }
-    catch(ParseException& e)
-    {
-        ERR("%s: %d", e.what(), ss.tellg());
+        ERR("%s: %d", e.what(), ss->tellg());
         return false;
     }
 }
@@ -594,20 +587,53 @@ void writeValueJSON(std::ostream* json, const Variant& v, u32 tabs)
         writeObjectJSON(json, v.asMap(), tabs);
 }
 
-std::string write(const Variant& v)
+void write(std::ostream* ss, const Variant& v, bool simplified)
+{
+    if (simplified)
+    {
+        writeMap(ss, v.asMap(), 0);
+    }
+    else
+    {
+        ASSERT(v.isMap() || v.isArray());
+        if (v.isMap()) writeObjectJSON(ss, v.asMap(), 1);
+        if (v.isArray()) writeArrayJSON(ss, v.asArray(), 1);
+    }
+}
+
+bool parse(const std::string& json, Variant& obj, bool simplified)
+{
+    std::istringstream ss(json);
+    return parse(&ss, obj, simplified);
+}
+    
+std::string write(const Variant& v, bool simplified)
 {
     std::ostringstream ss;
-    writeMap(&ss, v.asMap(), 0);
+    write(&ss, v, simplified);
     return ss.str();
 }
 
-std::string writeJSON(const Variant& v)
+bool readFile(const std::string& filename, Variant& obj, bool simplified)
 {
-    std::ostringstream ss;
-    ASSERT(v.isMap() || v.isArray());
-    if (v.isMap()) writeObjectJSON(&ss, v.asMap(), 1);
-    if (v.isArray()) writeArrayJSON(&ss, v.asArray(), 1);
-    return ss.str();
+    std::ifstream ifs(filename.c_str());
+    if (!ifs.is_open() || !ifs.good())
+    {
+        ERR("File '%s' does not exists", filename.c_str());
+        return false;
+    }
+    return parse(&ifs, obj, simplified);
+}
+
+void writeFile(const std::string& filename, Variant& obj, bool simplified)
+{
+    std::ofstream ofs(filename.c_str());
+    if (!ofs.is_open() || !ofs.good())
+    {
+        ERR("File '%s' could not be created", filename.c_str());
+        return;
+    }
+    write(&ofs, obj, simplified);
 }
 
 } // namespace sjson
