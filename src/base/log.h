@@ -28,9 +28,12 @@ public:
     enum Color {
         Default, Yellow, Red
     };
+    ConsoleLog();
     virtual ~ConsoleLog() {}
     void write(Level l, const char* message);
     void writeColored(Color c, const char* message);
+private:
+    bool useColor;
 };
 
 }

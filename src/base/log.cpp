@@ -2,6 +2,7 @@
 #include <cstdarg>
 #include <vector>
 #include "base/types.h"
+#include "base/env.h"
 
 #ifdef OS_WIN
 #include <windows.h>
@@ -52,6 +53,19 @@ void setLogLevel(Log::Level level)
     _logWrapper.level = level;
 }
 
+ConsoleLog::ConsoleLog()
+{
+#ifdef OS_WIN
+    useColor = true;
+#else
+    std::string term = Env::variable("TERM", "");
+    useColor =
+        term == "xterm" || term == "xterm-color" ||
+        term == "xterm-256color" || term == "screen" ||
+        term == "linux";
+#endif
+}
+    
 void ConsoleLog::write(Log::Level l, const char* message)
 {
     if (l == Log::Info) writeColored(ConsoleLog::Default, message);
@@ -99,8 +113,6 @@ void ConsoleLog::writeColored(ConsoleLog::Color color, const char* message)
     fflush(stdout);
     SetConsoleTextAttribute(stdoutHandle, oldColorAttrs);
 #else
-    // TODO: determine terminal
-    const bool useColor = true;
     if (!useColor || color == ConsoleLog::Default) {
         printf("%s\n", message);
     } else {

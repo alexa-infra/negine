@@ -118,7 +118,7 @@ class Material;
 class Entity
 {
 private:
-    Material* material;
+    //Material* material;
 
     Entity() {}
 public:
