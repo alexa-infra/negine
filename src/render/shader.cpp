@@ -28,7 +28,7 @@ void Shader::Destroy()
     }
 }
 
-bool Shader::Create( ShaderType shaderType, const std::string& source )
+bool Shader::Create( ShaderType shaderType, const char** source, u32 len )
 {
     ASSERT( id_ == 0 );
     shader_type_ = shaderType;
@@ -37,14 +37,12 @@ bool Shader::Create( ShaderType shaderType, const std::string& source )
     if ( id_ == 0 )
         return false;
 
-    const char* shader_source = source.c_str();
-
-    glShaderSource( id_, 1, &shader_source, NULL );
+    glShaderSource( id_, len, source, NULL );
     glCompileShader( id_ );
 
     GLint compile_status;
     glGetShaderiv( id_, GL_COMPILE_STATUS, &compile_status );
-
+  
     bool isCompiled = ( compile_status == GL_TRUE );
     return isCompiled;
 }

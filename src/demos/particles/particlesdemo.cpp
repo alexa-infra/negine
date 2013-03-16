@@ -32,7 +32,7 @@ public:
         ss.texture = "heart.png";
         ps_ = new ParticleSystem( ss );
         ps_renderer_ = new ParticleSystemRenderer( ps_, &texure_loader_ );
-        program_.CreateFromFileWithAssert( "hud.shader" );
+        program_.create( "hud.shader.meta" );
     }
     virtual ~Demo() {
         program_.Destroy();
@@ -47,8 +47,8 @@ protected:
         glEnable( GL_BLEND );
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         program_.Bind();
-        program_.set_uniform( base::opengl::UniformVars::Projection, Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 ) );
-        program_.set_uniform( base::opengl::UniformVars::Modelview, Matrix4::Identity() );
+        program_.set_uniform( "projection_matrix", Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 ) );
+        program_.set_uniform( "modelview_matrix", Matrix4::Identity() );
         f32 frame_time = timer_.Elapsed() / 1000.0f;
         timer_.Reset();
         ps_->update( frame_time );

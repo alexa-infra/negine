@@ -8,7 +8,7 @@
 
 #include "render/glcontext.h"
 #include "render/shader.h"
-#include <map>
+#include <unordered_map>
 #include <string>
 #include "render/mesh.h"
 #include "math/matrix.h"
@@ -18,34 +18,36 @@ namespace base
 namespace opengl
 {
 
-//! GpuProgram uniform information
-namespace UniformVars
+struct UniformVar
 {
-enum UniformVar {
-    Diffuse,
-    Projection,
-    Modelview,
-    CameraPos,
-    Bump,
-    LightPos,
-    Color,
-    Lightmap,
-    Clip,
-
-    Count
+    u32 location;
+    u32 index;
 };
+typedef std::unordered_map<std::string, UniformVar> UniformBinding;
 
-u32 get_tex_index( UniformVar var );
-}
-typedef UniformVars::UniformVar UniformVar;
-typedef std::map<UniformVar, u32> UniformBinding;
-
-using base::math::Matrix4;
-
+struct GpuProgramMeta
+{
+    std::string version;
+    std::string codePath;
+    std::string include;
+    std::vector<std::string> defines;
+    std::vector<std::string> headers;
+    
+    template<typename archive>
+    void reflect(archive& ar)
+    {
+        ar.reflect("version", version, std::string("150"));
+        ar.reflect("code", codePath);
+        ar.reflect("include", include, std::string(""));
+        ar.vreflect("define", defines);
+        ar.vreflect("header", headers);
+    }
+};
+    
 //! Shader program object
 class GpuProgram
 {
-protected:
+protected:    
     GLuint program_id_;         //!< Name of program object
 
     Shader pixel_shader_;       //!< Attached pixel shader
@@ -57,7 +59,6 @@ public:
     GpuProgram();
     ~GpuProgram();
 
-    void Create();
     void Destroy();
 
     //! Gets program creation status
@@ -74,17 +75,25 @@ public:
     void Unbind();
 
     template<typename T>
-    void set_uniform( UniformVar uniform, const T& val ) {
-        UniformBinding::iterator it = uni_binding_.find( uniform );
+    void set_uniform( const std::string& name, const T& val ) {
+        UniformBinding::const_iterator it = uni_binding_.find( name );
 
         if ( it == uni_binding_.end() ) {
+            ERR("uniform '%s' is not found in program", name.c_str());
             return;
         }
 
-        u32 location = it->second;
-        set_uniform_param( it->first, location, val );
+        set_uniform_param( it->second, val );
     }
 
+    bool createMeta( const std::string& filename );
+    
+    void create( const std::string& filename )
+    {
+        if (!createMeta(filename))
+            Destroy();
+    }
+    
     //! Creates program from vertex and shader source texts
     //! \param      vs              text of vertex shader
     //! \param      ps              text of pixel shader
@@ -92,23 +101,13 @@ public:
     //! \returns    The program instance (deallocation should be handled by caller), null if fails
     bool CreateFromText( const std::string& vs, const std::string& fs, std::string& status );
 
-    //! Creates program by shader file (sources of vertex/pixel shaders are devided by '-- (shader type)' line)
-    //! \param      filename        path to shader source file
-    //! \param      status          output status string
-    //! \returns    The program instance (deallocation should be handled by caller), null if fails
-    bool CreateFromFile( const std::string& filename, std::string& status );
-
-    void CreateFromFileWithAssert( const std::string& filename );
 protected:
     //! Set uniform helper, that wraps value by generic param
     template<typename T>
-    void set_uniform_param( UniformVar uniform, u32 location, const T& val );
+    void set_uniform_param( const UniformVar& uniform, const T& val );
 
     //! Populate list of active uniforms
     void get_uniforms_list();
-
-    //! Populate list of active attributes
-    void get_attributes_list();
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };

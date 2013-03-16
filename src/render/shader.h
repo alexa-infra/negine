@@ -33,7 +33,7 @@ public:
     ~Shader();
 
     //! Compile shader from source
-    bool Create( ShaderType shaderType, const std::string& source );
+    bool Create( ShaderType shaderType, const char** source, u32 len );
 
     void Destroy();
 

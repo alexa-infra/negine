@@ -69,7 +69,7 @@ ParticleSystemRenderer::~ParticleSystemRenderer()
 
 void ParticleSystemRenderer::Draw( GpuProgram* program )
 {
-    program->set_uniform( base::opengl::UniformVars::Diffuse, texture_ );
+    program->set_uniform( "diffuse", texture_ );
     vbo_->BindAttributes( );
 
     for ( ParticleList::const_iterator it = ps_->particles_active.begin(); it != ps_->particles_active.end(); ++it ) {

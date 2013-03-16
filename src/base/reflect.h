@@ -42,6 +42,9 @@ public:
 
     template<typename T>
     void vreflect(const std::string& name, std::vector<T>& object) {
+        if (!nodes_.top()->hasMember(name)) {
+            return;
+        }
         const sjson::Variant& current = currentNode(name);
         object.resize(current.size());
         for(u32 i=0; i<current.size(); i++)

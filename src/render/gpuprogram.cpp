@@ -13,6 +13,9 @@
 #include "base/stringmap.h"
 #include "render/statistics.h"
 
+#include "base/reflect.h"
+#include <sstream>
+
 namespace base
 {
 namespace opengl
@@ -29,33 +32,6 @@ StringMap<VertexAttr, VertexAttrs::Count>::Entry attr_map_str[VertexAttrs::Count
     { "bi",        VertexAttrs::tagBinormal }
 };
 StringMap<VertexAttr, VertexAttrs::Count> attr_map( attr_map_str );
-
-StringMap<UniformVar, UniformVars::Count>::Entry uni_map_str[UniformVars::Count] = {
-    { "diffuse",            UniformVars::Diffuse },
-    { "projection_matrix",  UniformVars::Projection },
-    { "modelview_matrix",   UniformVars::Modelview },
-    { "camera_pos",         UniformVars::CameraPos },
-    { "bump",               UniformVars::Bump },
-    { "light_pos",          UniformVars::LightPos },
-    { "color",              UniformVars::Color },
-    { "lightmap",           UniformVars::Lightmap },
-    { "clip_matrix",        UniformVars::Clip }
-};
-StringMap<UniformVar, UniformVars::Count> uni_map( uni_map_str );
-
-u32 UniformVars::get_tex_index( UniformVar var )
-{
-    switch ( var ) {
-    case UniformVars::Diffuse:
-        return 0;
-    case UniformVars::Lightmap:
-        return 1;
-    case UniformVars::Bump:
-        return 2;
-    default:
-        return 0;
-    }
-}
 
 GpuProgram::GpuProgram()
     : program_id_( 0 )
@@ -76,66 +52,6 @@ void GpuProgram::Destroy()
         glDeleteProgram( program_id_ );
         program_id_ = 0;
     }
-}
-
-bool GpuProgram::CreateFromText( const std::string& vs, const std::string& fs, std::string& statusStr )
-{
-    ASSERT( program_id_ == 0 );
-    program_id_ = glCreateProgram();
-
-    if ( program_id_ == 0 )
-        return false;
-
-    bool failed = false;
-
-    if ( !vertex_shader_.Create( ShaderTypes::VERTEX, vs ) ) {
-        statusStr = vertex_shader_.status();
-        failed = true;
-    }
-
-    if ( !pixel_shader_.Create( ShaderTypes::PIXEL, fs ) ) {
-        statusStr = statusStr + pixel_shader_.status();
-        failed = true;
-    }
-
-    if ( failed ) {
-        vertex_shader_.Destroy();
-        pixel_shader_.Destroy();
-        return false;
-    }
-
-    glAttachShader( program_id_, vertex_shader_.id() );
-    glAttachShader( program_id_, pixel_shader_.id() );
-
-    for (u32 i=0; i<VertexAttrs::Count; i++)
-    {
-        VertexAttr attr = (VertexAttr)i;
-        std::string name;
-        attr_map.to_string(attr, name);
-        glBindAttribLocation(program_id_, 
-            VertexAttrs::GetAttributeLocation(attr), 
-            name.c_str());
-    }
-
-    glLinkProgram( program_id_ );
-    
-    GLint linkStatus;
-    glGetProgramiv( program_id_, GL_LINK_STATUS, &linkStatus );
-    bool linked = ( linkStatus == GL_TRUE );
-    
-    if ( linked ){
-        get_uniforms_list();
-        get_attributes_list();
-    } else {
-        statusStr = this->status();
-
-        glDetachShader( program_id_, vertex_shader_.id() );
-        glDetachShader( program_id_, pixel_shader_.id() );
-        vertex_shader_.Destroy();
-        pixel_shader_.Destroy();
-    }
-
-    return linked;
 }
 
 const std::string GpuProgram::status() const
@@ -159,58 +75,6 @@ const std::string GpuProgram::status() const
     return result;
 }
 
-bool GpuProgram::CreateFromFile( const std::string& filename, std::string& status )
-{
-    FileText file( filename );
-    std::vector<std::string> lines = file.read_lines();
-
-    if ( lines.size() == 0 ) {
-        return false;
-    }
-
-    u32 vertexBegin = 0;
-    u32 pixelBegin = 0;
-
-    for ( u32 i = 0; i < lines.size(); i++ ) {
-        if ( lines[i] == "-- vertex" ) {
-            vertexBegin = i + 1;
-        }
-
-        if ( lines[i] == "-- pixel" ) {
-            pixelBegin = i + 1;
-        }
-    }
-
-    if ( vertexBegin == pixelBegin ) {
-        return false;
-    }
-
-    u32 vertexEnd = 0;
-    u32 pixelEnd = 0;
-
-    if ( vertexBegin > pixelBegin ) {
-        vertexEnd = lines.size();
-        pixelEnd = vertexBegin - 1;
-    } else {
-        vertexEnd = pixelBegin - 1;
-        pixelEnd = lines.size();
-    }
-
-    std::string vertexSrc;
-
-    for ( u32 i = vertexBegin; i < vertexEnd; i++ ) {
-        vertexSrc = vertexSrc + lines[i] + "\n";
-    }
-
-    std::string pixelSrc;
-
-    for ( u32 i = pixelBegin; i < pixelEnd; i++ ) {
-        pixelSrc = pixelSrc + lines[i] + "\n";
-    }
-
-    return CreateFromText( vertexSrc, pixelSrc, status );
-}
-
 GpuProgram::~GpuProgram()
 {
     Destroy();
@@ -228,35 +92,35 @@ void GpuProgram::Unbind()
 }
 
 template<>
-void GpuProgram::set_uniform_param<Texture*>( UniformVar uniform, u32 location, Texture* const& t )
+void GpuProgram::set_uniform_param<Texture*>( const UniformVar& uniform, Texture* const& t )
 {
-    u32 sampler_index = get_tex_index( uniform );
-    glActiveTexture( GL_TEXTURE0 + sampler_index );
+    glActiveTexture( GL_TEXTURE0 + uniform.index );
     t->Bind();
-    glUniform1i( location, sampler_index );
+    glUniform1i( uniform.location, uniform.index );
 }
 
 template<>
-void GpuProgram::set_uniform_param<Matrix4>( UniformVar uniform, u32 location, const Matrix4& m )
+void GpuProgram::set_uniform_param<Matrix4>( const UniformVar& uniform, const Matrix4& m )
 {
-    glUniformMatrix4fv( location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
+    glUniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
 }
 
 template<>
-void GpuProgram::set_uniform_param<Vector4>( UniformVar uniform, u32 location, const Vector4& v )
+void GpuProgram::set_uniform_param<Vector4>( const UniformVar& uniform, const Vector4& v )
 {
-    glUniform4f( location, v.x, v.y, v.z, v.w );
+    glUniform4f( uniform.location, v.x, v.y, v.z, v.w );
 }
 
 template<>
-void GpuProgram::set_uniform_param<Vector3>( UniformVar uniform, u32 location, const Vector3& v )
+void GpuProgram::set_uniform_param<Vector3>( const UniformVar& uniform, const Vector3& v )
 {
-    glUniform3f( location, v.x, v.y, v.z );
+    glUniform3f( uniform.location, v.x, v.y, v.z );
 }
 
 void GpuProgram::get_uniforms_list()
 {
-    GLint uniform_count, max_name_length = 0;
+    GLint uniform_count = 0;
+    GLint max_name_length = 0;
     glGetProgramiv( program_id_, GL_ACTIVE_UNIFORMS, &uniform_count );
     glGetProgramiv( program_id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length );
 
@@ -266,6 +130,7 @@ void GpuProgram::get_uniforms_list()
 
     char* buffer = new char[max_name_length];
 
+    u32 index = 0;
     for ( GLint i = 0; i < uniform_count; ++i ) {
         GLsizei name_length = 0;
         i32 type_size = 0;
@@ -274,35 +139,110 @@ void GpuProgram::get_uniforms_list()
         std::string uniformName( buffer );
         u32 location = glGetUniformLocation( program_id_, uniformName.c_str() );
         UniformVar uni;
-
-        if ( !uni_map.from_string( uniformName, uni ) ) {
-            ERR("Uniform not found: '%s' (%d)", uniformName.c_str(), uniform_type);
-            continue;
+        uni.location = location;
+        switch(uniform_type)
+        {
+            case GL_SAMPLER_2D:
+                uni.index = index++;
+                break;
         }
-
-        uni_binding_[uni] = location;
+        uni_binding_.emplace(uniformName, uni);
     }
 
     delete[] buffer;
 }
-
-void GpuProgram::get_attributes_list()
+    
+bool GpuProgram::createMeta( const std::string& filename )
 {
-}
-
-void GpuProgram::CreateFromFileWithAssert( const std::string& filename )
-{
-    std::string status;
-
-    if ( !base::file_exists( filename ) ) {
-        ERR("File not found %s", filename.c_str());
-        abort();
+    ASSERT(program_id_ == 0);
+    
+    GpuProgramMeta meta;
+    iarchive::deserializeFile(filename, meta);
+    std::ostringstream ss;
+    ss << "#version " << meta.version << '\n';
+    for(u32 i=0; i<meta.defines.size(); i++)
+        ss << "#define " << meta.defines[i] << '\n';
+    for(u32 i=0; i<meta.headers.size(); i++)
+        ss << meta.headers[i] << '\n';
+    std::string header = ss.str();
+    
+    const char* source[4];
+    source[0] = header.c_str();
+    
+    std::ifstream file(meta.codePath.c_str());
+    if (!file.is_open() || !file.good())
+    {
+        ERR("in meta file '%s', could not open file '%s'",
+            filename.c_str(),
+            meta.codePath.c_str());
+        return false;
     }
-
-    if ( !CreateFromFile( filename, status ) ) {
-        ERR("Error on load shader: %s @ %s", status.c_str(), filename.c_str());
-        abort();
+    std::string text((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    source[3] = text.c_str();
+    
+    std::string includeText;
+    if (!meta.include.empty())
+    {
+        std::ifstream includeFile(meta.include.c_str());
+        if (!file.is_open() || !file.good())
+        {
+            ERR("in meta file '%s', could not open file '%s'",
+                filename.c_str(),
+                meta.include.c_str());
+            return false;
+        }
+        includeText = std::string((std::istreambuf_iterator<char>(includeFile)), std::istreambuf_iterator<char>());
     }
+    source[1] = includeText.c_str();
+    
+    source[2] = "#define PIXEL_SHADER\n ";
+    if (!pixel_shader_.Create(ShaderTypes::PIXEL, source, 4))
+    {
+        ERR("in meta file '%s', for pixel shader compilation error\n%s",
+            filename.c_str(),
+            pixel_shader_.status().c_str());
+        return false;
+    }
+    
+    source[2] = "#define VERTEX_SHADER\n ";
+    if (!vertex_shader_.Create(ShaderTypes::VERTEX, source, 4))
+    {
+        ERR("in meta file '%s', for vertex shader compilation error\n%s",
+            filename.c_str(),
+            vertex_shader_.status().c_str());
+        return false;
+    }
+    
+    program_id_ = glCreateProgram( );
+    
+    glAttachShader( program_id_, vertex_shader_.id() );
+    glAttachShader( program_id_, pixel_shader_.id() );
+    
+    for (u32 i=0; i<VertexAttrs::Count; i++)
+    {
+        VertexAttr attr = (VertexAttr)i;
+        std::string name;
+        attr_map.to_string(attr, name);
+        glBindAttribLocation(program_id_,
+                             VertexAttrs::GetAttributeLocation(attr),
+                             name.c_str());
+    }
+    
+    glLinkProgram( program_id_ );
+    
+    GLint linkStatus;
+    glGetProgramiv( program_id_, GL_LINK_STATUS, &linkStatus );
+    bool linked = ( linkStatus == GL_TRUE );
+    if (!linked)
+    {
+        ERR("in meta file '%s', linkage error\n%s",
+            filename.c_str(), status().c_str());
+        return false;
+    }
+    
+    get_uniforms_list();
+    
+    return true;
 }
 
 }
