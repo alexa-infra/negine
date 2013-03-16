@@ -102,8 +102,8 @@ public:
 		};
 
 		std::string status;
-		bool result = program_.CreateFromText(vertexSh, fragmentSh, status);
-		ASSERT(result);
+		//bool result = program_.CreateFromText(vertexSh, fragmentSh, status);
+		//ASSERT(result);
                 GL_ASSERT();
 	}
 	virtual ~Demo() {
@@ -128,7 +128,7 @@ protected:
 		cameraComponent->update();
 		Camera& camera = cameraComponent->camera_;
 
-		program_.set_uniform( base::opengl::UniformVars::Projection, camera.GetProjection() );
+		program_.set_uniform( "projection_matrix", camera.GetProjection() );
 
         u32 pos = 1;
 		for(ComponentList::iterator it = meshes.begin();
@@ -140,7 +140,7 @@ protected:
 
 			//mesh->transform_->local() *= Matrix4::RotationX( 30 / 60.f * deg_to_rad * 500 /(f32)pos );
 
-			program_.set_uniform( base::opengl::UniformVars::Modelview,
+			program_.set_uniform( "modelview_matrix",
 				camera.GetModelView() * mesh->transform_->world( ) );
 
 			mesh->mesh_->draw();

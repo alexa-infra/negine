@@ -342,7 +342,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
         Texture* t = ( *ita ).first;
         if (diffuesID != t->id())
         {
-            pr->set_uniform( base::opengl::UniformVars::Diffuse, t );
+            pr->set_uniform( "diffuse", t );
             diffuesID = t->id();
             switches++;
         }
@@ -353,7 +353,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
         if ( face.lightmapID >= 0 && lightMapID != face.lightmapID ) {
             lightMapID = face.lightmapID;
             Texture* lightmap = lm_textures[face.lightmapID];
-            pr->set_uniform( base::opengl::UniformVars::Lightmap, lightmap );
+            pr->set_uniform( "lightmap", lightmap );
             switches++;
         }
 

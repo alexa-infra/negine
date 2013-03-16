@@ -69,7 +69,7 @@ const Vector3& WireBox::getMaxPoint() const
 //Public methods
 void WireBox::Draw( GpuProgram* program )
 {
-    program->set_uniform( base::opengl::UniformVars::Color, Vector4( 1, 0, 0, 1 ) );
+    program->set_uniform( "color", Vector4( 1, 0, 0, 1 ) );
     u32 bindPos = VertexAttrs::GetAttributeLocation(VertexAttrs::tagPosition);
     glVertexAttribPointer(
         bindPos,

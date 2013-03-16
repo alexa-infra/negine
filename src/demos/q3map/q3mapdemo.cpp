@@ -49,7 +49,7 @@ public:
         q3map_ = new q3maploader( fb );
         q3map_->load();
         q3map_->PreloadTextures( texure_loader_ );
-        program_.CreateFromFileWithAssert( "q3map.shader" );
+        program_.create( "q3map.shader.meta" );
     }
     virtual ~Demo() {
         program_.Destroy();
@@ -63,9 +63,9 @@ protected:
         glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
         glEnable( GL_DEPTH_TEST );
         program_.Bind();
-        program_.set_uniform( base::opengl::UniformVars::Projection, projection_ );
-        program_.set_uniform( base::opengl::UniformVars::Modelview, cameraTransform_ );
-        program_.set_uniform( base::opengl::UniformVars::Clip, projection_ * cameraTransform_ );
+        program_.set_uniform( "projection_matrix", projection_ );
+        program_.set_uniform( "modelview_matrix", cameraTransform_ );
+        program_.set_uniform( "clip_matrix", projection_ * cameraTransform_ );
         q3map_->render( camera_, &program_, texure_loader_ );
         program_.Unbind();
         GL_ASSERT();
