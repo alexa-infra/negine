@@ -117,8 +117,8 @@ void ConsoleLog::writeColored(ConsoleLog::Color color, const char* message)
         printf("%s\n", message);
     } else {
         printf("\033[0;3%sm", GetColorAttribute(color));
-        printf("%s\n", message);
-        printf("\033[m");
+        printf("%s", message);
+        printf("\033[m\n");
     }
 #endif
 }
