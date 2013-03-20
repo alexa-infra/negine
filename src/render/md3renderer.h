@@ -12,6 +12,11 @@
 
 namespace base
 {
+namespace math
+{
+    class Vector3;
+}
+
 namespace opengl
 {
 
@@ -29,7 +34,7 @@ public:
 
     void Draw( );
 private:
-    static math::Vector3 DecodeNormal( const u8* normal );
+    static void DecodeNormal( const u8* normal, math::Vector3& v );
 };
 
 }

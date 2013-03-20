@@ -1,6 +1,7 @@
 #include "game/cameracomponent.h"
 #include "game/gameobject.h"
 #include "game/transformcomponent.h"
+#include "base/debug.h"
 
 CameraComponent::CameraComponent()
 	: transform_(nullptr)

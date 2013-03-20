@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/types.h"
+#include "base/platform.h"
 #include <string>
 
 namespace base {
@@ -8,4 +8,6 @@ namespace base {
     public:
         static std::string variable(const std::string& name, const std::string& def);
     };
+
+    bool file_exists( const std::string& name );
 }

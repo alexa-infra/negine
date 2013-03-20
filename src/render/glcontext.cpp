@@ -1,4 +1,6 @@
 #include "render/glcontext.h"
+#include "base/log.h"
+#include "base/debug.h"
 
 namespace base
 {
@@ -20,7 +22,7 @@ void glAssert(const char* file, int line)
     if (err != GL_NO_ERROR)
     {
         ERR("GL error: %s [%x] @ %s, %d\n", glErrorToString(err), err, file, line);
-        abort();
+        debugBreak();
     }
 }
 

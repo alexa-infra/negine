@@ -1,4 +1,5 @@
 #include "render/cubemesh.h"
+#include "render/glcontext.h"
 
 namespace base
 {

@@ -19,7 +19,7 @@ namespace resource
 
 //! Joint info
 struct JointInfo {
-    string name;
+    std::string name;
     i32 parent;
     i32 flags;
     i32 start_index;
@@ -50,7 +50,7 @@ public:
     Md5Anim();
     ~Md5Anim();
 
-    void Load( const string& filename );
+    void Load( const std::string& filename );
     void BuildFrameSkeleton( u32 frameIndex );
 
     void Update( Md5Model* model, u32 frameIndex, f32 interp_phase );

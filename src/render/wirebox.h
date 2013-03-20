@@ -6,14 +6,14 @@
  * \copyright   MIT License
  **/
 
-#include "glcontext.h"
 #include "math/vector.h"
-#include "gpuprogram.h"
 
 namespace base
 {
 namespace opengl
 {
+
+class GpuProgram;
 
 class WireBox
 {

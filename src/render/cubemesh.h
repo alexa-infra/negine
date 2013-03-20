@@ -3,6 +3,7 @@
 #include <vector>
 #include "render/mesh.h"
 #include "render/vertexbuffer.h"
+#include "math/vector.h"
 
 namespace base
 {

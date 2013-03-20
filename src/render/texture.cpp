@@ -8,9 +8,12 @@
 #define STBI_FAILURE_USERMSG
 #include "stb/stb_image.c"
 
-#include "base/stream.h"
 #include <iostream>
 #include "render/statistics.h"
+#include <string>
+#include "base/log.h"
+#include "base/debug.h"
+#include "base/env.h"
 
 namespace base
 {

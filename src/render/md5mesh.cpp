@@ -1,6 +1,7 @@
 #include "md5mesh.h"
 #include "base/lexer.h"
 #include <string.h>
+#include "base/debug.h"
 
 namespace base
 {
@@ -26,7 +27,7 @@ void readQuat( Lexer& reader, math::Quat& q )
     q.z = reader.ReadFloat();
 }
 
-Entity* Entity::Load( const string& filename )
+Entity* Entity::Load( const std::string& filename )
 {
     Lexer reader( filename );
     Entity* entity = new Entity;

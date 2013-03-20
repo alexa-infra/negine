@@ -111,6 +111,4 @@ public:
     }
 };
 
-bool file_exists( const std::string& name );
-
 } // namespace base

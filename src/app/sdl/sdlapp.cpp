@@ -16,6 +16,7 @@
 
 #include "render/glcontext.h"
 #include "render/statistics.h"
+#include "base/log.h"
 
 namespace base {
 

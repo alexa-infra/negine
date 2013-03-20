@@ -4,6 +4,8 @@
  * \copyright   MIT License
  **/
 #include "md3mesh.h"
+#include "base/stream.h"
+#include "base/debug.h"
 
 namespace base
 {

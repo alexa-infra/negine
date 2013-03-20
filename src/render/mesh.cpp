@@ -5,6 +5,8 @@
  **/
 #include "render/mesh.h"
 #include "render/vertexbuffer.h"
+#include "render/glcontext.h"
+#include "math/vector.h"
 
 using base::math::Vector2;
 using base::math::Vector3;

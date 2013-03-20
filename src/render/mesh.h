@@ -7,11 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "math/vector.h"
-#include <list>
-#include <map>
 #include <vector>
-#include <array>
 
 namespace base
 {

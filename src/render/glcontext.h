@@ -6,7 +6,7 @@
  **/
 #pragma once
 
-#include "base/platform.h"
+#include "base/types.h"
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
@@ -22,17 +22,6 @@
 #elif defined(OS_LINUX)
 #include "GL/glxew.h"
 #endif
-
-//#ifdef __APPLE__
-//#undef glGenVertexArrays
-//#undef glDeleteVertexArrays
-//#undef glBindVertexArray
-//#define glGenVertexArrays      glGenVertexArraysAPPLE
-//#define glDeleteVertexArrays   glDeleteVertexArraysAPPLE
-//#define glBindVertexArray      glBindVertexArrayAPPLE
-//#endif
-
-#include "base/types.h"
 
 namespace base
 {

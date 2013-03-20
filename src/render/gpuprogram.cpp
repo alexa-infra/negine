@@ -4,17 +4,18 @@
  * \copyright   MIT License
  **/
 #include "render/gpuprogram.h"
-#include <iostream>
 #include "math/vector.h"
 #include "math/matrix-inl.h"
 #include "render/texture.h"
 #include <memory>
-#include "base/stream.h"
 #include "base/stringmap.h"
 #include "render/statistics.h"
+#include "render/shader.h"
+#include "base/log.h"
 
 #include "base/reflect.h"
 #include <sstream>
+#include <fstream>
 
 namespace base
 {
@@ -36,18 +37,24 @@ StringMap<VertexAttr, VertexAttrs::Count> attr_map( attr_map_str );
 GpuProgram::GpuProgram()
     : program_id_( 0 )
 {
+    vertex_shader_ = new Shader;
+    pixel_shader_ = new Shader;
+}
+
+bool GpuProgram::is_ok() const {
+    return ( program_id_ != 0 ) && pixel_shader_->is_ok() && vertex_shader_->is_ok();
 }
 
 void GpuProgram::Destroy()
 {
     if ( is_ok() ) {
-        glDetachShader( program_id_, vertex_shader_.id() );
-        glDetachShader( program_id_, pixel_shader_.id() );
+        glDetachShader( program_id_, vertex_shader_->id() );
+        glDetachShader( program_id_, pixel_shader_->id() );
     }
 
     if ( program_id_ != 0 ) {
-        pixel_shader_.Destroy();
-        vertex_shader_.Destroy();
+        pixel_shader_->Destroy();
+        vertex_shader_->Destroy();
 
         glDeleteProgram( program_id_ );
         program_id_ = 0;
@@ -78,6 +85,8 @@ const std::string GpuProgram::status() const
 GpuProgram::~GpuProgram()
 {
     Destroy();
+    delete vertex_shader_;
+    delete pixel_shader_;
 }
 
 void GpuProgram::Bind()
@@ -196,27 +205,27 @@ bool GpuProgram::createMeta( const std::string& filename )
     source[1] = includeText.c_str();
     
     source[2] = "#define PIXEL_SHADER\n ";
-    if (!pixel_shader_.Create(ShaderTypes::PIXEL, source, 4))
+    if (!pixel_shader_->Create(ShaderTypes::PIXEL, source, 4))
     {
         ERR("in meta file '%s', for pixel shader compilation error\n%s",
             filename.c_str(),
-            pixel_shader_.status().c_str());
+            pixel_shader_->status().c_str());
         return false;
     }
     
     source[2] = "#define VERTEX_SHADER\n ";
-    if (!vertex_shader_.Create(ShaderTypes::VERTEX, source, 4))
+    if (!vertex_shader_->Create(ShaderTypes::VERTEX, source, 4))
     {
         ERR("in meta file '%s', for vertex shader compilation error\n%s",
             filename.c_str(),
-            vertex_shader_.status().c_str());
+            vertex_shader_->status().c_str());
         return false;
     }
     
     program_id_ = glCreateProgram( );
     
-    glAttachShader( program_id_, vertex_shader_.id() );
-    glAttachShader( program_id_, pixel_shader_.id() );
+    glAttachShader( program_id_, vertex_shader_->id() );
+    glAttachShader( program_id_, pixel_shader_->id() );
     
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {

@@ -5,6 +5,9 @@
  * \copyright   MIT License
  **/
 #include "render/md3renderer.h"
+#include "math/mathlib.h"
+#include "render/glcontext.h"
+#include "math/vector.h"
 
 using base::resource::Md3FrameData;
 using base::resource::Md3Mesh;
@@ -79,7 +82,7 @@ void Md3Renderer::Commit()
             tex[j].x = uv.st[0];
             tex[j].y = uv.st[1];
             Md3Vertex& vert = md3.vertexes[j];
-            n[j] = DecodeNormal( vert.normal );
+            DecodeNormal( vert.normal, n[j] );
             pos[j].x = vert.coord[0] / 64.0f;
             pos[j].y = vert.coord[2] / 64.0f;
             pos[j].z = vert.coord[1] / 64.0f;
@@ -103,17 +106,16 @@ void Md3Renderer::Draw( )
     }
 }
 
-Vector3 Md3Renderer::DecodeNormal( const u8* normal )
+void Md3Renderer::DecodeNormal( const u8* normal, Vector3& v )
 {
     f32 const& zenith = normal[0];
     f32 const& azimuth = normal[1];
     f32 lat = zenith * ( 2 * pi ) / 255.f;
     f32 lng = azimuth * ( 2 * pi ) / 255.f;
-    Vector3 ret;
-    ret.x = cosf( lat ) * sinf( lng );
-    ret.y = sinf( lat ) * sinf( lng );
-    ret.z = cosf( lng );
-    return ret;
+
+    v.x = cosf( lat ) * sinf( lng );
+    v.y = sinf( lat ) * sinf( lng );
+    v.z = cosf( lng );
 }
 
 }

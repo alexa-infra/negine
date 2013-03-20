@@ -4,6 +4,7 @@
  * \copyright   MIT License
  **/
 #include "render/shader.h"
+#include "base/debug.h"
 
 namespace base
 {

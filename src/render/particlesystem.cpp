@@ -5,6 +5,7 @@
  **/
 #include "render/particlesystem.h"
 #include <stdlib.h>
+#include "math/vector-inl.h"
 
 namespace base
 {

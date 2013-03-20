@@ -6,7 +6,6 @@
  **/
 #pragma once
 
-#include "math/mathlib.h"
 #include "math/vector.h"
 
 namespace base

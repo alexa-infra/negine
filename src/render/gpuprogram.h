@@ -7,11 +7,11 @@
 #pragma once
 
 #include "render/glcontext.h"
-#include "render/shader.h"
 #include <unordered_map>
 #include <string>
 #include "render/mesh.h"
 #include "math/matrix.h"
+#include "base/log.h"
 
 namespace base
 {
@@ -24,6 +24,8 @@ struct UniformVar
     u32 index;
 };
 typedef std::unordered_map<std::string, UniformVar> UniformBinding;
+
+class Shader;
 
 struct GpuProgramMeta
 {
@@ -50,8 +52,8 @@ class GpuProgram
 protected:    
     GLuint program_id_;         //!< Name of program object
 
-    Shader pixel_shader_;       //!< Attached pixel shader
-    Shader vertex_shader_;      //!< Attached vertex shader
+    Shader* pixel_shader_;       //!< Attached pixel shader
+    Shader* vertex_shader_;      //!< Attached vertex shader
 
     UniformBinding uni_binding_;
     
@@ -62,9 +64,8 @@ public:
     void Destroy();
 
     //! Gets program creation status
-    bool is_ok() const {
-        return ( program_id_ != 0 ) && pixel_shader_.is_ok() && vertex_shader_.is_ok();
-    }
+    bool is_ok() const;
+
     //! Returns status string
     const std::string status() const;
 

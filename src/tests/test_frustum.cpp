@@ -6,6 +6,7 @@
  **/
 #include "gtest/gtest.h"
 #include "render/camera.h"
+#include "math/vector-inl.h"
 
 using base::opengl::Camera;
 using base::math::Plane;

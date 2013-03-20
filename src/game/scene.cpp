@@ -3,6 +3,7 @@
 #include "base/types.h"
 #include "game/component.h"
 #include "game/gameobject.h"
+#include "base/debug.h"
 
 Scene::~Scene()
 {

@@ -10,6 +10,7 @@
 #include "base/types.h"
 #include "math/vector.h"
 #include "math/quat.h"
+#include <string>
 
 namespace base
 {
@@ -22,7 +23,7 @@ namespace resource
 class Md5Anim;
 
 struct Md5Joint {
-    string name;
+    std::string name;
     i32 parent;
     math::Vector3 pos;
     math::Quat orient;
@@ -77,7 +78,7 @@ struct Md5Mesh {
     i32 num_tris;
     i32 num_weights;
 
-    string shader;
+    std::string shader;
 
     void Read( Lexer& reader );
 };
@@ -124,7 +125,7 @@ private:
 public:
     ~Entity() {}
 
-    static Entity* Load( const string& filename );
+    static Entity* Load( const std::string& filename );
 
     Md5Object object;
     math::Matrix4 transform;

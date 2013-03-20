@@ -9,16 +9,17 @@
 #pragma once
 
 #include "base/types.h"
-#include "base/stream.h"
-
+#include <string>
 
 namespace base
 {
 
+class FileText;
+
 class Lexer
 {
 protected:
-    FileText file_;
+    FileText* file_;
 
     const u32 maxTokenSize;
 

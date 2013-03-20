@@ -5,6 +5,7 @@
  **/
 #include "gtest/gtest.h"
 #include "math/quat.h"
+#include "math/vector-inl.h"
 
 using base::math::Vector3;
 using base::math::Quat;

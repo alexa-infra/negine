@@ -4,7 +4,7 @@
  * \copyright   MIT License
  **/
 #include "gtest/gtest.h"
-#include "math/vector.h"
+#include "math/vector-inl.h"
 
 using base::math::Vector2;
 

@@ -7,6 +7,7 @@
  **/
 
 #include "lexer.h"
+#include "stream.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -14,7 +15,7 @@ namespace base
 {
 
 Lexer::Lexer( const std::string& filename )
-    : file_( filename )
+    : file_( new FileText(filename) )
     , maxTokenSize( 512 )
     , token_( NULL )
     , whiteCharacters( NULL )
@@ -38,6 +39,7 @@ Lexer::~Lexer()
 {
     delete[] whiteCharacters;
     delete[] token_;
+    delete file_;
 }
 
 void Lexer::SkipWhiteSpace()
@@ -46,14 +48,14 @@ void Lexer::SkipWhiteSpace()
         return;
     }
 
-    while( HasMoreData() && IsWhiteChar( file_.current_char() ) ) {
-        char previousChar = file_.bump_char();
+    while( HasMoreData() && IsWhiteChar( file_->current_char() ) ) {
+        char previousChar = file_->bump_char();
 
         if ( !HasMoreData() ) {
             break;
         }
 
-        char ch = file_.current_char();
+        char ch = file_->current_char();
 
         if ( ch == '#' ) {
             SkipRestOfLine();
@@ -62,13 +64,13 @@ void Lexer::SkipWhiteSpace()
         } else if ( ( ch == '*' ) && ( previousChar == '/' ) ) {
             //Skip until */ is found
             while ( HasMoreData() ) {
-                previousChar = file_.bump_char();
+                previousChar = file_->bump_char();
 
                 if ( !HasMoreData() ) {
                     break;
                 }
 
-                ch = file_.current_char();
+                ch = file_->current_char();
 
                 if ( ( ch == '/' ) && ( previousChar == '*' ) ) {
                     break;
@@ -81,7 +83,7 @@ void Lexer::SkipWhiteSpace()
 void Lexer::SkipRestOfLine()
 {
     while ( HasMoreData() ) {
-        if ( file_.bump_char() == '\n' ) {
+        if ( file_->bump_char() == '\n' ) {
             break;
         }
     }
@@ -98,20 +100,20 @@ const char* Lexer::ReadToken()
         return token_;
     }
 
-    if ( file_.current_char() == '"' ) {
-        file_.bump_char();
+    if ( file_->current_char() == '"' ) {
+        file_->bump_char();
 
         while( HasMoreData() ) {
-            if ( file_.current_char() == '"' ) {
-                file_.bump_char();
+            if ( file_->current_char() == '"' ) {
+                file_->bump_char();
                 break;
             }
 
-            *tokenChar++ = file_.bump_char();
+            *tokenChar++ = file_->bump_char();
         }
     } else {
-        while( HasMoreData() && !IsWhiteChar( file_.current_char() ) ) {
-            *tokenChar++ = file_.bump_char();
+        while( HasMoreData() && !IsWhiteChar( file_->current_char() ) ) {
+            *tokenChar++ = file_->bump_char();
         }
     }
 
@@ -132,7 +134,7 @@ f32 Lexer::ReadFloat()
 
 bool Lexer::HasMoreData() const
 {
-    return ( file_.position() < file_.size() );
+    return ( file_->position() < file_->size() );
 }
 
 void Lexer::SetWhiteCharValue( char c, char value )

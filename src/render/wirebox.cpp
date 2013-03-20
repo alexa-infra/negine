@@ -6,8 +6,9 @@
  * \copyright   MIT License
  **/
 
-#include "wirebox.h"
-#include "statistics.h"
+#include "render/wirebox.h"
+#include "render/statistics.h"
+#include "render/gpuprogram.h"
 
 using base::math::Vector3;
 using base::math::Vector4;

@@ -5,7 +5,7 @@
  **/
 #include "gtest/gtest.h"
 #include "math/matrix-inl.h"
-#include "math/vector.h"
+#include "math/vector-inl.h"
 
 using base::math::Matrix4;
 using base::math::Vector4;

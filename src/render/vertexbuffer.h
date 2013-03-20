@@ -7,12 +7,14 @@
 #pragma once
 
 #include "render/mesh.h"
-#include "render/bufferobject.h"
+#include <array>
 
 namespace base
 {
 namespace opengl
 {
+
+class BufferObject;
 
 //! Wraps vertex buffer - combination of two buffers: vertex and index arrays
 //! Uses triangles as data, and u16 indexes
@@ -40,7 +42,7 @@ public:
 private:
     BufferObject* vertexes_;      //!< Vertex buffer object
     BufferObject* indexes_;       //!< Index buffer object
-    GLuint vao_;
+    u32 vao_;
 
     struct EnabledAttribute
     {

@@ -5,8 +5,13 @@
  * \copyright   MIT License
  **/
 #include "particlesystemrenderer.h"
+#include "particlesystem.h"
 #include "gpuprogram.h"
 #include "math/rect.h"
+#include "render/texture.h"
+#include "render/vertexbuffer.h"
+#include "render/mesh.h"
+#include "math/vector-inl.h"
 
 namespace base
 {

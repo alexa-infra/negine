@@ -2,6 +2,7 @@
 #include "base/sjson-internal.h"
 #include <sstream>
 #include <fstream>
+#include "base/log.h"
 
 namespace base {
 namespace sjson {

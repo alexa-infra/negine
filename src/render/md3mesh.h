@@ -7,11 +7,13 @@
 #pragma once
 
 #include "base/types.h"
-#include "base/stream.h"
 #include <vector>
 
 namespace base
 {
+
+class FileBinary;
+
 namespace resource
 {
 

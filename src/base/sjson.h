@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base/types.h"
+#include "base/debug.h"
 #include <string>
 #include <memory>
 #include <map>

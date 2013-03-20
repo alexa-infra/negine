@@ -4,6 +4,7 @@
  * \copyright   MIT License
  **/
 #include "base/stream.h"
+#include <string>
 
 namespace base
 {
@@ -132,12 +133,6 @@ char FileText::bump_char()
 {
     position_++;
     return static_cast<char>( sb_->sbumpc() );
-}
-
-bool file_exists( const std::string& name )
-{
-    std::ifstream f( name.c_str() );;
-    return f.good();
 }
 
 } // namespace base

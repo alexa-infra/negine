@@ -43,7 +43,7 @@ Md5Anim::~Md5Anim()
     delete[] skelFrames;
 }
 
-void Md5Anim::Load( const string& filename )
+void Md5Anim::Load( const std::string& filename )
 {
     Lexer reader( filename );
 

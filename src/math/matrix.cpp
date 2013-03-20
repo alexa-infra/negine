@@ -1,4 +1,5 @@
 #include "math/matrix-inl.h"
+#include "math/vector-inl.h"
 
 #include <string.h>
 

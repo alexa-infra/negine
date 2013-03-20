@@ -5,6 +5,7 @@
  * \copyright   MIT License
  **/
 #include "render/md5renderer.h"
+#include "render/glcontext.h"
 
 using base::resource::Md5Mesh;
 using base::resource::Md5Model;

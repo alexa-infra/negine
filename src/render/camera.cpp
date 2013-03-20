@@ -4,7 +4,8 @@
  * \copyright   MIT License
  **/
 #include "render/camera.h"
-#include "math/vector.h"
+#include "math/matrix-inl.h"
+#include "math/vector-inl.h"
 
 namespace base
 {

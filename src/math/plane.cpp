@@ -4,6 +4,7 @@
  * \copyright   MIT License
  **/
 #include "math/plane.h"
+#include "math/vector-inl.h"
 
 namespace base
 {

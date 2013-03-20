@@ -7,6 +7,7 @@
 #pragma once
 
 #include "render/glcontext.h"
+#include <string>
 
 namespace base
 {

@@ -4,6 +4,7 @@
  * \copyright   MIT License
  **/
 #include "base/timer.h"
+#include "base/log.h"
 
 #ifdef OS_WIN
 # include <windows.h>

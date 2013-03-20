@@ -6,16 +6,22 @@
  **/
 #pragma once
 
-#include "render/texture.h"
-#include "render/vertexbuffer.h"
-#include "render/particlesystem.h"
+#include "base/types.h"
 
 namespace base
 {
+namespace resource
+{
+    class ParticleSystem;
+}
 namespace opengl
 {
 
+class Texture;
+class TextureLoader;
 class GpuProgram;
+class VertexBuffer;
+class MeshExt;
 
 class ParticleSystemRenderer
 {

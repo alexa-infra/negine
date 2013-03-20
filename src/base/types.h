@@ -27,8 +27,6 @@
 #   error Include stdint.h
 #endif
 
-#include <string>
-
 namespace base {
 
 typedef int8_t      i8;
@@ -51,11 +49,9 @@ typedef u64 uptr;
 typedef i64 iptr;
 #endif
 
-typedef std::string string;
-
-struct hash_string {
-    size_t operator()( const std::string& x ) const;
-};
+//struct hash_string {
+//    size_t operator()( const std::string& x ) const;
+//};
 
 } // namespace base
 
@@ -64,15 +60,3 @@ struct hash_string {
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
    TypeName(const TypeName&);               \
    void operator=(const TypeName&)
-
-#include "base/log.h"
-
-#include <cassert>
-
-#ifdef _DEBUG
-#define ASSERT(x) assert(x)
-#define ENSURE(x) assert(x)
-#else
-#define ASSERT(x) {}
-#define ENSURE(x) (void)(x);
-#endif
