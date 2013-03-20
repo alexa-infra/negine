@@ -4,6 +4,7 @@
  * \copyright   MIT License
  **/
 #include "math/quat.h"
+#include "math/matrix-inl.h"
 #include "math/mathlib.h"
 
 namespace base

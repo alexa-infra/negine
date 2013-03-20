@@ -6,7 +6,7 @@
 #include "render/gpuprogram.h"
 #include <iostream>
 #include "math/vector.h"
-#include "math/matrix.h"
+#include "math/matrix-inl.h"
 #include "render/texture.h"
 #include <memory>
 #include "base/stream.h"

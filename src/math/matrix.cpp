@@ -1,4 +1,4 @@
-#include "math/matrix.h"
+#include "math/matrix-inl.h"
 
 #include <string.h>
 

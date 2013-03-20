@@ -64,7 +64,7 @@ const std::string Shader::status() const
 
     result.resize( static_cast<u32>( log_size ) );
     char* buffer = const_cast<char*>( result.c_str() );
-    glGetInfoLogARB( id_, log_size, NULL, buffer );
+    glGetShaderInfoLog( id_, log_size, NULL, buffer );
     return result;
 }
 

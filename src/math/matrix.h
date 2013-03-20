@@ -88,5 +88,3 @@ f32 Determinant( const Matrix4& m );
 
 }
 }
-
-#include "math/matrix-inl.h"
