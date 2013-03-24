@@ -6,7 +6,7 @@
  **/
 #pragma once
 
-#include "render/glcontext.h"
+#include "render/gpuresource.h"
 #include <unordered_map>
 #include <string>
 #include "render/mesh.h"
@@ -47,18 +47,16 @@ struct GpuProgramMeta
 };
     
 //! Shader program object
-class GpuProgram
+class GpuProgram : public GpuResource
 {
 protected:    
-    GLuint program_id_;         //!< Name of program object
-
     Shader* pixel_shader_;       //!< Attached pixel shader
     Shader* vertex_shader_;      //!< Attached vertex shader
 
     UniformBinding uni_binding_;
     
 public:
-    GpuProgram();
+    GpuProgram(DeviceContext& gl);
     ~GpuProgram();
 
     void Destroy();

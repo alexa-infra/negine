@@ -19,19 +19,18 @@ using namespace base::resource;
 class Demo : public Application
 {
     GpuProgram program_;
-    TextureLoader texure_loader_;
 
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
     Vector2 cursor_;
     Timer timer_;
 public:
-    Demo() {
+    Demo() : program_(GL) {
         ParticleSystemSetting ss;
         ss.speed = 2.0f;
         ss.texture = "heart.png";
         ps_ = new ParticleSystem( ss );
-        ps_renderer_ = new ParticleSystemRenderer( ps_, &texure_loader_ );
+        ps_renderer_ = new ParticleSystemRenderer( ps_, GL );
         program_.create( "hud.shader.meta" );
     }
     virtual ~Demo() {
@@ -41,11 +40,11 @@ public:
     }
 protected:
     void OnFrame() {
-        glClear( GL_COLOR_BUFFER_BIT );
-        glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
-        glDisable( GL_DEPTH_TEST );
-        glEnable( GL_BLEND );
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+        GL.Clear( GL_COLOR_BUFFER_BIT );
+        GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+        GL.Disable( GL_DEPTH_TEST );
+        GL.Enable( GL_BLEND );
+        GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         program_.Bind();
         program_.set_uniform( "projection_matrix", Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 ) );
         program_.set_uniform( "modelview_matrix", Matrix4::Identity() );
@@ -55,7 +54,7 @@ protected:
         ps_renderer_->Commit();
         ps_renderer_->Draw( &program_ );
         program_.Unbind();
-        GL_ASSERT();
+        GL_ASSERT(GL);
         Application::OnFrame();
     }
 

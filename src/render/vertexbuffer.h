@@ -15,13 +15,14 @@ namespace opengl
 {
 
 class BufferObject;
+class DeviceContext;
 
 //! Wraps vertex buffer - combination of two buffers: vertex and index arrays
 //! Uses triangles as data, and u16 indexes
 class VertexBuffer
 {
 public:
-    VertexBuffer();
+    VertexBuffer(DeviceContext& gl);
     ~VertexBuffer();
 
     void SetVertexData( void* vertexes, u32 vertexCount );
@@ -43,6 +44,7 @@ private:
     BufferObject* vertexes_;      //!< Vertex buffer object
     BufferObject* indexes_;       //!< Index buffer object
     u32 vao_;
+    DeviceContext& GL;
 
     struct EnabledAttribute
     {

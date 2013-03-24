@@ -6,7 +6,7 @@
  **/
 #pragma once
 
-#include "render/glcontext.h"
+#include "render/gpuresource.h"
 #include <string>
 
 namespace base
@@ -24,24 +24,18 @@ enum ShaderType {
 typedef ShaderTypes::ShaderType ShaderType;
 
 //! Shader object
-class Shader
+class Shader : public GpuResource
 {
 private:
-    u32 id_;                    //!< Name of shader
     GLenum shader_type_;        //!< Type of shader
 public:
-    Shader();
+    Shader(DeviceContext& gl);
     ~Shader();
 
     //! Compile shader from source
-    bool Create( ShaderType shaderType, const char** source, u32 len );
+    bool Create( ShaderType shaderType, const char* const* source, u32 len );
 
     void Destroy();
-
-    //! Gets name of shader
-    u32 id() const {
-        return id_;
-    }
 
     //! Gets creation status
     bool is_ok() const {

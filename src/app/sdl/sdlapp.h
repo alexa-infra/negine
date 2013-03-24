@@ -7,6 +7,7 @@
 #pragma once
 
 #include "base/types.h"
+#include "render/glcontext.h"
 
 struct SDL_Window;
 
@@ -17,6 +18,7 @@ class SDLApp
 protected:
     SDL_Window* mainwindow_;     //!< window handle
     void* maincontext_;          //!< GL context
+    opengl::DeviceContext GL;
     bool run_;
     bool capture_;
     u32 width_;

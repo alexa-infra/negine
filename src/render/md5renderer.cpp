@@ -25,7 +25,7 @@ Md5Renderer::Md5Renderer( Md5Model* model )
     , vb( NULL )
     , md5( model )
 {
-    vb = new VertexBuffer;
+//    vb = new VertexBuffer;
     Md5Mesh& mesh = md5->meshes[0];
 
     MeshBuilder builder;
@@ -48,9 +48,9 @@ Md5Renderer::~Md5Renderer()
 void Md5Renderer::Draw( )
 {
     vb->BindAttributes();
-    glDrawElements(
-        GL_TRIANGLES, mesh_->numIndexes(), 
-        GL_UNSIGNED_SHORT, (void*)0);
+    //glDrawElements(
+    //    GL_TRIANGLES, mesh_->numIndexes(), 
+    //    GL_UNSIGNED_SHORT, (void*)0);
     vb->UnbindAttributes();
 }
 

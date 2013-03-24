@@ -11,8 +11,8 @@ namespace base
 namespace opengl
 {
 
-Shader::Shader( )
-    : id_( 0 )
+Shader::Shader(DeviceContext& gl)
+    : GpuResource(gl)
 {
 }
 
@@ -24,25 +24,25 @@ Shader::~Shader()
 void Shader::Destroy()
 {
     if ( id_ != 0 ) {
-        glDeleteShader( id_ );
+        GL.DeleteShader( id_ );
         id_ = 0;
     }
 }
 
-bool Shader::Create( ShaderType shaderType, const char** source, u32 len )
+bool Shader::Create( ShaderType shaderType, const char* const* source, u32 len )
 {
     ASSERT( id_ == 0 );
     shader_type_ = shaderType;
-    id_ = glCreateShader( shader_type_ );
+    id_ = GL.CreateShader( shader_type_ );
 
     if ( id_ == 0 )
         return false;
 
-    glShaderSource( id_, len, source, NULL );
-    glCompileShader( id_ );
+    GL.ShaderSource( id_, len, source, NULL );
+    GL.CompileShader( id_ );
 
     GLint compile_status;
-    glGetShaderiv( id_, GL_COMPILE_STATUS, &compile_status );
+    GL.GetShaderiv( id_, GL_COMPILE_STATUS, &compile_status );
   
     bool isCompiled = ( compile_status == GL_TRUE );
     return isCompiled;
@@ -57,7 +57,7 @@ const std::string Shader::status() const
     }
 
     GLint log_size;
-    glGetShaderiv( id_, GL_INFO_LOG_LENGTH, &log_size );
+    GL.GetShaderiv( id_, GL_INFO_LOG_LENGTH, &log_size );
 
     if ( log_size == 0 ) {
         return result;
@@ -65,7 +65,7 @@ const std::string Shader::status() const
 
     result.resize( static_cast<u32>( log_size ) );
     char* buffer = const_cast<char*>( result.c_str() );
-    glGetShaderInfoLog( id_, log_size, NULL, buffer );
+    GL.GetShaderInfoLog( id_, log_size, NULL, buffer );
     return result;
 }
 

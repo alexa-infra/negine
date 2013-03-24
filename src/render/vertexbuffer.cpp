@@ -15,16 +15,17 @@ namespace base
 namespace opengl
 {
 
-VertexBuffer::VertexBuffer()
+VertexBuffer::VertexBuffer(DeviceContext& gl)
     : vertexes_(nullptr)
     , indexes_(nullptr)
     , vao_(0)
+    , GL(gl)
 {
 }
 
 VertexBuffer::~VertexBuffer()
 {
-    glDeleteVertexArrays(1, &vao_);
+    GL.DeleteVertexArrays(1, &vao_);
     delete vertexes_;
     delete indexes_;
 }
@@ -46,7 +47,7 @@ void VertexBuffer::EnableAttributeMesh( const MeshExt* mesh )
 void VertexBuffer::SetVertexData( void* vertexes, u32 vertexCount )
 {
     if (vertexes_ == nullptr)
-        vertexes_ = new BufferObject;
+        vertexes_ = new BufferObject(GL);
     vertexes_->Bind( BufferTargets::Array );
     vertexes_->SetData( vertexCount, vertexes, BufferUsages::DynamicDraw );
     vertexes_->Unbind();
@@ -55,7 +56,7 @@ void VertexBuffer::SetVertexData( void* vertexes, u32 vertexCount )
 void VertexBuffer::SetIndexData( void* index, u32 indexCount )
 {
     if (indexes_ == nullptr)
-        indexes_ = new BufferObject;
+        indexes_ = new BufferObject(GL);
     indexes_->Bind( BufferTargets::ElementArray );
     indexes_->SetData( indexCount, index, BufferUsages::DynamicDraw );
     indexes_->Unbind();
@@ -64,7 +65,7 @@ void VertexBuffer::SetIndexData( void* index, u32 indexCount )
 void VertexBuffer::BindAttributes( )
 {
     ASSERT(vao_ != 0);
-    glBindVertexArray(vao_);
+    GL.BindVertexArray(vao_);
 }
 
 void VertexBuffer::Load()
@@ -75,8 +76,8 @@ void VertexBuffer::Load()
         || enabledAttributes_[VertexAttrs::tagTexture].enabled_);
 
     if (vao_ == 0)
-        glGenVertexArrays(1, &vao_);
-    glBindVertexArray(vao_);
+        GL.GenVertexArrays(1, &vao_);
+    GL.BindVertexArray(vao_);
 
     vertexes_->Bind( BufferTargets::Array );
 
@@ -87,8 +88,8 @@ void VertexBuffer::Load()
         u32 location = VertexAttrs::GetAttributeLocation( vertexAttr );
         if (enabledAttributes_[i].enabled_)
         {
-            glEnableVertexAttribArray( location );
-            glVertexAttribPointer(
+            GL.EnableVertexAttribArray( location );
+            GL.VertexAttribPointer(
                 location,
                 VertexAttrs::GetComponentCount( vertexAttr ),
                 VertexAttrs::GetGLType( vertexAttr ),
@@ -98,17 +99,17 @@ void VertexBuffer::Load()
         }
         else
         {
-            glDisableVertexAttribArray(location);
+            GL.DisableVertexAttribArray(location);
         }
     }
 
     indexes_->Bind( BufferTargets::ElementArray );
-    glBindVertexArray(0);
+    GL.BindVertexArray(0);
 }
 
 void VertexBuffer::UnbindAttributes( )
 {
-    glBindVertexArray(0);
+    GL.BindVertexArray(0);
 }
 
 }

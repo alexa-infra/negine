@@ -14,7 +14,7 @@ CubeMesh::CubeMesh()
     std::vector<CubeMesh::CubeVertex> vv;
     std::vector<u32> ff;
     AddCube( vv, ff, Vector3( 0.0f ) );
-    buffer_ = new VertexBuffer();
+//    buffer_ = new VertexBuffer();
     buffer_->SetVertexData(&vv.front(), vv.size() * sizeof(CubeVertex));
     buffer_->SetIndexData(&ff.front(), ff.size() * sizeof(u32));
     buffer_->EnableAttribute(VertexAttrs::tagPosition, sizeof(CubeVertex), (void*)offsetof(CubeVertex, position));
@@ -32,10 +32,10 @@ CubeMesh::~CubeMesh()
 void CubeMesh::draw()
 {
     buffer_->BindAttributes( );
-    glDrawElements(GL_TRIANGLES,
-        6 * 2 * 3,
-        GL_UNSIGNED_INT,
-        0);
+    //glDrawElements(GL_TRIANGLES,
+    //    6 * 2 * 3,
+    //    GL_UNSIGNED_INT,
+    //    0);
     buffer_->UnbindAttributes();
 }
 

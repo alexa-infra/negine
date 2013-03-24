@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "render/glcontext.h"
+#include "render/gpuresource.h"
 #include <map>
 
 namespace base
@@ -127,13 +127,12 @@ struct TextureInfo {
 };
 
 //! Texture object
-class Texture
+class Texture : public GpuResource
 {
 protected:
-    GLuint id_;         //!< Texture name
     TextureInfo info_;  //!< Current info
 public:
-    Texture();
+    Texture(DeviceContext& gl);
     ~Texture();
 
     //! Gets creation status
@@ -144,11 +143,6 @@ public:
     //! Gets texture info
     const TextureInfo& info() {
         return info_;
-    }
-
-    //! Gets name of texture
-    GLuint id() const {
-        return id_;
     }
 
     //! Bind texture
@@ -176,9 +170,10 @@ class TextureLoader
 {
     typedef std::map<std::string, Texture*> TextureCache;
     TextureCache cache_;
+    DeviceContext& context_;
 
 public:
-    TextureLoader();
+    TextureLoader(DeviceContext& gl);
     ~TextureLoader();
     Texture* Load( const std::string& filename );
     void ClearCache();

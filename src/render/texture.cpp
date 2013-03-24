@@ -63,8 +63,8 @@ TextureInfo::TextureInfo()
 {
 }
 
-Texture::Texture()
-    : id_( 0 )
+Texture::Texture(DeviceContext& gl)
+    : GpuResource(gl)
 {
 }
 
@@ -76,14 +76,14 @@ Texture::~Texture()
 void Texture::Destroy()
 {
     if ( id_ != 0 ) {
-        glDeleteTextures( 1, &id_ );
+        GL.DeleteTextures( 1, &id_ );
         id_ = 0;
     }
 }
 
 void Texture::Bind()
 {
-    glBindTexture( info_.Type, id_ );
+    GL.BindTexture( info_.Type, id_ );
     Stats::inc_texture_switches();
 }
 
@@ -128,12 +128,12 @@ void Texture::GenerateFromFile( const TextureInfo& textureinfo )
 void Texture::FromBuffer( const u8* data )
 {
     ASSERT( id_ == 0 );
-    glGenTextures( 1, &id_ );
+    GL.GenTextures( 1, &id_ );
 
-    glBindTexture( info_.Type, id_ );
+    GL.BindTexture( info_.Type, id_ );
     setup();
 
-    glTexImage2D(
+    GL.TexImage2D(
         info_.Type,
         0,
         info_.InternalType,
@@ -143,18 +143,18 @@ void Texture::FromBuffer( const u8* data )
         info_.Pixel,
         info_.DataType,
         data );
-    glBindTexture( info_.Type, 0 );
+    GL.BindTexture( info_.Type, 0 );
 }
 
 void Texture::GenerateEmpty( const TextureInfo& textureinfo )
 {
     ASSERT( id_ == 0 );
-    glGenTextures( 1, &id_ );
+    GL.GenTextures( 1, &id_ );
 
-    glBindTexture( info_.Type, id_ );
+    GL.BindTexture( info_.Type, id_ );
     setup();
     
-    glTexImage2D(
+    GL.TexImage2D(
         info_.Type,
         0,
         info_.InternalType,
@@ -164,7 +164,7 @@ void Texture::GenerateEmpty( const TextureInfo& textureinfo )
         info_.Pixel,
         info_.DataType,
         NULL );
-    glBindTexture( info_.Type, 0 );
+    GL.BindTexture( info_.Type, 0 );
 }
 
 void Texture::setup()
@@ -174,16 +174,17 @@ void Texture::setup()
                 || info_.MinFilter == TextureMinFilters::NEAREST );
         ASSERT( info_.Width == info_.Height );
     } else {
-        glGenerateMipmap( info_.Type );
+        GL.GenerateMipmap( info_.Type );
     }
 
-    glTexParameteri( info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter );
-    glTexParameteri( info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter );
-    glTexParameteri( info_.Type, GL_TEXTURE_WRAP_S, info_.WrapS );
-    glTexParameteri( info_.Type, GL_TEXTURE_WRAP_T, info_.WrapT );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_S, info_.WrapS );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_T, info_.WrapT );
 }
 
-TextureLoader::TextureLoader()
+TextureLoader::TextureLoader(DeviceContext& gl)
+    : context_(gl)
 {
 }
 
@@ -229,7 +230,7 @@ Texture* TextureLoader::Load( const std::string& filename )
     tex_info.Filename = name;
     tex_info.MinFilter = TextureMinFilters::LINEAR;
     tex_info.GenerateMipmap = true;
-    Texture* t = new Texture();
+    Texture* t = new Texture(context_);
     t->GenerateFromFile( tex_info );
     cache_[filename] = t;
     return t;

@@ -34,42 +34,42 @@ StringMap<VertexAttr, VertexAttrs::Count>::Entry attr_map_str[VertexAttrs::Count
 };
 StringMap<VertexAttr, VertexAttrs::Count> attr_map( attr_map_str );
 
-GpuProgram::GpuProgram()
-    : program_id_( 0 )
+GpuProgram::GpuProgram(DeviceContext& gl)
+    : GpuResource(gl)
 {
-    vertex_shader_ = new Shader;
-    pixel_shader_ = new Shader;
+    vertex_shader_ = new Shader(gl);
+    pixel_shader_ = new Shader(gl);
 }
 
 bool GpuProgram::is_ok() const {
-    return ( program_id_ != 0 ) && pixel_shader_->is_ok() && vertex_shader_->is_ok();
+    return ( id_ != 0 ) && pixel_shader_->is_ok() && vertex_shader_->is_ok();
 }
 
 void GpuProgram::Destroy()
 {
     if ( is_ok() ) {
-        glDetachShader( program_id_, vertex_shader_->id() );
-        glDetachShader( program_id_, pixel_shader_->id() );
+        GL.DetachShader( id_, vertex_shader_->handle() );
+        GL.DetachShader( id_, pixel_shader_->handle() );
     }
 
-    if ( program_id_ != 0 ) {
+    if ( id_ != 0 ) {
         pixel_shader_->Destroy();
         vertex_shader_->Destroy();
 
-        glDeleteProgram( program_id_ );
-        program_id_ = 0;
+        GL.DeleteProgram( id_ );
+        id_ = 0;
     }
 }
 
 const std::string GpuProgram::status() const
 {
     std::string result;
-    if ( program_id_ == 0 ) {
+    if ( id_ == 0 ) {
         return result;
     }
 
     GLint len;
-    glGetProgramiv( program_id_, GL_INFO_LOG_LENGTH, &len );
+    GL.GetProgramiv( id_, GL_INFO_LOG_LENGTH, &len );
 
     if ( len == 0 ) {
         return result;
@@ -77,7 +77,7 @@ const std::string GpuProgram::status() const
 
     result.resize( len );
     char* buf = const_cast<char*>( result.c_str() );
-    glGetProgramInfoLog( program_id_, len, NULL, buf );
+    GL.GetProgramInfoLog( id_, len, NULL, buf );
 
     return result;
 }
@@ -91,47 +91,47 @@ GpuProgram::~GpuProgram()
 
 void GpuProgram::Bind()
 {
-    glUseProgram( program_id_ );
+    GL.UseProgram( id_ );
     Stats::instance()->inc_program_switches();
 }
 
 void GpuProgram::Unbind()
 {
-    glUseProgram(0);
+    GL.UseProgram(0);
 }
 
 template<>
 void GpuProgram::set_uniform_param<Texture*>( const UniformVar& uniform, Texture* const& t )
 {
-    glActiveTexture( GL_TEXTURE0 + uniform.index );
+    GL.ActiveTexture( GL_TEXTURE0 + uniform.index );
     t->Bind();
-    glUniform1i( uniform.location, uniform.index );
+    GL.Uniform1i( uniform.location, uniform.index );
 }
 
 template<>
 void GpuProgram::set_uniform_param<Matrix4>( const UniformVar& uniform, const Matrix4& m )
 {
-    glUniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
+    GL.UniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
 }
 
 template<>
 void GpuProgram::set_uniform_param<Vector4>( const UniformVar& uniform, const Vector4& v )
 {
-    glUniform4f( uniform.location, v.x, v.y, v.z, v.w );
+    GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
 }
 
 template<>
 void GpuProgram::set_uniform_param<Vector3>( const UniformVar& uniform, const Vector3& v )
 {
-    glUniform3f( uniform.location, v.x, v.y, v.z );
+    GL.Uniform3f( uniform.location, v.x, v.y, v.z );
 }
 
 void GpuProgram::get_uniforms_list()
 {
     GLint uniform_count = 0;
     GLint max_name_length = 0;
-    glGetProgramiv( program_id_, GL_ACTIVE_UNIFORMS, &uniform_count );
-    glGetProgramiv( program_id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length );
+    GL.GetProgramiv( id_, GL_ACTIVE_UNIFORMS, &uniform_count );
+    GL.GetProgramiv( id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length );
 
     if ( !uniform_count || !max_name_length ) {
         return;
@@ -144,9 +144,9 @@ void GpuProgram::get_uniforms_list()
         GLsizei name_length = 0;
         i32 type_size = 0;
         GLenum uniform_type = 0;
-        glGetActiveUniform( program_id_, i, max_name_length, &name_length, &type_size, &uniform_type, buffer );
+        GL.GetActiveUniform( id_, i, max_name_length, &name_length, &type_size, &uniform_type, buffer );
         std::string uniformName( buffer );
-        u32 location = glGetUniformLocation( program_id_, uniformName.c_str() );
+        u32 location = GL.GetUniformLocation( id_, uniformName.c_str() );
         UniformVar uni;
         uni.location = location;
         switch(uniform_type)
@@ -163,7 +163,7 @@ void GpuProgram::get_uniforms_list()
     
 bool GpuProgram::createMeta( const std::string& filename )
 {
-    ASSERT(program_id_ == 0);
+    ASSERT(id_ == 0);
     
     GpuProgramMeta meta;
     iarchive::deserializeFile(filename, meta);
@@ -222,25 +222,25 @@ bool GpuProgram::createMeta( const std::string& filename )
         return false;
     }
     
-    program_id_ = glCreateProgram( );
+    id_ = GL.CreateProgram( );
     
-    glAttachShader( program_id_, vertex_shader_->id() );
-    glAttachShader( program_id_, pixel_shader_->id() );
+    GL.AttachShader( id_, vertex_shader_->handle() );
+    GL.AttachShader( id_, pixel_shader_->handle() );
     
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {
         VertexAttr attr = (VertexAttr)i;
         std::string name;
         attr_map.to_string(attr, name);
-        glBindAttribLocation(program_id_,
+        GL.BindAttribLocation(id_,
                              VertexAttrs::GetAttributeLocation(attr),
                              name.c_str());
     }
     
-    glLinkProgram( program_id_ );
+    GL.LinkProgram( id_ );
     
     GLint linkStatus;
-    glGetProgramiv( program_id_, GL_LINK_STATUS, &linkStatus );
+    GL.GetProgramiv( id_, GL_LINK_STATUS, &linkStatus );
     bool linked = ( linkStatus == GL_TRUE );
     if (!linked)
     {

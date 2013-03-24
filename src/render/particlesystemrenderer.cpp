@@ -26,10 +26,11 @@ using base::resource::ParticleSystemSetting;
 using base::resource::Particle;
 using base::resource::ParticleList;
 
-ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, TextureLoader* loader )
+ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, DeviceContext& gl )
     : texture_( NULL )
     , vbo_( NULL )
     , mesh_(NULL)
+    , GL(gl)
     , ps_( ps )
 {
     const ParticleSystemSetting& settings = ps_->settings;
@@ -57,13 +58,13 @@ ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, TextureLoade
         tex[j + 3].set( 0.f, 1.f );
     }
 
-    vbo_ = new VertexBuffer;
+    vbo_ = new VertexBuffer(GL);
     vbo_->EnableAttributeMesh( mesh_ );
     vbo_->SetIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
     vbo_->SetVertexData( mesh_->data(), mesh_->rawSize() );
     vbo_->Load();
 
-    texture_ = loader->Load( settings.texture );
+    texture_ = GL.texture_loader()->Load( settings.texture );
 }
 
 ParticleSystemRenderer::~ParticleSystemRenderer()
@@ -77,11 +78,8 @@ void ParticleSystemRenderer::Draw( GpuProgram* program )
     program->set_uniform( "diffuse", texture_ );
     vbo_->BindAttributes( );
 
-    for ( ParticleList::const_iterator it = ps_->particles_active.begin(); it != ps_->particles_active.end(); ++it ) {
-        const Particle* p = *it;
-        glDrawElements(
-            GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (u16*)0 + (p->face*3));
-    }
+    GL.DrawElements(
+        GL_TRIANGLES, ps_->particles_active.size() * 6, GL_UNSIGNED_SHORT, (u16*)0);
 
     vbo_->UnbindAttributes( );
 }
@@ -93,18 +91,19 @@ void ParticleSystemRenderer::Commit()
     Vector3* pos = mesh_->findAttributeTyped<Vector3>(VertexAttrs::tagPosition);
     Vector4* color = mesh_->findAttributeTyped<Vector4>(VertexAttrs::tagColor);
 
-    for ( ParticleList::const_iterator it = ps_->particles_active.begin(); it != ps_->particles_active.end(); ++it ) {
+    u32 idx = 0;
+    for ( ParticleList::const_iterator it = ps_->particles_active.begin(); it != ps_->particles_active.end(); ++it, idx += 4 ) {
         const Particle* p = *it;
         base::math::RectF rectange( p->position, Vector2( p->size ), p->rotation );
         rectange.Points( v );
-        pos[p->index + 0] = Vector3( v[0] );
-        pos[p->index + 1] = Vector3( v[1] );
-        pos[p->index + 2] = Vector3( v[2] );
-        pos[p->index + 3] = Vector3( v[3] );
-        color[p->index + 0] = p->color;
-        color[p->index + 1] = p->color;
-        color[p->index + 2] = p->color;
-        color[p->index + 3] = p->color;
+        pos[idx + 0] = Vector3( v[0] );
+        pos[idx + 1] = Vector3( v[1] );
+        pos[idx + 2] = Vector3( v[2] );
+        pos[idx + 3] = Vector3( v[3] );
+        color[idx + 0] = p->color;
+        color[idx + 1] = p->color;
+        color[idx + 2] = p->color;
+        color[idx + 3] = p->color;
     }
 
     vbo_->SetVertexData( mesh_->data(), mesh_->rawSize() );

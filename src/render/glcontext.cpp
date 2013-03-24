@@ -1,6 +1,13 @@
 #include "render/glcontext.h"
 #include "base/log.h"
 #include "base/debug.h"
+#include "render/texture.h"
+#include <type_traits>
+
+#ifdef OS_WIN
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#endif
 
 namespace base
 {
@@ -16,14 +23,145 @@ const char* glErrorToString(GLenum code)
     return "UNKNOWN";
 }
 
-void glAssert(const char* file, int line)
+void DeviceContext::Assert(const char* file, int line)
 {
-    GLenum err = glGetError();
+    GLenum err = GetError();
     if (err != GL_NO_ERROR)
     {
         ERR("GL error: %s [%x] @ %s, %d\n", glErrorToString(err), err, file, line);
         debugBreak();
     }
+}
+
+TextureLoader* DeviceContext::texture_loader()
+{
+    ASSERT(texture_loader_ != NULL);
+    return texture_loader_;
+}
+
+class Library
+{
+public:
+    Library(const char* name)
+    {
+        m_module = LoadLibraryA(name);
+        ASSERT(m_module != 0);
+    }
+    ~Library()
+    {
+        FreeLibrary(m_module);
+    }
+    void* getFunc(const char* func)
+    {
+        return GetProcAddress(m_module, func);
+    }
+private:
+    HMODULE m_module;
+};
+
+class GLFuncLoader
+{
+public:
+    GLFuncLoader()
+        : libgl("opengl32.dll")
+    {
+        glGetProcAddress = (GLGETPROCADDRESSPROC)libgl.getFunc("wglGetProcAddress");
+    }
+
+    template<typename Func>
+    Func getPointer(const char* name) {
+        void* ptr = glGetProcAddress(name);
+        if (ptr == NULL)
+            ptr = libgl.getFunc(name);
+        return (Func)ptr;
+    }
+    
+    template<typename Func>
+    void getPointerWrap(Func& ptr, const char* name) {
+        typedef typename std::remove_reference<Func>::type nonref;
+        ptr = getPointer<nonref>(name);
+        ASSERT(ptr != NULL);
+    }
+private:
+    Library libgl;
+    typedef void* (WINAPI *GLGETPROCADDRESSPROC)(const char*);
+    GLGETPROCADDRESSPROC glGetProcAddress;
+};
+
+DeviceContext::DeviceContext()
+    : loader(NULL)
+{
+}
+
+DeviceContext::~DeviceContext()
+{
+    delete loader;
+}
+
+void DeviceContext::init()
+{
+    ASSERT(loader == NULL);
+    loader = new GLFuncLoader;
+
+    #define LOAD_GL(name) loader->getPointerWrap(##name, "gl"#name );
+    
+    LOAD_GL(ActiveTexture                    );
+    LOAD_GL(AttachShader                     );
+    LOAD_GL(BindAttribLocation               );
+    LOAD_GL(BindBuffer                       );
+    LOAD_GL(BindBufferBase                   );
+    LOAD_GL(BindBufferRange                  );
+    LOAD_GL(BindTexture                      );
+    LOAD_GL(BindVertexArray                  );
+    LOAD_GL(BufferData                       );
+    LOAD_GL(BufferSubData                    );
+    LOAD_GL(CompileShader                    );
+    LOAD_GL(CreateProgram                    );
+    LOAD_GL(CreateShader                     );
+    LOAD_GL(DeleteBuffers                    );
+    LOAD_GL(DeleteProgram                    );
+    LOAD_GL(DeleteShader                     );
+    LOAD_GL(DeleteTextures                   );
+    LOAD_GL(DeleteVertexArrays               );
+    LOAD_GL(DetachShader                     );
+    LOAD_GL(DisableVertexAttribArray         );
+    LOAD_GL(DrawElements                     );
+    LOAD_GL(EnableVertexAttribArray          );
+    LOAD_GL(GenBuffers                       );
+    LOAD_GL(GenTextures                      );
+    LOAD_GL(GenVertexArrays                  );
+    LOAD_GL(GenerateMipmap                   );
+    LOAD_GL(GetActiveUniform                 );
+    LOAD_GL(GetBufferSubData                 );
+    LOAD_GL(GetProgramInfoLog                );
+    LOAD_GL(GetProgramiv                     );
+    LOAD_GL(GetShaderInfoLog                 );
+    LOAD_GL(GetShaderiv                      );
+    LOAD_GL(GetUniformLocation               );
+    LOAD_GL(LinkProgram                      );
+    LOAD_GL(MapBuffer                        );
+    LOAD_GL(ShaderSource                     );
+    LOAD_GL(TexImage2D                       );
+    LOAD_GL(TexParameteri                    );
+    LOAD_GL(Uniform1i                        );
+    LOAD_GL(Uniform3f                        );
+    LOAD_GL(Uniform4f                        );
+    LOAD_GL(UniformMatrix4fv                 );
+    LOAD_GL(UnmapBuffer                      );
+    LOAD_GL(UseProgram                       );
+    LOAD_GL(VertexAttribPointer              );
+
+    LOAD_GL(Clear                            );
+    LOAD_GL(ClearColor                       );
+    LOAD_GL(Enable                           );
+    LOAD_GL(GetError                         );
+    LOAD_GL(Disable                          );
+    LOAD_GL(GetString                        );
+    LOAD_GL(BlendFunc                        );
+    
+    #undef LOAD_GL
+
+    texture_loader_ = new TextureLoader(*this);
 }
 
 }

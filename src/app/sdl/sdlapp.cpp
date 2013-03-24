@@ -20,6 +20,8 @@
 
 namespace base {
 
+using namespace opengl;
+
 SDLApp::SDLApp()
     : mainwindow_( NULL )
     , run_( true )
@@ -63,24 +65,15 @@ SDLApp::SDLApp()
         ERR("SDL error: %s", SDL_GetError());
         abort();
     }
-    glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
 
-    if ( GLEW_OK != err ) {
-        ERR("Unable to load GLEW: %s", glewGetErrorString( err ));
-        abort();
-    }
+    GL.init();
 
-    if ( !GLEW_VERSION_3_1 ) {
-        WARN("OpenGL 3.1 is not supported.");
-    }
-
-    const GLubyte* version = glGetString( GL_VERSION );
+    const GLubyte* version = GL.GetString( GL_VERSION );
     LOG("Current OpenGL version: %s", version);
 
-    GL_ASSERT();
+    GL_ASSERT(GL);
 
-    SDL_GL_SetSwapInterval( 1 );
+    //SDL_GL_SetSwapInterval( 1 );
 
     Stats::init();
 }

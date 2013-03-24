@@ -38,9 +38,6 @@ struct ParticleSystemSetting {
 };
 
 struct Particle {
-    u16 index;
-    u16 face;
-
     f32 life_time;
     f32 life;
 

@@ -31,8 +31,6 @@ ParticleSystem::ParticleSystem( ParticleSystemSetting s )
     particles = new Particle[s.max_count];
 
     for ( u32 i = 0; i < s.max_count; i++ ) {
-        particles[i].index = 4 * i;
-        particles[i].face = 2 * i;
         particles_free.push_back( &particles[i] );
     }
 
@@ -62,7 +60,7 @@ void ParticleSystem::add()
     p->position = math::Vector2( position );
     p->speed = math::Vector2( cosf( direction ), sinf( direction ) );
     p->speed *= settings.speed * ( rand() / ( f32 )( RAND_MAX ) );
-    p->acceleration = 0.f;
+    p->acceleration = rand() / ( f32 )( RAND_MAX ) * 200.0f;
     p->size = settings.size_start;
     p->rotation = 0.f;
     p->color = settings.color_start;
@@ -104,8 +102,7 @@ void ParticleSystem::update( f32 frame_time )
         p->color[2] = settings.color_start[2] * ( 1 - t ) + settings.color_end[2] * t;
         p->color[3] = settings.color_start[3] * ( 1 - t ) + settings.color_end[3] * t;
         math::Vector2 ppos = p->position - math::Vector2( position );
-        ppos += p->speed * p->life;
-        p->position = ppos + math::Vector2( position );
+        p->position = p->speed * t + p->speed.Normalized() * p->acceleration * t * t / 2.0f;
         ++it;
     }
 

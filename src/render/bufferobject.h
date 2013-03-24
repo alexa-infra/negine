@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "render/glcontext.h"
+#include "render/gpuresource.h"
 
 namespace base
 {
@@ -19,14 +19,7 @@ namespace BufferTargets
 //! the target to which the buffer object is bound
 enum BufferTarget {
     Array = GL_ARRAY_BUFFER,
-    CopyRead = GL_COPY_READ_BUFFER,
-    CopyWrite = GL_COPY_WRITE_BUFFER,
-    Draw = GL_DRAW_INDIRECT_BUFFER,
     ElementArray = GL_ELEMENT_ARRAY_BUFFER,
-    PixelPack = GL_PIXEL_PACK_BUFFER,
-    PixelUnpack = GL_PIXEL_UNPACK_BUFFER,
-    Texture = GL_TEXTURE_BUFFER,
-    TransformFeedback = GL_TRANSFORM_FEEDBACK_BUFFER,
     Uniform = GL_UNIFORM_BUFFER
 };
 }
@@ -61,20 +54,15 @@ enum BufferAccess {
 typedef BufferAccesses::BufferAccess BufferAccess;
 
 //! Wraps Buffer Object
-class BufferObject
+class BufferObject : public GpuResource
 {
 private:
-    GLuint id_;     //!< Buffer identifier
     GLenum target_; //!< Currently mapped type format
     bool is_ok_;    //!< Is buffer created
 public:
-    BufferObject();
+    BufferObject(DeviceContext& gl);
     ~BufferObject();
 
-    //! Gets name of buffer
-    GLuint id() const {
-        return id_;
-    }
     //! Get status of buffer creation
     bool is_ok() const {
         return is_ok_;

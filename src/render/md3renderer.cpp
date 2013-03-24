@@ -40,7 +40,7 @@ Md3Renderer::Md3Renderer( Md3Model* m )
     for ( i32 i = 0; i < model->hdr.num_surfaces; i++ ) {
          MeshExt* mesh = new MeshExt(builder, model->meshes[i].surface.num_verts, model->meshes[i].surface.num_triangles * 3);
          meshes[i] = mesh;
-         vbs[i] = new VertexBuffer;
+//         vbs[i] = new VertexBuffer;
          vbs[i]->EnableAttributeMesh(mesh);
     }
 }
@@ -99,9 +99,9 @@ void Md3Renderer::Draw( )
 {
     for ( u32 i = 0; i < vbs.size(); i++ ) {
         vbs[i]->BindAttributes();
-        glDrawElements(
-            GL_TRIANGLES, meshes[i]->numIndexes(), 
-            GL_UNSIGNED_SHORT, (void*)0);
+        //glDrawElements(
+        //    GL_TRIANGLES, meshes[i]->numIndexes(), 
+        //    GL_UNSIGNED_SHORT, (void*)0);
         vbs[i]->UnbindAttributes();
     }
 }

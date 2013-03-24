@@ -72,15 +72,15 @@ void WireBox::Draw( GpuProgram* program )
 {
     program->set_uniform( "color", Vector4( 1, 0, 0, 1 ) );
     u32 bindPos = VertexAttrs::GetAttributeLocation(VertexAttrs::tagPosition);
-    glVertexAttribPointer(
-        bindPos,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        sizeof( Vector3 ),
-        ( u8* )points );
-    u32 indexes[] = { 0, 1, 1, 3, 3, 7, 7, 0, 0, 5, 1, 2, 3, 4, 7, 6, 5, 2, 2, 4, 4, 6, 6, 5 };
-    glDrawElements( GL_LINES, 24, GL_UNSIGNED_INT, indexes );
+    //glVertexAttribPointer(
+    //    bindPos,
+    //    3,
+    //    GL_FLOAT,
+    //    GL_FALSE,
+    //    sizeof( Vector3 ),
+    //    ( u8* )points );
+    //u32 indexes[] = { 0, 1, 1, 3, 3, 7, 7, 0, 0, 5, 1, 2, 3, 4, 7, 6, 5, 2, 2, 4, 4, 6, 6, 5 };
+    //glDrawElements( GL_LINES, 24, GL_UNSIGNED_INT, indexes );
     Stats::add_polygons( 12 );
 }
 
