@@ -19,7 +19,6 @@ macro(create_demo NAME PATH)
     include_directories(
         ${TOOLS_PATH}
         ${SRC_PATH}
-        ${TOOLS_PATH}/glew/include
     )
 
     add_source_group("Sources" ${PATH} SRC)
