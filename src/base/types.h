@@ -60,3 +60,7 @@ typedef i64 iptr;
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
    TypeName(const TypeName&);               \
    void operator=(const TypeName&)
+
+#define DISALLOW_HEAP_ALLOC() \
+    void *operator new(size_t size);  \
+    void *operator new[](size_t size)

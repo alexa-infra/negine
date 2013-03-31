@@ -27,3 +27,9 @@
 #define ASSERT(x) {}
 #define ENSURE(x) (void)(x);
 #endif
+
+#ifdef OS_WIN
+    #define UNREACHABLE() __assume(0)
+#else
+    #define UNREACHABLE() __builtin_unreachable()
+#endif
