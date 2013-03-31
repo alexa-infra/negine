@@ -7,6 +7,7 @@
 #include "render/vertexbuffer.h"
 #include "render/glcontext.h"
 #include "math/vector.h"
+#include "base/debug.h"
 
 using base::math::Vector2;
 using base::math::Vector3;
@@ -71,6 +72,91 @@ u32 GetSize( VertexAttr attr )
 }
 
 } // namespace VertexAttr
+
+MeshLayer::MeshLayer()
+    : valid_(false)
+{
+}
+
+MeshLayer::MeshLayer(VertexAttr attr, u32 start, u32 stride)
+    : attr_(attr)
+    , start_(start)
+    , stride_(stride)
+    , valid_(true)
+{
+}
+
+MeshBuilder::MeshBuilder()
+    : type_(Static)
+{
+}
+
+MeshBuilder& MeshBuilder::addAttribute(VertexAttr attr)
+{
+    attributes_.push_back(attr);
+    return *this;
+}
+
+MeshExt::MeshExt(const MeshBuilder& builder, u32 nVertexes, u32 nIndexes)
+    : numVertexes_(nVertexes)
+    , numIndexes_(nIndexes)
+    , rawSize_(0)
+{
+    if (builder.type_ == MeshBuilder::Static) {
+        for(u32 i=0; i<builder.attributes_.size(); i++) {
+            VertexAttr attr = builder.attributes_[i];
+            u32 size = VertexAttrs::GetSize(attr);
+            attributes_[attr] = MeshLayer(attr, rawSize_, size);
+            rawSize_ += size * numVertexes_;
+        }
+    } else if (builder.type_ == MeshBuilder::Static) {
+        u32 vertexSize = 0;
+        for(u32 i=0; i<builder.attributes_.size(); i++) {
+            VertexAttr attr = builder.attributes_[i];
+            vertexSize = VertexAttrs::GetSize(attr);
+        }
+        u32 pos = 0;
+        for(u32 i=0; i<builder.attributes_.size(); i++) {
+            VertexAttr attr = builder.attributes_[i];
+            u32 size = VertexAttrs::GetSize(attr);
+            attributes_[attr] = MeshLayer(attr, pos, vertexSize);
+            pos += size;
+        }
+        rawSize_ += vertexSize * numVertexes_;
+    }
+    attributeBuffer_.resize(rawSize_);
+    indices_.resize(numIndexes_);
+}
+
+MeshExt::~MeshExt()
+{
+}
+
+u32 MeshExt::stride(VertexAttr attr) const
+{
+    const MeshLayer& layer = attributes_[attr];
+    ASSERT(layer.valid_);
+    return layer.stride_;
+}
+
+void MeshExt::reserve(u32 vertexCount, u32 indexCount)
+{
+}
+
+u8* MeshExt::findAttributeRaw(VertexAttr attr)
+{
+    const MeshLayer& layer = attributes_[attr];
+    ASSERT(layer.valid_);
+    return &attributeBuffer_[layer.start_];
+}
+
+u8* MeshExt::findElementRaw(VertexAttr attr, u32 idx)
+{
+    ASSERT(idx < numVertexes_);
+    const MeshLayer& layer = attributes_[attr];
+    ASSERT(layer.valid_);
+    return &attributeBuffer_[layer.start_ + layer.stride_ * idx];
+}
 
 }
 }
