@@ -6,6 +6,7 @@
  **/
 #include "render/md5renderer.h"
 #include "render/glcontext.h"
+#include "math/vector-inl.h"
 
 using base::resource::Md5Mesh;
 using base::resource::Md5Model;
@@ -20,12 +21,13 @@ namespace base
 namespace opengl
 {
 
-Md5Renderer::Md5Renderer( Md5Model* model )
+Md5Renderer::Md5Renderer( Md5Model* model, DeviceContext& gl )
     : mesh_( NULL )
     , vb( NULL )
     , md5( model )
+    , GL(gl)
 {
-//    vb = new VertexBuffer;
+    vb = new VertexBuffer(GL);
     Md5Mesh& mesh = md5->meshes[0];
 
     MeshBuilder builder;
@@ -48,9 +50,9 @@ Md5Renderer::~Md5Renderer()
 void Md5Renderer::Draw( )
 {
     vb->BindAttributes();
-    //glDrawElements(
-    //    GL_TRIANGLES, mesh_->numIndexes(), 
-    //    GL_UNSIGNED_SHORT, (void*)0);
+    GL.DrawElements(
+        GL_TRIANGLES, mesh_->numIndexes(), 
+        GL_UNSIGNED_SHORT, (void*)0);
     vb->UnbindAttributes();
 }
 

@@ -25,8 +25,9 @@ private:
     MeshExt* mesh_;
     VertexBuffer* vb;
     resource::Md5Model* md5;
+    DeviceContext& GL;
 public:
-    Md5Renderer( resource::Md5Model* model );
+    Md5Renderer( resource::Md5Model* model, DeviceContext& gl );
     ~Md5Renderer();
 
     void Commit();
