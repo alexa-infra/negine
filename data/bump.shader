@@ -1,4 +1,4 @@
--- vertex
+#ifdef VERTEX_SHADER
 attribute vec2 tex;
 attribute vec3 position;
 attribute vec4 col;
@@ -18,7 +18,7 @@ varying vec3 halfVec;
 
 void main(void) {
     vec3 bitan = cross(n, t);
-    vec3 tmp = light - position;
+    vec3 tmp = light_pos - position;
     distance = length(tmp);
     light.x = dot(tmp, t);
     light.y = dot(tmp, bitan);
@@ -38,8 +38,9 @@ void main(void) {
 
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
 }
+#endif
 
--- pixel
+#ifdef PIXEL_SHADER
 uniform sampler2D diffuse;
 uniform sampler2D bump;
 
@@ -59,3 +60,4 @@ void main() {
 
     gl_FragColor = vec4(color * lamberFactor + vec3(1.0) * specFactor, alpha);
 }
+#endif
