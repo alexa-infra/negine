@@ -1,4 +1,5 @@
 #include "math/matrix.h"
+#include <math.h>
 
 namespace base
 {

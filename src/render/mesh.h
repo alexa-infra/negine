@@ -98,7 +98,7 @@ public:
 
     ~MeshExt()
     {
-        for(size_t i=0; i<attributes_.size(); i++)
+        for(u32 i=0; i<attributes_.size(); i++)
         {
             delete attributes_[i];
         }
@@ -121,7 +121,7 @@ public:
 
     void* findAttribute(VertexAttr attr)
     {
-        for(size_t i=0; i<attributes_.size(); i++)
+        for(u32 i=0; i<attributes_.size(); i++)
         {
             if (attributes_[i]->attr_ == attr)
             {

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <map>
-#include <list>
 #include "base/types.h"
 #include "game/componenttypes.h"
+#include <map>
+#include <list>
+#include <string>
 
 class Component;
 typedef std::list<Component*> ComponentList;

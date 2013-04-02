@@ -9,6 +9,7 @@
 #include "base/types.h"
 #include "render/glcontext.h"
 #include <map>
+#include <string>
 
 namespace base
 {

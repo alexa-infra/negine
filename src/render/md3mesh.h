@@ -8,6 +8,7 @@
 
 #include "base/types.h"
 #include <vector>
+#include <string>
 
 namespace base
 {
