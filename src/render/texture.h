@@ -9,6 +9,7 @@
 #include "base/types.h"
 #include "render/gpuresource.h"
 #include <map>
+#include <string>
 
 namespace base
 {
