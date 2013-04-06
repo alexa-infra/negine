@@ -27,64 +27,12 @@ if(APPLE)
     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++") 
-  option(BUILD_FOR_MACOS "MacOS" ON)
-  option(BUILD_FOR_IOS   "iOS"   OFF)
-  
-  if (BUILD_FOR_MACOS)
     set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa -framework OpenGL")
-  endif(BUILD_FOR_MACOS)
-  
-  if (BUILD_FOR_IOS)
-    
-    add_source_group("sources"         ${SRC_PATH}       SOURCES)
-
-    # message("My sources: ${SOURCES}")
-    
-    file(GLOB_RECURSE SOURCES
-        ${SRC_PATH}/*.h
-        ${SRC_PATH}/*.cpp
-        ${SRC_PATH}/*.cc
-        ${SRC_PATH}/*.c
-    )
-
-    set(IOS_FRAMEWORKS
-        Foundation
-        AudioToolbox
-        CoreGraphics
-        QuartzCore
-        UIKit
-        OpenGLES
-    )
-  
-    set(CMAKE_OSX_SYSROOT iphonesimulator5  .0)
-    set(CMAKE_OSX_ARCHITECTURES $(ARCHS_STANDARD_32_BIT))
-    
-    foreach(FW ${IOS_FRAMEWORKS})
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework ${FW}")
-    endforeach()
-    
-    # link_directories(\${HOME}/\${SDKROOT}/lib)
-
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.mycompany.\${PRODUCT_NAME:identifier}")
-
-    
-
-    add_executable(
-    negineApp
-    MACOSX_BUNDLE
-    ${SOURCES}
-    )
-
-    target_link_libraries(negineApp SDL)
-
-    # code signing
-    # set_target_properties(${NAME} PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer: My Name")
-  endif (BUILD_FOR_IOS)
-  
 endif(APPLE)
 if(WIN32)
+  set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /WX /GR-")
+  add_definitions(-D_HAS_EXCEPTIONS=0)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -WX")
 endif(WIN32)
 set(CMAKE_DEBUG_POSTFIX "_d")
 

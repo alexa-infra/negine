@@ -38,146 +38,131 @@ TEST( sjson, fail )
     EXPECT_FALSE(result);
 }
 
-void testSkipSpaces(const char* str, i32& pos)
+bool testSkipSpaces(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::skipWhiteSpace(&ss);
+    if (!sjson::skipWhiteSpace(&ss))
+        return false;
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
+    return true;
 }
 
 TEST( sjson, skipSpaces )
 {
     i32 index;
-    testSkipSpaces("  a", index);
+    EXPECT_TRUE(testSkipSpaces("  a", index));
     EXPECT_EQ(2, index);
-    testSkipSpaces("\t a", index);
+    EXPECT_TRUE(testSkipSpaces("\t a", index));
     EXPECT_EQ(2, index);
-    testSkipSpaces("\r\n\r\nbb", index);
+    EXPECT_TRUE(testSkipSpaces("\r\n\r\nbb", index));
     EXPECT_EQ(4, index);
-    testSkipSpaces("", index);
+    EXPECT_TRUE(testSkipSpaces("", index));
     EXPECT_EQ(0, index);
-    testSkipSpaces("afg", index);
+    EXPECT_TRUE(testSkipSpaces("afg", index));
     EXPECT_EQ(0, index);
-    testSkipSpaces("   ", index);
+    EXPECT_TRUE(testSkipSpaces("   ", index));
     EXPECT_EQ(3, index);
 }
 
 TEST( sjson, spacesAndComments )
 {
     i32 index;
-    testSkipSpaces(" // comment \n a", index);
+    EXPECT_TRUE(testSkipSpaces(" // comment \n a", index));
     EXPECT_EQ(14, index);
-    testSkipSpaces(" /* comment */ a", index);
+    EXPECT_TRUE(testSkipSpaces(" /* comment */ a", index));
     EXPECT_EQ(15, index);
-    EXPECT_THROW({
-        i32 index = 0;
-        testSkipSpaces(" /*  ", index);      
-    }, sjson::ParseException);
+    EXPECT_FALSE(testSkipSpaces(" /*  ", index));
 }
 
-void testCheckBounds(const char* str)
+bool testCheckBounds(const char* str)
 {
     std::istringstream ss(str);
-    sjson::checkBounds(&ss);
+    return sjson::checkBounds(&ss);
 }
 
 TEST( sjson, bounds )
 {
-    EXPECT_THROW({
-        testCheckBounds("");
-    }, sjson::ParseException);
-    EXPECT_NO_THROW({
-        testCheckBounds("abc");
-    });
+    EXPECT_FALSE(testCheckBounds(""));
+    EXPECT_TRUE(testCheckBounds("abc"));
 }
 
-void testSkipComment(const char* str, i32& pos)
+bool testSkipComment(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::skipComment(&ss);
+    if (!sjson::skipComment(&ss))
+        return false;
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
+    return true;
 }
 
 TEST( sjson, comments )
 {
     i32 index;
-    testSkipComment("// a\n", index);
+    EXPECT_TRUE(testSkipComment("// a\n", index));
     EXPECT_EQ(5, index);
-    testSkipComment("//\n//\na", index);
+    EXPECT_TRUE(testSkipComment("//\n//\na", index));
     EXPECT_EQ(3, index);
-    testSkipComment("//dd", index);
+    EXPECT_TRUE(testSkipComment("//dd", index));
     EXPECT_EQ(4, index);
-    testSkipComment("/**/", index);
+    EXPECT_TRUE(testSkipComment("/**/", index));
     EXPECT_EQ(4, index);
-    testSkipComment("/*\n\n\n*/a", index);
+    EXPECT_TRUE(testSkipComment("/*\n\n\n*/a", index));
     EXPECT_EQ(7, index);
-    testSkipComment("/*a*//*b*/tt", index);
+    EXPECT_TRUE(testSkipComment("/*a*//*b*/tt", index));
     EXPECT_EQ(5, index);
-    EXPECT_THROW({
-        i32 index=0;
-        testSkipComment("    /*", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index=0;
-        testSkipComment("/*", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index=0;
-        testSkipComment("/s  ", index);
-    }, sjson::ParseException);
+    EXPECT_FALSE(testSkipComment("    /*", index));
+    EXPECT_FALSE(testSkipComment("/*", index));
+    EXPECT_FALSE(testSkipComment("/s  ", index));
 }
 
-void testConsume(const char* str, const char* check, i32& index)
+bool testConsume(const char* str, const char* check, i32& index)
 {
     std::istringstream ss(str);
-    sjson::consume(&ss, check);
+    if (!sjson::consume(&ss, check))
+        return false;
     index = static_cast<i32>(ss.tellg());
     if (index == -1) index = strlen(str);
+    return true;
 }
 
 TEST( sjson, consume )
 {
     i32 index = 0;
-    testConsume("test string", "test", index);
+    EXPECT_TRUE(testConsume("test string", "test", index));
     EXPECT_EQ(4, index);
-    testConsume("true", "true", index);
+    EXPECT_TRUE(testConsume("true", "true", index));
     EXPECT_EQ(4, index);
-    EXPECT_THROW({
-        i32 index = 0;
-        testConsume("test", "testME", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index = 0;
-        testConsume("testHIM", "testME", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index = 0;
-        testConsume("test", "false", index);
-    }, sjson::ParseException);
+    EXPECT_FALSE(testConsume("test", "testME", index));
+    EXPECT_FALSE(testConsume("testHIM", "testME", index));
+    EXPECT_FALSE(testConsume("test", "false", index));
 }
 
-char testNextChar(const char* str)
+bool testNextChar(const char* str, char& ret)
 {
     std::istringstream ss(str);
-    return sjson::next(&ss);
+    return sjson::next(&ss, ret);
 }
 
 TEST( sjson, nextChar )
 {
-    EXPECT_EQ('t', testNextChar(" /* */ test"));
-    EXPECT_EQ('t', testNextChar(" /* */ /* */ test"));
-    EXPECT_EQ('t', testNextChar("test"));
-    EXPECT_THROW({
-        testNextChar(" // \n");
-    }, sjson::ParseException);
+    char ch;
+    EXPECT_TRUE(testNextChar(" /* */ test", ch));
+    EXPECT_EQ('t', ch);
+    EXPECT_TRUE(testNextChar(" /* */ /* */ test", ch));
+    EXPECT_EQ('t', ch);
+    EXPECT_TRUE(testNextChar("test", ch));
+    EXPECT_EQ('t', ch);
+    EXPECT_FALSE(testNextChar(" // \n", ch));
 }
 
 sjson::Variant testParseString(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::Variant ret = sjson::parseString(&ss);
+    sjson::Variant ret;
+    if (!sjson::parseString(&ss, ret))
+        return sjson::Variant(sjson::ValueType::typeNull);
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
@@ -200,24 +185,23 @@ TEST( sjson, string )
     ASSERT_TRUE(v.isString());
     EXPECT_STREQ("\n\r", v.asString().c_str());
     EXPECT_EQ(6, pos);
-    EXPECT_THROW({
-        i32 index = 0;
-        testParseString("asffa", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index = 0;
-        testParseString("\"asffa", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index = 0;
-        testParseString("\\easffa", index);
-    }, sjson::ParseException);
+    pos = 0;
+    v = testParseString("asffa", pos);
+    EXPECT_TRUE(v.isNull());
+    pos = 0;
+    v = testParseString("\"asffa", pos);
+    EXPECT_TRUE(v.isNull());
+    pos = 0;
+    v = testParseString("\\easffa", pos);
+    EXPECT_TRUE(v.isNull());
 }
 
 sjson::Variant testParseIdentifier(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::Variant ret = sjson::parseIdentifier(&ss);
+    sjson::Variant ret;
+    if (!sjson::parseIdentifier(&ss, ret))
+        return sjson::Variant(sjson::ValueType::typeNull);
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
@@ -245,16 +229,17 @@ TEST( sjson, identifier )
     ASSERT_TRUE(v.isString());
     EXPECT_STREQ("the value", v.asString().c_str());
     EXPECT_EQ(11, pos);
-    EXPECT_THROW({
-        i32 index = 0;
-        testParseIdentifier("=123", index);
-    }, sjson::ParseException);
+    pos = 0;
+    v = testParseIdentifier("=123", pos);
+    ASSERT_TRUE(v.isNull());
 }
 
 sjson::Variant testParseNumber(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::Variant ret = sjson::parseNumber(&ss);
+    sjson::Variant ret;
+    if (!sjson::parseNumber(&ss, ret))
+        return sjson::Variant(sjson::ValueType::typeNull);
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
@@ -279,7 +264,9 @@ TEST( sjson, parseNum )
 sjson::Variant testParseValue(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::Variant ret = sjson::parseValue(&ss);
+    sjson::Variant ret;
+    if (!sjson::parseValue(&ss, ret))
+        return sjson::Variant(sjson::ValueType::typeNull);
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
@@ -323,20 +310,20 @@ TEST( sjson, parseValue )
     ASSERT_FALSE(v.isInt());
     EXPECT_FLOAT_EQ(-12.5, v.asFloat<f32>());
 
-    EXPECT_THROW({
-        i32 index = 0;
-        testParseValue("", index);
-    }, sjson::ParseException);
-    EXPECT_THROW({
-        i32 index = 0;
-        testParseValue("  asdf", index);
-    }, sjson::ParseException);
+    pos = 0;
+    v = testParseValue("", pos);
+    ASSERT_TRUE(v.isNull());
+    pos = 0;
+    v = testParseValue("  asdf", pos);
+    ASSERT_TRUE(v.isNull());
 }
 
 sjson::Variant testParseObject(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::Variant ret = sjson::parseObject(&ss);
+    sjson::Variant ret;
+    if (!sjson::parseObject(&ss, ret))
+        return sjson::Variant(sjson::ValueType::typeNull);
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;
@@ -404,7 +391,9 @@ TEST( sjson, parseObject )
 sjson::Variant testParseArray(const char* str, i32& pos)
 {
     std::istringstream ss(str);
-    sjson::Variant ret = sjson::parseArray(&ss);
+    sjson::Variant ret;
+    if (!sjson::parseArray(&ss, ret))
+        return sjson::Variant(sjson::ValueType::typeNull);
     pos = static_cast<i32>(ss.tellg());
     if (pos == -1) pos = strlen(str);
     return ret;

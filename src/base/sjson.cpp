@@ -120,109 +120,123 @@ size_t Variant::size() const {
     return 0;
 }
 
-ParseException::ParseException(const std::string& reason)
-    : text(reason)
-{
-}
+#define CHECK_FALSE(x) if(!x) return false
 
-void skipWhiteSpace(std::istream* json)
+bool skipWhiteSpace(std::istream* json)
 {
     while(json->good()) {
         char ch = (char)json->peek();
         if (!json->good() || ch == EOF)
             break;
-        if (ch == '/')
-            skipComment(json);
-        else if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
+        if (ch == '/') {
+            CHECK_FALSE(skipComment(json));
+        } else if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
             json->get();
         else
             break;
     }
+    return true;
 }
 
-void checkBounds(std::istream* json) throw(ParseException)
+bool checkBounds(std::istream* json)
 {
     int res = json->peek();
-    if (!json->good() || res == EOF)
-        throw ParseException("checkBounds fails");
+    if (!json->good() || res == EOF) {
+        ERR("check bounds fails");
+        return false;
+    }
+    return true;
 }
 
-void skipComment(std::istream* json) throw(ParseException)
+bool skipComment(std::istream* json)
 {
-    consume(json, "/");
-    checkBounds(json);
+    CHECK_FALSE(consume(json, "/"));
+    CHECK_FALSE(checkBounds(json));
     
     char ch = (char)json->get();
     if (ch == '/') {
         while(json->good()) {
             if ((char)json->get() == '\n') {
-                return;
+                return true;
             }
         }
     } else if (ch == '*') {
         while(json->good())
             if ((char)json->get() == '*' && (char)json->get() == '/') {
-                return;
+                return true;
             }
-        checkBounds(json);
+        CHECK_FALSE(checkBounds(json));
     } else {
-        throw ParseException("incorrect comment");
+        ERR("incorrect comment");
+        return false;
     }
+    return true;
 }
 
-void consume(std::istream* json, const std::string& str) throw(ParseException)
+bool consume(std::istream* json, const std::string& str)
 {
     for(u32 i=0; i<str.length(); i++) {
-        checkBounds(json);
+        CHECK_FALSE(checkBounds(json));
         char ch = (char)json->peek();
-        if (ch != str[i])
-            throw ParseException("wrong format, consumed: " + str);
+        if (ch != str[i]) {
+            ERR("wrong format, consumed: %s", str.c_str());
+            return false;
+        }
         json->get();
     }
+    return true;
 }
 
-char next(std::istream* json) throw(ParseException)
+bool next(std::istream* json, char& ch)
 {
-    skipWhiteSpace(json);
-    checkBounds(json);
-    return (char)json->peek();
+    CHECK_FALSE(skipWhiteSpace(json));
+    CHECK_FALSE(checkBounds(json));
+    ch = (char)json->peek();
+    return true;
 }
 
-Variant parseString(std::istream* json) throw(ParseException)
+bool parseString(std::istream* json, Variant& result)
 {
-    consume(json, "\"");
+    CHECK_FALSE(consume(json, "\""));
     std::string ret;
     while(json->good()) {
-        checkBounds(json);
+        CHECK_FALSE(checkBounds(json));
         char ch = (char)json->peek();
         if (ch == '"')
             break;
         json->get();
         if (ch == '\\')
         {
-            checkBounds(json);
+            CHECK_FALSE(checkBounds(json));
             ch = (char)json->get();
             if (ch == '"' || ch == '\\' || ch == '/')
                 ret.push_back(ch);
             else if (ch == 't') ret.push_back('\t');
             else if (ch == 'n') ret.push_back('\n');
             else if (ch == 'r') ret.push_back('\r');
-            else throw ParseException("wrong string escaping");
+            else {
+                ERR("wrong string escaping");
+                return false;
+            }
         }
         else
         {
             ret.push_back(ch);
         }
     }
-    consume(json, "\"");
-    return Variant(ret);
+    CHECK_FALSE(consume(json, "\""));
+    result = Variant(ret);
+    return true;
 }
 
-Variant parseIdentifier(std::istream* json) throw(ParseException)
+bool parseIdentifier(std::istream* json, Variant& result)
 {
-    char ch = next(json);
-    if (ch == '"')
-        return parseString(json);
+    char ch;
+    CHECK_FALSE(next(json, ch));
+    if (ch == '"') {
+        CHECK_FALSE(parseString(json, result));
+        return true;
+    }
     std::string ret;
     while(json->good())
     {
@@ -235,9 +249,12 @@ Variant parseIdentifier(std::istream* json) throw(ParseException)
             break;
         json->get();
     }
-    if (ret.empty())
-        throw ParseException("empty identifier");
-    return Variant(ret);
+    if (ret.empty()) {
+        ERR("empty identifier");
+        return false;
+    }
+    result = Variant(ret);
+    return true;
 }
 
 bool isIdentifier(char ch)
@@ -245,7 +262,7 @@ bool isIdentifier(char ch)
     return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_');
 }
 
-Variant parseNumber(std::istream* json) throw(ParseException)
+bool parseNumber(std::istream* json, Variant& result)
 {
     const std::string chars("0123456789+-.eE");
     std::string ret;
@@ -262,181 +279,211 @@ Variant parseNumber(std::istream* json) throw(ParseException)
         ret.find('e') != std::string::npos ||
         ret.find('E') != std::string::npos)
     {
-        return Variant(atof(ret.c_str()));
+        result = Variant(atof(ret.c_str()));
+        return true;
     }
-    return Variant((i64)atol(ret.c_str()));
+    result = Variant((i64)atol(ret.c_str()));
+    return true;
 }
 
-Variant parseValue(std::istream* json) throw(ParseException)
+bool parseValue(std::istream* json, Variant& result)
 {
-    char ch = next(json);
+    char ch; 
+    CHECK_FALSE(next(json, ch));
     if (ch == '"')
-        return parseString(json);
+        return parseString(json, result);
     if (ch == 't') {
-        consume(json, "true");
-        return Variant(true);
+        CHECK_FALSE(consume(json, "true"));
+        result = Variant(true);
+        return true;
     }
     if (ch == 'f') {
-        consume(json, "false");
-        return Variant(false);
+        CHECK_FALSE(consume(json, "false"));
+        result = Variant(false);
+        return true;
     }
     if (ch == 'n') {
-        consume(json, "null");
-        return Variant(typeNull);
+        CHECK_FALSE(consume(json, "null"));
+        result = Variant(typeNull);
+        return true;
     }
     if (ch == '{')
-        return parseObject(json);
+        return parseObject(json, result);
     if (ch == '[')
-        return parseArray(json);
+        return parseArray(json, result);
     if ((ch >= '0' && ch <= '9') || ch == '-')
-        return parseNumber(json);
-    throw ParseException("unknown value");
+        return parseNumber(json, result);
+    ERR("unknown value");
+    return false;
 }
 
-Variant parseValueJSON(std::istream* json) throw(ParseException)
+bool parseValueJSON(std::istream* json, Variant& result)
 {
-    char ch = next(json);
+    char ch; 
+    CHECK_FALSE(next(json, ch));
     if (ch == '"')
-        return parseString(json);
+        return parseString(json, result);
     if (ch == 't') {
-        consume(json, "true");
-        return Variant(true);
+        CHECK_FALSE(consume(json, "true"));
+        result = Variant(true);
+        return true;
     }
     if (ch == 'f') {
-        consume(json, "false");
-        return Variant(false);
+        CHECK_FALSE(consume(json, "false"));
+        result = Variant(false);
+        return true;
     }
     if (ch == 'n') {
-        consume(json, "null");
-        return Variant(typeNull);
+        CHECK_FALSE(consume(json, "null"));
+        result = Variant(typeNull);
+        return true;
     }
     if (ch == '{')
-        return parseObjectJSON(json);
+        return parseObjectJSON(json, result);
     if (ch == '[')
-        return parseArrayJSON(json);
+        return parseArrayJSON(json, result);
     if ((ch >= '0' && ch <= '9') || ch == '-')
-        return parseNumber(json);
-    throw ParseException("unknown value");
+        return parseNumber(json, result);
+    ERR("unknown value");
+    return false;
 }
 
-Variant parseObject(std::istream* json) throw(ParseException)
+bool parseObject(std::istream* json, Variant& result)
 {
-    consume(json, "{");
+    CHECK_FALSE(consume(json, "{"));
     Variant obj(typeDict);
-    while(next(json) != '}')
+    char ch;
+    while(next(json, ch) && ch != '}')
     {
-        std::string key = parseIdentifier(json).asString();
-        if (obj.hasMember(key))
-            throw ParseException("duplicate key " + key);
-        skipWhiteSpace(json);
-        consume(json, "=");
-        skipWhiteSpace(json);
-        Variant value = parseValue(json);
+        Variant keyVar;
+        CHECK_FALSE(parseIdentifier(json, keyVar));
+        std::string key = keyVar.asString();
+        if (obj.hasMember(key)) {
+            ERR("duplicate key %s", key.c_str());
+            return false;
+        }
+        CHECK_FALSE(skipWhiteSpace(json));
+        CHECK_FALSE(consume(json, "="));
+        CHECK_FALSE(skipWhiteSpace(json));
+        Variant value;
+        CHECK_FALSE(parseValue(json, value));
         obj[key] = value;
-        if (next(json) == ',')
+        if (next(json, ch) && ch == ',')
             json->get();
     }
-    consume(json, "}");
-    return obj;
+    CHECK_FALSE(consume(json, "}"));
+    result = obj;
+    return true;
 }
 
-Variant parseObjectJSON(std::istream* json) throw(ParseException)
+bool parseObjectJSON(std::istream* json, Variant& result)
 {
-    consume(json, "{");
+    CHECK_FALSE(consume(json, "{"));
     Variant obj(typeDict);
-    while(next(json) != '}')
+    char ch;
+    while(next(json, ch) && ch != '}')
     {
         if (obj.size() > 0) {
-            consume(json, ",");
-            skipWhiteSpace(json);
+            CHECK_FALSE(consume(json, ","));
+            CHECK_FALSE(skipWhiteSpace(json));
         }
-        std::string key = parseString(json).asString();
-        if (obj.hasMember(key))
-            throw ParseException("duplicate key " + key);
-        skipWhiteSpace(json);
-        consume(json, ":");
-        skipWhiteSpace(json);
-        Variant value = parseValueJSON(json);
+        Variant keyVar;
+        CHECK_FALSE(parseString(json, keyVar));
+        std::string key = keyVar.asString();
+        if (obj.hasMember(key)) {
+            ERR("duplicate key %s", key.c_str());
+            return false;
+        }
+        CHECK_FALSE(skipWhiteSpace(json));
+        CHECK_FALSE(consume(json, ":"));
+        CHECK_FALSE(skipWhiteSpace(json));
+        Variant value;
+        CHECK_FALSE(parseValueJSON(json, value));
         obj[key] = value;
     }
-    consume(json, "}");
-    return obj;
+    CHECK_FALSE(consume(json, "}"));
+    result = obj;
+    return true;
 }
 
-Variant parseArray(std::istream* json) throw(ParseException)
+bool parseArray(std::istream* json, Variant& result)
 {
-    consume(json, "[");
+    CHECK_FALSE(consume(json, "["));
     Variant arr(typeArray);
-    while(next(json) != ']')
+    char ch;
+    while(next(json, ch) && ch != ']')
     {
-        Variant value = parseValue(json);
+        Variant value;
+        CHECK_FALSE(parseValue(json, value));
         arr.asArray().push_back(value);
-        if (next(json) == ',')
+        if (next(json, ch) && ch == ',')
             json->get();
     }
-    consume(json, "]");
-    return arr;
+    CHECK_FALSE(consume(json, "]"));
+    result = arr;
+    return true;
 }
 
-Variant parseArrayJSON(std::istream* json) throw(ParseException)
+bool parseArrayJSON(std::istream* json, Variant& result)
 {
-    consume(json, "[");
+    CHECK_FALSE(consume(json, "["));
     Variant arr(typeArray);
-    while(next(json) != ']')
+    char ch;
+    while(next(json, ch) && ch != ']')
     {
         if (arr.size() > 0) {
-            consume(json, ",");
-            skipWhiteSpace(json);
+            CHECK_FALSE(consume(json, ","));
+            CHECK_FALSE(skipWhiteSpace(json));
         }
-        Variant value = parseValue(json);
+        Variant value;
+        CHECK_FALSE(parseValue(json, value));
         arr.asArray().push_back(value);
     }
-    consume(json, "]");
-    return arr;
+    CHECK_FALSE(consume(json, "]"));
+    result = arr;
+    return true;
 }
 
-Variant parseRoot(std::istream* json) throw(ParseException)
+bool parseRoot(std::istream* json, Variant& result)
 {
     Variant obj(typeDict);
     while(json->good())
     {
         skipWhiteSpace(json);
-        std::string key = parseIdentifier(json).asString();
+        std::string key;
+        Variant keyVar;
+        CHECK_FALSE(parseIdentifier(json, keyVar));
+        key = keyVar.asString();
         skipWhiteSpace(json);
         consume(json, "=");
         skipWhiteSpace(json);
-        Variant value = parseValue(json);
+        Variant value;
+        CHECK_FALSE(parseValue(json, value));
         obj[key] = value;
-        skipWhiteSpace(json);
+        CHECK_FALSE(skipWhiteSpace(json));
         if ((char)json->peek() == ',') {
             json->get();
         } else if (json->peek() == EOF)
             break;
     }
-    return obj;
+    result = obj;
+    return true;
 }
 
 bool parse(std::istream* ss, Variant& obj, bool simplified)
 {
-    try
+    if (simplified)
     {
-        if (simplified)
-        {
-            obj = parseRoot(ss);
-        }
-        else
-        {
-            obj = parseValueJSON(ss);
-            if (obj.isArray() || obj.isMap())
-                return true;
-            ERR("array or object is expected");
-            return false;
-        }
-        return true;
+        return parseRoot(ss, obj);
     }
-    catch(ParseException& e)
+    else
     {
-        ERR("%s: %d", e.what(), ss->tellg());
+        bool result = parseValueJSON(ss, obj);
+        if (!result)
+            return false;
+        if (obj.isArray() || obj.isMap())
+            return true;
+        ERR("array or object is expected");
         return false;
     }
 }

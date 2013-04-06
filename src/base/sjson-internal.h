@@ -2,43 +2,27 @@
 
 #include "sjson.h"
 #include <istream>
-#include <exception>
-
-#ifdef COMPILER_MSVC
-// void f1(void) throw(int) {} - is not implemented :(
-#pragma warning( disable : 4290 )
-// noexcept is not implemented
-#define noexcept throw()
-#endif 
 
 namespace base {
 namespace sjson {
 
-    struct ParseException : public std::exception
-    {
-        std::string text;
-        ParseException(const std::string& reason);
-        virtual ~ParseException() noexcept {}
-        const char* what() const noexcept { return text.c_str(); }
-    };
-
-    void skipWhiteSpace(std::istream* json);
-    void checkBounds(std::istream* json) throw(ParseException);
-    void skipComment(std::istream* json) throw(ParseException);
-    void consume(std::istream* json, const std::string& str) throw(ParseException);
-    char next(std::istream* json) throw(ParseException);
-    Variant parseString(std::istream* json) throw(ParseException);
-    Variant parseIdentifier(std::istream* json) throw(ParseException);
+    bool skipWhiteSpace(std::istream* json);
+    bool checkBounds(std::istream* json);
+    bool skipComment(std::istream* json);
+    bool consume(std::istream* json, const std::string& str);
+    bool next(std::istream* json, char& ch);
+    bool parseString(std::istream* json, Variant& result);
+    bool parseIdentifier(std::istream* json, Variant& result);
     bool isIdentifier(char ch);
-    Variant parseNumber(std::istream* json)throw(ParseException);
-    Variant parseValue(std::istream* json) throw(ParseException);
-    Variant parseArray(std::istream* json) throw(ParseException);
-    Variant parseRoot(std::istream* json) throw(ParseException);
-    Variant parseObject(std::istream* json) throw(ParseException);
+    bool parseNumber(std::istream* json, Variant& result);
+    bool parseValue(std::istream* json, Variant& result);
+    bool parseArray(std::istream* json, Variant& result);
+    bool parseRoot(std::istream* json, Variant& result);
+    bool parseObject(std::istream* json, Variant& result);
 
-    Variant parseValueJSON(std::istream* json) throw(ParseException);
-    Variant parseArrayJSON(std::istream* json) throw(ParseException);
-    Variant parseObjectJSON(std::istream* json) throw(ParseException);
+    bool parseValueJSON(std::istream* json, Variant& result);
+    bool parseArrayJSON(std::istream* json, Variant& result);
+    bool parseObjectJSON(std::istream* json, Variant& result);
 
     void writeTabs(std::ostream* json, u32 tabs);
     void writeString(std::ostream* json, const std::string& str);
