@@ -20,7 +20,7 @@ if (NOT USE_SDL AND NOT USE_GLUT)
 endif()
 
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=c++11 -fno-exceptions -fno-rtti")
   add_definitions(-D_DEBUG)
 endif(UNIX)
 if(APPLE)
