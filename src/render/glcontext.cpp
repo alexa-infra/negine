@@ -9,6 +9,10 @@
     #include <windows.h>
 #endif
 
+#ifdef OS_MAC
+    #include <dlfcn.h>
+#endif
+
 namespace base
 {
 namespace opengl
@@ -39,40 +43,74 @@ TextureLoader* DeviceContext::texture_loader()
     return texture_loader_;
 }
 
+#ifdef OS_WIN
 class Library
 {
 public:
     Library(const char* name)
     {
-        m_module = LoadLibraryA(name);
-        ASSERT(m_module != 0);
+        module_ = LoadLibraryA(name);
+        ASSERT(module_ != 0);
     }
     ~Library()
     {
-        FreeLibrary(m_module);
+        FreeLibrary(module_);
     }
     void* getFunc(const char* func)
     {
-        return GetProcAddress(m_module, func);
+        return GetProcAddress(module_, func);
     }
 private:
-    HMODULE m_module;
+    HMODULE module_;
 };
+#elif defined(OS_MAC)
+class Library
+{
+public:
+    Library(const char* name)
+    {
+        module_ = dlopen(name, RTLD_NOW | RTLD_GLOBAL); 
+        ASSERT(module_ != 0);
+    }
+    ~Library()
+    {
+        dlclose(module_);
+    }
+    void* getFunc(const char* func)
+    {
+        return dlsym(module_, func);
+    }
+private:
+    void* module_;
+};
+#endif
 
 class GLFuncLoader
 {
 public:
+#ifdef OS_WIN
     GLFuncLoader()
         : libgl("opengl32.dll")
     {
         glGetProcAddress = (GLGETPROCADDRESSPROC)libgl.getFunc("wglGetProcAddress");
+        ASSERT(glGetProcAddress != NULL);
     }
+#elif defined(OS_MAC)
+    GLFuncLoader()
+        : libgl("/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib")
+    {
+    }
+#endif
 
     template<typename Func>
     Func getPointer(const char* name) {
+#ifdef OS_WIN
         void* ptr = glGetProcAddress(name);
         if (ptr == NULL)
             ptr = libgl.getFunc(name);
+#elif defined(OS_MAC)
+        void* ptr = libgl.getFunc(name);
+#endif
         return (Func)ptr;
     }
     
@@ -84,8 +122,10 @@ public:
     }
 private:
     Library libgl;
+#ifdef OS_WIN
     typedef void* (WINAPI *GLGETPROCADDRESSPROC)(const char*);
     GLGETPROCADDRESSPROC glGetProcAddress;
+#endif
 };
 
 DeviceContext::DeviceContext()
@@ -103,7 +143,7 @@ void DeviceContext::init()
     ASSERT(loader == NULL);
     loader = new GLFuncLoader;
 
-    #define LOAD_GL(name) loader->getPointerWrap(##name, "gl"#name );
+    #define LOAD_GL(name) loader->getPointerWrap( name, "gl"#name );
     
     LOAD_GL(ActiveTexture                    );
     LOAD_GL(AttachShader                     );
