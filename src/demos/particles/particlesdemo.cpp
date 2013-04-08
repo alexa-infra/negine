@@ -10,6 +10,7 @@
 #include "render/particlesystemrenderer.h"
 #include "render/texture.h"
 #include "render/gpuprogram.h"
+#include "math/matrix.h"
 
 using namespace base;
 using namespace base::math;
@@ -22,7 +23,7 @@ class Demo : public Application
 
     ParticleSystem* ps_;
     ParticleSystemRenderer* ps_renderer_;
-    Vector2 cursor_;
+    vec2f cursor_;
     Timer timer_;
 public:
     Demo() : program_(GL) {
@@ -78,7 +79,7 @@ protected:
             cursor_.y = -150.f;
         }
 
-        ps_->position = Vector3( cursor_.x, cursor_.y, 0 );
+        ps_->position = vec3f( cursor_.x, cursor_.y, 0.0f );
     }
 };
 

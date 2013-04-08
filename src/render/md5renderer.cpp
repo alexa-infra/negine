@@ -6,15 +6,14 @@
  **/
 #include "render/md5renderer.h"
 #include "render/glcontext.h"
-#include "math/vector-inl.h"
 
 using base::resource::Md5Mesh;
 using base::resource::Md5Model;
 using base::resource::Md5Model;
 using base::resource::Md5Joint;
 using base::resource::Md5Weight;
-using base::math::Vector2;
-using base::math::Vector3;
+using base::math::vec2f;
+using base::math::vec3f;
 
 namespace base
 {
@@ -70,16 +69,16 @@ void Md5Renderer::Commit()
 void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
 {
     const Md5Joint* skeleton = md5->baseSkel;
-    math::Vector2* tex = mesh_->findAttributeTyped<math::Vector2>(VertexAttrs::tagTexture);
-    math::Vector3* tangent = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTangent);
-    math::Vector3* pos = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-    math::Vector3* n = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagNormal);
+    math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
+    math::vec3f* tangent = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagTangent);
+    math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
+    math::vec3f* n = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagNormal);
 
     for ( i32 i = 0; i < mesh.num_verts; ++i ) {
         tex[i] = mesh.vertices[i].st;
-        pos[i].set( 0.0f );
-        n[i].set( 0.0f );
-        tangent[i].set( 0.0f );
+        pos[i] = vec3f( 0.0f );
+        n[i] = vec3f( 0.0f );
+        tangent[i] = vec3f( 0.0f );
 
         for ( u32 j = 0; j < mesh.vertices[i].count; j++ ) {
             const Md5Weight& weight = mesh.weights[mesh.vertices[i].start + j];
@@ -89,8 +88,8 @@ void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
             tangent[i] += joint.orient.RotatePoint( weight.tangent );
         }
 
-        n[i].Normalize();
-        tangent[i].Normalize();
+        n[i] = normalize( n[i] );
+        tangent[i] = normalize( tangent[i] );
         UpdateBoundingBox( pos[i] );
     }
 }
@@ -107,21 +106,21 @@ void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
 
 void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
 {
-    math::Vector2* tex = mesh_->findAttributeTyped<math::Vector2>(VertexAttrs::tagTexture);
-    math::Vector3* tangent = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagTangent);
-    math::Vector3* binormal = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagBinormal);
-    math::Vector3* pos = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-    math::Vector3* n = mesh_->findAttributeTyped<math::Vector3>(VertexAttrs::tagNormal);
+    math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
+    math::vec3f* tangent = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagTangent);
+    math::vec3f* binormal = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagBinormal);
+    math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
+    math::vec3f* n = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagNormal);
 
     for ( i32 i = 0; i < mesh.num_tris; i++ ) {
         f32 d0[5], d1[5];
-        math::Vector3 normal, tangents[2];
-        const Vector3* a = pos + mesh.triangles[i].index[0];
-        const Vector3* b = pos + mesh.triangles[i].index[1];
-        const Vector3* c = pos + mesh.triangles[i].index[2];
-        const Vector2* ta = tex + mesh.triangles[i].index[0];
-        const Vector2* tb = tex + mesh.triangles[i].index[1];
-        const Vector2* tc = tex + mesh.triangles[i].index[2];
+        vec3f normal, tangents[2];
+        const vec3f* a = pos + mesh.triangles[i].index[0];
+        const vec3f* b = pos + mesh.triangles[i].index[1];
+        const vec3f* c = pos + mesh.triangles[i].index[2];
+        const vec2f* ta = tex + mesh.triangles[i].index[0];
+        const vec2f* tb = tex + mesh.triangles[i].index[1];
+        const vec2f* tc = tex + mesh.triangles[i].index[2];
         d0[0] = b->x - a->x;
         d0[1] = b->y - a->y;
         d0[2] = b->z - a->z;
@@ -132,24 +131,24 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
         d1[2] = c->z - a->z;
         d1[3] = tc->x - ta->x;
         d1[4] = tc->y - ta->y;
-        normal = Vector3(
+        normal = vec3f(
                      d1[1] * d0[2] - d1[2] * d0[1],
                      d1[2] * d0[0] - d1[0] * d0[2],
                      d1[0] * d0[1] - d1[1] * d0[0]
                  );
-        normal.Normalize();
-        tangents[0] = Vector3(
+        normal = normalize( normal );
+        tangents[0] = vec3f(
                           d0[0] * d1[4] - d0[4] * d1[0],
                           d0[1] * d1[4] - d0[4] * d1[1],
                           d0[2] * d1[4] - d0[4] * d1[2]
                       );
-        tangents[0].Normalize();
-        tangents[1] = Vector3(
+        tangents[0] = normalize( tangents[0] );
+        tangents[1] = vec3f(
                           d0[3] * d1[0] - d0[0] * d1[3],
                           d0[3] * d1[1] - d0[1] * d1[3],
                           d0[3] * d1[2] - d0[2] * d1[3]
                       );
-        tangents[1].Normalize();
+        tangents[1] = normalize( tangents[1] );
 
         for ( int j = 0; j < 3; j++ ) {
             u32 idx = mesh.triangles[i].index[j];
@@ -160,17 +159,15 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
     }
 
     for ( i32 i = 0; i < mesh.num_verts; i++ ) {
-        n[i].Normalize();
-        f32 d = Dot( tangent[i], n[i] );
-        tangent[i] = tangent[i] - n[i] * d;
-        tangent[i].Normalize();
-        d = Dot( binormal[i], n[i] );
-        binormal[i] = binormal[i] - n[i] * d;
-        binormal[i].Normalize();
+        n[i] = normalize( n[i] );
+        f32 d = dot( tangent[i], n[i] );
+        tangent[i] = normalize( tangent[i] - n[i] * d );
+        d = dot( binormal[i], n[i] );
+        binormal[i] = normalize( binormal[i] - n[i] * d );
     }
 }
 
-void Md5Renderer::UpdateBoundingBox( math::Vector3& pos )
+void Md5Renderer::UpdateBoundingBox( math::vec3f& pos )
 {
     if ( boundingBox.min.x > pos.x ) {
         boundingBox.min.x = pos.x;

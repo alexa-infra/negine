@@ -5,8 +5,9 @@
  *              Victor Sukochev <sukochevvv@gmail.com>
  * \copyright   MIT License
  **/
+#pragma once
 
-#include "math/vector.h"
+#include "math/vec3.h"
 
 namespace base
 {
@@ -18,19 +19,19 @@ class GpuProgram;
 class WireBox
 {
 public:
-    void setMinPoint( const math::Vector3& minPoint );
-    void setMaxPoint( const math::Vector3& maxPoint );
-    void setMinMaxPoints( const math::Vector3& minPoint, const math::Vector3& maxPoint );
-    const math::Vector3& getMinPoint() const;
-    const math::Vector3& getMaxPoint() const;
+    void setMinPoint( const math::vec3f& minPoint );
+    void setMaxPoint( const math::vec3f& maxPoint );
+    void setMinMaxPoints( const math::vec3f& minPoint, const math::vec3f& maxPoint );
+    const math::vec3f& getMinPoint() const;
+    const math::vec3f& getMaxPoint() const;
 private:
-    math::Vector3 minPoint_;
-    math::Vector3 maxPoint_;
-    math::Vector3 points[8];
+    math::vec3f minPoint_;
+    math::vec3f maxPoint_;
+    math::vec3f points[8];
 
 public:
     WireBox();
-    WireBox( math::Vector3 minPoint, math::Vector3 maxPoin );
+    WireBox( math::vec3f minPoint, math::vec3f maxPoin );
     ~WireBox();
     void Draw( GpuProgram* program );
 private:

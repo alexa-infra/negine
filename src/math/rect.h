@@ -8,7 +8,7 @@
 
 #include "base/types.h"
 #include "math/mathlib.h"
-#include "math/vector.h"
+#include "math/vec2.h"
 
 namespace base
 {
@@ -198,8 +198,8 @@ public:
 
 
 struct RectF {
-    Vector2 position;
-    Vector2 size;
+    vec2f position;
+    vec2f size;
     f32 angle;
 
     RectF()
@@ -207,19 +207,19 @@ struct RectF {
         , angle( 0.f ) {
     }
 
-    RectF( const Vector2& pos_, const Vector2& size_, f32 angle_ )
+    RectF( const vec2f& pos_, const vec2f& size_, f32 angle_ )
         : position( pos_ )
         , size( size_ )
         , angle( angle_ ) {
     }
 
-    RectF( const Vector2& pos_, f32 size_ )
+    RectF( const vec2f& pos_, f32 size_ )
         : position( pos_ )
         , size( size_ )
         , angle( 0.f ) {
     }
 
-    void Points( Vector2* v ) const {
+    void Points( vec2f* v ) const {
         f32 c = cosf( angle );
         f32 s = sinf( angle );
         v[0] = position + rotate( point1(), c, s );
@@ -229,21 +229,21 @@ struct RectF {
     }
 
 private:
-    Vector2 point1() const {
-        return Vector2( -size.x, size.y );
+    vec2f point1() const {
+        return vec2f( -size.x, size.y );
     }
-    Vector2 point2() const {
-        return Vector2( size.x, size.y );
+    vec2f point2() const {
+        return vec2f( size.x, size.y );
     }
-    Vector2 point3() const {
-        return Vector2( size.x, -size.y );
+    vec2f point3() const {
+        return vec2f( size.x, -size.y );
     }
-    Vector2 point4() const {
-        return Vector2( -size.x, -size.y );
+    vec2f point4() const {
+        return vec2f( -size.x, -size.y );
     }
 
-    Vector2 rotate( Vector2 const& v, f32 c, f32 s ) const {
-        return Vector2( c * v.x - s * v.y, s * v.x + c * v.y );
+    vec2f rotate( vec2f const& v, f32 c, f32 s ) const {
+        return vec2f( c * v.x - s * v.y, s * v.x + c * v.y );
     }
 };
 

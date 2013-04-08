@@ -5,7 +5,6 @@
  **/
 #include "render/camera.h"
 #include "math/matrix-inl.h"
-#include "math/vector-inl.h"
 
 namespace base
 {
@@ -36,22 +35,22 @@ void Camera::UpdateOrientation()
     Matrix4 pitchRot = Matrix4::RotationX( pitch_ );
     Matrix4 orientation = headRot * pitchRot;
 
-    const Vector3 r( 1, 0, 0 );
-    const Vector3 u( 0, 1, 0 );
-    const Vector3 f( 0, 0, -1 );
+    const vec3f r( 1, 0, 0 );
+    const vec3f u( 0, 1, 0 );
+    const vec3f f( 0, 0, -1 );
 
-    right_   = Vector3( orientation * r );
-    up_      = Vector3( orientation * u );
-    forward_ = Vector3( orientation * f );
+    right_   = ( orientation * r ).xyz();
+    up_      = ( orientation * u ).xyz();
+    forward_ = ( orientation * f ).xyz();
 }
 
 void Camera::UpdateFrustum()
 {
     const Matrix4& m = clip_;
-    const math::Vector4 v1 = m.Row( 0 );
-    const math::Vector4 v2 = m.Row( 1 );
-    const math::Vector4 v3 = m.Row( 2 );
-    const math::Vector4 v4 = m.Row( 3 );
+    const math::vec4f v1 = m.Row( 0 );
+    const math::vec4f v2 = m.Row( 1 );
+    const math::vec4f v3 = m.Row( 2 );
+    const math::vec4f v4 = m.Row( 3 );
     planes_[0].set( v4 + v1 );
     planes_[1].set( v4 - v1 );
     planes_[2].set( v4 + v2 );

@@ -7,8 +7,11 @@
 #pragma once
 
 #include "base/types.h"
-#include "math/vector.h"
+#include "math/vec2.h"
+#include "math/vec3.h"
+#include "math/vec4.h"
 #include <list>
+#include <string>
 
 namespace base
 {
@@ -21,8 +24,8 @@ struct ParticleSystemSetting {
     f32 particle_lifetime;
     f32 particle_lifetime_spread;
 
-    math::Vector4 color_start;
-    math::Vector4 color_end;
+    math::vec4f color_start;
+    math::vec4f color_end;
 
     f32 size_start;
     f32 size_end;
@@ -41,13 +44,13 @@ struct Particle {
     f32 life_time;
     f32 life;
 
-    math::Vector2 position;
-    math::Vector2 speed;
+    math::vec2f position;
+    math::vec2f speed;
     f32 acceleration;
 
     f32 size;
     f32 rotation;
-    math::Vector4 color;
+    math::vec4f color;
 };
 typedef std::list<Particle*> ParticleList;
 
@@ -70,7 +73,7 @@ public:
 
     f32 lifetime;               //!< particle system lifetime
 
-    math::Vector3 position;           //!< center position
+    math::vec3f position;           //!< center position
 public:
     ParticleSystem( ParticleSystemSetting s );
 

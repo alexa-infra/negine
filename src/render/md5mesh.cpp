@@ -8,12 +8,12 @@ namespace base
 namespace resource
 {
 
-math::Vector3 Md5Joint::translate( const math::Vector3& v ) const
+math::vec3f Md5Joint::translate( const math::vec3f& v ) const
 {
     return orient.RotatePoint( v ) + pos;
 }
 
-void readVector( Lexer& reader, math::Vector3& vec )
+void readVector( Lexer& reader, math::vec3f& vec )
 {
     vec.x = reader.ReadFloat();
     vec.y = reader.ReadFloat();

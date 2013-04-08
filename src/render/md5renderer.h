@@ -37,7 +37,7 @@ private:
     void GenerateVertexes( resource::Md5Mesh& mesh );
     void GenerateIndexes( resource::Md5Mesh& mesh );
     void GenerateLightningInfo( resource::Md5Mesh& mesh );
-    void UpdateBoundingBox( math::Vector3& vetex );
+    void UpdateBoundingBox( math::vec3f& vetex );
 };
 
 } // namespace base

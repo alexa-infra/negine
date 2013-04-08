@@ -5,9 +5,8 @@
  * \copyright   MIT License
  **/
 #include "render/md3renderer.h"
-#include "math/mathlib.h"
 #include "render/glcontext.h"
-#include "math/vector.h"
+#include "math/vec4.h"
 
 using base::resource::Md3FrameData;
 using base::resource::Md3Mesh;
@@ -16,9 +15,9 @@ using base::resource::Md3TexCoord;
 using base::resource::Md3Model;
 using base::resource::Md3Surface;
 using base::math::pi;
-using base::math::Vector2;
-using base::math::Vector3;
-using base::math::Vector4;
+using base::math::vec2f;
+using base::math::vec3f;
+using base::math::vec4f;
 
 namespace base
 {
@@ -72,10 +71,10 @@ void Md3Renderer::Commit()
             }
         }
 
-        math::Vector2* tex = mesh->findAttributeTyped<math::Vector2>(VertexAttrs::tagTexture);
-        math::Vector3* pos = mesh->findAttributeTyped<math::Vector3>(VertexAttrs::tagPosition);
-        math::Vector3* n = mesh->findAttributeTyped<math::Vector3>(VertexAttrs::tagNormal);
-        math::Vector4* color = mesh->findAttributeTyped<math::Vector4>(VertexAttrs::tagColor);
+        math::vec2f* tex = mesh->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
+        math::vec3f* pos = mesh->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
+        math::vec3f* n = mesh->findAttributeTyped<math::vec3f>(VertexAttrs::tagNormal);
+        math::vec4f* color = mesh->findAttributeTyped<math::vec4f>(VertexAttrs::tagColor);
 
         for ( i32 j = 0; j < info.num_verts; j++ ) {
             Md3TexCoord& uv = md3.uv[j];
@@ -86,7 +85,7 @@ void Md3Renderer::Commit()
             pos[j].x = vert.coord[0] / 64.0f;
             pos[j].y = vert.coord[2] / 64.0f;
             pos[j].z = vert.coord[1] / 64.0f;
-            color[j] = Vector4( 1, 1, 1, 1 );
+            color[j] = vec4f( 1, 1, 1, 1 );
         }
 
         vbs[i]->SetVertexData( mesh->data(), mesh->rawSize());
@@ -106,7 +105,7 @@ void Md3Renderer::Draw( )
     }
 }
 
-void Md3Renderer::DecodeNormal( const u8* normal, Vector3& v )
+void Md3Renderer::DecodeNormal( const u8* normal, vec3f& v )
 {
     f32 const& zenith = normal[0];
     f32 const& azimuth = normal[1];

@@ -8,7 +8,8 @@
 #pragma once
 
 #include "base/types.h"
-#include "math/vector.h"
+#include "math/vec2.h"
+#include "math/vec3.h"
 #include "math/quat.h"
 #include <string>
 
@@ -25,14 +26,14 @@ class Md5Anim;
 struct Md5Joint {
     std::string name;
     i32 parent;
-    math::Vector3 pos;
+    math::vec3f pos;
     math::Quat orient;
 
-    math::Vector3 translate( const math::Vector3& v ) const;
+    math::vec3f translate( const math::vec3f& v ) const;
 };
 
 struct Md5Vertex {
-    math::Vector2 st;
+    math::vec2f st;
 
     u32 start;
     u32 count;
@@ -46,15 +47,15 @@ struct Md5Weight {
     i32 joint;
     f32 bias;
 
-    math::Vector3 pos;
+    math::vec3f pos;
 
-    math::Vector3 normal;
-    math::Vector3 tangent;
+    math::vec3f normal;
+    math::vec3f tangent;
 };
 
 struct Md5BoundingBox {
-    math::Vector3 min;
-    math::Vector3 max;
+    math::vec3f min;
+    math::vec3f max;
 };
 
 struct Md5Mesh {
@@ -131,7 +132,7 @@ public:
     math::Matrix4 transform;
 };
 
-void readVector( Lexer& reader, math::Vector3& vec );
+void readVector( Lexer& reader, math::vec3f& vec );
 void readQuat( Lexer& reader, math::Quat& q );
 
 }

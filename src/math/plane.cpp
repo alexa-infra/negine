@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "math/plane.h"
-#include "math/vector-inl.h"
 
 namespace base
 {
@@ -16,22 +15,22 @@ Plane::Plane()
     set( 0.f, 0.f, 0.f, 0.f );
 }
 
-void Plane::set( const Vector3* points )
+void Plane::set( const vec3f* points )
 {
     set( points[0], points[1], points[2] );
 }
 
-void Plane::set( const Vector3& p1, const Vector3& p2, const Vector3& p3 )
+void Plane::set( const vec3f& p1, const vec3f& p2, const vec3f& p3 )
 {
-    normal_ = Cross( p2 - p1, p3 - p1 );
-    distance_ = -Dot( normal_, p1 );
+    normal_ = cross( p2 - p1, p3 - p1 );
+    distance_ = -dot( normal_, p1 );
     Normalize();
 }
 
-void Plane::set( const Vector3& normal, const Vector3& planePoint )
+void Plane::set( const vec3f& normal, const vec3f& planePoint )
 {
     normal_ = normal;
-    distance_ = -Dot( normal, planePoint );
+    distance_ = -dot( normal, planePoint );
     Normalize();
 }
 
@@ -44,19 +43,19 @@ void Plane::set( const f32& a, const f32& b, const f32& c, const f32& d )
     Normalize();
 }
 
-Vector3 Plane::Projection( const Vector3& point ) const
+vec3f Plane::Projection( const vec3f& point ) const
 {
     return ( point - normal_ * Distance( point ) );
 }
 
-f32 Plane::Distance( const Vector3& point ) const
+f32 Plane::Distance( const vec3f& point ) const
 {
-    return ( Dot( normal_, point ) + distance_ );
+    return ( dot( normal_, point ) + distance_ );
 }
 
 void Plane::Normalize()
 {
-    f32 len = normal_.Length();
+    f32 len = length(normal_);
 
     if ( len < eps ) {
         return;
@@ -68,9 +67,9 @@ void Plane::Normalize()
     distance_ /= len;
 }
 
-i8 Plane::BoxOnPlaneSide( const Vector3& mmin, const Vector3& mmax ) const
+i8 Plane::BoxOnPlaneSide( const vec3f& mmin, const vec3f& mmax ) const
 {
-    Vector3 corners[2];
+    vec3f corners[2];
 
     for ( i32 i = 0; i < 3; i++ ) {
         if ( normal_[i] < 0 ) {

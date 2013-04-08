@@ -9,13 +9,10 @@
 #include "render/vertexbuffer.h"
 #include "render/mesh.h"
 #include <vector>
+#include "math/vec3.h"
 
 namespace base
 {
-namespace math
-{
-    class Vector3;
-}
 
 namespace opengl
 {
@@ -34,7 +31,7 @@ public:
 
     void Draw( );
 private:
-    static void DecodeNormal( const u8* normal, math::Vector3& v );
+    static void DecodeNormal( const u8* normal, math::vec3f& v );
 };
 
 }

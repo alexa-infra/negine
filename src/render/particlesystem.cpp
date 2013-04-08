@@ -5,7 +5,6 @@
  **/
 #include "render/particlesystem.h"
 #include <stdlib.h>
-#include "math/vector-inl.h"
 
 namespace base
 {
@@ -57,8 +56,8 @@ void ParticleSystem::add()
     p->life_time = rand() / ( f32 )( RAND_MAX ) * ( 2 * settings.particle_lifetime_spread ) + ( settings.particle_lifetime - settings.particle_lifetime_spread );
     p->life = 0;
     f32 direction = rand() / ( f32 )( RAND_MAX ) * ( 2 * math::pi );
-    p->position = math::Vector2( position );
-    p->speed = math::Vector2( cosf( direction ), sinf( direction ) );
+    p->position = position.xy(); 
+    p->speed = math::vec2f( cosf( direction ), sinf( direction ) );
     p->speed *= settings.speed * ( rand() / ( f32 )( RAND_MAX ) );
     p->acceleration = rand() / ( f32 )( RAND_MAX ) * 200.0f;
     p->size = settings.size_start;
@@ -101,8 +100,8 @@ void ParticleSystem::update( f32 frame_time )
         p->color[1] = settings.color_start[1] * ( 1 - t ) + settings.color_end[1] * t;
         p->color[2] = settings.color_start[2] * ( 1 - t ) + settings.color_end[2] * t;
         p->color[3] = settings.color_start[3] * ( 1 - t ) + settings.color_end[3] * t;
-        math::Vector2 ppos = p->position - math::Vector2( position );
-        p->position = p->speed * t + p->speed.Normalized() * p->acceleration * t * t / 2.0f;
+        math::vec2f ppos = p->position - position.xy();
+        p->position = p->speed * t + normalize( p->speed ) * p->acceleration * t * t / 2.0f;
         ++it;
     }
 

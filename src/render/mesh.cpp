@@ -6,12 +6,12 @@
 #include "render/mesh.h"
 #include "render/vertexbuffer.h"
 #include "render/glcontext.h"
-#include "math/vector.h"
+#include "math/vec4.h"
 #include "base/debug.h"
 
-using base::math::Vector2;
-using base::math::Vector3;
-using base::math::Vector4;
+using base::math::vec2f;
+using base::math::vec3f;
+using base::math::vec4f;
 
 namespace base
 {
@@ -55,17 +55,17 @@ u32 GetSize( VertexAttr attr )
 {
     switch ( attr ) {
     case tagPosition:
-        return sizeof(Vector3);
+        return sizeof(vec3f);
     case tagNormal:
-        return sizeof(Vector3);
+        return sizeof(vec3f);
     case tagTexture:
-        return sizeof(Vector2);
+        return sizeof(vec2f);
     case tagTangent:
-        return sizeof(Vector3);
+        return sizeof(vec3f);
     case tagBinormal:
-        return sizeof(Vector3);
+        return sizeof(vec3f);
     case tagColor:
-        return sizeof(Vector4);
+        return sizeof(vec4f);
     default:
         return 0;
     }

@@ -4,7 +4,7 @@
  * \copyright   MIT License
  **/
 #include "render/gpuprogram.h"
-#include "math/vector.h"
+#include "math/vec4.h"
 #include "math/matrix-inl.h"
 #include "render/texture.h"
 #include <memory>
@@ -115,13 +115,13 @@ void GpuProgram::set_uniform_param<Matrix4>( const UniformVar& uniform, const Ma
 }
 
 template<>
-void GpuProgram::set_uniform_param<Vector4>( const UniformVar& uniform, const Vector4& v )
+void GpuProgram::set_uniform_param<vec4f>( const UniformVar& uniform, const vec4f& v )
 {
     GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
 }
 
 template<>
-void GpuProgram::set_uniform_param<Vector3>( const UniformVar& uniform, const Vector3& v )
+void GpuProgram::set_uniform_param<vec3f>( const UniformVar& uniform, const vec3f& v )
 {
     GL.Uniform3f( uniform.location, v.x, v.y, v.z );
 }

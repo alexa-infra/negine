@@ -31,12 +31,12 @@ Quat::Quat( f32 _x, f32 _y, f32 _z, f32 _w )
     Set( _x, _y, _z, _w );
 }
 
-Quat::Quat( const Vector3& v )
+Quat::Quat( const vec3f& v )
 {
     Set( v.x, v.y, v.z, 0.0f );
 }
 
-Quat::Quat( const Vector3& axis, f32 angle )
+Quat::Quat( const vec3f& axis, f32 angle )
 {
     Set( axis, angle );
 }
@@ -62,7 +62,7 @@ void Quat::Set( f32 _x, f32 _y, f32 _z, f32 _w )
     w = _w;
 }
 
-void Quat::Set( const Vector3& axis, f32 angle )
+void Quat::Set( const vec3f& axis, f32 angle )
 {
     ( *this ) = GetRotation( axis, angle );
 }
@@ -85,9 +85,9 @@ void Quat::Set( const Matrix4& _matrix )
 {
 }
 
-Vector3 Quat::getXYZ() const
+vec3f Quat::getXYZ() const
 {
-    return Vector3( x, y, z );
+    return vec3f( x, y, z );
 }
 
 Quat Quat::operator+ ( const Quat& _q ) const
@@ -138,12 +138,12 @@ Quat Quat::operator* ( const Quat& _q ) const
                  w * _q.w - x * _q.x - y * _q.y - z * _q.z );
 };
 
-Vector3 Quat::RotatePoint( const Vector3& v ) const
+vec3f Quat::RotatePoint( const vec3f& v ) const
 {
     Quat p( v );
     Quat inv = GetConjugated();
     Quat final = *this * p * inv;
-    return Vector3( final.x, final.y, final.z );
+    return vec3f( final.x, final.y, final.z );
 }
 
 bool Quat::operator== ( const Quat& q ) const
@@ -187,10 +187,10 @@ Quat Quat::GetZero()
     return Quat( 0, 0, 0, 1 );
 }
 
-Quat Quat::GetRotation( const Vector3& axis, f32 angle )
+Quat Quat::GetRotation( const vec3f& axis, f32 angle )
 {
     Quat q = GetZero();
-    f32 len = axis.Length();
+    f32 len = length(axis);
 
     if ( len ) {
         len = 1.0f / len;
@@ -209,20 +209,20 @@ Quat Quat::GetRotation( const Vector3& axis, f32 angle )
 
 Quat Quat::GetRotationX( f32 angle )
 {
-    return Quat::GetRotation( Vector3( 1, 0, 0 ), angle );
+    return Quat::GetRotation( vec3f( 1, 0, 0 ), angle );
 }
 
 Quat Quat::GetRotationY( f32 angle )
 {
-    return Quat::GetRotation( Vector3( 0, 1, 0 ), angle );
+    return Quat::GetRotation( vec3f( 0, 1, 0 ), angle );
 }
 
 Quat Quat::GetRotationZ( f32 angle )
 {
-    return Quat::GetRotation( Vector3( 0, 0, 1 ), angle );
+    return Quat::GetRotation( vec3f( 0, 0, 1 ), angle );
 }
 
-void Quat::Rotate( const Vector3& axis, const f32& angle )
+void Quat::Rotate( const vec3f& axis, const f32& angle )
 {
     *this *= GetRotation( axis, angle );
 }
@@ -298,9 +298,9 @@ Matrix4 Quat::GetMatrix() const
     wx = w * x2;
     wy = w * y2;
     wz = w * z2;
-    m.SetCol1( Vector4( 1.0f - ( yy + zz ), xy - wz, xz + wy, 0.0f ) );
-    m.SetCol2( Vector4( xy + wz, 1.0f - ( xx + zz ), yz - wx, 0.0f ) );
-    m.SetCol3( Vector4( xz - wy, yz + wx, 1.0f - ( xx + yy ), 0.0f ) );
+    m.SetCol1( vec4f( 1.0f - ( yy + zz ), xy - wz, xz + wy, 0.0f ) );
+    m.SetCol2( vec4f( xy + wz, 1.0f - ( xx + zz ), yz - wx, 0.0f ) );
+    m.SetCol3( vec4f( xz - wy, yz + wx, 1.0f - ( xx + yy ), 0.0f ) );
     return m;
 }
 

@@ -10,7 +10,6 @@
 #include <unordered_map>
 #include <string>
 #include "render/mesh.h"
-#include "math/matrix.h"
 #include "base/log.h"
 
 namespace base

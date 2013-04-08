@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "math/vector.h"
+#include "math/vec3.h"
 #include "math/matrix.h"
 #include "math/plane.h"
 
@@ -24,11 +24,11 @@ private:
     math::Matrix4 modelview_;
     math::Matrix4 clip_;
 
-    math::Vector3 forward_;
-    math::Vector3 right_;
-    math::Vector3 up_;
+    math::vec3f forward_;
+    math::vec3f right_;
+    math::vec3f up_;
 
-    math::Vector3 position_;
+    math::vec3f position_;
 
     f32 pitch_;
     f32 head_;
@@ -40,20 +40,20 @@ private:
 public:
     Camera();
 
-    const math::Vector3& forward() const {
+    const math::vec3f& forward() const {
         return forward_;
     }
-    const math::Vector3& right() const {
+    const math::vec3f& right() const {
         return right_;
     }
-    const math::Vector3& up() const {
+    const math::vec3f& up() const {
         return up_;
     }
 
-    void set_position( const math::Vector3& v ) {
+    void set_position( const math::vec3f& v ) {
         position_ = v;
     }
-    const math::Vector3& position() const {
+    const math::vec3f& position() const {
         return position_;
     }
 

@@ -13,7 +13,7 @@
 #include "render/gpuprogram.h"
 #include "render/wirebox.h"
 #include "math/matrix-inl.h"
-#include "math/vector-inl.h"
+#include "math/vec3.h"
 
 using namespace base;
 using namespace base::math;
@@ -37,7 +37,7 @@ public:
         : program_(GL)
         , program_wirebox_(GL)
     {
-        camera_.set_position( Vector3( 0.f, 0.f, 500.f ) );
+        camera_.set_position( vec3f( 0.f, 0.f, 500.f ) );
         camera_.set_pitch( 0 );
         camera_.set_head( 180 * deg_to_rad );
         camera_.set_aspect( width_ / ( f32 )height_ );
@@ -46,7 +46,7 @@ public:
         camera_.set_zFar( 1000 );
         camera_.Update();
         modelTransform_ = Matrix4::Identity();
-        modelTransform_ *= Matrix4::Translation( Vector3( 0, 0, 450 ) );
+        modelTransform_ *= Matrix4::Translation( vec3f( 0, 0, 450 ) );
         modelTransform_ *= Matrix4::RotationX( -90 * deg_to_rad );
         modelTransform_ *= Matrix4::RotationZ( 180 * deg_to_rad );
         program_.create( "bump.shader.meta" );
@@ -60,8 +60,8 @@ public:
         wire_box_ = new WireBox( md5_renderer_->boundingBox.min,
                                  md5_renderer_->boundingBox.max );
         f32 box_radius  = 600.0f;
-        camera_wirebox_ = new WireBox ( Vector3( -1 * box_radius, -1 * box_radius, -1 * box_radius ),
-                                        Vector3( box_radius, box_radius, box_radius ) );
+        camera_wirebox_ = new WireBox ( vec3f( -1 * box_radius, -1 * box_radius, -1 * box_radius ),
+                                        vec3f( box_radius, box_radius, box_radius ) );
     }
     virtual ~Demo() {
         program_.Destroy();

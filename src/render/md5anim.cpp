@@ -139,24 +139,24 @@ void Md5Anim::BuildFrameSkeleton( u32 frameIndex )
 {
     for ( u32 i = 0; i < num_joints; ++i ) {
         const BaseframeJoint& baseJoint = baseFrame[i];
-        math::Vector3 animatedPos;
+        math::vec3f animatedPos;
         math::Quat    animatedOrient;
         i32 j = 0;
         animatedPos    = baseJoint.pos;
         animatedOrient = baseJoint.orient;
 
         if ( jointInfos[i].flags & 1 ) { //Tx
-            animatedPos.array[0] = animFrameData[jointInfos[i].start_index + j];
+            animatedPos[0] = animFrameData[jointInfos[i].start_index + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 2 ) { //Ty
-            animatedPos.array[1] = animFrameData[jointInfos[i].start_index + j];
+            animatedPos[1] = animFrameData[jointInfos[i].start_index + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 4 ) { //Tz
-            animatedPos.array[2] = animFrameData[jointInfos[i].start_index + j];
+            animatedPos[2] = animFrameData[jointInfos[i].start_index + j];
             ++j;
         }
 
@@ -186,7 +186,7 @@ void Md5Anim::BuildFrameSkeleton( u32 frameIndex )
             thisJoint.orient = animatedOrient;
         } else {
             Md5Joint& parentJoint = skelFrames[frameIndex][parent];
-            math::Vector3 rotatedPos = parentJoint.orient.RotatePoint( animatedPos );
+            math::vec3f rotatedPos = parentJoint.orient.RotatePoint( animatedPos );
             thisJoint.pos = rotatedPos + parentJoint.pos;
             thisJoint.orient = parentJoint.orient * animatedOrient;
             thisJoint.orient.Normalize();

@@ -5,9 +5,9 @@
  **/
 #include "gtest/gtest.h"
 #include "math/quat.h"
-#include "math/vector-inl.h"
+#include "math/vec3.h"
 
-using base::math::Vector3;
+using base::math::vec3f;
 using base::math::Quat;
 using base::math::Matrix4;
 using base::f32;
@@ -17,10 +17,10 @@ TEST( quat, sum )
     const Quat a( 1.f, 2.f, 3.f, 4.f );
     const Quat b( 2.f, 3.f, 4.f, 5.f );
     Quat c = a + b;
-    EXPECT_TRUE( Vector3( 3.f, 5.f, 7.f ) == c.getXYZ() );
+    EXPECT_TRUE( vec3f( 3.f, 5.f, 7.f ) == c.getXYZ() );
     EXPECT_FLOAT_EQ( 9., c.w );
     c = b - a;
-    EXPECT_TRUE( Vector3( 1.f, 1.f, 1.f ) == c.getXYZ() );
+    EXPECT_TRUE( vec3f( 1.f, 1.f, 1.f ) == c.getXYZ() );
     EXPECT_FLOAT_EQ( 1.f, c.w );
 }
 
@@ -33,15 +33,15 @@ TEST( quat, scalar )
 
 TEST( quat, cross_product )
 {
-    const Vector3 v1( 1.f, 2.f, 3.f );
+    const vec3f v1( 1.f, 2.f, 3.f );
     const f32 w1 = 4.f;
-    const Vector3 v2( 2.f, 3.f, 4.f );
+    const vec3f v2( 2.f, 3.f, 4.f );
     const f32 w2 = 5.f;
     Quat a( v1.x, v1.y, v1.z, w1 );
     Quat b( v2.x, v2.y, v2.z, w2 );
     Quat c = a * b;
-    Vector3 expectXYZ = Cross( v1, v2 ) + v2 * w1 + v1 * w2;
-    f32 expectW = w1 * w2 - Dot( v1, v2 );
+    vec3f expectXYZ = cross( v1, v2 ) + v2 * w1 + v1 * w2;
+    f32 expectW = w1 * w2 - dot( v1, v2 );
     Quat expected( expectXYZ );
     expected.w = expectW;
     EXPECT_EQ( expected, c );
@@ -64,9 +64,9 @@ TEST( quat, conjugate )
 TEST( quat, rotate_vector )
 {
     const Quat a( 1.f, 2.f, 3.f, 4.f );
-    const Vector3 b( 2.f, 3.f, 4.f );
-    Vector3 c = a.RotatePoint( b );
+    const vec3f b( 2.f, 3.f, 4.f );
+    vec3f c = a.RotatePoint( b );
     Quat temp = a * Quat( b.x, b.y, b.z, 0.f ) * a.GetConjugated();
-    Vector3 expected = temp.getXYZ();
+    vec3f expected = temp.getXYZ();
     EXPECT_EQ( expected, c );
 }

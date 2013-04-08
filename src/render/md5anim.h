@@ -9,7 +9,7 @@
 
 #include "base/types.h"
 #include "render/md5mesh.h"
-#include "math/vector.h"
+#include "math/vec3.h"
 #include "math/quat.h"
 
 namespace base
@@ -27,7 +27,7 @@ struct JointInfo {
 
 //! Base frame joint
 struct BaseframeJoint {
-    math::Vector3 pos;
+    math::vec3f pos;
     math::Quat    orient;
 };
 
