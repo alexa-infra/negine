@@ -9,7 +9,7 @@
     #include <windows.h>
 #endif
 
-#ifdef OS_MAC
+#ifdef OS_POSIX
     #include <dlfcn.h>
 #endif
 
@@ -63,7 +63,7 @@ public:
 private:
     HMODULE module_;
 };
-#elif defined(OS_MAC)
+#elif defined(OS_POSIX)
 class Library
 {
 public:
@@ -100,6 +100,11 @@ public:
         : libgl("/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib")
     {
     }
+#elif defined(OS_LINUX)
+    GLFuncLoader()
+        : libgl("libGL.so.1")
+    {
+    }
 #endif
 
     template<typename Func>
@@ -108,7 +113,7 @@ public:
         void* ptr = glGetProcAddress(name);
         if (ptr == NULL)
             ptr = libgl.getFunc(name);
-#elif defined(OS_MAC)
+#elif defined(OS_POSIX)
         void* ptr = libgl.getFunc(name);
 #endif
         return (Func)ptr;

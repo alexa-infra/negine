@@ -17,10 +17,10 @@ CubeMesh::CubeMesh()
 //    buffer_ = new VertexBuffer();
     buffer_->SetVertexData(&vv.front(), vv.size() * sizeof(CubeVertex));
     buffer_->SetIndexData(&ff.front(), ff.size() * sizeof(u32));
-    buffer_->EnableAttribute(VertexAttrs::tagPosition, sizeof(CubeVertex), (void*)offsetof(CubeVertex, position));
-    buffer_->EnableAttribute(VertexAttrs::tagNormal, sizeof(CubeVertex), (void*)offsetof(CubeVertex, normal));
+//    buffer_->EnableAttribute(VertexAttrs::tagPosition, sizeof(CubeVertex), (void*)offsetof(CubeVertex, position));
+//    buffer_->EnableAttribute(VertexAttrs::tagNormal, sizeof(CubeVertex), (void*)offsetof(CubeVertex, normal));
     //buffer_->EnableAttribute(VertexAttrs::tagTexture, sizeof(CubeVertex), (void*)offsetof(CubeVertex, tex));
-    buffer_->EnableAttribute(VertexAttrs::tagColor, sizeof(CubeVertex), (void*)offsetof(CubeVertex, color));
+//    buffer_->EnableAttribute(VertexAttrs::tagColor, sizeof(CubeVertex), (void*)offsetof(CubeVertex, color));
     buffer_->Load();
 }
 
