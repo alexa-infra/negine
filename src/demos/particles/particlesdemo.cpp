@@ -46,8 +46,8 @@ public:
     }
 protected:
     void OnFrame() {
-        GL.Clear( GL_COLOR_BUFFER_BIT );
         GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+        GL.Clear( GL_COLOR_BUFFER_BIT );
         GL.Disable( GL_DEPTH_TEST );
         GL.Enable( GL_BLEND );
         GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
