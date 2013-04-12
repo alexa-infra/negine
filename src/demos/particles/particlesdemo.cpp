@@ -11,6 +11,7 @@
 #include "render/texture.h"
 #include "render/gpuprogram.h"
 #include "math/matrix.h"
+#include "math/matrix-inl.h"
 
 using namespace base;
 using namespace base::math;
@@ -25,6 +26,7 @@ class Demo : public Application
     ParticleSystemRenderer* ps_renderer_;
     vec2f cursor_;
     Timer timer_;
+    ParameterMap params_;
 public:
     Demo() : program_(GL) {
         ParticleSystemSetting ss;
@@ -33,6 +35,9 @@ public:
         ps_ = new ParticleSystem( ss );
         ps_renderer_ = new ParticleSystemRenderer( ps_, GL );
         program_.create( "hud.shader.meta" );
+        params_["projection_matrix"] = Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 );
+        params_["modelview_matrix"] = Matrix4::Identity();
+        params_["diffuse"] = ps_renderer_->texture();
     }
     virtual ~Demo() {
         program_.Destroy();
@@ -47,8 +52,7 @@ protected:
         GL.Enable( GL_BLEND );
         GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         program_.Bind();
-        program_.set_uniform( "projection_matrix", Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 ) );
-        program_.set_uniform( "modelview_matrix", Matrix4::Identity() );
+        program_.setParams(params_);
         f32 frame_time = timer_.Elapsed() / 1000.0f;
         timer_.Reset();
         ps_->update( frame_time );

@@ -73,9 +73,13 @@ ParticleSystemRenderer::~ParticleSystemRenderer()
     delete mesh_;
 }
 
+Texture* ParticleSystemRenderer::texture()
+{
+    return texture_;
+}
+
 void ParticleSystemRenderer::Draw( GpuProgram* program )
 {
-    program->set_uniform( "diffuse", texture_ );
     vbo_->BindAttributes( );
 
     GL.DrawElements(

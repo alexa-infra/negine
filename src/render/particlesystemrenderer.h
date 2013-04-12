@@ -34,6 +34,7 @@ public:
     ParticleSystemRenderer( resource::ParticleSystem* ps, DeviceContext& gl );
     ~ParticleSystemRenderer();
 
+    Texture* texture();
     void Commit();
     void Draw( GpuProgram* binding );
 };
