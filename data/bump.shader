@@ -7,8 +7,8 @@ attribute vec3 t;
 
 uniform mat4 projection_matrix;
 uniform mat4 modelview_matrix;
-uniform vec3 light_pos;
-uniform vec3 camera_pos;
+uniform vec4 light_pos;
+uniform vec4 camera_pos;
 
 varying vec2 tex0;
 varying vec3 eye;
@@ -17,25 +17,24 @@ varying float distance;
 varying vec3 halfVec;
 
 void main(void) {
-    vec3 bitan = cross(n, t);
-    vec3 tmp = light_pos - position;
+    vec3 b = cross(n, t);
+    vec3 tmp = light_pos.xyz - position;
     distance = length(tmp);
     light.x = dot(tmp, t);
-    light.y = dot(tmp, bitan);
+    light.y = dot(tmp, b);
     light.z = dot(tmp, n);
     light = normalize(light);
 
-    tmp = camera_pos - position;
+    tmp = camera_pos.xyz - position;
     halfVec.x = dot(tmp, t);
-    halfVec.y = dot(tmp, bitan);
+    halfVec.y = dot(tmp, b);
     halfVec.z = dot(tmp, n);
     halfVec = normalize(halfVec);
     halfVec = (halfVec + light) / 2.0;
     halfVec = normalize(halfVec);
 
-    eye = camera_pos;
+    eye = camera_pos.xyz;
     tex0 = tex;
-
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
 }
 #endif

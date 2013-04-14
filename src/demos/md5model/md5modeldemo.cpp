@@ -12,7 +12,7 @@
 #include "render/texture.h"
 #include "render/gpuprogram.h"
 #include "math/matrix-inl.h"
-#include "math/vec3.h"
+#include "math/vec4.h"
 
 using namespace base;
 using namespace base::math;
@@ -22,7 +22,6 @@ using namespace base::resource;
 class Demo : public Application
 {
     GpuProgram        program_;
-    GpuProgram        program_wirebox_;
     Camera          camera_;
     Matrix4         modelTransform_;
     Md5Renderer*    md5_renderer_;
@@ -32,7 +31,6 @@ class Demo : public Application
 public:
     Demo()
         : program_(GL)
-        , program_wirebox_(GL)
     {
         camera_.set_position( vec3f( 0.f, 0.f, 500.f ) );
         camera_.set_pitch( 0 );
@@ -63,8 +61,8 @@ public:
     }
 protected:
     void OnFrame() {
-        GL.Clear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+        GL.Clear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         GL.Enable( GL_DEPTH_TEST );
         program_.Bind();
 
@@ -73,8 +71,8 @@ protected:
         params["bump"] = texture_bump_;
         params["projection_matrix"] = camera_.GetProjection();
         params["modelview_matrix"] = camera_.GetModelView() * modelTransform_;
-        params["camera_pos"] = camera_.position();
-        params["light_pos"] = camera_.position();
+        params["camera_pos"] = vec4f(camera_.position(), 1.0f);
+        params["light_pos"] = vec4f(camera_.position(), 1.0f);
         program_.setParams(params);
 
         //program_.set_uniform( "diffuse", texture_ );

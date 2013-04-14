@@ -232,6 +232,7 @@ bool GpuProgram::createMeta( const std::string& filename )
             pixel_shader_->status().c_str());
         return false;
     }
+    WARN(pixel_shader_->status().c_str());
     
     source[2] = "#define VERTEX_SHADER\n ";
     if (!vertex_shader_->Create(ShaderTypes::VERTEX, source, 4))
@@ -241,6 +242,7 @@ bool GpuProgram::createMeta( const std::string& filename )
             vertex_shader_->status().c_str());
         return false;
     }
+    WARN(vertex_shader_->status().c_str());
     
     id_ = GL.CreateProgram( );
     
@@ -268,6 +270,7 @@ bool GpuProgram::createMeta( const std::string& filename )
             filename.c_str(), status().c_str());
         return false;
     }
+    WARN(status().c_str());
     
     get_uniforms_list();
     
