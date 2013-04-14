@@ -108,7 +108,7 @@ void GpuProgram::setParams(const ParameterMap& params)
         const UniformVar& uniform = uni_binding_[i];
         ParameterMap::const_iterator it = params.find(uniform.name);
         if (it == params.end()) {
-            ERR("Uniform '%s' us not supplied", uniform.name.c_str());
+            ERR("Uniform '%s' is not supplied", uniform.name.c_str());
             return;
         }
         setParam(uniform, it->second, samplerIdx);
@@ -141,13 +141,13 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
         }
         default:
         {
-            ERR("Uniform type %d is not supported", uniform.type);
+            ERR("Uniform '%s' of type %#X is not supported", uniform.name.c_str(), uniform.type);
             break;
         }
     }
 }
 
-void GpuProgram::get_uniforms_list()
+void GpuProgram::getUniformsList()
 {
     GLint uniform_count = 0;
     GLint max_name_length = 0;
@@ -272,7 +272,7 @@ bool GpuProgram::createMeta( const std::string& filename )
     }
     WARN(status().c_str());
     
-    get_uniforms_list();
+    getUniformsList();
     
     return true;
 }

@@ -32,7 +32,7 @@ void DeviceContext::Assert(const char* file, int line)
     GLenum err = GetError();
     if (err != GL_NO_ERROR)
     {
-        ERR("GL error: %s [%x] @ %s, %d\n", glErrorToString(err), err, file, line);
+        ERR("GL error: %s [%#X] @ %s, %d", glErrorToString(err), err, file, line);
         debugBreak();
     }
 }

@@ -73,31 +73,22 @@ public:
 
     void setParams(const ParameterMap& params);
 
-    bool createMeta( const std::string& filename );
-    
     void create( const std::string& filename )
     {
         if (!createMeta(filename))
             Destroy();
     }
     
-    //! Creates program from vertex and shader source texts
-    //! \param      vs              text of vertex shader
-    //! \param      ps              text of pixel shader
-    //! \param      status          output status string
-    //! \returns    The program instance (deallocation should be handled by caller), null if fails
-    bool CreateFromText( const std::string& vs, const std::string& fs, std::string& status );
-
 protected:
+    bool createMeta( const std::string& filename );
+    
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
-    void get_uniforms_list();
+    void getUniformsList();
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };
-
-
 
 } // namespace opengl
 } // namespace base
