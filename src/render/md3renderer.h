@@ -20,7 +20,7 @@ namespace opengl
 class Md3Renderer
 {
     resource::Md3Model* model;
-    std::vector<MeshExt*> meshes;
+    std::vector<Mesh*> meshes;
     std::vector<VertexBuffer*> vbs;
 
 public:

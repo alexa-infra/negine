@@ -50,25 +50,11 @@ struct MeshLayer
     MeshLayer(VertexAttr attr, u32 start, u32 stride);
 };
 
-class MeshBuilder
-{
-public:
-    std::vector<VertexAttr> attributes_;
-
-    enum Type
-    {
-        Static,
-        Dynamic
-    };
-    Type type_;
-
-    MeshBuilder();
-    MeshBuilder& addAttribute(VertexAttr attr);
-};
-
-class MeshExt
+class Mesh
 {
 private:
+    std::vector<VertexAttr> attr_;
+
     u32 numVertexes_;
     u32 numIndexes_;
     MeshLayer attributes_[VertexAttrs::Count];
@@ -76,8 +62,12 @@ private:
     std::vector<u16> indices_;
     u32 rawSize_;
 public:
-    MeshExt(const MeshBuilder& builder, u32 nVertexes, u32 nIndexes);
-    ~MeshExt();
+    Mesh();
+    ~Mesh();
+
+    Mesh& addAttribute(VertexAttr attr);
+    Mesh& vertexCount(u32 nVertexes, u32 nIndexes);
+    void complete();
 
     u32 numVertexes() const { return numVertexes_; }
     u32 numIndexes() const { return numIndexes_; }
@@ -97,14 +87,12 @@ public:
     T* findElement(VertexAttr attr, u32 idx) {
         return reinterpret_cast<T*>(findElementRaw(attr, idx));
     }
-
-    void reserve(u32 vertexCount, u32 indexCount);
 private:
     u8* findAttributeRaw(VertexAttr attr);
 
     u8* findElementRaw(VertexAttr attr, u32 idx);
 private:
-    DISALLOW_COPY_AND_ASSIGN(MeshExt);
+    DISALLOW_COPY_AND_ASSIGN(Mesh);
 };
 
 

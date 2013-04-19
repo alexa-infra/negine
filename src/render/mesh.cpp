@@ -86,71 +86,79 @@ MeshLayer::MeshLayer(VertexAttr attr, u32 start, u32 stride)
 {
 }
 
-MeshBuilder::MeshBuilder()
-    : type_(Static)
+Mesh::Mesh()
+    : numVertexes_(0)
+    , numIndexes_(0)
+    , rawSize_(0)
 {
 }
 
-MeshBuilder& MeshBuilder::addAttribute(VertexAttr attr)
+Mesh::~Mesh()
 {
-    attributes_.push_back(attr);
+}
+
+Mesh& Mesh::addAttribute(VertexAttr attr)
+{
+    attr_.push_back(attr);
     return *this;
 }
 
-MeshExt::MeshExt(const MeshBuilder& builder, u32 nVertexes, u32 nIndexes)
-    : numVertexes_(nVertexes)
-    , numIndexes_(nIndexes)
-    , rawSize_(0)
+Mesh& Mesh::vertexCount(u32 nVertexes, u32 nIndexes)
 {
-    if (builder.type_ == MeshBuilder::Static) {
-        for(u32 i=0; i<builder.attributes_.size(); i++) {
-            VertexAttr attr = builder.attributes_[i];
+    numVertexes_ = nVertexes;
+    numIndexes_ = nIndexes;
+    return *this;
+}
+
+void Mesh::complete()
+{
+    #define MESH_ATTR_IN_ARRAY
+        rawSize_ = 0;
+        for(u32 i=0; i<VertexAttrs::Count; i++) {
+            attributes_[i] = MeshLayer();
+        }
+    #ifdef MESH_ATTR_IN_ARRAY
+        for(u32 i=0; i<attr_.size(); i++) {
+            VertexAttr attr = attr_[i];
             u32 size = VertexAttrs::GetSize(attr);
             attributes_[attr] = MeshLayer(attr, rawSize_, size);
             rawSize_ += size * numVertexes_;
         }
-    } else if (builder.type_ == MeshBuilder::Static) {
+    #else
         u32 vertexSize = 0;
-        for(u32 i=0; i<builder.attributes_.size(); i++) {
-            VertexAttr attr = builder.attributes_[i];
+        for(u32 i=0; i<attr_.size(); i++) {
+            VertexAttr attr = attr_[i];
             vertexSize = VertexAttrs::GetSize(attr);
         }
         u32 pos = 0;
-        for(u32 i=0; i<builder.attributes_.size(); i++) {
-            VertexAttr attr = builder.attributes_[i];
+        for(u32 i=0; i<attr_.size(); i++) {
+            VertexAttr attr = attr_[i];
             u32 size = VertexAttrs::GetSize(attr);
             attributes_[attr] = MeshLayer(attr, pos, vertexSize);
             pos += size;
         }
         rawSize_ += vertexSize * numVertexes_;
     }
+    #endif
     attributeBuffer_.resize(rawSize_);
     indices_.resize(numIndexes_);
 }
 
-MeshExt::~MeshExt()
-{
-}
-
-u32 MeshExt::stride(VertexAttr attr) const
+u32 Mesh::stride(VertexAttr attr) const
 {
     const MeshLayer& layer = attributes_[attr];
     ASSERT(layer.valid_);
     return layer.stride_;
 }
 
-void MeshExt::reserve(u32 vertexCount, u32 indexCount)
-{
-}
-
-u8* MeshExt::findAttributeRaw(VertexAttr attr)
+u8* Mesh::findAttributeRaw(VertexAttr attr)
 {
     const MeshLayer& layer = attributes_[attr];
     ASSERT(layer.valid_);
     return &attributeBuffer_[layer.start_];
 }
 
-u8* MeshExt::findElementRaw(VertexAttr attr, u32 idx)
+u8* Mesh::findElementRaw(VertexAttr attr, u32 idx)
 {
     ASSERT(idx < numVertexes_);
     const MeshLayer& layer = attributes_[attr];

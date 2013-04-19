@@ -30,13 +30,14 @@ Md5Renderer::Md5Renderer( Md5Model* model, DeviceContext& gl )
     vb = new VertexBuffer(GL);
     Md5Mesh& mesh = md5->meshes[0];
 
-    MeshBuilder builder;
-    builder
+    mesh_ = new Mesh();
+    (*mesh_)
         .addAttribute(VertexAttrs::tagPosition)
         .addAttribute(VertexAttrs::tagNormal)
         .addAttribute(VertexAttrs::tagTexture)
-        .addAttribute(VertexAttrs::tagTangent);
-    mesh_ = new MeshExt(builder, mesh.num_verts, mesh.num_tris * 3);
+        .addAttribute(VertexAttrs::tagTangent)
+        .vertexCount(mesh.num_verts, mesh.num_tris * 3)
+        .complete();
     vb->EnableAttributeMesh(mesh_);
 }
 

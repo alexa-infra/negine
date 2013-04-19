@@ -22,7 +22,7 @@ class Md5Renderer
 public:
     resource::Md5BoundingBox boundingBox;
 private:
-    MeshExt* mesh_;
+    Mesh* mesh_;
     VertexBuffer* vb;
     resource::Md5Model* md5;
     DeviceContext& GL;

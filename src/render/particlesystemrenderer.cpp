@@ -35,12 +35,13 @@ ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, DeviceContex
 {
     const ParticleSystemSetting& settings = ps_->settings;
 
-    MeshBuilder builder;
-    builder
+    mesh_ = new Mesh();
+    (*mesh_)
         .addAttribute(VertexAttrs::tagPosition)
         .addAttribute(VertexAttrs::tagTexture)
-        .addAttribute(VertexAttrs::tagColor);
-    mesh_ = new MeshExt(builder, settings.max_count * 4, settings.max_count * 6);
+        .addAttribute(VertexAttrs::tagColor)
+        .vertexCount(settings.max_count * 4, settings.max_count * 6)
+        .complete();
 
     vec2f* tex = mesh_->findAttributeTyped<vec2f>(VertexAttrs::tagTexture);
     u16* index = mesh_->indices();

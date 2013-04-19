@@ -30,14 +30,15 @@ Md3Renderer::Md3Renderer( Md3Model* m )
     meshes.resize( model->hdr.num_surfaces );
     vbs.resize( model->hdr.num_surfaces );
 
-    MeshBuilder builder;
-    builder
-        .addAttribute(VertexAttrs::tagPosition)
-        .addAttribute(VertexAttrs::tagNormal)
-        .addAttribute(VertexAttrs::tagColor)
-        .addAttribute(VertexAttrs::tagTexture);
     for ( i32 i = 0; i < model->hdr.num_surfaces; i++ ) {
-         MeshExt* mesh = new MeshExt(builder, model->meshes[i].surface.num_verts, model->meshes[i].surface.num_triangles * 3);
+         Mesh* mesh = new Mesh();
+         (*mesh)
+             .addAttribute(VertexAttrs::tagPosition)
+             .addAttribute(VertexAttrs::tagNormal)
+             .addAttribute(VertexAttrs::tagColor)
+             .addAttribute(VertexAttrs::tagTexture)
+             .vertexCount(model->meshes[i].surface.num_verts, model->meshes[i].surface.num_triangles * 3)
+             .complete();
          meshes[i] = mesh;
 //         vbs[i] = new VertexBuffer;
          vbs[i]->EnableAttributeMesh(mesh);
@@ -61,7 +62,7 @@ void Md3Renderer::Commit()
 
     for ( i32 i = 0; i < model->hdr.num_surfaces; i++ ) {
         Md3Mesh& md3 = frame.meshes[i];
-        MeshExt* mesh = meshes[i];
+        Mesh* mesh = meshes[i];
         Md3Surface& info = md3.mesh_base->surface;
 
         u16* indices = mesh->indices();

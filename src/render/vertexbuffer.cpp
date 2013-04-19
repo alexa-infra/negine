@@ -35,7 +35,7 @@ void VertexBuffer::EnableAttribute( VertexAttr attr, u32 stride, void* pointer )
     enabledAttributes_[(u32)attr] = EnabledAttribute(stride, pointer);
 }
 
-void VertexBuffer::EnableAttributeMesh( const MeshExt* mesh )
+void VertexBuffer::EnableAttributeMesh( const Mesh* mesh )
 {
     const MeshLayer* attributes = mesh->attributes();
     for (u32 i=0; i<VertexAttrs::Count; i++)

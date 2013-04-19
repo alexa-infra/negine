@@ -31,7 +31,7 @@ public:
 
     void EnableAttribute( VertexAttr attr, u32 stride, void* pointer );
 
-    void EnableAttributeMesh( const MeshExt* mesh );
+    void EnableAttributeMesh( const Mesh* mesh );
 
     void Load();
 
