@@ -84,6 +84,7 @@ public:
     PFNGLDISABLEPROC            Disable;
     PFNGETSTRINGPROC            GetString;
     PFNBLENDFUNCPROC            BlendFunc;
+    PFNGLVIEWPORTPROC           Viewport;
 
     void Assert(const char* file, int line);
 

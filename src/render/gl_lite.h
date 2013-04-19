@@ -203,6 +203,7 @@ typedef GLenum (_APIENTRYP PFNGLGETERRORPROC) (void);
 typedef void (_APIENTRYP PFNGLDISABLEPROC) (GLenum cap);
 typedef const GLubyte* (_APIENTRYP PFNGETSTRINGPROC) (GLenum name);
 typedef void (_APIENTRYP PFNBLENDFUNCPROC) (GLenum sfactor, GLenum dfactor);
+typedef void (_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 }
 }

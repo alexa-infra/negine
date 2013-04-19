@@ -203,7 +203,8 @@ void DeviceContext::init()
     LOAD_GL(Disable                          );
     LOAD_GL(GetString                        );
     LOAD_GL(BlendFunc                        );
-    
+    LOAD_GL(Viewport                         );
+
     #undef LOAD_GL
 
     texture_loader_ = new TextureLoader(*this);
