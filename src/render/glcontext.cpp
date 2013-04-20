@@ -58,7 +58,7 @@ public:
     }
     void* getFunc(const char* func)
     {
-        return GetProcAddress(module_, func);
+        return reinterpret_cast<void*>(GetProcAddress(module_, func));
     }
 private:
     HMODULE module_;

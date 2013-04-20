@@ -3,6 +3,7 @@
 #include <vector>
 #include "base/types.h"
 #include "base/env.h"
+#include <cstdio>
 
 #ifdef OS_WIN
 #include <windows.h>
