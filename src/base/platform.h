@@ -12,6 +12,9 @@
 
 #if defined(_WIN32) || defined(__WIN32__)
 #   define OS_WIN
+#   if defined(__MINGW32__)
+#       define OS_MINGW
+#   endif
 #elif defined(__APPLE__)
 #   define OS_MAC
 #elif defined(__linux__)
@@ -34,7 +37,9 @@
 #   define OS_POSIX
 #endif
 
-#if defined(__GNUC__)
+#if defined(__clang__)
+#   define COMPILER_CLANG
+#elif defined(__GNUC__)
 #   define COMPILER_GCC
 #elif defined(_MSC_VER)
 #   define COMPILER_MSVC

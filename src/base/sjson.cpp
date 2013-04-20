@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include "base/log.h"
+#include <cstdlib>
 
 namespace base {
 namespace sjson {

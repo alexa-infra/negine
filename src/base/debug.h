@@ -4,7 +4,7 @@
 
 #if defined(COMPILER_MSVC)
 #   define debugBreak() __debugbreak()
-#elif defined(COMPILER_GCC)
+#elif defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 #   define debugBreak() __builtin_trap()
 #endif
 
