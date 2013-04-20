@@ -64,3 +64,4 @@ typedef i64 iptr;
 #define DISALLOW_HEAP_ALLOC() \
     void *operator new(size_t size);  \
     void *operator new[](size_t size)
+

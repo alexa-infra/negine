@@ -7,10 +7,8 @@
 #pragma once
 
 #include "render/gpuresource.h"
-#include <unordered_map>
-#include <string>
 #include "render/mesh.h"
-#include "base/log.h"
+#include "base/parameter.h"
 
 namespace base
 {
@@ -19,10 +17,11 @@ namespace opengl
 
 struct UniformVar
 {
+    std::string name;
     u32 location;
-    u32 index;
+    u32 type;
 };
-typedef std::unordered_map<std::string, UniformVar> UniformBinding;
+typedef std::vector<UniformVar> UniformBinding;
 
 class Shader;
 
@@ -72,17 +71,7 @@ public:
     //! Unbind program
     void Unbind();
 
-    template<typename T>
-    void set_uniform( const std::string& name, const T& val ) {
-        UniformBinding::const_iterator it = uni_binding_.find( name );
-
-        if ( it == uni_binding_.end() ) {
-            ERR("uniform '%s' is not found in program", name.c_str());
-            return;
-        }
-
-        set_uniform_param( it->second, val );
-    }
+    void setParams(const ParameterMap& params);
 
     bool createMeta( const std::string& filename );
     
@@ -100,9 +89,7 @@ public:
     bool CreateFromText( const std::string& vs, const std::string& fs, std::string& status );
 
 protected:
-    //! Set uniform helper, that wraps value by generic param
-    template<typename T>
-    void set_uniform_param( const UniformVar& uniform, const T& val );
+    void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
     void get_uniforms_list();

@@ -32,7 +32,6 @@ SDLApp::SDLApp()
     LOG("start");
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         ERR("Unable to init SDL: %s", SDL_GetError());
-        abort();
     }
 
     // my personal configuration, temporary
@@ -63,7 +62,6 @@ SDLApp::SDLApp()
     maincontext_ = SDL_GL_CreateContext( mainwindow_ );
     if (!maincontext_) {
         ERR("SDL error: %s", SDL_GetError());
-        abort();
     }
 
     GL.init();

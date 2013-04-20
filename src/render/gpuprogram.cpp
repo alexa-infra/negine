@@ -100,30 +100,51 @@ void GpuProgram::Unbind()
     GL.UseProgram(0);
 }
 
-template<>
-void GpuProgram::set_uniform_param<Texture*>( const UniformVar& uniform, Texture* const& t )
+void GpuProgram::setParams(const ParameterMap& params)
 {
-    GL.ActiveTexture( GL_TEXTURE0 + uniform.index );
-    t->Bind();
-    GL.Uniform1i( uniform.location, uniform.index );
+    u32 samplerIdx = 0;
+    for(u32 i=0; i<uni_binding_.size(); i++)
+    {
+        const UniformVar& uniform = uni_binding_[i];
+        ParameterMap::const_iterator it = params.find(uniform.name);
+        if (it == params.end()) {
+            ERR("Uniform '%s' us not supplied", uniform.name.c_str());
+            return;
+        }
+        setParam(uniform, it->second, samplerIdx);
+    }
 }
-
-template<>
-void GpuProgram::set_uniform_param<Matrix4>( const UniformVar& uniform, const Matrix4& m )
+    
+void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samplerIdx)
 {
-    GL.UniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
-}
-
-template<>
-void GpuProgram::set_uniform_param<vec4f>( const UniformVar& uniform, const vec4f& v )
-{
-    GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
-}
-
-template<>
-void GpuProgram::set_uniform_param<vec3f>( const UniformVar& uniform, const vec3f& v )
-{
-    GL.Uniform3f( uniform.location, v.x, v.y, v.z );
+    switch(uniform.type) {
+        case GL_SAMPLER_2D:
+        {
+            Texture* texture = any_cast<Texture*>(value);
+            GL.ActiveTexture( GL_TEXTURE0 + samplerIdx );
+            texture->Bind();
+            GL.Uniform1i( uniform.location, samplerIdx );
+            samplerIdx++;
+            break;
+        }
+        case GL_FLOAT_MAT4:
+        {
+            const Matrix4& m = any_cast<const Matrix4&>(value);
+            GL.UniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
+            break;
+        }
+        case GL_FLOAT_VEC4:
+        {
+            const vec4f& v = any_cast<const vec4f&>(value);
+            GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
+            break;
+        }
+        default:
+        {
+            ERR("Uniform type %d is not supported", uniform.type);
+            break;
+        }
+    }
 }
 
 void GpuProgram::get_uniforms_list()
@@ -137,6 +158,9 @@ void GpuProgram::get_uniforms_list()
         return;
     }
 
+    uni_binding_.clear();
+    uni_binding_.reserve(static_cast<u32>(uniform_count));
+
     char* buffer = new char[max_name_length];
 
     u32 index = 0;
@@ -149,13 +173,9 @@ void GpuProgram::get_uniforms_list()
         u32 location = GL.GetUniformLocation( id_, uniformName.c_str() );
         UniformVar uni;
         uni.location = location;
-        switch(uniform_type)
-        {
-            case GL_SAMPLER_2D:
-                uni.index = index++;
-                break;
-        }
-        uni_binding_.emplace(uniformName, uni);
+        uni.type = uniform_type;
+        uni.name = uniformName;
+        uni_binding_.push_back(uni);
     }
 
     delete[] buffer;
@@ -212,6 +232,7 @@ bool GpuProgram::createMeta( const std::string& filename )
             pixel_shader_->status().c_str());
         return false;
     }
+    WARN(pixel_shader_->status().c_str());
     
     source[2] = "#define VERTEX_SHADER\n ";
     if (!vertex_shader_->Create(ShaderTypes::VERTEX, source, 4))
@@ -221,6 +242,7 @@ bool GpuProgram::createMeta( const std::string& filename )
             vertex_shader_->status().c_str());
         return false;
     }
+    WARN(vertex_shader_->status().c_str());
     
     id_ = GL.CreateProgram( );
     
@@ -248,6 +270,7 @@ bool GpuProgram::createMeta( const std::string& filename )
             filename.c_str(), status().c_str());
         return false;
     }
+    WARN(status().c_str());
     
     get_uniforms_list();
     

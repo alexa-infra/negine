@@ -146,6 +146,10 @@ typedef u64 GLuint64;
 #define GL_DST_ALPHA                      0x0304
 #define GL_ONE_MINUS_DST_ALPHA            0x0305 
 
+#define GL_FLOAT_MAT4                     0x8B5C
+#define GL_FLOAT_VEC4                     0x8B52
+#define GL_SAMPLER_2D                     0x8B5E
+
 typedef void (_APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture); 
 typedef void (_APIENTRYP PFNGLATTACHSHADERPROC) (GLuint program, GLuint shader); 
 typedef void (_APIENTRYP PFNGLBINDATTRIBLOCATIONPROC) (GLuint program, GLuint index, const GLchar *name); 
