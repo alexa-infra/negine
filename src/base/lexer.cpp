@@ -14,30 +14,35 @@
 namespace base
 {
 
-Lexer::Lexer( const std::string& filename )
+LexerPolicy::LexerPolicy(const std::string& whitespaces, u32 mask)
+    : setup(mask)
+{
+    memset( whiteCharacters, 0, 128 );
+    for(u32 i=0; i<whitespaces.size(); i++)
+        whiteCharacters[(u8)whitespaces[i]] = 1;
+}
+
+void LexerPolicy::setWhiteCharValue( char ch, bool whitespace )
+{
+    whiteCharacters[( u8 )ch] = whitespace ? 1 : 0;
+}
+
+LexerPolicy LexerPolicy::defaultPolicy()
+{
+    return LexerPolicy(" \t,\r\n*:/", cStyleComment | cppStyleComment | pythonComment | strings);
+}
+
+Lexer::Lexer( const std::string& filename, const LexerPolicy& policy )
     : file_( new FileText(filename) )
     , maxTokenSize( 512 )
     , token_( NULL )
-    , whiteCharacters( NULL )
+    , policy_( policy )
 {
     token_ = new char[maxTokenSize];
-    whiteCharacters = new char[128];
-    memset( whiteCharacters, 0, 128 );
-    whiteCharacters[( u8 )' '] = 1;
-    whiteCharacters[( u8 )'\t'] = 1;
-    whiteCharacters[( u8 )','] = 1;
-//    whiteCharacters[(u8)'('] = 1;
-//    whiteCharacters[(u8)')'] = 1;
-    whiteCharacters[( u8 )'\r'] = 1;
-    whiteCharacters[( u8 )'\n'] = 1;
-    whiteCharacters[( u8 )'*'] = 1;
-    whiteCharacters[( u8 )':'] = 1;
-    whiteCharacters[( u8 )'/'] = 1;
 }
 
 Lexer::~Lexer()
 {
-    delete[] whiteCharacters;
     delete[] token_;
     delete file_;
 }
@@ -48,7 +53,7 @@ void Lexer::SkipWhiteSpace()
         return;
     }
 
-    while( HasMoreData() && IsWhiteChar( file_->current_char() ) ) {
+    while( HasMoreData() && policy_.isWhitespace( file_->current_char() ) ) {
         char previousChar = file_->bump_char();
 
         if ( !HasMoreData() ) {
@@ -57,36 +62,19 @@ void Lexer::SkipWhiteSpace()
 
         char ch = file_->current_char();
 
-        if ( ch == '#' ) {
+        if (policy_.allowPythonComment() && ch == '#') {
+            skipUntil('\n');
+        } else if ( policy_.allowCppStyleComment() && ( ch == '/' ) && ( previousChar == '/' ) ) {
             SkipRestOfLine();
-        } else if ( ( ch == '/' ) && ( previousChar == '/' ) ) {
-            SkipRestOfLine();
-        } else if ( ( ch == '*' ) && ( previousChar == '/' ) ) {
-            //Skip until */ is found
-            while ( HasMoreData() ) {
-                previousChar = file_->bump_char();
-
-                if ( !HasMoreData() ) {
-                    break;
-                }
-
-                ch = file_->current_char();
-
-                if ( ( ch == '/' ) && ( previousChar == '*' ) ) {
-                    break;
-                }
-            }
+        } else if ( policy_.allowCStyleComment() && ( ch == '*' ) && ( previousChar == '/' ) ) {
+            skipUntil('*', '/');
         }
     }
 }
 
 void Lexer::SkipRestOfLine()
 {
-    while ( HasMoreData() ) {
-        if ( file_->bump_char() == '\n' ) {
-            break;
-        }
-    }
+    skipUntil('\n');
 }
 
 
@@ -100,7 +88,7 @@ const char* Lexer::ReadToken()
         return token_;
     }
 
-    if ( file_->current_char() == '"' ) {
+    if ( policy_.allowString() && file_->current_char() == '"' ) {
         file_->bump_char();
 
         while( HasMoreData() ) {
@@ -112,7 +100,7 @@ const char* Lexer::ReadToken()
             *tokenChar++ = file_->bump_char();
         }
     } else {
-        while( HasMoreData() && !IsWhiteChar( file_->current_char() ) ) {
+        while( HasMoreData() && !policy_.isWhitespace( file_->current_char() ) ) {
             *tokenChar++ = file_->bump_char();
         }
     }
@@ -121,15 +109,10 @@ const char* Lexer::ReadToken()
     return token_;
 }
 
-bool Lexer::IsWhiteChar( char character ) const
-{
-    return whiteCharacters[( u8 )character] == 1;
-}
-
 f32 Lexer::ReadFloat()
 {
     ReadToken();
-    return ( float )atof( token_ );
+    return ( f32 )atof( token_ );
 }
 
 bool Lexer::HasMoreData() const
@@ -137,9 +120,30 @@ bool Lexer::HasMoreData() const
     return ( file_->position() < file_->size() );
 }
 
-void Lexer::SetWhiteCharValue( char c, char value )
+void Lexer::skipUntil(char ch)
 {
-    whiteCharacters[( u8 )c] = value;
+    while ( HasMoreData() ) {
+        if ( file_->bump_char() == ch ) {
+            break;
+        }
+    }
+}
+
+void Lexer::skipUntil(char ch1, char ch2)
+{
+    while ( HasMoreData() ) {
+        char previousChar = file_->bump_char();
+
+        if ( !HasMoreData() ) {
+            break;
+        }
+
+        char ch = file_->current_char();
+
+        if ( ( ch == ch2 ) && ( previousChar == ch1 ) ) {
+            break;
+        }
+    }
 }
 
 } // namespace base
