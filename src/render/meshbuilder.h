@@ -4,6 +4,7 @@
 #include "base/debug.h"
 #include <vector>
 #include "mesh.h"
+#include "base/log.h"
 
 namespace base
 {
@@ -64,7 +65,7 @@ namespace imp
 
         Vertex& addVertex(const math::vec3f& p, const math::vec4f& color)
         {
-            perVertexColor = true;
+            //perVertexColor = true;
             Vertex& v = addVertex(p);
             v.color = color;
             return v;
@@ -128,7 +129,7 @@ namespace imp
                 Edge& edge = edgeList[i];
                 if (edge.v[0] == tmp.v[0] && edge.v[1] == tmp.v[1])
                 {
-                    ASSERT(edgeList[i].p[2] == kInvalidIndex);
+//                    ASSERT(edgeList[i].p[2] == kInvalidIndex);
                     edgeList[i].p[2] = p;
                     return i;
                 }
@@ -147,13 +148,13 @@ namespace imp
                 .addAttribute(opengl::VertexAttrs::tagPosition)
                 .addAttribute(opengl::VertexAttrs::tagNormal)
                 .addAttribute(opengl::VertexAttrs::tagColor)
-                .vertexCount(vertexCount)
+                .vertexCount(vertexCount, vertexCount)
                 .complete();
 
             math::vec3f* position = mesh.findAttributeTyped<math::vec3f>(opengl::VertexAttrs::tagPosition);
             math::vec3f* normal = mesh.findAttributeTyped<math::vec3f>(opengl::VertexAttrs::tagNormal);
             math::vec4f* color = mesh.findAttributeTyped<math::vec4f>(opengl::VertexAttrs::tagColor);
-            u16* indeces;
+            u16* indeces = mesh.indices();
 
             for(u32 i=0, j=0; i<polygonList.size(); i++, j+=3)
             {
@@ -163,14 +164,27 @@ namespace imp
                     const Vertex& v = vertexList[polygon.v[k]];
                     position[idx] = v.position;
                     normal[idx] = polygon.normal;
-                    if(perVertexColor)
-                        color[idx] = v.color;
-                    else
+                    WARN("%f %f %f", polygon.color.x, polygon.color.y, polygon.color.z);
+                    if(!perVertexColor)
                         color[idx] = polygon.color;
+                    else
+                        color[idx] = v.color;
+                    indeces[idx] = static_cast<u16>(idx);
                 }
             }
         }
 
+        void createQuad()
+        {
+            math::vec3f x(1, 0, 0);
+            math::vec3f y(0, 1, 0);
+            math::vec3f z(0, 0, 1);
+            addVertex(x * 0 + y * 0);
+            addVertex(x * 1 + y * 0);
+            addVertex(x * 0 + y * 1);
+            math::vec4f red(1, 0, 0, 1);
+            addPolygon(2, 1, 0, red);
+        }
         void createCube()
         {
             math::vec3f x(1, 0, 0);
@@ -187,14 +201,16 @@ namespace imp
             addVertex(ori + y + x + z);
             addVertex(ori + y + z);
 
-            math::vec4f color(1, 0, 0, 1);
-            addPolygonQuad(0, 1, 2, 3, color);
-            addPolygonQuad(0, 1, 5, 4, color);
-            addPolygonQuad(2, 3, 7, 6, color);
-            addPolygonQuad(3, 0, 4, 7, color);
-            addPolygonQuad(1, 2, 6, 5, color);
-            addPolygonQuad(0, 3, 7, 4, color);
-            addPolygonQuad(4, 5, 6, 7, color);
+            math::vec4f red(1, 0, 0, 1);
+            math::vec4f green(0, 1, 0, 1);
+            math::vec4f blue(0, 0, 1, 1);
+            math::vec4f black(0, 0, 0, 1);
+            addPolygonQuad(0, 1, 2, 3, red);
+            addPolygonQuad(0, 1, 5, 4, green);
+            addPolygonQuad(2, 3, 7, 6, green);
+            addPolygonQuad(1, 2, 6, 5, blue);
+            addPolygonQuad(0, 4, 7, 3, blue);
+            addPolygonQuad(7, 6, 5, 4, red);
         }
     };
 }
