@@ -10,35 +10,44 @@
 #include "stream.h"
 #include <string.h>
 #include <stdlib.h>
+#include <regex>
 
 namespace base
 {
 
-LexerPolicy::LexerPolicy(const std::string& whitespaces, u32 mask)
+LexerPolicy::LexerPolicy(u32 mask)
     : setup(mask)
+    , maxTokenSize( 512 )
 {
     memset( whiteCharacters, 0, 128 );
+    memset( breakCharacters, 0, 128 );
+}
+
+void LexerPolicy::setWhitespaces(const std::string& whitespaces)
+{
     for(u32 i=0; i<whitespaces.size(); i++)
         whiteCharacters[(u8)whitespaces[i]] = 1;
 }
 
-void LexerPolicy::setWhiteCharValue( char ch, bool whitespace )
+void LexerPolicy::setBreakChar(const std::string& breaks)
 {
-    whiteCharacters[( u8 )ch] = whitespace ? 1 : 0;
+    for(u32 i=0; i<breaks.size(); i++)
+        breakCharacters[(u8)breaks[i]] = 1;
 }
 
 LexerPolicy LexerPolicy::defaultPolicy()
 {
-    return LexerPolicy(" \t,\r\n*:/", cStyleComment | cppStyleComment | pythonComment | strings);
+    LexerPolicy policy(cStyleComment | cppStyleComment | pythonComment | strings);
+    policy.setWhitespaces(" \t,\r\n*:/");
+    return policy;
 }
 
 Lexer::Lexer( const std::string& filename, const LexerPolicy& policy )
     : file_( new FileText(filename) )
-    , maxTokenSize( 512 )
     , token_( NULL )
     , policy_( policy )
 {
-    token_ = new char[maxTokenSize];
+    token_ = new char[policy_.maxTokenSize];
 }
 
 Lexer::~Lexer()
@@ -101,12 +110,37 @@ const char* Lexer::ReadToken()
         }
     } else {
         while( HasMoreData() && !policy_.isWhitespace( file_->current_char() ) ) {
+            if (policy_.allowBreakOnChar() && policy_.isBreakChar( file_->current_char() ))
+                break;
             *tokenChar++ = file_->bump_char();
         }
     }
 
     *tokenChar = '\0';
     return token_;
+}
+
+bool Lexer::ReadNumber(f32& ret)
+{
+    char* tokenChar = token_;
+    *tokenChar = '\0';
+    SkipWhiteSpace();
+
+    const std::string chars("0123456789+-.eE");
+    while ( HasMoreData() ) {
+        char ch = file_->current_char();
+        if (chars.find(ch) == std::string::npos)
+            break;
+        *tokenChar++ = file_->bump_char();
+    }
+    *tokenChar = '\0';
+
+    if ( std::regex_match( token_, std::regex( "-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?" ) ) )
+    {
+        ret = ( f32 )atof( token_ );
+        return true;
+    }
+    return false;
 }
 
 f32 Lexer::ReadFloat()

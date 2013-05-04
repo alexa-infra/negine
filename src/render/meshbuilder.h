@@ -5,6 +5,7 @@
 #include <vector>
 #include "mesh.h"
 #include "base/log.h"
+#include "base/lexer.h"
 
 namespace base
 {
@@ -41,10 +42,30 @@ namespace imp
 
     struct Object
     {
-        bool perVertexColor;
+        enum {
+            hasVertexNormal,
+            hasVertexColor,
+            hasVertexUV,
+            hasPolygonColor
+        };
+        u32 mask;
+
+        Object()
+            : mask(0)
+        {
+            vertexList.reserve(1000);
+            polygonList.reserve(1000);
+            edgeList.reserve(1000);
+        }
+
         std::vector<Vertex> vertexList;
         std::vector<Polygon> polygonList;
         std::vector<Edge> edgeList;
+
+        u32 nextVertexIndex() const
+        {
+            return vertexList.size();
+        }
 
         Vertex& addVertex(const math::vec3f& p)
         {
@@ -57,15 +78,33 @@ namespace imp
 
         Vertex& addVertex(const math::vec3f& p, const math::vec2f& uv)
         {
-            perVertexColor = false;
+            mask |= hasVertexUV;
             Vertex& v = addVertex(p);
             v.uv = uv;
             return v;
         }
 
+        Vertex& addVertex(const math::vec3f& p, const math::vec3f& n)
+        {
+            mask |= hasVertexNormal;
+            Vertex& v = addVertex(p);
+            v.normal = n;
+            return v;
+        }
+
+        Vertex& addVertex(const math::vec3f& p, const math::vec2f& uv, const math::vec3f& n)
+        {
+            mask |= hasVertexUV;
+            mask |= hasVertexNormal;
+            Vertex& v = addVertex(p);
+            v.uv = uv;
+            v.normal = n;
+            return v;
+        }
+
         Vertex& addVertex(const math::vec3f& p, const math::vec4f& color)
         {
-            //perVertexColor = true;
+            mask |= hasVertexColor;
             Vertex& v = addVertex(p);
             v.color = color;
             return v;
@@ -73,8 +112,11 @@ namespace imp
 
         void addPolygonQuad(u32 x, u32 y, u32 z, u32 w, const math::vec4f& color)
         {
-            addPolygon(x, y, z, color);
-            addPolygon(x, z, w, color);
+            mask |= hasPolygonColor;
+            Polygon& a = addPolygon(x, y, z);
+            a.color = color;
+            Polygon& b = addPolygon(x, z, w);
+            b.color = color;
         }
 
         Polygon& addPolygon(u32 x, u32 y, u32 z)
@@ -102,6 +144,7 @@ namespace imp
 
         Polygon& addPolygon(u32 x, u32 y, u32 z, const math::vec2f& uv1, const math::vec2f& uv2, const math::vec2f& uv3)
         {
+            mask |= hasVertexUV;
             Polygon& p = addPolygon(x, y, z);
             p.uv[0] = uv1;
             p.uv[1] = uv2;
@@ -110,6 +153,7 @@ namespace imp
 
         Polygon& addPolygon(u32 x, u32 y, u32 z, const math::vec4f& color)
         {
+            mask |= hasPolygonColor;
             Polygon& p = addPolygon(x, y, z);
             p.color = color;
         }
@@ -144,16 +188,25 @@ namespace imp
         void getDrawingList(opengl::Mesh& mesh)
         {
             u32 vertexCount = polygonList.size() * 3;
-            mesh
-                .addAttribute(opengl::VertexAttrs::tagPosition)
-                .addAttribute(opengl::VertexAttrs::tagNormal)
-                .addAttribute(opengl::VertexAttrs::tagColor)
-                .vertexCount(vertexCount, vertexCount)
-                .complete();
+            mesh.addAttribute(opengl::VertexAttrs::tagPosition);
+            mesh.addAttribute(opengl::VertexAttrs::tagNormal);
+            bool hasUV = (mask & hasVertexUV) == hasVertexUV;
+            if (hasUV)
+                mesh.addAttribute(opengl::VertexAttrs::tagTexture);
+            bool hasColor = (mask & hasPolygonColor) == hasPolygonColor || (mask & hasVertexColor) == hasVertexColor;
+            if (hasColor)
+                mesh.addAttribute(opengl::VertexAttrs::tagColor);
+            mesh.vertexCount(vertexCount, vertexCount);
+            mesh.complete();
 
             math::vec3f* position = mesh.findAttributeTyped<math::vec3f>(opengl::VertexAttrs::tagPosition);
             math::vec3f* normal = mesh.findAttributeTyped<math::vec3f>(opengl::VertexAttrs::tagNormal);
-            math::vec4f* color = mesh.findAttributeTyped<math::vec4f>(opengl::VertexAttrs::tagColor);
+            math::vec4f* color = nullptr;
+            if (hasColor)
+                color = mesh.findAttributeTyped<math::vec4f>(opengl::VertexAttrs::tagColor);
+            math::vec2f* uv = nullptr;
+            if (hasUV)
+                uv = mesh.findAttributeTyped<math::vec2f>(opengl::VertexAttrs::tagTexture);
             u16* indeces = mesh.indices();
 
             for(u32 i=0, j=0; i<polygonList.size(); i++, j+=3)
@@ -163,12 +216,22 @@ namespace imp
                 {
                     const Vertex& v = vertexList[polygon.v[k]];
                     position[idx] = v.position;
-                    normal[idx] = polygon.normal;
-                    WARN("%f %f %f", polygon.color.x, polygon.color.y, polygon.color.z);
-                    if(!perVertexColor)
-                        color[idx] = polygon.color;
+                    if ((mask & hasVertexNormal) == hasVertexNormal)
+                        normal[idx] = v.normal;
                     else
-                        color[idx] = v.color;
+                        normal[idx] = polygon.normal;
+
+                    if (hasColor)
+                    {
+                        if ((mask & hasPolygonColor) == hasPolygonColor)
+                            color[idx] = polygon.color;
+                        else if ((mask & hasVertexColor) == hasVertexColor)
+                            color[idx] = v.color;
+                    }
+
+                    if (hasUV)
+                        uv[idx] = v.uv;
+
                     indeces[idx] = static_cast<u16>(idx);
                 }
             }
@@ -179,11 +242,12 @@ namespace imp
             math::vec3f x(1, 0, 0);
             math::vec3f y(0, 1, 0);
             math::vec3f z(0, 0, 1);
+            u32 idx = nextVertexIndex();
             addVertex(x * 0 + y * 0);
             addVertex(x * 1 + y * 0);
             addVertex(x * 0 + y * 1);
             math::vec4f red(1, 0, 0, 1);
-            addPolygon(2, 1, 0, red);
+            addPolygon(idx+2, idx+1, idx, red);
         }
         void createCube()
         {
@@ -192,6 +256,7 @@ namespace imp
             math::vec3f z(0, 0, 1);
             math::vec3f ori(-0.5f, -0.5f, -0.5f);
 
+            u32 idx = nextVertexIndex();
             addVertex(ori);
             addVertex(ori + x);
             addVertex(ori + x + z);
@@ -205,12 +270,77 @@ namespace imp
             math::vec4f green(0, 1, 0, 1);
             math::vec4f blue(0, 0, 1, 1);
             math::vec4f black(0, 0, 0, 1);
-            addPolygonQuad(0, 1, 2, 3, red);
-            addPolygonQuad(0, 1, 5, 4, green);
-            addPolygonQuad(2, 3, 7, 6, green);
-            addPolygonQuad(1, 2, 6, 5, blue);
-            addPolygonQuad(0, 4, 7, 3, blue);
-            addPolygonQuad(7, 6, 5, 4, red);
+            addPolygonQuad(idx + 0, idx + 1, idx + 2, idx + 3, red);
+            addPolygonQuad(idx + 0, idx + 1, idx + 5, idx + 4, green);
+            addPolygonQuad(idx + 2, idx + 3, idx + 7, idx + 6, green);
+            addPolygonQuad(idx + 1, idx + 2, idx + 6, idx + 5, blue);
+            addPolygonQuad(idx + 0, idx + 4, idx + 7, idx + 3, blue);
+            addPolygonQuad(idx + 7, idx + 6, idx + 5, idx + 4, red);
+        }
+
+        void readOBJ(const std::string& filename)
+        {
+            std::vector<math::vec3f> pos;
+            std::vector<math::vec2f> uv;
+            std::vector<math::vec3f> normal;
+
+            LexerPolicy policy(LexerPolicy::pythonComment);
+            policy.setWhitespaces(" \t\n\r/");
+
+            Lexer lexer(filename, policy);
+
+            while ( lexer.HasMoreData() )
+            {
+
+                std::string token = lexer.ReadToken();
+                if (token == "v") {
+                    math::vec3f p;
+                    p.x = lexer.ReadFloat();
+                    p.y = lexer.ReadFloat();
+                    p.z = lexer.ReadFloat();
+                    pos.push_back(p);
+                } else if (token == "vt") {
+                    math::vec2f v;
+                    v.x = lexer.ReadFloat();
+                    v.y = lexer.ReadFloat();
+                    uv.push_back(v);
+                } else if (token == "vn") {
+                    math::vec3f n;
+                    n.x = lexer.ReadFloat();
+                    n.y = lexer.ReadFloat();
+                    n.z = lexer.ReadFloat();
+                    n = math::normalize(n);
+                    normal.push_back(n);
+                } else if (token == "f") {
+                    u32 idx = nextVertexIndex();
+                    for(u32 i=0; i<3; i++) {
+                        if ( uv.size() != 0 && normal.size() != 0 ) {
+                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
+                            u32 uvIdx = static_cast<u32>(lexer.ReadFloat());
+                            u32 normalIdx = static_cast<u32>(lexer.ReadFloat());
+                            addVertex(pos[vertexIdx], uv[uvIdx], normal[normalIdx]);
+                        } else if ( uv.size() != 0 ) {
+                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
+                            u32 uvIdx = static_cast<u32>(lexer.ReadFloat());
+                            addVertex(pos[vertexIdx], uv[uvIdx]);
+                        } else if ( normal.size() != 0 ) {
+                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
+                            u32 normalIdx = static_cast<u32>(lexer.ReadFloat());
+                            addVertex(pos[vertexIdx], normal[normalIdx]);
+                        } else {
+                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
+                            addVertex(pos[vertexIdx]);
+                        }
+                    }
+                    addPolygon(idx, idx + 1, idx + 2);
+                } else if (token == "mtllib") {
+                    lexer.ReadToken();
+                } else if (token == "usemtl") {
+                    lexer.ReadToken();
+                } else if (token == "g") {
+                    lexer.ReadToken();
+                }
+            }
         }
     };
 }
