@@ -37,7 +37,8 @@ Md3Renderer::Md3Renderer( Md3Model* m )
              .addAttribute(VertexAttrs::tagNormal)
              .addAttribute(VertexAttrs::tagColor)
              .addAttribute(VertexAttrs::tagTexture)
-             .vertexCount(model->meshes[i].surface.num_verts, model->meshes[i].surface.num_triangles * 3)
+             .vertexCount(model->meshes[i].surface.num_verts)
+             .indexCount(model->meshes[i].surface.num_triangles * 3, IndexTypes::UInt16)
              .complete();
          meshes[i] = mesh;
 //         vbs[i] = new VertexBuffer;
@@ -65,7 +66,7 @@ void Md3Renderer::Commit()
         Mesh* mesh = meshes[i];
         Md3Surface& info = md3.mesh_base->surface;
 
-        u16* indices = mesh->indices();
+        u16* indices = reinterpret_cast<u16*>(mesh->indices());
         for ( i32 j = 0; j < info.num_triangles; j++ ) {
             for ( u8 k = 0; k < 3; k++ ) {
                 indices[j + k] = md3.mesh_base->triangles[j].indexes[k];

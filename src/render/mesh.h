@@ -8,6 +8,7 @@
 
 #include "base/types.h"
 #include <vector>
+#include "render/gl_lite.h"
 
 namespace base
 {
@@ -50,6 +51,15 @@ struct MeshLayer
     MeshLayer(VertexAttr attr, u32 start, u32 stride);
 };
 
+namespace IndexTypes
+{
+    enum IndexType {
+        UInt16 = GL_UNSIGNED_SHORT,
+        UInt32 = GL_UNSIGNED_INT
+    };
+}
+typedef IndexTypes::IndexType IndexType;
+
 class Mesh
 {
 private:
@@ -59,14 +69,16 @@ private:
     u32 numIndexes_;
     MeshLayer attributes_[VertexAttrs::Count];
     std::vector<u8> attributeBuffer_;
-    std::vector<u16> indices_;
+    std::vector<u8> indices_;
     u32 rawSize_;
+    IndexType indexType_;
 public:
     Mesh();
     ~Mesh();
 
     Mesh& addAttribute(VertexAttr attr);
-    Mesh& vertexCount(u32 nVertexes, u32 nIndexes);
+    Mesh& vertexCount(u32 nVertexes);
+    Mesh& indexCount(u32 nIndexes, IndexType type);
     void complete();
 
     u32 numVertexes() const { return numVertexes_; }
@@ -74,7 +86,8 @@ public:
     u32 rawSize() const { return rawSize_; }
     void* data() { return &attributeBuffer_.front(); }
     const MeshLayer* attributes() const { return attributes_; }
-    u16* indices() { return &indices_.front(); }
+    void* indices() { return &indices_.front(); }
+    IndexType indexType() const { return indexType_; }
 
     u32 stride(VertexAttr attr) const;
 

@@ -196,7 +196,8 @@ namespace imp
             bool hasColor = (mask & hasPolygonColor) == hasPolygonColor || (mask & hasVertexColor) == hasVertexColor;
             if (hasColor)
                 mesh.addAttribute(opengl::VertexAttrs::tagColor);
-            mesh.vertexCount(vertexCount, vertexCount);
+            mesh.vertexCount(vertexCount);
+            mesh.indexCount(vertexCount, opengl::IndexTypes::UInt32);
             mesh.complete();
 
             math::vec3f* position = mesh.findAttributeTyped<math::vec3f>(opengl::VertexAttrs::tagPosition);
@@ -207,7 +208,7 @@ namespace imp
             math::vec2f* uv = nullptr;
             if (hasUV)
                 uv = mesh.findAttributeTyped<math::vec2f>(opengl::VertexAttrs::tagTexture);
-            u16* indeces = mesh.indices();
+            u32* indeces = reinterpret_cast<u32*>(mesh.indices());
 
             for(u32 i=0, j=0; i<polygonList.size(); i++, j+=3)
             {
@@ -232,7 +233,7 @@ namespace imp
                     if (hasUV)
                         uv[idx] = v.uv;
 
-                    indeces[idx] = static_cast<u16>(idx);
+                    indeces[idx] = idx;
                 }
             }
         }

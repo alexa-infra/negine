@@ -108,7 +108,7 @@ void GpuProgram::setParams(const ParameterMap& params)
         const UniformVar& uniform = uni_binding_[i];
         ParameterMap::const_iterator it = params.find(uniform.name);
         if (it == params.end()) {
-            ERR("Uniform '%s' us not supplied", uniform.name.c_str());
+            ERR("Uniform '%s' is not supplied", uniform.name.c_str());
             return;
         }
         setParam(uniform, it->second, samplerIdx);

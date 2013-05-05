@@ -40,11 +40,12 @@ ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, DeviceContex
         .addAttribute(VertexAttrs::tagPosition)
         .addAttribute(VertexAttrs::tagTexture)
         .addAttribute(VertexAttrs::tagColor)
-        .vertexCount(settings.max_count * 4, settings.max_count * 6)
+        .vertexCount(settings.max_count * 4)
+        .indexCount(settings.max_count * 6, IndexTypes::UInt16)
         .complete();
 
     vec2f* tex = mesh_->findAttributeTyped<vec2f>(VertexAttrs::tagTexture);
-    u16* index = mesh_->indices();
+    u16* index = reinterpret_cast<u16*>(mesh_->indices());
 
     for ( u32 i = 0, j = 0; i < settings.max_count * 6; i += 6, j += 4 ) {
         index[i+0] = j;

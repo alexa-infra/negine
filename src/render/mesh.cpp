@@ -103,11 +103,17 @@ Mesh& Mesh::addAttribute(VertexAttr attr)
     return *this;
 }
 
-Mesh& Mesh::vertexCount(u32 nVertexes, u32 nIndexes)
+Mesh& Mesh::vertexCount(u32 nVertexes)
 {
     numVertexes_ = nVertexes;
-    numIndexes_ = nIndexes;
     return *this;
+}
+
+Mesh& Mesh::indexCount(u32 nIndexes, IndexType type)
+{
+    indexType_ = type;
+    numIndexes_ = nIndexes;
+    return *this;    
 }
 
 void Mesh::complete()
@@ -141,7 +147,10 @@ void Mesh::complete()
     }
     #endif
     attributeBuffer_.resize(rawSize_);
-    indices_.resize(numIndexes_);
+    if (indexType_ == IndexTypes::UInt16)
+        indices_.resize(numIndexes_ * 2);
+    else if (indexType_ == IndexTypes::UInt32)
+        indices_.resize(numIndexes_ * 4);
 }
 
 u32 Mesh::stride(VertexAttr attr) const

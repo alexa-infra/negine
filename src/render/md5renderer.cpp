@@ -36,7 +36,8 @@ Md5Renderer::Md5Renderer( Md5Model* model, DeviceContext& gl )
         .addAttribute(VertexAttrs::tagNormal)
         .addAttribute(VertexAttrs::tagTexture)
         .addAttribute(VertexAttrs::tagTangent)
-        .vertexCount(mesh.num_verts, mesh.num_tris * 3)
+        .vertexCount(mesh.num_verts)
+        .indexCount(mesh.num_tris * 3, IndexTypes::UInt16)
         .complete();
     vb->EnableAttributeMesh(mesh_);
 }
@@ -52,7 +53,7 @@ void Md5Renderer::Draw( )
     vb->BindAttributes();
     GL.DrawElements(
         GL_TRIANGLES, mesh_->numIndexes(), 
-        GL_UNSIGNED_SHORT, (void*)0);
+        mesh_->indexType(), (void*)0);
     vb->UnbindAttributes();
 }
 
@@ -89,7 +90,7 @@ void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
 
 void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
 {
-    u16* indicies = mesh_->indices();
+    u16* indicies = reinterpret_cast<u16*>(mesh_->indices());
     for ( int i = 0; i < mesh.num_tris; i++ ) {
         for ( int j = 0; j < 3; j++ ) {
             indicies[3*i + j] = (u16)mesh.triangles[i].index[j];

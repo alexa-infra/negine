@@ -80,13 +80,6 @@ public:
         if (!createMeta(filename))
             Destroy();
     }
-    
-    //! Creates program from vertex and shader source texts
-    //! \param      vs              text of vertex shader
-    //! \param      ps              text of pixel shader
-    //! \param      status          output status string
-    //! \returns    The program instance (deallocation should be handled by caller), null if fails
-    bool CreateFromText( const std::string& vs, const std::string& fs, std::string& status );
 
 protected:
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
