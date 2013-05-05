@@ -284,6 +284,9 @@ namespace imp
             std::vector<math::vec2f> uv;
             std::vector<math::vec3f> normal;
 
+            pos.reserve(1000);
+            normal.reserve(1000);
+
             LexerPolicy policy(LexerPolicy::pythonComment);
             policy.setWhitespaces(" \t\n\r/");
 
@@ -314,22 +317,19 @@ namespace imp
                 } else if (token == "f") {
                     u32 idx = nextVertexIndex();
                     for(u32 i=0; i<3; i++) {
+                        u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
                         if ( uv.size() != 0 && normal.size() != 0 ) {
-                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
                             u32 uvIdx = static_cast<u32>(lexer.ReadFloat());
                             u32 normalIdx = static_cast<u32>(lexer.ReadFloat());
-                            addVertex(pos[vertexIdx], uv[uvIdx], normal[normalIdx]);
+                            addVertex(pos[vertexIdx-1], uv[uvIdx-1], normal[normalIdx-1]);
                         } else if ( uv.size() != 0 ) {
-                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
                             u32 uvIdx = static_cast<u32>(lexer.ReadFloat());
-                            addVertex(pos[vertexIdx], uv[uvIdx]);
+                            addVertex(pos[vertexIdx-1], uv[uvIdx-1]);
                         } else if ( normal.size() != 0 ) {
-                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
                             u32 normalIdx = static_cast<u32>(lexer.ReadFloat());
-                            addVertex(pos[vertexIdx], normal[normalIdx]);
+                            addVertex(pos[vertexIdx-1], normal[normalIdx-1]);
                         } else {
-                            u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
-                            addVertex(pos[vertexIdx]);
+                            addVertex(pos[vertexIdx-1]);
                         }
                     }
                     addPolygon(idx, idx + 1, idx + 2);
@@ -339,6 +339,8 @@ namespace imp
                     lexer.ReadToken();
                 } else if (token == "g") {
                     lexer.ReadToken();
+                } else {
+                    ERR("unknown token in OBJ: '%s'", token.c_str());
                 }
             }
         }
