@@ -11,7 +11,7 @@ namespace base {
 namespace sjson {
 
     enum ValueType {
-        typeBool, typeInt, typeFloat, typeString, typeArray, typeDict, typeNull
+        typeTrue, typeFalse, typeInt, typeFloat, typeString, typeArray, typeDict, typeNull
     };
 
     struct Variant {
@@ -22,7 +22,6 @@ namespace sjson {
     private:
         ValueType type;
 
-        std::shared_ptr<bool>           boolVal;
         std::shared_ptr<i64>            intVal;
         std::shared_ptr<f64>            floatVal;
         std::shared_ptr<std::string>    strVal;
@@ -44,7 +43,7 @@ namespace sjson {
         bool isArray() const;
         bool isNull() const;
 
-        bool& asBool() const;
+        bool asBool() const;
         std::string& asString() const;
 
         template<typename T>

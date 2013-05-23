@@ -16,7 +16,6 @@ Variant::Variant(ValueType v)
     : type(v)
 {
     switch(type) {
-    case typeBool:      boolVal = std::make_shared<bool>();         break;
     case typeInt:       intVal = std::make_shared<i64>();           break;
     case typeFloat:     floatVal = std::make_shared<f64>();       break;
     case typeString:    strVal = std::make_shared<std::string>();   break;
@@ -26,8 +25,8 @@ Variant::Variant(ValueType v)
     }
 }
 
-Variant::Variant(bool val) : type(typeBool) {
-    boolVal = std::make_shared<bool>(val);
+Variant::Variant(bool val) {
+    type = val ? typeTrue : typeFalse;
 }
 
 Variant::Variant(i64 val) : type(typeInt) {
@@ -43,7 +42,7 @@ Variant::Variant(const std::string& val) : type(typeString) {
 }
 
 bool Variant::isBool() const {
-    return type == typeBool && boolVal;
+    return type == typeTrue || type == typeFalse;
 }
 
 bool Variant::isInt() const {
@@ -69,9 +68,9 @@ bool Variant::isNull() const {
     return type == typeNull;
 }
 
-bool& Variant::asBool() const {
+bool Variant::asBool() const {
     ASSERT(isBool());
-    return *boolVal;
+    return type == typeTrue;
 }
 
 std::string& Variant::asString() const {
