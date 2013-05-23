@@ -65,7 +65,6 @@ public:
     PFNGLGETSHADERIVPROC        GetShaderiv;
     PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation;
     PFNGLLINKPROGRAMPROC        LinkProgram;
-    PFNGLMAPBUFFERPROC          MapBuffer;
     PFNGLSHADERSOURCEPROC       ShaderSource;
     PFNGLTEXIMAGE2DPROC         TexImage2D;
     PFNGLTEXPARAMETERIPROC      TexParameteri;
@@ -73,7 +72,6 @@ public:
     PFNGLUNIFORM3FPROC          Uniform3f;
     PFNGLUNIFORM4FPROC          Uniform4f;
     PFNGLUNIFORMMATRIX4FVPROC   UniformMatrix4fv;
-    PFNGLUNMAPBUFFERPROC        UnmapBuffer;
     PFNGLUSEPROGRAMPROC         UseProgram;
     PFNGLVERTEXATTRIBPOINTERPROC        VertexAttribPointer;
 

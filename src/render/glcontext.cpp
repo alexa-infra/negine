@@ -184,7 +184,6 @@ void DeviceContext::init()
     LOAD_GL(GetShaderiv                      );
     LOAD_GL(GetUniformLocation               );
     LOAD_GL(LinkProgram                      );
-    LOAD_GL(MapBuffer                        );
     LOAD_GL(ShaderSource                     );
     LOAD_GL(TexImage2D                       );
     LOAD_GL(TexParameteri                    );
@@ -192,7 +191,6 @@ void DeviceContext::init()
     LOAD_GL(Uniform3f                        );
     LOAD_GL(Uniform4f                        );
     LOAD_GL(UniformMatrix4fv                 );
-    LOAD_GL(UnmapBuffer                      );
     LOAD_GL(UseProgram                       );
     LOAD_GL(VertexAttribPointer              );
 

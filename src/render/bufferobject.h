@@ -77,11 +77,6 @@ public:
     //! Bind buffer to target by index, and to desired position
     void BindRange( BufferTarget target, u32 index, void* offset, void* size );
 
-    //! Map buffer from GPU to memory
-    void* Map( BufferAccess access_type );
-    //! Unmap buffer, returns buffer to GPU
-    bool Unmap();
-
     //! Sets data of buffer, copy from memory to GPU
     void SetData( u32 size, const void* data_ptr, BufferUsage usage );
     //! Sets sub-data of buffer, copy from memory to GPU

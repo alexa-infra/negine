@@ -165,8 +165,6 @@ typedef void (_APIENTRYP PFNGLGENVERTEXARRAYSPROC) (GLsizei n, GLuint *arrays);
 typedef void (_APIENTRYP PFNGLBUFFERDATAPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
 typedef void (_APIENTRYP PFNGLBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 typedef void (_APIENTRYP PFNGLGETBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, GLvoid *data);
-typedef GLvoid* (_APIENTRYP PFNGLMAPBUFFERPROC) (GLenum target, GLenum access);
-typedef GLboolean (_APIENTRYP PFNGLUNMAPBUFFERPROC) (GLenum target); 
 typedef void (_APIENTRYP PFNGLCOMPILESHADERPROC) (GLuint shader);
 typedef GLuint (_APIENTRYP PFNGLCREATEPROGRAMPROC) (void);
 typedef GLuint (_APIENTRYP PFNGLCREATESHADERPROC) (GLenum type);

@@ -46,15 +46,6 @@ void BufferObject::BindRange( BufferTarget target, u32 index, void* offset, void
     GL.BindBufferRange( target_ = target, index, id_, ( GLintptr )offset, ( GLsizeiptr )size );
 }
 
-void* BufferObject::Map( BufferAccess access_type )
-{
-    return GL.MapBuffer( target_, access_type );
-}
-bool BufferObject::Unmap()
-{
-    return ( GL.UnmapBuffer( target_ ) == GL_TRUE );
-}
-
 void BufferObject::SetData( u32 size, const void* data_ptr, BufferUsage usage )
 {
     GL.BufferData( target_, size, data_ptr, usage );
