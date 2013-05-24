@@ -9,7 +9,7 @@
     #include <windows.h>
 #endif
 
-#ifdef OS_POSIX
+#ifdef OS_UNIX
     #include <dlfcn.h>
 #endif
 
@@ -63,7 +63,7 @@ public:
 private:
     HMODULE module_;
 };
-#elif defined(OS_POSIX)
+#elif defined(OS_UNIX)
 class Library
 {
 public:
@@ -113,7 +113,7 @@ public:
         void* ptr = glGetProcAddress(name);
         if (ptr == NULL)
             ptr = libgl.getFunc(name);
-#elif defined(OS_POSIX)
+#elif defined(OS_UNIX)
         void* ptr = libgl.getFunc(name);
 #endif
         return (Func)ptr;

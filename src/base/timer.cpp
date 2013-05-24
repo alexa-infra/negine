@@ -9,7 +9,7 @@
 #ifdef OS_WIN
 # include <windows.h>
 #endif
-#ifdef OS_POSIX
+#ifdef OS_UNIX
 # include <sys/time.h>
 #endif
 
@@ -57,7 +57,7 @@ f32 Timer::GetMillis( u64 range )
     return ( f32 )( range / ( frequency_ / 1000.0f ) );
 }
 
-#elif defined(OS_POSIX)
+#elif defined(OS_UNIX)
 
 u64 Timer::GetClock()
 {

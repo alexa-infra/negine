@@ -14,7 +14,7 @@
 #   define NULL 0
 #endif
 
-#if defined(OS_POSIX) || defined(OS_MINGW)
+#if defined(OS_UNIX) || defined(OS_MINGW)
 #   include <stdint.h>
 #elif defined(OS_WIN)
 #   include <winsdkver.h>
