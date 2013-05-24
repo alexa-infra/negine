@@ -18,35 +18,13 @@ Quat::Quat()
 
 Quat::Quat( const Quat& _q )
 {
-    Set( _q.x, _q.y, _q.z, _q.w );
+    x = _q.x;
+    y = _q.y;
+    z = _q.z;
+    w = _q.w;
 }
 
 Quat::Quat( const f32* _q )
-{
-    Set( _q );
-}
-
-Quat::Quat( f32 _x, f32 _y, f32 _z, f32 _w )
-{
-    Set( _x, _y, _z, _w );
-}
-
-Quat::Quat( const vec3f& v )
-{
-    Set( v.x, v.y, v.z, 0.0f );
-}
-
-Quat::Quat( const vec3f& axis, f32 angle )
-{
-    Set( axis, angle );
-}
-
-Quat::Quat( const Matrix4& _matrix )
-{
-    Set( _matrix );
-}
-
-void Quat::Set( const f32* _q )
 {
     x = _q[0];
     y = _q[1];
@@ -54,7 +32,7 @@ void Quat::Set( const f32* _q )
     w = _q[3];
 }
 
-void Quat::Set( f32 _x, f32 _y, f32 _z, f32 _w )
+Quat::Quat( f32 _x, f32 _y, f32 _z, f32 _w )
 {
     x = _x;
     y = _y;
@@ -62,9 +40,18 @@ void Quat::Set( f32 _x, f32 _y, f32 _z, f32 _w )
     w = _w;
 }
 
-void Quat::Set( const vec3f& axis, f32 angle )
+Quat::Quat( const vec3f& v )
+{
+    ( *this ) = GetRotation( v, 0.0f );
+}
+
+Quat::Quat( const vec3f& axis, f32 angle )
 {
     ( *this ) = GetRotation( axis, angle );
+}
+
+Quat::Quat( const Matrix4& _matrix )
+{
 }
 
 void Quat::Normalize()
@@ -79,10 +66,6 @@ void Quat::Normalize()
     y /= norm;
     z /= norm;
     w /= norm;
-}
-
-void Quat::Set( const Matrix4& _matrix )
-{
 }
 
 vec3f Quat::getXYZ() const

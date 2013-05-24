@@ -161,17 +161,17 @@ void Md5Anim::BuildFrameSkeleton( u32 frameIndex )
         }
 
         if ( jointInfos[i].flags & 8 ) { //Qx
-            animatedOrient.arr[0] = animFrameData[jointInfos[i].start_index + j];
+            animatedOrient.x = animFrameData[jointInfos[i].start_index + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 16 ) { //Qy
-            animatedOrient.arr[1] = animFrameData[jointInfos[i].start_index + j];
+            animatedOrient.y = animFrameData[jointInfos[i].start_index + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 32 ) { //Qz
-            animatedOrient.arr[2] = animFrameData[jointInfos[i].start_index + j];
+            animatedOrient.z = animFrameData[jointInfos[i].start_index + j];
             ++j;
         }
 

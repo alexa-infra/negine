@@ -19,12 +19,7 @@ namespace math
 class Quat
 {
 public:
-    union {
-        struct {
-            f32 x, y, z, w;
-        };
-        f32 arr[4];
-    };
+    f32 x, y, z, w;
 
 public:
     Quat();
@@ -55,10 +50,6 @@ public:
     vec3f RotatePoint( const vec3f& v ) const;
     vec3f getXYZ() const;
 
-    void Set( const f32* quat );
-    void Set( const vec3f& axis, f32 angle );
-    void Set( f32 _x, f32 _y, f32 _z, f32 angle );
-    void Set( const Matrix4& _matrix );
     Matrix4 GetMatrix() const;
 
     void Rotate( const vec3f& axis, const f32& angle );
