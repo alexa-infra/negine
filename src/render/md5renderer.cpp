@@ -53,7 +53,7 @@ void Md5Renderer::Draw( )
     vb->BindAttributes();
     GL.DrawElements(
         GL_TRIANGLES, mesh_->numIndexes(), 
-        mesh_->indexType(), (void*)0);
+        mesh_->indexType(), NULL);
     vb->UnbindAttributes();
 }
 
@@ -93,7 +93,7 @@ void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
     u16* indicies = reinterpret_cast<u16*>(mesh_->indices());
     for ( int i = 0; i < mesh.num_tris; i++ ) {
         for ( int j = 0; j < 3; j++ ) {
-            indicies[3*i + j] = (u16)mesh.triangles[i].index[j];
+            indicies[3*i + j] = static_cast<u16>(mesh.triangles[i].index[j]);
         }
     }
 }

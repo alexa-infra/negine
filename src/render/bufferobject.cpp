@@ -43,7 +43,7 @@ void BufferObject::BindBase( BufferTarget target, u32 index )
 
 void BufferObject::BindRange( BufferTarget target, u32 index, void* offset, void* size )
 {
-    GL.BindBufferRange( target_ = target, index, id_, ( GLintptr )offset, ( GLsizeiptr )size );
+    GL.BindBufferRange( target_ = target, index, id_, reinterpret_cast<GLintptr>(offset), reinterpret_cast<GLsizeiptr>(size) );
 }
 
 void BufferObject::SetData( u32 size, const void* data_ptr, BufferUsage usage )

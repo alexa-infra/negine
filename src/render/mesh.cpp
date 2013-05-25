@@ -43,7 +43,7 @@ u8 GetComponentCount( VertexAttr attr )
 
 u32 GetAttributeLocation( VertexAttr attr )
 {
-    return (u32)attr;
+    return static_cast<u32>(attr);
 }
 
 u32 GetGLType( VertexAttr attr )

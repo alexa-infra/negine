@@ -85,7 +85,7 @@ void ParticleSystemRenderer::Draw( GpuProgram* program )
     vbo_->BindAttributes( );
 
     GL.DrawElements(
-        GL_TRIANGLES, ps_->particles_active.size() * 6, GL_UNSIGNED_SHORT, (u16*)0);
+        GL_TRIANGLES, ps_->particles_active.size() * 6, GL_UNSIGNED_SHORT, NULL);
 
     vbo_->UnbindAttributes( );
 }

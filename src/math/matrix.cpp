@@ -26,7 +26,7 @@ const Matrix4 Matrix4::LookAt( const vec3f& eyePos, const vec3f& lookAtPos, cons
 
 const Matrix4 Matrix4::Perspective( f32 fovyRadians, f32 aspect, f32 zNear, f32 zFar )
 {
-    f32 f = tanf( ( ( f32 )( pi_over_2 ) - ( 0.5f * fovyRadians ) ) );
+    f32 f = tanf( ( pi_over_2 - ( 0.5f * fovyRadians ) ) );
     f32 rangeInv = ( 1.0f / ( zNear - zFar ) );
     return Matrix4(
                vec4f( ( f / aspect ), 0.0f, 0.0f, 0.0f ),

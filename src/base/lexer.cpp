@@ -26,13 +26,13 @@ LexerPolicy::LexerPolicy(u32 mask)
 void LexerPolicy::setWhitespaces(const std::string& whitespaces)
 {
     for(u32 i=0; i<whitespaces.size(); i++)
-        whiteCharacters[(u8)whitespaces[i]] = 1;
+        whiteCharacters[static_cast<u8>(whitespaces[i])] = 1;
 }
 
 void LexerPolicy::setBreakChar(const std::string& breaks)
 {
     for(u32 i=0; i<breaks.size(); i++)
-        breakCharacters[(u8)breaks[i]] = 1;
+        breakCharacters[static_cast<u8>(breaks[i])] = 1;
 }
 
 LexerPolicy LexerPolicy::defaultPolicy()
@@ -137,7 +137,7 @@ bool Lexer::ReadNumber(f32& ret)
 
     if ( std::regex_match( token_, std::regex( "-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?" ) ) )
     {
-        ret = ( f32 )atof( token_ );
+        ret = static_cast<f32>(atof( token_ ));
         return true;
     }
     return false;
@@ -146,7 +146,7 @@ bool Lexer::ReadNumber(f32& ret)
 f32 Lexer::ReadFloat()
 {
     ReadToken();
-    return ( f32 )atof( token_ );
+    return static_cast<u8>(atof( token_ ));
 }
 
 bool Lexer::HasMoreData() const

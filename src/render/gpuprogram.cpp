@@ -251,7 +251,7 @@ bool GpuProgram::createMeta( const std::string& filename )
     
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {
-        VertexAttr attr = (VertexAttr)i;
+        VertexAttr attr = static_cast<VertexAttr>(i);
         std::string name;
         attr_map.to_string(attr, name);
         GL.BindAttribLocation(id_,

@@ -32,7 +32,7 @@ VertexBuffer::~VertexBuffer()
 
 void VertexBuffer::EnableAttribute( VertexAttr attr, u32 stride, void* pointer )
 {
-    enabledAttributes_[(u32)attr] = EnabledAttribute(stride, pointer);
+    enabledAttributes_[static_cast<u32>(attr)] = EnabledAttribute(stride, pointer);
 }
 
 void VertexBuffer::EnableAttributeMesh( const Mesh* mesh )
@@ -42,7 +42,7 @@ void VertexBuffer::EnableAttributeMesh( const Mesh* mesh )
     {
         if (!attributes[i].valid_)
             continue;
-        EnableAttribute(attributes[i].attr_, attributes[i].stride_, (u8*)0 + attributes[i].start_);
+        EnableAttribute(attributes[i].attr_, attributes[i].stride_, reinterpret_cast<u8*>(NULL) + attributes[i].start_);
     }
 }
 
@@ -86,7 +86,7 @@ void VertexBuffer::Load()
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {
         EnabledAttribute& attr = enabledAttributes_[i];
-        VertexAttr vertexAttr = (VertexAttr)i;
+        VertexAttr vertexAttr = static_cast<VertexAttr>(i);
         u32 location = VertexAttrs::GetAttributeLocation( vertexAttr );
         if (enabledAttributes_[i].enabled_)
         {

@@ -54,7 +54,7 @@ u64 Timer::GetClock()
 
 f32 Timer::GetMillis( u64 range )
 {
-    return ( f32 )( range / ( frequency_ / 1000.0f ) );
+    return static_cast<f64>( range / ( frequency_ / 1000.0f ) );
 }
 
 #elif defined(OS_UNIX)

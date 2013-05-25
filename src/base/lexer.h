@@ -40,8 +40,8 @@ public:
     inline bool allowCppStyleComment() const { return (setup & cppStyleComment) == cppStyleComment; }
     inline bool allowPythonComment() const   { return (setup & pythonComment) == pythonComment; }
     inline bool allowString() const          { return (setup & strings) == strings; }
-    inline bool isWhitespace(char ch) const  { return whiteCharacters[(u8)ch] == 1; }
-    inline bool isBreakChar(char ch) const   { return breakCharacters[(u8)ch] == 1; }
+    inline bool isWhitespace(char ch) const  { return whiteCharacters[static_cast<u8>(ch)] == 1; }
+    inline bool isBreakChar(char ch) const   { return breakCharacters[static_cast<u8>(ch)] == 1; }
     inline bool allowBreakOnChar() const     { return (setup & breakOnChar) == breakOnChar; }
 
     static LexerPolicy defaultPolicy();

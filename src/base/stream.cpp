@@ -73,7 +73,7 @@ std::istream& FileBinary::safeGetline( std::istream& is, std::string& t, u32& re
         case EOF:
             return is;
         default:
-            t += ( char )c;
+            t += static_cast<char>(c);
         }
     }
 }

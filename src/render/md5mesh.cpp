@@ -44,17 +44,17 @@ void Md5Model::Read( Lexer& reader )
         reader.ReadToken();
 
         if ( strcmp( reader.CurrentToken(), "MD5Version" ) == 0 ) {
-            u32 version = ( u32 ) reader.ReadFloat();
+            u32 version = static_cast<u32>(reader.ReadFloat());
 
             ASSERT( version == 10 );
         } else if ( strcmp( reader.CurrentToken(), "numJoints" ) == 0 ) {
-            num_joints = ( u32 ) reader.ReadFloat();
+            num_joints = static_cast<u32>(reader.ReadFloat());
 
             if (    num_joints > 0 ) {
                 baseSkel = new Md5Joint[    num_joints];
             }
         } else if ( strcmp( reader.CurrentToken(), "numMeshes" ) == 0 ) {
-            num_meshes = ( u32 ) reader.ReadFloat();
+            num_meshes = static_cast<u32>(reader.ReadFloat());
 
             if (    num_meshes > 0 ) {
                 meshes = new Md5Mesh[    num_meshes];
@@ -66,7 +66,7 @@ void Md5Model::Read( Lexer& reader )
                 Md5Joint& joint =     baseSkel[i];
                 //"name parent ( pos.x pos.y pos.z ) ( q.x q.y q.z )"
                 joint.name = reader.ReadToken();
-                joint.parent = ( i32 )reader.ReadFloat();
+                joint.parent = static_cast<i32>(reader.ReadFloat());
                 reader.ReadToken(); // (
                 readVector( reader, joint.pos );
                 reader.ReadToken(); // )
@@ -94,45 +94,45 @@ void Md5Mesh::Read( Lexer& reader )
         if ( strcmp( reader.CurrentToken(), "shader" ) == 0 ) {
             shader = reader.ReadToken();
         } else if ( strcmp( reader.CurrentToken(), "numverts" ) == 0 ) {
-            num_verts = ( u32 ) reader.ReadFloat();
+            num_verts = static_cast<u32>(reader.ReadFloat());
 
             if ( num_verts > 0 ) {
                 vertices    = new Md5Vertex [num_verts];
             }
         } else if ( strcmp( reader.CurrentToken(), "numtris" ) == 0 ) {
-            num_tris = ( u32 ) reader.ReadFloat();
+            num_tris = static_cast<u32>(reader.ReadFloat());
 
             if ( num_tris > 0 ) {
                 triangles     = new Md5Triangle [num_tris];
             }
         } else if ( strcmp( reader.CurrentToken(), "numweights" ) == 0 ) {
-            num_weights = ( u32 ) reader.ReadFloat();
+            num_weights = static_cast<u32>(reader.ReadFloat());
 
             if ( num_weights > 0 ) {
                 weights = new Md5Weight [num_weights];
             }
         } else if ( strcmp( reader.CurrentToken(), "vert" ) == 0 ) {
             //vert %d ( %f %f ) %d %d
-            u32 vertIndex = ( u32 ) reader.ReadFloat();
+            u32 vertIndex = static_cast<u32>(reader.ReadFloat());
             reader.ReadToken();//(
             Md5Vertex& vertex = vertices[vertIndex];
             vertex.st.x = reader.ReadFloat();
             vertex.st.y = reader.ReadFloat();
             reader.ReadToken();//)
-            vertex.start = ( u32 ) reader.ReadFloat();
-            vertex.count = ( u32 ) reader.ReadFloat();
+            vertex.start = static_cast<u32>(reader.ReadFloat());
+            vertex.count = static_cast<u32>(reader.ReadFloat());
         } else if ( strcmp( reader.CurrentToken(), "tri" ) == 0 ) {
             // tri %d %d %d %d
-            u32 triangleIndex = ( u32 ) reader.ReadFloat();
+            u32 triangleIndex = static_cast<u32>(reader.ReadFloat());
             Md5Triangle& triangle = triangles[triangleIndex];
-            triangle.index[0] = ( u32 ) reader.ReadFloat();
-            triangle.index[1] = ( u32 ) reader.ReadFloat();
-            triangle.index[2] = ( u32 ) reader.ReadFloat();
+            triangle.index[0] = static_cast<u32>(reader.ReadFloat());
+            triangle.index[1] = static_cast<u32>(reader.ReadFloat());
+            triangle.index[2] = static_cast<u32>(reader.ReadFloat());
         } else if ( strcmp( reader.CurrentToken(), "weight" ) == 0 ) {
             //weight %d %d %f ( %f %f %f )
-            u32 weightIndex = ( u32 ) reader.ReadFloat();
+            u32 weightIndex = static_cast<u32>(reader.ReadFloat());
             Md5Weight& weight = weights[weightIndex];
-            weight.joint = ( u32 ) reader.ReadFloat();
+            weight.joint = static_cast<u32>(reader.ReadFloat());
             weight.bias  = reader.ReadFloat();
             reader.ReadToken(); //(
             readVector( reader, weight.pos );

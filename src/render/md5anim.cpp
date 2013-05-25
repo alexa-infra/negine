@@ -51,13 +51,13 @@ void Md5Anim::Load( const std::string& filename )
         reader.ReadToken();
 
         if ( strcmp( reader.CurrentToken(), "MD5Version" ) == 0 ) {
-            u32 version = ( u32 ) reader.ReadFloat();
+            u32 version = static_cast<u32>(reader.ReadFloat());
 
             if ( version != 10 ) {
                 return;
             }
         } else if ( strcmp( reader.CurrentToken(), "numFrames" ) == 0 ) {
-            num_frames = ( u32 ) reader.ReadFloat();
+            num_frames = static_cast<u32>(reader.ReadFloat());
 
             // Allocate memory for skeleton frames and bounding boxes
             if ( num_frames > 0 ) {
@@ -65,7 +65,7 @@ void Md5Anim::Load( const std::string& filename )
                 bboxes     = new Md5BoundingBox [num_frames];
             }
         } else if ( strcmp( reader.CurrentToken(), "numJoints" ) == 0 ) {
-            num_joints = ( u32 ) reader.ReadFloat();
+            num_joints = static_cast<u32>(reader.ReadFloat());
 
             for ( u32 i = 0; i < num_frames; ++i ) {
                 // Allocate memory for joints of each frame
@@ -75,9 +75,9 @@ void Md5Anim::Load( const std::string& filename )
             jointInfos = new JointInfo     [num_joints];
             baseFrame  = new BaseframeJoint[num_joints];
         } else if ( strcmp( reader.CurrentToken(), "frameRate" ) == 0 ) {
-            frame_rate = ( u32 ) reader.ReadFloat();
+            frame_rate = static_cast<u32>(reader.ReadFloat());
         } else if ( strcmp( reader.CurrentToken(), "numAnimatedComponents" ) == 0 ) {
-            numAnimatedComponents = ( u32 ) reader.ReadFloat();
+            numAnimatedComponents = static_cast<u32>(reader.ReadFloat());
 
             if ( numAnimatedComponents > 0 ) {
                 // Allocate memory for animation frame data
@@ -88,9 +88,9 @@ void Md5Anim::Load( const std::string& filename )
 
             for ( u32 i = 0; i < num_joints; i++ ) {
                 jointInfos[i].name        = reader.ReadToken();
-                jointInfos[i].parent      = ( u32 )reader.ReadFloat();
-                jointInfos[i].flags       = ( u32 )reader.ReadFloat();
-                jointInfos[i].start_index = ( u32 )reader.ReadFloat();
+                jointInfos[i].parent      = static_cast<u32>(reader.ReadFloat());
+                jointInfos[i].flags       = static_cast<u32>(reader.ReadFloat());
+                jointInfos[i].start_index = static_cast<u32>(reader.ReadFloat());
             }
 
             reader.ReadToken(); // }
@@ -122,7 +122,7 @@ void Md5Anim::Load( const std::string& filename )
 
             reader.ReadToken(); // }
         } else if ( strcmp( reader.CurrentToken(), "frame" ) == 0 ) {
-            u32 frameIndex = ( u32 ) reader.ReadFloat();
+            u32 frameIndex = static_cast<u32>(reader.ReadFloat());
             reader.ReadToken(); // {
 
             for ( u32 i = 0; i < numAnimatedComponents; ++i ) {

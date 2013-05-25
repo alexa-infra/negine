@@ -125,7 +125,7 @@ size_t Variant::size() const {
 bool skipWhiteSpace(std::istream* json)
 {
     while(json->good()) {
-        char ch = (char)json->peek();
+        char ch = json->peek();
         if (!json->good() || ch == EOF)
             break;
         if (ch == '/') {
@@ -153,16 +153,16 @@ bool skipComment(std::istream* json)
     CHECK_FALSE(consume(json, "/"));
     CHECK_FALSE(checkBounds(json));
     
-    char ch = (char)json->get();
+    char ch = json->get();
     if (ch == '/') {
         while(json->good()) {
-            if ((char)json->get() == '\n') {
+            if (json->get() == '\n') {
                 return true;
             }
         }
     } else if (ch == '*') {
         while(json->good())
-            if ((char)json->get() == '*' && (char)json->get() == '/') {
+            if (json->get() == '*' && json->get() == '/') {
                 return true;
             }
         CHECK_FALSE(checkBounds(json));
@@ -177,7 +177,7 @@ bool consume(std::istream* json, const std::string& str)
 {
     for(u32 i=0; i<str.length(); i++) {
         CHECK_FALSE(checkBounds(json));
-        char ch = (char)json->peek();
+        char ch = json->peek();
         if (ch != str[i]) {
             ERR("wrong format, consumed: %s", str.c_str());
             return false;
@@ -191,7 +191,7 @@ bool next(std::istream* json, char& ch)
 {
     CHECK_FALSE(skipWhiteSpace(json));
     CHECK_FALSE(checkBounds(json));
-    ch = (char)json->peek();
+    ch = json->peek();
     return true;
 }
 
@@ -201,14 +201,14 @@ bool parseString(std::istream* json, Variant& result)
     std::string ret;
     while(json->good()) {
         CHECK_FALSE(checkBounds(json));
-        char ch = (char)json->peek();
+        char ch = json->peek();
         if (ch == '"')
             break;
         json->get();
         if (ch == '\\')
         {
             CHECK_FALSE(checkBounds(json));
-            ch = (char)json->get();
+            ch = json->get();
             if (ch == '"' || ch == '\\' || ch == '/')
                 ret.push_back(ch);
             else if (ch == 't') ret.push_back('\t');
@@ -240,7 +240,7 @@ bool parseIdentifier(std::istream* json, Variant& result)
     std::string ret;
     while(json->good())
     {
-        char ch = (char)json->peek();
+        char ch = json->peek();
         if (ch == EOF)
             break;
         if (isIdentifier(ch))
@@ -267,7 +267,7 @@ bool parseNumber(std::istream* json, Variant& result)
     const std::string chars("0123456789+-.eE");
     std::string ret;
     while(json->good()) {
-        char ch = (char)json->peek();
+        char ch = json->peek();
         if (!json->good() || ch == EOF)
             break;
         if (chars.find(ch) == std::string::npos)
@@ -282,7 +282,7 @@ bool parseNumber(std::istream* json, Variant& result)
         result = Variant(atof(ret.c_str()));
         return true;
     }
-    result = Variant((i64)atol(ret.c_str()));
+    result = Variant(static_cast<i64>(atol(ret.c_str())));
     return true;
 }
 
@@ -461,7 +461,7 @@ bool parseRoot(std::istream* json, Variant& result)
         CHECK_FALSE(parseValue(json, value));
         obj[key] = value;
         CHECK_FALSE(skipWhiteSpace(json));
-        if ((char)json->peek() == ',') {
+        if (json->peek() == ',') {
             json->get();
         } else if (json->peek() == EOF)
             break;

@@ -53,13 +53,13 @@ void ParticleSystem::add()
 
     Particle* p = particles_free.front();
     particles_free.pop_front();
-    p->life_time = rand() / ( f32 )( RAND_MAX ) * ( 2 * settings.particle_lifetime_spread ) + ( settings.particle_lifetime - settings.particle_lifetime_spread );
+    p->life_time = rand() / static_cast<f32>( RAND_MAX ) * ( 2 * settings.particle_lifetime_spread ) + ( settings.particle_lifetime - settings.particle_lifetime_spread );
     p->life = 0;
-    f32 direction = rand() / ( f32 )( RAND_MAX ) * ( 2 * math::pi );
+    f32 direction = rand() / static_cast<f32>( RAND_MAX ) * ( 2 * math::pi );
     p->position = position.xy(); 
     p->speed = math::vec2f( cosf( direction ), sinf( direction ) );
-    p->speed *= settings.speed * ( rand() / ( f32 )( RAND_MAX ) );
-    p->acceleration = rand() / ( f32 )( RAND_MAX ) * 200.0f;
+    p->speed *= settings.speed * ( rand() / static_cast<f32>( RAND_MAX ) );
+    p->acceleration = rand() / static_cast<f32>( RAND_MAX ) * 200.0f;
     p->size = settings.size_start;
     p->rotation = 0.f;
     p->color = settings.color_start;

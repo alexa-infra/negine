@@ -92,7 +92,7 @@ public:
     GLFuncLoader()
         : libgl("opengl32.dll")
     {
-        glGetProcAddress = (GLGETPROCADDRESSPROC)libgl.getFunc("wglGetProcAddress");
+        glGetProcAddress = reinterpret_cast<GLGETPROCADDRESSPROC>(libgl.getFunc("wglGetProcAddress"));
         ASSERT(glGetProcAddress != NULL);
     }
 #elif defined(OS_MAC)
@@ -116,7 +116,7 @@ public:
 #elif defined(OS_UNIX)
         void* ptr = libgl.getFunc(name);
 #endif
-        return (Func)ptr;
+        return reinterpret_cast<Func>(ptr);
     }
     
     template<typename Func>
