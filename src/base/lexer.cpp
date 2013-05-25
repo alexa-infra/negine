@@ -137,7 +137,7 @@ bool Lexer::ReadNumber(f32& ret)
 
     if ( std::regex_match( token_, std::regex( "-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?" ) ) )
     {
-        ret = static_cast<f32>(atof( token_ ));
+        ret = atof( token_ );
         return true;
     }
     return false;
@@ -146,7 +146,7 @@ bool Lexer::ReadNumber(f32& ret)
 f32 Lexer::ReadFloat()
 {
     ReadToken();
-    return static_cast<u8>(atof( token_ ));
+    return (f32)atof( token_ );
 }
 
 bool Lexer::HasMoreData() const

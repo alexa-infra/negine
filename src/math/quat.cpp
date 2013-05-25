@@ -42,7 +42,10 @@ Quat::Quat( f32 _x, f32 _y, f32 _z, f32 _w )
 
 Quat::Quat( const vec3f& v )
 {
-    ( *this ) = GetRotation( v, 0.0f );
+    x = v.x;
+    y = v.y;
+    z = v.z;
+    w = 0.0f;
 }
 
 Quat::Quat( const vec3f& axis, f32 angle )
