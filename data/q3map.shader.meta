@@ -1,0 +1,3 @@
+version = "150"
+code = "q3map.shader"
+include = "global.shader"

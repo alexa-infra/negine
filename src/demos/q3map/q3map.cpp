@@ -12,17 +12,17 @@
 #include "render/statistics.h"
 #include "base/timer.h"
 
-using base::math::Vector3;
-using base::math::Vector4;
+using base::math::vec3f;
+using base::math::vec4f;
 
 namespace base
 {
 namespace opengl
 {
 
-void bind_attr( GpuProgram* pr, const q3vertex& vertexes );
+void bind_attr( DeviceContext& GL, GpuProgram* pr, const q3vertex& vertexes );
 
-void swizzle( Vector3& v )
+void swizzle( vec3f& v )
 {
     std::swap(v.y, v.z);
     std::swap(v.z, v.x);
@@ -47,7 +47,7 @@ public:
     q3vertex                controls[9];
 
     void tessellate( u32 level );
-    void render( GpuProgram* program );
+    void render( DeviceContext& GL, GpuProgram* program );
 };
 
 
@@ -60,9 +60,10 @@ bool q3visibility::isClusterVisible( i32 visCluster, i32 testCluster ) const
     return ( vecs[visCluster * szVecs + ( testCluster >> 3 )] & ( 1 << ( testCluster & 7 ) ) ) != 0;
 }
 
-q3maploader::q3maploader( FileBinary& file )
+q3maploader::q3maploader( DeviceContext& gl, FileBinary& file )
     : f( file )
     , visFaces( NULL )
+    , GL(gl)
 #ifdef USE_PVS
     , _frame_index( 1 )
     , _camera_cluster( -2 )
@@ -133,7 +134,7 @@ void q3maploader::load()
     ti.Height = 128;
     for( u32 i = 0; i < lm.size(); i++ )    {
         Texture*& t = lm_textures[i];
-        t = new Texture;
+        t = new Texture(GL);
         t->GenerateFromBuffer( ti, (u8*)lm[i].data );
     }
 
@@ -195,7 +196,7 @@ q3lump q3maploader::read_lump( i32 index )
     return f.read_type<q3lump>();
 }
 
-i32 q3maploader::findLeaf( const Vector3& camPos ) const
+i32 q3maploader::findLeaf( const vec3f& camPos ) const
 {
     i32 index = 0;
 
@@ -214,7 +215,7 @@ i32 q3maploader::findLeaf( const Vector3& camPos ) const
     return -index - 1;
 }
 
-void q3maploader::ComputePossibleVisible( const Vector3& cameraPos )
+void q3maploader::ComputePossibleVisible( const vec3f& cameraPos )
 {
     i32 cameraLeafIndex = findLeaf( cameraPos );
     const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
@@ -266,8 +267,8 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
         return;
     }
 
-    const Vector3& mins = node->mins;
-    const Vector3& maxs = node->maxs;
+    const vec3f& mins = node->mins;
+    const vec3f& maxs = node->maxs;
     for ( u32 i = 0; i < 6; i++ ) {
         u32 mask = 1 << i;
 
@@ -306,7 +307,7 @@ bool comp_texture_array(const TextureFace& a, const TextureFace& b)
     return a.first < b.first;
 }
 
-void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& txloader )
+void q3maploader::render( const Camera& camera, GpuProgram* pr, ParameterMap& params, TextureLoader& txloader )
 {
     Timer tt;
     tt.Reset();
@@ -340,10 +341,10 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
     for ( std::vector<TextureFace>::iterator ita = sorted.begin(); ita != sorted.end(); ++ita ) {
 
         Texture* t = ( *ita ).first;
-        if (diffuesID != t->id())
+        if (diffuesID != t->handle())
         {
-            pr->set_uniform( "diffuse", t );
-            diffuesID = t->id();
+            params["diffuse"] = t;
+            diffuesID = t->handle();
             switches++;
         }
 
@@ -353,13 +354,15 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
         if ( face.lightmapID >= 0 && lightMapID != face.lightmapID ) {
             lightMapID = face.lightmapID;
             Texture* lightmap = lm_textures[face.lightmapID];
-            pr->set_uniform( "lightmap", lightmap );
+            params["lightmap"] = lightmap;
             switches++;
         }
 
         if ( face.type == 1 ) {
+            pr->setParams(params);
             render_polygons( face, pr );
         } else if ( face.type == 2 ) {
+            pr->setParams(params);
             render_patch( face, pr );
             patches++;
         }
@@ -378,8 +381,8 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
 
 void q3maploader::render_polygons( const q3face& face, GpuProgram* pr ) const
 {
-    bind_attr( pr, vertexes[face.vertexIndex] );
-    glDrawElements( GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex] );
+    bind_attr( GL, pr, vertexes[face.vertexIndex] );
+    GL.DrawElements( GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex] );
     Stats::add_polygons( face.numOfFaceIndices / 3 );
 }
 
@@ -403,16 +406,16 @@ void q3maploader::render_patch( const q3face& face, GpuProgram* pr ) const
             b.controls[7] = vertexes[offset + ( patchWidth << 1 ) + 1];
             b.controls[8] = vertexes[offset + ( patchWidth << 1 ) + 2];
             b.tessellate( 8 );
-            b.render( pr );
+            b.render( GL, pr );
         }
     }
 }
 
-void bind_attr( GpuProgram* pr, const q3vertex& vertex )
+void bind_attr( DeviceContext& GL, GpuProgram* pr, const q3vertex& vertex )
 {
     u32 bindPos = VertexAttrs::GetAttributeLocation(VertexAttrs::tagPosition);
-    glEnableVertexAttribArray(bindPos);
-    glVertexAttribPointer(
+    GL.EnableVertexAttribArray(bindPos);
+    GL.VertexAttribPointer(
         bindPos,
         3,
         GL_FLOAT,
@@ -420,8 +423,8 @@ void bind_attr( GpuProgram* pr, const q3vertex& vertex )
         sizeof( q3vertex ),
         ( const u8* )&vertex.pos );
     u32 bindTex = VertexAttrs::GetAttributeLocation(VertexAttrs::tagTexture);
-    glEnableVertexAttribArray(bindTex);
-    glVertexAttribPointer(
+    GL.EnableVertexAttribArray(bindTex);
+    GL.VertexAttribPointer(
         bindTex,
         2,
         GL_FLOAT,
@@ -439,8 +442,8 @@ void bind_attr( GpuProgram* pr, const q3vertex& vertex )
             (const u8*)&vertex.normal);
     */
         u32 bindLM = VertexAttrs::GetAttributeLocation(VertexAttrs::tagTangent);
-        glEnableVertexAttribArray(bindLM);
-        glVertexAttribPointer(
+        GL.EnableVertexAttribArray(bindLM);
+        GL.VertexAttribPointer(
             bindLM,
             2,
             GL_FLOAT,
@@ -508,12 +511,12 @@ void Bezier::tessellate( u32 L )
     }
 }
 
-void Bezier::render( GpuProgram* program )
+void Bezier::render( DeviceContext& GL, GpuProgram* program )
 {
-    bind_attr( program, vertex[0] );
+    bind_attr( GL, program, vertex[0] );
 
     for( u32 i = 0; i < level; i++ ) {
-        glDrawElements( GL_TRIANGLE_STRIP,
+        GL.DrawElements( GL_TRIANGLE_STRIP,
                         trianglesPerRow[i],
                         GL_UNSIGNED_INT,
                         rowIndexes[i] );

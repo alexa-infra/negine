@@ -1,4 +1,4 @@
--- vertex
+#ifdef VERTEX_SHADER
 attribute vec2 tex;
 attribute vec3 position;
 attribute vec3 n;
@@ -16,8 +16,9 @@ void main(void) {
     tex1 = t;
     gl_Position = clip_matrix * vec4(position, 1.0);
 }
+#endif
 
--- pixel
+#ifdef PIXEL_SHADER
 uniform sampler2D diffuse;
 uniform sampler2D lightmap;
 varying vec2 tex0;
@@ -28,3 +29,4 @@ void main() {
     vec4 lightmap_color = texture2D(lightmap, tex1);
     gl_FragColor = color_sample * lightmap_color;
 }
+#endif
