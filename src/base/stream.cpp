@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "base/stream.h"
-#include <string>
 
 namespace base
 {
@@ -27,55 +26,16 @@ u32 FileBinary::size()
     return static_cast<u32>( file_.tellg() );
 }
 
-std::string FileBinary::get_line()
-{
-    file_.seekg( position_ );
-    std::string ret;
-    //u32 len = 0;
-    //safeGetline(file_, ret, len);
-    std::getline( file_, ret );
-    position_ = static_cast<u32>( file_.tellg() );
-    return ret;
-}
-
-void FileBinary::read_impl( u8* dest, u32 size, u32 position )
+void FileBinary::readImpl( u8* dest, u32 size, u32 position )
 {
     file_.seekg( position );
     file_.read( reinterpret_cast<char*>( dest ), size );
 }
 
-void FileBinary::write_impl( const u8* source, u32 size, u32 position )
+void FileBinary::writeImpl( const u8* source, u32 size, u32 position )
 {
     file_.seekp( position );
     file_.write( reinterpret_cast<const char*>( source ), size );
-}
-
-std::istream& FileBinary::safeGetline( std::istream& is, std::string& t, u32& read_count )
-{
-    t.clear();
-//    std::istream::sentry se(is);
-    std::streambuf* sb = is.rdbuf();
-
-    for( read_count = 1;; read_count++ ) {
-        int c = sb->sbumpc();
-
-        switch ( c ) {
-        case '\r':
-            c = sb->sgetc();
-
-            if( c == '\n' ) {
-                sb->sbumpc();
-                read_count++;
-            }
-
-            return is;
-        case '\n':
-        case EOF:
-            return is;
-        default:
-            t += static_cast<char>(c);
-        }
-    }
 }
 
 FileText::FileText( const std::string& filename )
@@ -100,7 +60,7 @@ FileText::~FileText()
     }
 }
 
-std::vector<std::string> FileText::read_lines()
+std::vector<std::string> FileText::readLines()
 {
     file_.seekg( 0, std::ios::beg );
     std::vector<std::string> ret;
@@ -113,7 +73,7 @@ std::vector<std::string> FileText::read_lines()
     return ret;
 }
 
-std::string FileText::read_all()
+std::string FileText::readAll()
 {
     u32 s = size();
     std::string ret;
@@ -124,12 +84,21 @@ std::string FileText::read_all()
     return ret;
 }
 
-char FileText::current_char()
+std::string FileText::readLine()
+{
+    file_.seekg( position_ );
+    std::string ret;
+    std::getline( file_, ret );
+    position_ = static_cast<u32>( file_.tellg() );
+    return ret;
+}
+
+char FileText::currentChar()
 {
     return static_cast<char>( sb_->sgetc() );
 }
 
-char FileText::bump_char()
+char FileText::bumpChar()
 {
     position_++;
     return static_cast<char>( sb_->sbumpc() );

@@ -18,7 +18,7 @@ namespace base
 
 Timer::Timer()
 {
-    start_time_ = GetClock();
+    startTime_ = getClock();
 #ifdef OS_WIN
     LARGE_INTEGER freq;
     if ( QueryPerformanceFrequency( &freq ) == FALSE )
@@ -27,48 +27,50 @@ Timer::Timer()
         abort();
     }
     frequency_ = freq.QuadPart;
+#else
+    frequency_ = 0;
 #endif
 }
 
-f32 Timer::Reset()
+f32 Timer::reset()
 {
-    u64 new_time = GetClock();
-    f32 elapsed = GetMillis( new_time - start_time_ );
-    start_time_ = new_time;
+    u64 new_time = getClock();
+    f32 elapsed = static_cast<f32>( convertToMillis( new_time - startTime_ ) );
+    startTime_ = new_time;
     return elapsed;
 }
 
-f32 Timer::Elapsed()
+f32 Timer::elapsed() const
 {
-    return GetMillis( GetClock() - start_time_ );
+    return static_cast<f32>( convertToMillis( getClock() - startTime_ ) );
 }
 
 #ifdef OS_WIN
 
-u64 Timer::GetClock()
+u64 Timer::getClock() const
 {
     LARGE_INTEGER time;
     QueryPerformanceCounter(&time);
     return time.QuadPart;
 }
 
-f32 Timer::GetMillis( u64 range )
+f64 Timer::convertToMillis( u64 range ) const
 {
-    return static_cast<f64>( range / ( frequency_ / 1000.0f ) );
+    return range / ( frequency_ / 1000.0 );
 }
 
 #elif defined(OS_UNIX)
 
-u64 Timer::GetClock()
+u64 Timer::getClock() const
 {
     timeval time;
-    gettimeofday( &time, NULL );
+    gettimeofday( &time, nullptr );
     return time.tv_sec * 1000000 + time.tv_usec;
 }
 
-f32 Timer::GetMillis( u64 range )
+f64 Timer::convertToMillis( u64 range ) const
 {
-    return ( f32 )( range / ( f32 )1000 );
+    return range / 1000.0;
 }
 
 #endif

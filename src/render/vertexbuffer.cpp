@@ -30,58 +30,56 @@ VertexBuffer::~VertexBuffer()
     delete indexes_;
 }
 
-void VertexBuffer::EnableAttribute( VertexAttr attr, u32 stride, void* pointer )
+void VertexBuffer::enableAttribute( VertexAttr attr, u32 stride, void* pointer )
 {
     enabledAttributes_[static_cast<u32>(attr)] = EnabledAttribute(stride, pointer);
 }
 
-void VertexBuffer::EnableAttributeMesh( const Mesh* mesh )
+void VertexBuffer::enableAttributeMesh( const Mesh* mesh )
 {
     const MeshLayer* attributes = mesh->attributes();
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {
         if (!attributes[i].valid_)
             continue;
-        EnableAttribute(attributes[i].attr_, attributes[i].stride_, reinterpret_cast<u8*>(NULL) + attributes[i].start_);
+        enableAttribute(attributes[i].attr_, attributes[i].stride_, reinterpret_cast<u8*>(NULL) + attributes[i].start_);
     }
+    complete();
 }
 
-void VertexBuffer::SetVertexData( void* vertexes, u32 vertexCount )
+void VertexBuffer::setVertexData( void* vertexes, u32 vertexCount )
 {
     if (vertexes_ == nullptr)
         vertexes_ = new BufferObject(GL);
-    vertexes_->Bind( BufferTargets::Array );
-    vertexes_->SetData( vertexCount, vertexes, BufferUsages::DynamicDraw );
-    vertexes_->Unbind();
+    vertexes_->bind( BufferTargets::Array );
+    vertexes_->setData( vertexCount, vertexes, BufferUsages::DynamicDraw );
+    vertexes_->unbind();
 }
 
-void VertexBuffer::SetIndexData( void* index, u32 indexCount )
+void VertexBuffer::setIndexData( void* index, u32 indexCount )
 {
     if (indexes_ == nullptr)
         indexes_ = new BufferObject(GL);
-    indexes_->Bind( BufferTargets::ElementArray );
-    indexes_->SetData( indexCount, index, BufferUsages::DynamicDraw );
-    indexes_->Unbind();
+    indexes_->bind( BufferTargets::ElementArray );
+    indexes_->setData( indexCount, index, BufferUsages::DynamicDraw );
+    indexes_->unbind();
 }
 
-void VertexBuffer::BindAttributes( )
+void VertexBuffer::bind( )
 {
     ASSERT(vao_ != 0);
     GL.BindVertexArray(vao_);
 }
 
-void VertexBuffer::Load()
+void VertexBuffer::complete()
 {
     ASSERT(vertexes_ != nullptr && indexes_ != nullptr);
-    ASSERT(enabledAttributes_[VertexAttrs::tagPosition].enabled_
-        || enabledAttributes_[VertexAttrs::tagNormal].enabled_
-        || enabledAttributes_[VertexAttrs::tagTexture].enabled_);
 
     if (vao_ == 0)
         GL.GenVertexArrays(1, &vao_);
     GL.BindVertexArray(vao_);
 
-    vertexes_->Bind( BufferTargets::Array );
+    vertexes_->bind( BufferTargets::Array );
 
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {
@@ -105,12 +103,13 @@ void VertexBuffer::Load()
         }
     }
 
-    indexes_->Bind( BufferTargets::ElementArray );
+    indexes_->bind( BufferTargets::ElementArray );
     GL.BindVertexArray(0);
 }
 
-void VertexBuffer::UnbindAttributes( )
+void VertexBuffer::unbind( )
 {
+    // TODO: do we need this?
     GL.BindVertexArray(0);
 }
 

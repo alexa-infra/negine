@@ -37,7 +37,7 @@ void LexerPolicy::setBreakChar(const std::string& breaks)
 
 LexerPolicy LexerPolicy::defaultPolicy()
 {
-    LexerPolicy policy(cStyleComment | cppStyleComment | pythonComment | strings);
+    LexerPolicy policy(POLICY_CSTYLE_COMMENT | POLICY_CPPSTYLE_COMMENT | POLICY_PYTHON_COMMENT | POLICY_QUOTED_STRINGS);
     policy.setWhitespaces(" \t,\r\n*:/");
     return policy;
 }
@@ -56,63 +56,63 @@ Lexer::~Lexer()
     delete file_;
 }
 
-void Lexer::SkipWhiteSpace()
+void Lexer::skipWhiteSpace()
 {
-    if ( !HasMoreData() ) {
+    if ( !hasMoreData() ) {
         return;
     }
 
-    while( HasMoreData() && policy_.isWhitespace( file_->current_char() ) ) {
-        char previousChar = file_->bump_char();
+    while( hasMoreData() && policy_.isWhitespace( file_->currentChar() ) ) {
+        char previousChar = file_->bumpChar();
 
-        if ( !HasMoreData() ) {
+        if ( !hasMoreData() ) {
             break;
         }
 
-        char ch = file_->current_char();
+        char ch = file_->currentChar();
 
         if (policy_.allowPythonComment() && ch == '#') {
             skipUntil('\n');
         } else if ( policy_.allowCppStyleComment() && ( ch == '/' ) && ( previousChar == '/' ) ) {
-            SkipRestOfLine();
+            skipRestOfLine();
         } else if ( policy_.allowCStyleComment() && ( ch == '*' ) && ( previousChar == '/' ) ) {
             skipUntil('*', '/');
         }
     }
 }
 
-void Lexer::SkipRestOfLine()
+void Lexer::skipRestOfLine()
 {
     skipUntil('\n');
 }
 
 
-const char* Lexer::ReadToken()
+const char* Lexer::readToken()
 {
     char* tokenChar = token_;
     *tokenChar = '\0';
-    SkipWhiteSpace();
+    skipWhiteSpace();
 
-    if ( !HasMoreData() ) {
+    if ( !hasMoreData() ) {
         return token_;
     }
 
-    if ( policy_.allowString() && file_->current_char() == '"' ) {
-        file_->bump_char();
+    if ( policy_.allowString() && file_->currentChar() == '"' ) {
+        file_->bumpChar();
 
-        while( HasMoreData() ) {
-            if ( file_->current_char() == '"' ) {
-                file_->bump_char();
+        while( hasMoreData() ) {
+            if ( file_->currentChar() == '"' ) {
+                file_->bumpChar();
                 break;
             }
 
-            *tokenChar++ = file_->bump_char();
+            *tokenChar++ = file_->bumpChar();
         }
     } else {
-        while( HasMoreData() && !policy_.isWhitespace( file_->current_char() ) ) {
-            if (policy_.allowBreakOnChar() && policy_.isBreakChar( file_->current_char() ))
+        while( hasMoreData() && !policy_.isWhitespace( file_->currentChar() ) ) {
+            if (policy_.allowBreakOnChar() && policy_.isBreakChar( file_->currentChar() ))
                 break;
-            *tokenChar++ = file_->bump_char();
+            *tokenChar++ = file_->bumpChar();
         }
     }
 
@@ -120,18 +120,18 @@ const char* Lexer::ReadToken()
     return token_;
 }
 
-bool Lexer::ReadNumber(f32& ret)
+bool Lexer::readNumber(f32& ret)
 {
     char* tokenChar = token_;
     *tokenChar = '\0';
-    SkipWhiteSpace();
+    skipWhiteSpace();
 
     const std::string chars("0123456789+-.eE");
-    while ( HasMoreData() ) {
-        char ch = file_->current_char();
+    while ( hasMoreData() ) {
+        char ch = file_->currentChar();
         if (chars.find(ch) == std::string::npos)
             break;
-        *tokenChar++ = file_->bump_char();
+        *tokenChar++ = file_->bumpChar();
     }
     *tokenChar = '\0';
 
@@ -143,21 +143,21 @@ bool Lexer::ReadNumber(f32& ret)
     return false;
 }
 
-f32 Lexer::ReadFloat()
+f32 Lexer::readFloat()
 {
-    ReadToken();
+    readToken();
     return (f32)atof( token_ );
 }
 
-bool Lexer::HasMoreData() const
+bool Lexer::hasMoreData() const
 {
     return ( file_->position() < file_->size() );
 }
 
 void Lexer::skipUntil(char ch)
 {
-    while ( HasMoreData() ) {
-        if ( file_->bump_char() == ch ) {
+    while ( hasMoreData() ) {
+        if ( file_->bumpChar() == ch ) {
             break;
         }
     }
@@ -165,14 +165,14 @@ void Lexer::skipUntil(char ch)
 
 void Lexer::skipUntil(char ch1, char ch2)
 {
-    while ( HasMoreData() ) {
-        char previousChar = file_->bump_char();
+    while ( hasMoreData() ) {
+        char previousChar = file_->bumpChar();
 
-        if ( !HasMoreData() ) {
+        if ( !hasMoreData() ) {
             break;
         }
 
-        char ch = file_->current_char();
+        char ch = file_->currentChar();
 
         if ( ( ch == ch2 ) && ( previousChar == ch1 ) ) {
             break;

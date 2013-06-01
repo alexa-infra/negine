@@ -243,45 +243,45 @@ void MeshBuilder::readOBJ(const std::string& filename)
     pos.reserve(1000);
     normal.reserve(1000);
 
-    LexerPolicy policy(LexerPolicy::pythonComment);
+    LexerPolicy policy(LexerPolicy::POLICY_PYTHON_COMMENT);
     policy.setWhitespaces(" \t\n\r/");
 
     Lexer lexer(filename, policy);
 
-    while ( lexer.HasMoreData() )
+    while ( lexer.hasMoreData() )
     {
-        std::string token = lexer.ReadToken();
+        std::string token = lexer.readToken();
         if (token == "v") {
             vec3f p;
-            p.x = lexer.ReadFloat();
-            p.y = lexer.ReadFloat();
-            p.z = lexer.ReadFloat();
+            p.x = lexer.readFloat();
+            p.y = lexer.readFloat();
+            p.z = lexer.readFloat();
             pos.push_back(p);
         } else if (token == "vt") {
             vec2f v;
-            v.x = lexer.ReadFloat();
-            v.y = lexer.ReadFloat();
+            v.x = lexer.readFloat();
+            v.y = lexer.readFloat();
             uv.push_back(v);
         } else if (token == "vn") {
             vec3f n;
-            n.x = lexer.ReadFloat();
-            n.y = lexer.ReadFloat();
-            n.z = lexer.ReadFloat();
+            n.x = lexer.readFloat();
+            n.y = lexer.readFloat();
+            n.z = lexer.readFloat();
             n = normalize(n);
             normal.push_back(n);
         } else if (token == "f") {
             u32 idx = nextVertexIndex();
             for(u32 i=0; i<3; i++) {
-                u32 vertexIdx = static_cast<u32>(lexer.ReadFloat());
+                u32 vertexIdx = static_cast<u32>(lexer.readFloat());
                 if ( uv.size() != 0 && normal.size() != 0 ) {
-                    u32 uvIdx = static_cast<u32>(lexer.ReadFloat());
-                    u32 normalIdx = static_cast<u32>(lexer.ReadFloat());
+                    u32 uvIdx = static_cast<u32>(lexer.readFloat());
+                    u32 normalIdx = static_cast<u32>(lexer.readFloat());
                     addVertex(pos[vertexIdx-1], uv[uvIdx-1], normal[normalIdx-1]);
                 } else if ( uv.size() != 0 ) {
-                    u32 uvIdx = static_cast<u32>(lexer.ReadFloat());
+                    u32 uvIdx = static_cast<u32>(lexer.readFloat());
                     addVertex(pos[vertexIdx-1], uv[uvIdx-1]);
                 } else if ( normal.size() != 0 ) {
-                    u32 normalIdx = static_cast<u32>(lexer.ReadFloat());
+                    u32 normalIdx = static_cast<u32>(lexer.readFloat());
                     addVertex(pos[vertexIdx-1], normal[normalIdx-1]);
                 } else {
                     addVertex(pos[vertexIdx-1]);
@@ -289,11 +289,11 @@ void MeshBuilder::readOBJ(const std::string& filename)
             }
             addPolygon(idx, idx + 1, idx + 2);
         } else if (token == "mtllib") {
-            lexer.ReadToken();
+            lexer.readToken();
         } else if (token == "usemtl") {
-            lexer.ReadToken();
+            lexer.readToken();
         } else if (token == "g") {
-            lexer.ReadToken();
+            lexer.readToken();
         } else {
             ERR("unknown token in OBJ: '%s'", token.c_str());
         }

@@ -25,27 +25,28 @@ public:
     VertexBuffer(DeviceContext& gl);
     ~VertexBuffer();
 
-    void SetVertexData( void* vertexes, u32 vertexCount );
+    void setVertexData( void* vertexes, u32 vertexCount );
 
-    void SetIndexData( void* index, u32 indexCount );
+    void setIndexData( void* index, u32 indexCount );
 
-    void EnableAttribute( VertexAttr attr, u32 stride, void* pointer );
+    void enableAttribute( VertexAttr attr, u32 stride, void* pointer );
 
-    void EnableAttributeMesh( const Mesh* mesh );
+    void enableAttributeMesh( const Mesh* mesh );
 
-    void Load();
+    void complete();
 
     //! Bind components of vertex to active attributes in current shader program
-    void BindAttributes( );
+    void bind( );
 
     //! Unbind attributes
-    void UnbindAttributes( );
+    void unbind( );
 private:
     BufferObject* vertexes_;      //!< Vertex buffer object
     BufferObject* indexes_;       //!< Index buffer object
     u32 vao_;
     DeviceContext& GL;
 
+    // TODO: surfaces??
     struct EnabledAttribute
     {
         bool enabled_;

@@ -39,15 +39,15 @@ protected:
 TEST_F( LexerTest, Basic )
 {
     Lexer lex( filename );
-    EXPECT_STREQ( lex.ReadToken(), "this" );
-    EXPECT_STREQ( lex.ReadToken(), "is" );
-    EXPECT_STREQ( lex.ReadToken(), "a" );
-    EXPECT_STREQ( lex.ReadToken(), "test" );
-    EXPECT_STREQ( lex.ReadToken(), "second" );
-    EXPECT_STREQ( lex.ReadToken(), "line" );
-    EXPECT_STREQ( lex.ReadToken(), "value" );
-    EXPECT_STREQ( lex.ReadToken(), "thevalue" );
-    EXPECT_STREQ( lex.ReadToken(), "value1" );
-    lex.ReadToken();
-    lex.ReadToken();
+    EXPECT_STREQ( lex.readToken(), "this" );
+    EXPECT_STREQ( lex.readToken(), "is" );
+    EXPECT_STREQ( lex.readToken(), "a" );
+    EXPECT_STREQ( lex.readToken(), "test" );
+    EXPECT_STREQ( lex.readToken(), "second" );
+    EXPECT_STREQ( lex.readToken(), "line" );
+    EXPECT_STREQ( lex.readToken(), "value" );
+    EXPECT_STREQ( lex.readToken(), "thevalue" );
+    EXPECT_STREQ( lex.readToken(), "value1" );
+    lex.readToken();
+    lex.readToken();
 }
