@@ -85,7 +85,7 @@ protected:
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
-    void get_uniforms_list();
+    void populateUniformMap();
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };

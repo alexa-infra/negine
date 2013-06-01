@@ -147,7 +147,7 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
     }
 }
 
-void GpuProgram::get_uniforms_list()
+void GpuProgram::populateUniformMap()
 {
     GLint uniform_count = 0;
     GLint max_name_length = 0;
@@ -272,7 +272,7 @@ bool GpuProgram::createMeta( const std::string& filename )
     }
     WARN(status().c_str());
     
-    get_uniforms_list();
+    populateUniformMap();
     
     return true;
 }
