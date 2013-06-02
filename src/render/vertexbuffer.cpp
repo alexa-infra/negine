@@ -18,14 +18,18 @@ namespace opengl
 VertexBuffer::VertexBuffer(DeviceContext& gl)
     : vertexes_(nullptr)
     , indexes_(nullptr)
-    , vao_(0)
     , GL(gl)
+#ifdef USE_VAO
+    , vao_(0)
+#endif
 {
 }
 
 VertexBuffer::~VertexBuffer()
 {
+#ifdef USE_VAO
     GL.DeleteVertexArrays(1, &vao_);
+#endif
     delete vertexes_;
     delete indexes_;
 }
@@ -44,7 +48,6 @@ void VertexBuffer::enableAttributeMesh( const Mesh* mesh )
             continue;
         enableAttribute(attributes[i].attr_, attributes[i].stride_, reinterpret_cast<u8*>(NULL) + attributes[i].start_);
     }
-    complete();
 }
 
 void VertexBuffer::setVertexData( void* vertexes, u32 vertexCount )
@@ -67,18 +70,42 @@ void VertexBuffer::setIndexData( void* index, u32 indexCount )
 
 void VertexBuffer::bind( )
 {
-    ASSERT(vao_ != 0);
-    GL.BindVertexArray(vao_);
-}
-
-void VertexBuffer::complete()
-{
+#ifdef USE_VAO
+    if (vao_ != 0) {
+        GL.BindVertexArray(vao_);
+        return;
+    }
+    
     ASSERT(vertexes_ != nullptr && indexes_ != nullptr);
-
-    if (vao_ == 0)
-        GL.GenVertexArrays(1, &vao_);
+    GL.GenVertexArrays(1, &vao_);
     GL.BindVertexArray(vao_);
 
+    vertexes_->bind( BufferTargets::Array );
+
+    for (u32 i=0; i<VertexAttrs::Count; i++)
+    {
+        const EnabledAttribute& attr = enabledAttributes_[i];
+        VertexAttr vertexAttr = static_cast<VertexAttr>(i);
+        u32 location = VertexAttrs::GetAttributeLocation( vertexAttr );
+        if (attr.enabled_)
+        {
+            GL.EnableVertexAttribArray( location );
+            GL.VertexAttribPointer(
+                location,
+                VertexAttrs::GetComponentCount( vertexAttr ),
+                VertexAttrs::GetGLType( vertexAttr ),
+                GL_FALSE,
+                attr.stride_,
+                attr.pointer_ );
+        }
+        else
+        {
+            GL.DisableVertexAttribArray(location);
+        }
+    }
+
+    indexes_->bind( BufferTargets::ElementArray );
+#else
     vertexes_->bind( BufferTargets::Array );
 
     for (u32 i=0; i<VertexAttrs::Count; i++)
@@ -104,13 +131,18 @@ void VertexBuffer::complete()
     }
 
     indexes_->bind( BufferTargets::ElementArray );
-    GL.BindVertexArray(0);
+#endif
 }
 
 void VertexBuffer::unbind( )
 {
+#ifdef USE_VAO
     // TODO: do we need this?
     GL.BindVertexArray(0);
+#else
+    indexes_->unbind( );
+    vertexes_->unbind( );
+#endif
 }
 
 }
