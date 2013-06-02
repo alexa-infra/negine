@@ -61,10 +61,9 @@ ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, DeviceContex
     }
 
     vbo_ = new VertexBuffer(GL);
-    vbo_->EnableAttributeMesh( mesh_ );
-    vbo_->SetIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
-    vbo_->SetVertexData( mesh_->data(), mesh_->rawSize() );
-    vbo_->Load();
+    vbo_->enableAttributeMesh( mesh_ );
+    vbo_->setIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
+    vbo_->setVertexData( mesh_->data(), mesh_->rawSize() );
 
     texture_ = GL.texture_loader()->Load( settings.texture );
 }
@@ -82,12 +81,13 @@ Texture* ParticleSystemRenderer::texture()
 
 void ParticleSystemRenderer::Draw( GpuProgram* program )
 {
-    vbo_->BindAttributes( );
+    vbo_->bind( );
 
+    // TODO: Uint32?
     GL.DrawElements(
         GL_TRIANGLES, ps_->particles_active.size() * 6, GL_UNSIGNED_SHORT, NULL);
 
-    vbo_->UnbindAttributes( );
+    vbo_->unbind( );
 }
 
 void ParticleSystemRenderer::Commit()
@@ -112,7 +112,7 @@ void ParticleSystemRenderer::Commit()
         color[idx + 3] = p->color;
     }
 
-    vbo_->SetVertexData( mesh_->data(), mesh_->rawSize() );
+    vbo_->setVertexData( mesh_->data(), mesh_->rawSize() );
 }
 
 } // namespace opengl

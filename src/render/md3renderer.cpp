@@ -42,7 +42,7 @@ Md3Renderer::Md3Renderer( Md3Model* m )
              .complete();
          meshes[i] = mesh;
 //         vbs[i] = new VertexBuffer;
-         vbs[i]->EnableAttributeMesh(mesh);
+         vbs[i]->enableAttributeMesh(mesh);
     }
 }
 
@@ -90,20 +90,21 @@ void Md3Renderer::Commit()
             color[j] = vec4f( 1, 1, 1, 1 );
         }
 
-        vbs[i]->SetVertexData( mesh->data(), mesh->rawSize());
-        vbs[i]->SetIndexData( mesh->indices(), mesh->numIndexes() * sizeof(u16));
-        vbs[i]->Load();
+        vbs[i]->setVertexData( mesh->data(), mesh->rawSize());
+        vbs[i]->setIndexData( mesh->indices(), mesh->numIndexes() * sizeof(u16));
     }
 }
 
 void Md3Renderer::Draw( )
 {
     for ( u32 i = 0; i < vbs.size(); i++ ) {
-        vbs[i]->BindAttributes();
+        vbs[i]->bind();
+        // TODO: resurrect MD3!
+
         //glDrawElements(
         //    GL_TRIANGLES, meshes[i]->numIndexes(), 
         //    GL_UNSIGNED_SHORT, (void*)0);
-        vbs[i]->UnbindAttributes();
+        vbs[i]->unbind();
     }
 }
 

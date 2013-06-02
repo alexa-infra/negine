@@ -53,8 +53,8 @@ protected:
         GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
         program_.Bind();
         program_.setParams(params_);
-        f32 frame_time = timer_.Elapsed() / 1000.0f;
-        timer_.Reset();
+        f32 frame_time = timer_.elapsed() / 1000.0f;
+        timer_.reset();
         ps_->update( frame_time );
         ps_renderer_->Commit();
         ps_renderer_->Draw( &program_ );

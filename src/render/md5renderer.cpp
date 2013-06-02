@@ -39,7 +39,7 @@ Md5Renderer::Md5Renderer( Md5Model* model, DeviceContext& gl )
         .vertexCount(mesh.num_verts)
         .indexCount(mesh.num_tris * 3, IndexTypes::UInt16)
         .complete();
-    vb->EnableAttributeMesh(mesh_);
+    vb->enableAttributeMesh(mesh_);
 }
 
 Md5Renderer::~Md5Renderer()
@@ -50,11 +50,11 @@ Md5Renderer::~Md5Renderer()
 
 void Md5Renderer::Draw( )
 {
-    vb->BindAttributes();
+    vb->bind();
     GL.DrawElements(
         GL_TRIANGLES, mesh_->numIndexes(), 
         mesh_->indexType(), NULL);
-    vb->UnbindAttributes();
+    vb->unbind();
 }
 
 void Md5Renderer::Commit()
@@ -63,9 +63,10 @@ void Md5Renderer::Commit()
     GenerateVertexes( mesh );
     GenerateIndexes( mesh );
     GenerateLightningInfo( mesh );
-    vb->SetVertexData( mesh_->data(), mesh_->rawSize() );
-    vb->SetIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
-    vb->Load();
+    vb->setVertexData( mesh_->data(), mesh_->rawSize() );
+
+    // TODO: should it be only once?? and Uint32
+    vb->setIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
 }
 
 void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
@@ -181,6 +182,7 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
 
 void Md5Renderer::UpdateBoundingBox( math::vec3f& pos )
 {
+    // TODO bounding box class?
     if ( boundingBox.min.x > pos.x ) {
         boundingBox.min.x = pos.x;
     }

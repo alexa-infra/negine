@@ -58,34 +58,28 @@ class BufferObject : public GpuResource
 {
 private:
     GLenum target_; //!< Currently mapped type format
-    bool is_ok_;    //!< Is buffer created
 public:
     BufferObject(DeviceContext& gl);
     ~BufferObject();
 
-    //! Get status of buffer creation
-    bool is_ok() const {
-        return is_ok_;
-    }
-
     //! Bind buffer to target
-    void Bind( BufferTarget target );
+    void bind( BufferTarget target );
     //! Unbind active target
-    void Unbind();
+    void unbind();
     //! Bind buffer to target by index
-    void BindBase( BufferTarget target, u32 index );
+    void bindBase( BufferTarget target, u32 index );
     //! Bind buffer to target by index, and to desired position
-    void BindRange( BufferTarget target, u32 index, void* offset, void* size );
+    void bindRange( BufferTarget target, u32 index, void* offset, void* size );
 
     //! Sets data of buffer, copy from memory to GPU
-    void SetData( u32 size, const void* data_ptr, BufferUsage usage );
+    void setData( u32 size, const void* dataPtr, BufferUsage usage );
     //! Sets sub-data of buffer, copy from memory to GPU
-    void SetSubData( u32 offset, u32 size, const void* data_ptr );
+    void setSubData( u32 offset, u32 size, const void* dataPtr );
     //! Gets sub-data of buffer, copy from GPU to memory
-    void GetSubData( u32 offset, u32 size, void* data_ptr );
+    void getSubData( u32 offset, u32 size, void* dataPtr );
 
     //! Clear allocated memory at GPU
-    void Clear();
+    void clear();
 
 private:
     DISALLOW_COPY_AND_ASSIGN( BufferObject );

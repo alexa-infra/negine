@@ -47,25 +47,26 @@ void Md5Anim::Load( const std::string& filename )
 {
     Lexer reader( filename );
 
-    while( reader.HasMoreData() ) {
-        reader.ReadToken();
+    while( reader.hasMoreData() ) {
+        reader.readToken();
 
-        if ( strcmp( reader.CurrentToken(), "MD5Version" ) == 0 ) {
-            u32 version = static_cast<u32>(reader.ReadFloat());
+        // TODO: strcmp(...) == 0 move to equal<T>
+        if ( strcmp( reader.currentToken(), "MD5Version" ) == 0 ) {
+            u32 version = static_cast<u32>(reader.readFloat());
 
             if ( version != 10 ) {
                 return;
             }
-        } else if ( strcmp( reader.CurrentToken(), "numFrames" ) == 0 ) {
-            num_frames = static_cast<u32>(reader.ReadFloat());
+        } else if ( strcmp( reader.currentToken(), "numFrames" ) == 0 ) {
+            num_frames = static_cast<u32>(reader.readFloat());
 
             // Allocate memory for skeleton frames and bounding boxes
             if ( num_frames > 0 ) {
                 skelFrames = new Md5Joint*      [num_frames];
                 bboxes     = new Md5BoundingBox [num_frames];
             }
-        } else if ( strcmp( reader.CurrentToken(), "numJoints" ) == 0 ) {
-            num_joints = static_cast<u32>(reader.ReadFloat());
+        } else if ( strcmp( reader.currentToken(), "numJoints" ) == 0 ) {
+            num_joints = static_cast<u32>(reader.readFloat());
 
             for ( u32 i = 0; i < num_frames; ++i ) {
                 // Allocate memory for joints of each frame
@@ -74,62 +75,62 @@ void Md5Anim::Load( const std::string& filename )
 
             jointInfos = new JointInfo     [num_joints];
             baseFrame  = new BaseframeJoint[num_joints];
-        } else if ( strcmp( reader.CurrentToken(), "frameRate" ) == 0 ) {
-            frame_rate = static_cast<u32>(reader.ReadFloat());
-        } else if ( strcmp( reader.CurrentToken(), "numAnimatedComponents" ) == 0 ) {
-            numAnimatedComponents = static_cast<u32>(reader.ReadFloat());
+        } else if ( strcmp( reader.currentToken(), "frameRate" ) == 0 ) {
+            frame_rate = static_cast<u32>(reader.readFloat());
+        } else if ( strcmp( reader.currentToken(), "numAnimatedComponents" ) == 0 ) {
+            numAnimatedComponents = static_cast<u32>(reader.readFloat());
 
             if ( numAnimatedComponents > 0 ) {
                 // Allocate memory for animation frame data
                 animFrameData = new f32[numAnimatedComponents];
             }
-        } else if ( strcmp( reader.CurrentToken(), "hierarchy" ) == 0 ) {
-            reader.ReadToken(); // {
+        } else if ( strcmp( reader.currentToken(), "hierarchy" ) == 0 ) {
+            reader.readToken(); // {
 
             for ( u32 i = 0; i < num_joints; i++ ) {
-                jointInfos[i].name        = reader.ReadToken();
-                jointInfos[i].parent      = static_cast<u32>(reader.ReadFloat());
-                jointInfos[i].flags       = static_cast<u32>(reader.ReadFloat());
-                jointInfos[i].start_index = static_cast<u32>(reader.ReadFloat());
+                jointInfos[i].name        = reader.readToken();
+                jointInfos[i].parent      = static_cast<u32>(reader.readFloat());
+                jointInfos[i].flags       = static_cast<u32>(reader.readFloat());
+                jointInfos[i].start_index = static_cast<u32>(reader.readFloat());
             }
 
-            reader.ReadToken(); // }
-        } else if ( strcmp( reader.CurrentToken(), "bounds" ) == 0 ) {
-            reader.ReadToken(); // {
+            reader.readToken(); // }
+        } else if ( strcmp( reader.currentToken(), "bounds" ) == 0 ) {
+            reader.readToken(); // {
 
             for ( u32 i = 0; i < num_frames; i++ ) {
-                reader.ReadToken(); // (
+                reader.readToken(); // (
                 readVector( reader, bboxes[i].min );
-                reader.ReadToken(); // )
-                reader.ReadToken(); // (
+                reader.readToken(); // )
+                reader.readToken(); // (
                 readVector( reader, bboxes[i].max );
-                reader.ReadToken(); // )
+                reader.readToken(); // )
             }
 
-            reader.ReadToken(); // }
-        } else if ( strcmp( reader.CurrentToken(), "baseframe" ) == 0 ) {
-            reader.ReadToken(); // {
+            reader.readToken(); // }
+        } else if ( strcmp( reader.currentToken(), "baseframe" ) == 0 ) {
+            reader.readToken(); // {
 
             for ( u32 i = 0; i < num_joints; i++ ) {
-                reader.ReadToken(); // (
+                reader.readToken(); // (
                 readVector( reader, baseFrame[i].pos );
-                reader.ReadToken(); // )
-                reader.ReadToken(); // (
+                reader.readToken(); // )
+                reader.readToken(); // (
                 readQuat( reader, baseFrame[i].orient );
                 baseFrame[i].orient.ComputeW();
-                reader.ReadToken(); // )
+                reader.readToken(); // )
             }
 
-            reader.ReadToken(); // }
-        } else if ( strcmp( reader.CurrentToken(), "frame" ) == 0 ) {
-            u32 frameIndex = static_cast<u32>(reader.ReadFloat());
-            reader.ReadToken(); // {
+            reader.readToken(); // }
+        } else if ( strcmp( reader.currentToken(), "frame" ) == 0 ) {
+            u32 frameIndex = static_cast<u32>(reader.readFloat());
+            reader.readToken(); // {
 
             for ( u32 i = 0; i < numAnimatedComponents; ++i ) {
-                animFrameData[i] = reader.ReadFloat();
+                animFrameData[i] = reader.readFloat();
             }
 
-            reader.ReadToken(); // }
+            reader.readToken(); // }
             BuildFrameSkeleton( frameIndex );
         }
     }
