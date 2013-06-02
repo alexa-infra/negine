@@ -40,7 +40,7 @@ public:
         params_["diffuse"] = ps_renderer_->texture();
     }
     virtual ~Demo() {
-        program_.Destroy();
+        program_.destroy();
         delete ps_renderer_;
         delete ps_;
     }
@@ -51,14 +51,14 @@ protected:
         GL.Disable( GL_DEPTH_TEST );
         GL.Enable( GL_BLEND );
         GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-        program_.Bind();
+        program_.bind();
         program_.setParams(params_);
         f32 frame_time = timer_.elapsed() / 1000.0f;
         timer_.reset();
         ps_->update( frame_time );
-        ps_renderer_->Commit();
-        ps_renderer_->Draw( &program_ );
-        program_.Unbind();
+        ps_renderer_->commit();
+        ps_renderer_->draw( &program_ );
+        program_.unbind();
         GL_ASSERT(GL);
         Application::OnFrame();
     }

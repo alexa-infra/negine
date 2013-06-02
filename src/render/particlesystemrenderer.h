@@ -35,8 +35,8 @@ public:
     ~ParticleSystemRenderer();
 
     Texture* texture();
-    void Commit();
-    void Draw( GpuProgram* binding );
+    void commit();
+    void draw( GpuProgram* binding );
 };
 
 }

@@ -45,15 +45,15 @@ public:
         modelTransform_ *= Matrix4::RotationX( -90 * deg_to_rad );
         modelTransform_ *= Matrix4::RotationZ( 180 * deg_to_rad );
         program_.create( "bump.shader.meta" );
-        texture_ = GL.texture_loader()->Load( "hellknight.png" );
-        texture_bump_ = GL.texture_loader()->Load( "hellknight_local.png" );
+        texture_ = GL.texture_loader()->load( "hellknight.png" );
+        texture_bump_ = GL.texture_loader()->load( "hellknight_local.png" );
         entity = Entity::Load( "hellknight.md5mesh" );
         entity->object.md5Anim = new Md5Anim;
         entity->object.md5Anim->Load( "hellknight_idle2.md5anim" );
         md5_renderer_ = new Md5Renderer( &entity->object.md5Model, GL );
     }
     virtual ~Demo() {
-        program_.Destroy();
+        program_.destroy();
 
         delete entity->object.md5Anim;
         delete entity;
@@ -64,7 +64,7 @@ protected:
         GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
         GL.Clear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         GL.Enable( GL_DEPTH_TEST );
-        program_.Bind();
+        program_.bind();
 
         ParameterMap params;
         params["diffuse"] = texture_;
@@ -89,7 +89,7 @@ protected:
         entity->object.md5Anim->Update( &entity->object.md5Model, frame, interp );
         md5_renderer_->Commit();
         md5_renderer_->Draw( );
-        program_.Unbind();
+        program_.unbind();
         GL_ASSERT(GL);
         Application::OnFrame();
     }

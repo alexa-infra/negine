@@ -40,14 +40,14 @@ ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, DeviceContex
         .addAttribute(VertexAttrs::tagPosition)
         .addAttribute(VertexAttrs::tagTexture)
         .addAttribute(VertexAttrs::tagColor)
-        .vertexCount(settings.max_count * 4)
-        .indexCount(settings.max_count * 6, IndexTypes::UInt16)
+        .vertexCount(settings.maxCount * 4)
+        .indexCount(settings.maxCount * 6, IndexTypes::UInt16)
         .complete();
 
     vec2f* tex = mesh_->findAttributeTyped<vec2f>(VertexAttrs::tagTexture);
     u16* index = reinterpret_cast<u16*>(mesh_->indices());
 
-    for ( u32 i = 0, j = 0; i < settings.max_count * 6; i += 6, j += 4 ) {
+    for ( u32 i = 0, j = 0; i < settings.maxCount * 6; i += 6, j += 4 ) {
         index[i+0] = j;
         index[i+1] = j + 1;
         index[i+2] = j + 2;
@@ -65,7 +65,7 @@ ParticleSystemRenderer::ParticleSystemRenderer( ParticleSystem* ps, DeviceContex
     vbo_->setIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
     vbo_->setVertexData( mesh_->data(), mesh_->rawSize() );
 
-    texture_ = GL.texture_loader()->Load( settings.texture );
+    texture_ = GL.texture_loader()->load( settings.texture );
 }
 
 ParticleSystemRenderer::~ParticleSystemRenderer()
@@ -79,18 +79,18 @@ Texture* ParticleSystemRenderer::texture()
     return texture_;
 }
 
-void ParticleSystemRenderer::Draw( GpuProgram* program )
+void ParticleSystemRenderer::draw( GpuProgram* program )
 {
     vbo_->bind( );
 
     // TODO: Uint32?
     GL.DrawElements(
-        GL_TRIANGLES, ps_->particles_active.size() * 6, GL_UNSIGNED_SHORT, NULL);
+        GL_TRIANGLES, ps_->particlesActive.size() * 6, GL_UNSIGNED_SHORT, NULL);
 
     vbo_->unbind( );
 }
 
-void ParticleSystemRenderer::Commit()
+void ParticleSystemRenderer::commit()
 {
     vec2f v[4];
 
@@ -98,18 +98,14 @@ void ParticleSystemRenderer::Commit()
     vec4f* color = mesh_->findAttributeTyped<vec4f>(VertexAttrs::tagColor);
 
     u32 idx = 0;
-    for ( ParticleList::const_iterator it = ps_->particles_active.begin(); it != ps_->particles_active.end(); ++it, idx += 4 ) {
+    for ( ParticleList::const_iterator it = ps_->particlesActive.begin(); it != ps_->particlesActive.end(); ++it, idx += 4 ) {
         const Particle* p = *it;
         base::math::RectF rectange( p->position, vec2f( p->size ), p->rotation );
         rectange.Points( v );
-        pos[idx + 0] = vec3f( v[0], 0.0f );
-        pos[idx + 1] = vec3f( v[1], 0.0f );
-        pos[idx + 2] = vec3f( v[2], 0.0f );
-        pos[idx + 3] = vec3f( v[3], 0.0f );
-        color[idx + 0] = p->color;
-        color[idx + 1] = p->color;
-        color[idx + 2] = p->color;
-        color[idx + 3] = p->color;
+        for( u32 i=0; i<4; i++ ) {
+            pos[idx + i] = vec3f( v[i], 0.0f );
+            color[idx + i] = p->color;    
+        }
     }
 
     vbo_->setVertexData( mesh_->data(), mesh_->rawSize() );

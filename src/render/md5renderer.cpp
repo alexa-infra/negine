@@ -36,8 +36,8 @@ Md5Renderer::Md5Renderer( Md5Model* model, DeviceContext& gl )
         .addAttribute(VertexAttrs::tagNormal)
         .addAttribute(VertexAttrs::tagTexture)
         .addAttribute(VertexAttrs::tagTangent)
-        .vertexCount(mesh.num_verts)
-        .indexCount(mesh.num_tris * 3, IndexTypes::UInt16)
+        .vertexCount(mesh.vertices.size())
+        .indexCount(mesh.triangles.size() * 3, IndexTypes::UInt16)
         .complete();
     vb->enableAttributeMesh(mesh_);
 }
@@ -71,11 +71,11 @@ void Md5Renderer::Commit()
 
 void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
 {
-    const Md5Joint* skeleton = md5->baseSkel;
+    std::vector<Md5Joint>& skeleton = md5->baseSkel;
     math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
     math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
 
-    for ( i32 i = 0; i < mesh.num_verts; ++i ) {
+    for ( i32 i = 0; i < mesh.vertices.size(); ++i ) {
         tex[i] = mesh.vertices[i].st;
         pos[i] = vec3f( 0.0f );
 
@@ -92,7 +92,7 @@ void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
 void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
 {
     u16* indicies = reinterpret_cast<u16*>(mesh_->indices());
-    for ( int i = 0; i < mesh.num_tris; i++ ) {
+    for ( int i = 0; i < mesh.triangles.size(); i++ ) {
         for ( int j = 0; j < 3; j++ ) {
             indicies[3*i + j] = static_cast<u16>(mesh.triangles[i].index[j]);
         }
@@ -104,13 +104,13 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
     math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
     math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
 
-    for ( i32 i = 0; i < mesh.num_weights; i++ ) {
+    for ( i32 i = 0; i < mesh.weights.size(); i++ ) {
         Md5Weight& weight = mesh.weights[i];
         weight.normal = vec3f(0.0f);
         weight.tangent = vec3f(0.0f);
     }
 
-    for ( i32 i = 0; i < mesh.num_tris; i++ ) {
+    for ( i32 i = 0; i < mesh.triangles.size(); i++ ) {
         f32 d0[5], d1[5];
         vec3f normal, tangent;
         const vec3f* a = pos + mesh.triangles[i].index[0];
@@ -153,7 +153,7 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
         }
     }
 
-    for ( i32 i = 0; i < mesh.num_weights; i++ ) {
+    for ( i32 i = 0; i < mesh.weights.size(); i++ ) {
         Md5Weight& weight = mesh.weights[i];
         weight.normal = normalize( weight.normal );
         f32 d = dot( weight.tangent, weight.normal );
@@ -163,8 +163,8 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
     math::vec3f* tangent = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagTangent);
     math::vec3f* n = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagNormal);
 
-    const Md5Joint* skeleton = md5->baseSkel;
-    for ( i32 i = 0; i < mesh.num_verts; ++i ) {
+    std::vector<Md5Joint>& skeleton = md5->baseSkel;
+    for ( i32 i = 0; i < mesh.vertices.size(); ++i ) {
         n[i] = vec3f( 0.0f );
         tangent[i] = vec3f( 0.0f );
 

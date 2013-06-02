@@ -37,27 +37,18 @@ StringMap<VertexAttr, VertexAttrs::Count> attr_map( attr_map_str );
 GpuProgram::GpuProgram(DeviceContext& gl)
     : GpuResource(gl)
 {
-    vertex_shader_ = new Shader(gl);
-    pixel_shader_ = new Shader(gl);
+    vertexShader_ = new Shader(gl);
+    pixelShader_ = new Shader(gl);
 }
 
-bool GpuProgram::is_ok() const {
-    return ( id_ != 0 ) && pixel_shader_->is_ok() && vertex_shader_->is_ok();
-}
-
-void GpuProgram::Destroy()
+void GpuProgram::destroy()
 {
-    if ( is_ok() ) {
-        GL.DetachShader( id_, vertex_shader_->handle() );
-        GL.DetachShader( id_, pixel_shader_->handle() );
-    }
-
     if ( id_ != 0 ) {
-        pixel_shader_->Destroy();
-        vertex_shader_->Destroy();
-
         GL.DeleteProgram( id_ );
         id_ = 0;
+
+        pixelShader_->destroy();
+        vertexShader_->destroy();
     }
 }
 
@@ -65,7 +56,7 @@ const std::string GpuProgram::status() const
 {
     std::string result;
     if ( id_ == 0 ) {
-        return result;
+        return "Gpu program does not exist";
     }
 
     GLint len;
@@ -84,18 +75,18 @@ const std::string GpuProgram::status() const
 
 GpuProgram::~GpuProgram()
 {
-    Destroy();
-    delete vertex_shader_;
-    delete pixel_shader_;
+    destroy();
+    delete vertexShader_;
+    delete pixelShader_;
 }
 
-void GpuProgram::Bind()
+void GpuProgram::bind()
 {
     GL.UseProgram( id_ );
     Stats::instance()->inc_program_switches();
 }
 
-void GpuProgram::Unbind()
+void GpuProgram::unbind()
 {
     GL.UseProgram(0);
 }
@@ -103,9 +94,9 @@ void GpuProgram::Unbind()
 void GpuProgram::setParams(const ParameterMap& params)
 {
     u32 samplerIdx = 0;
-    for(u32 i=0; i<uni_binding_.size(); i++)
+    for(u32 i=0; i<uniformBinding_.size(); i++)
     {
-        const UniformVar& uniform = uni_binding_[i];
+        const UniformVar& uniform = uniformBinding_[i];
         ParameterMap::const_iterator it = params.find(uniform.name);
         if (it == params.end()) {
             ERR("Uniform '%s' is not supplied", uniform.name.c_str());
@@ -122,7 +113,7 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
         {
             Texture* texture = any_cast<Texture*>(value);
             GL.ActiveTexture( GL_TEXTURE0 + samplerIdx );
-            texture->Bind();
+            texture->bind();
             GL.Uniform1i( uniform.location, samplerIdx );
             samplerIdx++;
             break;
@@ -158,8 +149,8 @@ void GpuProgram::populateUniformMap()
         return;
     }
 
-    uni_binding_.clear();
-    uni_binding_.reserve(static_cast<u32>(uniform_count));
+    uniformBinding_.clear();
+    uniformBinding_.reserve(static_cast<u32>(uniform_count));
 
     char* buffer = new char[max_name_length];
 
@@ -175,7 +166,7 @@ void GpuProgram::populateUniformMap()
         uni.location = location;
         uni.type = uniform_type;
         uni.name = uniformName;
-        uni_binding_.push_back(uni);
+        uniformBinding_.push_back(uni);
     }
 
     delete[] buffer;
@@ -225,29 +216,29 @@ bool GpuProgram::createMeta( const std::string& filename )
     source[1] = includeText.c_str();
     
     source[2] = "#define PIXEL_SHADER\n ";
-    if (!pixel_shader_->Create(ShaderTypes::PIXEL, source, 4))
+    if (!pixelShader_->create(ShaderTypes::PIXEL, source, 4))
     {
         ERR("in meta file '%s', for pixel shader compilation error\n%s",
             filename.c_str(),
-            pixel_shader_->status().c_str());
+            pixelShader_->status().c_str());
         return false;
     }
-    WARN(pixel_shader_->status().c_str());
+    WARN(pixelShader_->status().c_str());
     
     source[2] = "#define VERTEX_SHADER\n ";
-    if (!vertex_shader_->Create(ShaderTypes::VERTEX, source, 4))
+    if (!vertexShader_->create(ShaderTypes::VERTEX, source, 4))
     {
         ERR("in meta file '%s', for vertex shader compilation error\n%s",
             filename.c_str(),
-            vertex_shader_->status().c_str());
+            vertexShader_->status().c_str());
         return false;
     }
-    WARN(vertex_shader_->status().c_str());
+    WARN(vertexShader_->status().c_str());
     
     id_ = GL.CreateProgram( );
     
-    GL.AttachShader( id_, vertex_shader_->handle() );
-    GL.AttachShader( id_, pixel_shader_->handle() );
+    GL.AttachShader( id_, vertexShader_->handle() );
+    GL.AttachShader( id_, pixelShader_->handle() );
     
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {

@@ -54,7 +54,7 @@ public:
         program_.create( "q3map.shader.meta" );
     }
     virtual ~Demo() {
-        program_.Destroy();
+        program_.destroy();
         delete q3map_;
         delete buffer_;
     }
@@ -64,14 +64,14 @@ protected:
         GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
         GL.Clear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         GL.Enable( GL_DEPTH_TEST );
-        program_.Bind();
+        program_.bind();
         ParameterMap params;
         params["projection_matrix"] = projection_;
         params["modelview_matrix"] = cameraTransform_;
         params["clip_matrix"] = projection_ * cameraTransform_;
         //program_.setParams(params);
         q3map_->render( camera_, &program_, params, *GL.texture_loader() );
-        program_.Unbind();
+        program_.unbind();
         GL_ASSERT(GL);
         Application::OnFrame();
     }

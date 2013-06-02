@@ -156,10 +156,10 @@ struct q3leaf {
     i32 leafBrush;
     i32 numberOfLeafBrushes;
     math::vec3f minv() const {
-        return math::vec3f( static_cast<f32>(mins[0]), static_cast<f32>(mins[1]), static_cast<f32>(mins[2]) );
+        return math::vec3f( mins[0], mins[1], mins[2] );
     }
     math::vec3f maxv() const {
-        return math::vec3f( static_cast<f32>(maxs[0]), static_cast<f32>(maxs[1]), static_cast<f32>(maxs[2]) );
+        return math::vec3f( maxs[0], maxs[1], maxs[2] );
     }
 };
 
@@ -240,8 +240,8 @@ private:
         q3lump lump = read_lump( lumpIndex );
         const u32 count = lump.length / sizeof( T );
         std::vector<T> items( count );
-        f.set_position( lump.offset );
-        f.read( reinterpret_cast<u8*>( &items.front() ), sizeof( T )*count );
+        f.setPosition( lump.offset );
+        f.readRaw( reinterpret_cast<u8*>( &items.front() ), sizeof( T )*count );
         return items;
     }
     i32 findLeaf( const math::vec3f& camPos ) const;

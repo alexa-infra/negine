@@ -18,10 +18,10 @@ Shader::Shader(DeviceContext& gl)
 
 Shader::~Shader()
 {
-    Destroy();
+    destroy();
 }
 
-void Shader::Destroy()
+void Shader::destroy()
 {
     if ( id_ != 0 ) {
         GL.DeleteShader( id_ );
@@ -29,14 +29,15 @@ void Shader::Destroy()
     }
 }
 
-bool Shader::Create( ShaderType shaderType, const char* const* source, u32 len )
+bool Shader::create( ShaderType type, const char* const* source, u32 len )
 {
-    ASSERT( id_ == 0 );
-    shader_type_ = shaderType;
-    id_ = GL.CreateShader( shader_type_ );
-
-    if ( id_ == 0 )
-        return false;
+    if ( id_ == 0 ) {
+        type_ = type;
+        id_ = GL.CreateShader( type_ );
+        ASSERT( id_ != 0 );
+    } else {
+        ASSERT( type == type_ );
+    }
 
     GL.ShaderSource( id_, len, source, NULL );
     GL.CompileShader( id_ );
@@ -53,7 +54,7 @@ const std::string Shader::status() const
     std::string result;
 
     if ( id_ == 0 ) {
-        return result;
+        return "Shader does not exist";
     }
 
     GLint log_size;

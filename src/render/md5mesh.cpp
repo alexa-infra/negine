@@ -48,22 +48,22 @@ void Md5Model::Read( Lexer& reader )
 
             ASSERT( version == 10 );
         } else if ( strcmp( reader.currentToken(), "numJoints" ) == 0 ) {
-            num_joints = static_cast<u32>(reader.readFloat());
+            u32 numJoints = static_cast<u32>(reader.readFloat());
 
-            if (    num_joints > 0 ) {
-                baseSkel = new Md5Joint[    num_joints];
+            if ( numJoints > 0 ) {
+                baseSkel.resize(numJoints);
             }
         } else if ( strcmp( reader.currentToken(), "numMeshes" ) == 0 ) {
-            num_meshes = static_cast<u32>(reader.readFloat());
+            u32 numMeshes = static_cast<u32>(reader.readFloat());
 
-            if (    num_meshes > 0 ) {
-                meshes = new Md5Mesh[    num_meshes];
+            if ( numMeshes > 0 ) {
+                meshes.resize(numMeshes);
             }
         } else if ( strcmp( reader.currentToken(), "joints" ) == 0 ) {
             reader.readToken(); // {
 
-            for ( i32 i = 0; i <     num_joints; ++i ) {
-                Md5Joint& joint =     baseSkel[i];
+            for ( i32 i = 0; i < baseSkel.size(); ++i ) {
+                Md5Joint& joint = baseSkel[i];
                 //"name parent ( pos.x pos.y pos.z ) ( q.x q.y q.z )"
                 joint.name = reader.readToken();
                 joint.parent = static_cast<i32>(reader.readFloat());
@@ -79,7 +79,7 @@ void Md5Model::Read( Lexer& reader )
             reader.readToken(); // }
         } else if ( strcmp( reader.currentToken(), "mesh" ) == 0 ) {
             reader.readToken(); // {
-            Md5Mesh& mesh  =     meshes[currentMeshIndex];
+            Md5Mesh& mesh = meshes[currentMeshIndex];
             mesh.Read( reader );
             currentMeshIndex++;
         }
@@ -94,22 +94,22 @@ void Md5Mesh::Read( Lexer& reader )
         if ( strcmp( reader.currentToken(), "shader" ) == 0 ) {
             shader = reader.readToken();
         } else if ( strcmp( reader.currentToken(), "numverts" ) == 0 ) {
-            num_verts = static_cast<u32>(reader.readFloat());
+            u32 numVerts = static_cast<u32>(reader.readFloat());
 
-            if ( num_verts > 0 ) {
-                vertices    = new Md5Vertex [num_verts];
+            if ( numVerts > 0 ) {
+                vertices.resize(numVerts);
             }
         } else if ( strcmp( reader.currentToken(), "numtris" ) == 0 ) {
-            num_tris = static_cast<u32>(reader.readFloat());
+            u32 numTris = static_cast<u32>(reader.readFloat());
 
-            if ( num_tris > 0 ) {
-                triangles     = new Md5Triangle [num_tris];
+            if ( numTris > 0 ) {
+                triangles.resize(numTris);
             }
         } else if ( strcmp( reader.currentToken(), "numweights" ) == 0 ) {
-            num_weights = static_cast<u32>(reader.readFloat());
+            u32 numWeights = static_cast<u32>(reader.readFloat());
 
-            if ( num_weights > 0 ) {
-                weights = new Md5Weight [num_weights];
+            if ( numWeights > 0 ) {
+                weights.resize(numWeights);
             }
         } else if ( strcmp( reader.currentToken(), "vert" ) == 0 ) {
             //vert %d ( %f %f ) %d %d

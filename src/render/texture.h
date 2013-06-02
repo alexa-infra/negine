@@ -136,32 +136,25 @@ public:
     Texture(DeviceContext& gl);
     ~Texture();
 
-    //! Gets creation status
-    bool is_ok() const {
-        return id_ == 0;
-    }
-
     //! Gets texture info
     const TextureInfo& info() {
         return info_;
     }
 
     //! Bind texture
-    void Bind();
+    void bind();
 
     //! Generate texture object from texture info
-    void GenerateFromFile( const TextureInfo& textureinfo );
+    void createFromFile( const TextureInfo& textureinfo );
 
     //! Generate texture object from texture info
-    void GenerateFromBuffer( const TextureInfo& textureinfo, const u8* data );
+    void createFromBuffer( const TextureInfo& textureinfo, const u8* data );
 
-    void GenerateEmpty( const TextureInfo& textureinfo );
+    void createEmpty( const TextureInfo& textureinfo );
 
-    void Destroy();
+    void destroy();
 
 private:
-    void FromBuffer( const u8* data );
-
     void setup();
 private:
     DISALLOW_COPY_AND_ASSIGN( Texture );
@@ -176,8 +169,8 @@ class TextureLoader
 public:
     TextureLoader(DeviceContext& gl);
     ~TextureLoader();
-    Texture* Load( const std::string& filename );
-    void ClearCache();
+    Texture* load( const std::string& filename );
+    void clearCache();
 private:
     DISALLOW_COPY_AND_ASSIGN( TextureLoader );
 };

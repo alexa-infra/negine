@@ -112,12 +112,12 @@ void q3maploader::load()
     }
 
     q3lump lump_vis = read_lump( 16 );
-    f.set_position( lump_vis.offset );
-    visibility.nVecs = f.read_type<i32>();
-    visibility.szVecs = f.read_type<i32>();
+    f.setPosition( lump_vis.offset );
+    visibility.nVecs = f.readType<i32>();
+    visibility.szVecs = f.readType<i32>();
     i32 visDataSize = visibility.nVecs * visibility.szVecs;
     visibility.vecs = new u8[visDataSize];
-    f.read( visibility.vecs, visDataSize );
+    f.readRaw( visibility.vecs, visDataSize );
     
     visFaces = new u8[faces.size()];
     tree.resize( nodes.size() + leafs.size() );
@@ -135,7 +135,7 @@ void q3maploader::load()
     for( u32 i = 0; i < lm.size(); i++ )    {
         Texture*& t = lm_textures[i];
         t = new Texture(GL);
-        t->GenerateFromBuffer( ti, (u8*)lm[i].data );
+        t->createFromBuffer( ti, (u8*)lm[i].data );
     }
 
     for( size_t i = 0; i < nodes.size(); i++ ) {
@@ -173,27 +173,27 @@ void q3maploader::load()
 
 void q3maploader::PreloadTextures( TextureLoader& textureLoader )
 {
-    Texture* checker = textureLoader.Load( "checker.png" );
+    Texture* checker = textureLoader.load( "checker.png" );
 
     d_textures.resize( textures.size() );
     for ( size_t i = 0; i < textures.size(); i++ ) {
-        Texture* t = textureLoader.Load( ( char* )textures[i].name );
+        Texture* t = textureLoader.load( ( const char* )textures[i].name );
         d_textures[i] = (t == NULL) ? checker : t;
     }
 }
 
 void q3maploader::check_header()
 {
-    f.set_position( 0 );
-    q3header hdr = f.read_type<q3header>();
+    f.setPosition( 0 );
+    q3header hdr = f.readType<q3header>();
     ASSERT( strncmp( reinterpret_cast<char*>( hdr.magic ), "IBSP", 4 ) == 0 );
     ASSERT( hdr.version == 0x2e );
 }
 
 q3lump q3maploader::read_lump( i32 index )
 {
-    f.set_position( index * sizeof( q3lump ) + sizeof( q3header ) );
-    return f.read_type<q3lump>();
+    f.setPosition( index * sizeof( q3lump ) + sizeof( q3header ) );
+    return f.readType<q3lump>();
 }
 
 i32 q3maploader::findLeaf( const vec3f& camPos ) const
@@ -310,7 +310,7 @@ bool comp_texture_array(const TextureFace& a, const TextureFace& b)
 void q3maploader::render( const Camera& camera, GpuProgram* pr, ParameterMap& params, TextureLoader& txloader )
 {
     Timer tt;
-    tt.Reset();
+    tt.reset();
 
     memset( visFaces, 0, faces.size() );
     _visible_faces.clear();
@@ -319,7 +319,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, ParameterMap& pa
     _program = pr;
     ComputeVisible_R( camera, &tree.front(), ( 1 << 7 ) - 1 );
     //return;
-    //float t1 = tt.Reset();
+    //float t1 = tt.reset();
 
     std::vector<TextureFace> sorted;
     size_t ii = _visible_faces.size();
@@ -331,7 +331,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, ParameterMap& pa
         sorted.push_back( std::pair<Texture*, int>( t, faceIndex ) );
     }
     std::sort(sorted.begin(), sorted.end(), comp_texture_array);
-    //float t2 = tt.Reset();
+    //float t2 = tt.reset();
 
     int switches = 0;
     int patches = 0;
@@ -367,7 +367,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, ParameterMap& pa
             patches++;
         }
     }
-    //float t3 = tt.Reset();
+    //float t3 = tt.reset();
 
 //    std::cout
 //    << Stats::polygons() << " "

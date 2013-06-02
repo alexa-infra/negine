@@ -15,7 +15,7 @@ namespace base {
     }
 #endif
 
-    bool file_exists( const std::string& name )
+    bool fileExists( const std::string& name )
     {
         std::ifstream f( name.c_str() );;
         return f.is_open() && f.good();
