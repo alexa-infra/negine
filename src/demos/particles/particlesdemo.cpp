@@ -12,6 +12,8 @@
 #include "render/gpuprogram.h"
 #include "math/matrix.h"
 #include "math/matrix-inl.h"
+#include "base/profiler.h"
+#include <iostream>
 
 using namespace base;
 using namespace base::math;
@@ -38,29 +40,48 @@ public:
         params_["projection_matrix"] = Matrix4::Orthographic( -150.0, 150.0, -150.0, 150.0, -500.0, 500.0 );
         params_["modelview_matrix"] = Matrix4::Identity();
         params_["diffuse"] = ps_renderer_->texture();
+        Profiler::init();
     }
     virtual ~Demo() {
         program_.destroy();
         delete ps_renderer_;
         delete ps_;
+        Profiler::shutdown();
     }
 protected:
     void OnFrame() {
-        GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
-        GL.Clear( GL_COLOR_BUFFER_BIT );
-        GL.Disable( GL_DEPTH_TEST );
-        GL.Enable( GL_BLEND );
-        GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-        program_.bind();
-        program_.setParams(params_);
-        f32 frame_time = timer_.elapsed() / 1000.0f;
-        timer_.reset();
-        ps_->update( frame_time );
-        ps_renderer_->commit();
-        ps_renderer_->draw( &program_ );
-        program_.unbind();
-        GL_ASSERT(GL);
-        Application::OnFrame();
+
+        {
+            ProfilerScope("frame", Profiler::instance());
+            {
+                ProfilerScope("state", Profiler::instance());   
+                GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+                GL.Clear( GL_COLOR_BUFFER_BIT );
+                GL.Disable( GL_DEPTH_TEST );
+                GL.Enable( GL_BLEND );
+                GL.BlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+            }
+            {
+                ProfilerScope("draw", Profiler::instance());
+                program_.bind();
+                program_.setParams(params_);
+                f32 frame_time = timer_.elapsed() / 1000.0f;
+                timer_.reset();
+                ps_->update( frame_time );
+                ps_renderer_->commit();
+                ps_renderer_->draw( &program_ );
+                program_.unbind();
+                GL_ASSERT(GL);
+            }
+            {
+                ProfilerScope("swap", Profiler::instance());
+                Application::OnFrame();
+            }
+        }
+        Profiler::instance()->reportHeader(&std::cout);
+        Profiler::instance()->report(&std::cout);
+        std::cout.flush();
+        Profiler::instance()->reset();
     }
 
     void OnMotion( i32 x, i32 y, i32 dx, i32 dy ) {
