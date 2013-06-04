@@ -54,7 +54,6 @@ void GpuProgram::destroy()
 
 const std::string GpuProgram::status() const
 {
-    std::string result;
     if ( id_ == 0 ) {
         return "Gpu program does not exist";
     }
@@ -63,14 +62,13 @@ const std::string GpuProgram::status() const
     GL.GetProgramiv( id_, GL_INFO_LOG_LENGTH, &len );
 
     if ( len == 0 ) {
-        return result;
+        return "";
     }
 
-    result.resize( len );
-    char* buf = const_cast<char*>( result.c_str() );
-    GL.GetProgramInfoLog( id_, len, NULL, buf );
+    std::vector<char> buf(len);
+    GL.GetProgramInfoLog( id_, len, NULL, &buf[0] );
 
-    return result;
+    return std::string(buf.begin(), buf.end());
 }
 
 GpuProgram::~GpuProgram()
@@ -140,36 +138,34 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
 
 void GpuProgram::populateUniformMap()
 {
-    GLint uniform_count = 0;
-    GLint max_name_length = 0;
-    GL.GetProgramiv( id_, GL_ACTIVE_UNIFORMS, &uniform_count );
-    GL.GetProgramiv( id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_length );
+    GLint uniformCount = 0;
+    GLint maxNameLength = 0;
+    GL.GetProgramiv( id_, GL_ACTIVE_UNIFORMS, &uniformCount );
+    GL.GetProgramiv( id_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength );
 
-    if ( !uniform_count || !max_name_length ) {
+    if ( !uniformCount || !maxNameLength ) {
         return;
     }
 
     uniformBinding_.clear();
-    uniformBinding_.reserve(static_cast<u32>(uniform_count));
+    uniformBinding_.reserve(static_cast<u32>(uniformCount));
 
-    char* buffer = new char[max_name_length];
+    std::vector<char> buffer(maxNameLength);
 
     u32 index = 0;
-    for ( GLint i = 0; i < uniform_count; ++i ) {
-        GLsizei name_length = 0;
-        i32 type_size = 0;
-        GLenum uniform_type = 0;
-        GL.GetActiveUniform( id_, i, max_name_length, &name_length, &type_size, &uniform_type, buffer );
-        std::string uniformName( buffer );
+    for ( GLint i = 0; i < uniformCount; ++i ) {
+        GLsizei nameLength = 0;
+        i32 typeSize = 0;
+        GLenum uniformType = 0;
+        GL.GetActiveUniform( id_, i, maxNameLength, &nameLength, &typeSize, &uniformType, &buffer[0] );
+        std::string uniformName( buffer.begin(), buffer.begin()+nameLength );
         u32 location = GL.GetUniformLocation( id_, uniformName.c_str() );
         UniformVar uni;
         uni.location = location;
-        uni.type = uniform_type;
+        uni.type = uniformType;
         uni.name = uniformName;
         uniformBinding_.push_back(uni);
     }
-
-    delete[] buffer;
 }
     
 bool GpuProgram::createMeta( const std::string& filename )

@@ -5,6 +5,7 @@
  **/
 #include "render/shader.h"
 #include "base/debug.h"
+#include <vector>
 
 namespace base
 {
@@ -42,32 +43,29 @@ bool Shader::create( ShaderType type, const char* const* source, u32 len )
     GL.ShaderSource( id_, len, source, NULL );
     GL.CompileShader( id_ );
 
-    GLint compile_status;
-    GL.GetShaderiv( id_, GL_COMPILE_STATUS, &compile_status );
+    GLint compileStatus;
+    GL.GetShaderiv( id_, GL_COMPILE_STATUS, &compileStatus );
   
-    bool isCompiled = ( compile_status == GL_TRUE );
+    bool isCompiled = ( compileStatus == GL_TRUE );
     return isCompiled;
 }
 
 const std::string Shader::status() const
 {
-    std::string result;
-
     if ( id_ == 0 ) {
         return "Shader does not exist";
     }
 
-    GLint log_size;
-    GL.GetShaderiv( id_, GL_INFO_LOG_LENGTH, &log_size );
+    GLint logSize;
+    GL.GetShaderiv( id_, GL_INFO_LOG_LENGTH, &logSize );
 
-    if ( log_size == 0 ) {
-        return result;
+    if ( logSize == 0 ) {
+        return "";
     }
 
-    result.resize( static_cast<u32>( log_size ) );
-    char* buffer = const_cast<char*>( result.c_str() );
-    GL.GetShaderInfoLog( id_, log_size, NULL, buffer );
-    return result;
+    std::vector<char> buf(logSize);
+    GL.GetShaderInfoLog( id_, logSize, NULL, &buf[0] );
+    return std::string(buf.begin(), buf.end());
 }
 
 }
