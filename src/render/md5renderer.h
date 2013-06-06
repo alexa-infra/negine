@@ -30,14 +30,14 @@ public:
     Md5Renderer( resource::Md5Model* model, DeviceContext& gl );
     ~Md5Renderer();
 
-    void Commit();
-    void Draw( );
+    void commit( );
+    void draw( );
 
 private:
-    void GenerateVertexes( resource::Md5Mesh& mesh );
-    void GenerateIndexes( resource::Md5Mesh& mesh );
-    void GenerateLightningInfo( resource::Md5Mesh& mesh );
-    void UpdateBoundingBox( math::vec3f& vetex );
+    void generateVertexes( resource::Md5Mesh& mesh );
+    void generateIndexes( resource::Md5Mesh& mesh );
+    void generateLightningInfo( resource::Md5Mesh& mesh );
+    void updateBoundingBox( math::vec3f& vetex );
 };
 
 } // namespace base

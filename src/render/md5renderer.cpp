@@ -48,7 +48,7 @@ Md5Renderer::~Md5Renderer()
     delete mesh_;
 }
 
-void Md5Renderer::Draw( )
+void Md5Renderer::draw( )
 {
     vb->bind();
     GL.DrawElements(
@@ -57,19 +57,20 @@ void Md5Renderer::Draw( )
     vb->unbind();
 }
 
-void Md5Renderer::Commit()
+void Md5Renderer::commit()
 {
+    // TODO: draw all meshes from model
     Md5Mesh& mesh = md5->meshes[0];
-    GenerateVertexes( mesh );
-    GenerateIndexes( mesh );
-    GenerateLightningInfo( mesh );
+    generateVertexes( mesh );
+    generateIndexes( mesh );
+    generateLightningInfo( mesh );
     vb->setVertexData( mesh_->data(), mesh_->rawSize() );
 
     // TODO: should it be only once?? and Uint32
     vb->setIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
 }
 
-void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
+void Md5Renderer::generateVertexes( Md5Mesh& mesh )
 {
     std::vector<Md5Joint>& skeleton = md5->baseSkel;
     math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
@@ -85,11 +86,11 @@ void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
             pos[i] += joint.translate( weight.pos ) * weight.bias;
         }
 
-        UpdateBoundingBox( pos[i] );
+        updateBoundingBox( pos[i] );
     }
 }
 
-void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
+void Md5Renderer::generateIndexes( Md5Mesh& mesh )
 {
     u16* indicies = reinterpret_cast<u16*>(mesh_->indices());
     for ( int i = 0; i < mesh.triangles.size(); i++ ) {
@@ -99,7 +100,7 @@ void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
     }
 }
 
-void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
+void Md5Renderer::generateLightningInfo( Md5Mesh& mesh )
 {
     math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
     math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
@@ -180,7 +181,7 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
     }
 }
 
-void Md5Renderer::UpdateBoundingBox( math::vec3f& pos )
+void Md5Renderer::updateBoundingBox( math::vec3f& pos )
 {
     // TODO bounding box class?
     if ( boundingBox.min.x > pos.x ) {

@@ -49,7 +49,7 @@ public:
         texture_bump_ = GL.texture_loader()->load( "hellknight_local.png" );
         entity = Entity::Load( "hellknight.md5mesh" );
         entity->object.md5Anim = new Md5Anim;
-        entity->object.md5Anim->Load( "hellknight_idle2.md5anim" );
+        entity->object.md5Anim->load( "hellknight_idle2.md5anim" );
         md5_renderer_ = new Md5Renderer( &entity->object.md5Model, GL );
     }
     virtual ~Demo() {
@@ -75,20 +75,14 @@ protected:
         params["light_pos"] = vec4f(camera_.position(), 1.0f);
         program_.setParams(params);
 
-        //program_.set_uniform( "diffuse", texture_ );
-        //program_.set_uniform( "bump", texture_bump_ );
         //modelTransform_ *= Matrix4::RotationZ( 20 / 60.f * deg_to_rad );
-        //program_.set_uniform( "projection_matrix", camera_.GetProjection() );
-        //program_.set_uniform( "modelview_matrix", camera_.GetModelView() * modelTransform_ );
-        //program_.set_uniform( "camera_pos", camera_.position() );
-        //program_.set_uniform( "light_pos", camera_.position() );
         static u32 counter = 0;
         counter++;
         u32 frame  = counter / 10;
         f32 interp = ( counter % 10 ) / 10.f;
-        entity->object.md5Anim->Update( &entity->object.md5Model, frame, interp );
-        md5_renderer_->Commit();
-        md5_renderer_->Draw( );
+        entity->object.md5Anim->update( &entity->object.md5Model, frame, interp );
+        md5_renderer_->commit();
+        md5_renderer_->draw( );
         program_.unbind();
         GL_ASSERT(GL);
         Application::OnFrame();
