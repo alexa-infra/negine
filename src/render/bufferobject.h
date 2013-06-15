@@ -20,7 +20,8 @@ namespace BufferTargets
 enum BufferTarget {
     Array = GL_ARRAY_BUFFER,
     ElementArray = GL_ELEMENT_ARRAY_BUFFER,
-    Uniform = GL_UNIFORM_BUFFER
+    Uniform = GL_UNIFORM_BUFFER,
+    Texture = GL_TEXTURE_BUFFER
 };
 }
 typedef BufferTargets::BufferTarget BufferTarget;
@@ -42,44 +43,31 @@ enum BufferUsage {
 }
 typedef BufferUsages::BufferUsage BufferUsage;
 
-namespace BufferAccesses
-{
-//! access to buffer during mapping
-enum BufferAccess {
-    ReadOnly = GL_READ_ONLY,
-    WriteOnly = GL_WRITE_ONLY,
-    ReadWrite = GL_READ_WRITE
-};
-}
-typedef BufferAccesses::BufferAccess BufferAccess;
-
 //! Wraps Buffer Object
 class BufferObject : public GpuResource
 {
 private:
     GLenum target_; //!< Currently mapped type format
+    GLenum usage_;
 public:
-    BufferObject(DeviceContext& gl);
+    BufferObject(DeviceContext& gl, BufferTarget target, BufferUsage usage);
     ~BufferObject();
 
     //! Bind buffer to target
-    void bind( BufferTarget target );
+    void bind();
     //! Unbind active target
     void unbind();
     //! Bind buffer to target by index
-    void bindBase( BufferTarget target, u32 index );
+    void bindBase( u32 index );
     //! Bind buffer to target by index, and to desired position
-    void bindRange( BufferTarget target, u32 index, void* offset, void* size );
+    void bindRange( u32 index, void* offset, void* size );
 
     //! Sets data of buffer, copy from memory to GPU
-    void setData( u32 size, const void* dataPtr, BufferUsage usage );
+    void setData( u32 size, const void* dataPtr );
     //! Sets sub-data of buffer, copy from memory to GPU
     void setSubData( u32 offset, u32 size, const void* dataPtr );
     //! Gets sub-data of buffer, copy from GPU to memory
     void getSubData( u32 offset, u32 size, void* dataPtr );
-
-    //! Clear allocated memory at GPU
-    void clear();
 
 private:
     DISALLOW_COPY_AND_ASSIGN( BufferObject );

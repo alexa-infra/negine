@@ -100,11 +100,8 @@ typedef u64 GLuint64;
 
 #define GL_ARRAY_BUFFER                   0x8892
 #define GL_ELEMENT_ARRAY_BUFFER           0x8893
-#define GL_UNIFORM_BUFFER                 0x8A11 
-
-#define GL_READ_ONLY                      0x88B8
-#define GL_WRITE_ONLY                     0x88B9
-#define GL_READ_WRITE                     0x88BA 
+#define GL_UNIFORM_BUFFER                 0x8A11
+#define GL_TEXTURE_BUFFER                 0x8C2A
 
 #define GL_STREAM_DRAW                    0x88E0
 #define GL_STREAM_READ                    0x88E1

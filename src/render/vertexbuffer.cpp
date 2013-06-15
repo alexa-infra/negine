@@ -23,6 +23,8 @@ VertexBuffer::VertexBuffer(DeviceContext& gl)
     , vao_(0)
 #endif
 {
+    vertexes_ = new BufferObject(GL, BufferTargets::Array, BufferUsages::DynamicDraw);
+    indexes_ = new BufferObject(GL, BufferTargets::ElementArray, BufferUsages::DynamicDraw );
 }
 
 VertexBuffer::~VertexBuffer()
@@ -52,19 +54,15 @@ void VertexBuffer::enableAttributeMesh( const Mesh* mesh )
 
 void VertexBuffer::setVertexData( void* vertexes, u32 vertexCount )
 {
-    if (vertexes_ == nullptr)
-        vertexes_ = new BufferObject(GL);
-    vertexes_->bind( BufferTargets::Array );
-    vertexes_->setData( vertexCount, vertexes, BufferUsages::DynamicDraw );
+    vertexes_->bind();
+    vertexes_->setData( vertexCount, vertexes );
     vertexes_->unbind();
 }
 
 void VertexBuffer::setIndexData( void* index, u32 indexCount )
 {
-    if (indexes_ == nullptr)
-        indexes_ = new BufferObject(GL);
-    indexes_->bind( BufferTargets::ElementArray );
-    indexes_->setData( indexCount, index, BufferUsages::DynamicDraw );
+    indexes_->bind();
+    indexes_->setData( indexCount, index );
     indexes_->unbind();
 }
 
@@ -79,8 +77,8 @@ void VertexBuffer::bind( )
     ASSERT(vertexes_ != nullptr && indexes_ != nullptr);
     GL.GenVertexArrays(1, &vao_);
     GL.BindVertexArray(vao_);
-
-    vertexes_->bind( BufferTargets::Array );
+#endif
+    vertexes_->bind();
 
     for (u32 i=0; i<VertexAttrs::Count; i++)
     {
@@ -104,34 +102,7 @@ void VertexBuffer::bind( )
         }
     }
 
-    indexes_->bind( BufferTargets::ElementArray );
-#else
-    vertexes_->bind( BufferTargets::Array );
-
-    for (u32 i=0; i<VertexAttrs::Count; i++)
-    {
-        EnabledAttribute& attr = enabledAttributes_[i];
-        VertexAttr vertexAttr = static_cast<VertexAttr>(i);
-        u32 location = VertexAttrs::GetAttributeLocation( vertexAttr );
-        if (enabledAttributes_[i].enabled_)
-        {
-            GL.EnableVertexAttribArray( location );
-            GL.VertexAttribPointer(
-                location,
-                VertexAttrs::GetComponentCount( vertexAttr ),
-                VertexAttrs::GetGLType( vertexAttr ),
-                GL_FALSE,
-                attr.stride_,
-                attr.pointer_ );
-        }
-        else
-        {
-            GL.DisableVertexAttribArray(location);
-        }
-    }
-
-    indexes_->bind( BufferTargets::ElementArray );
-#endif
+    indexes_->bind();
 }
 
 void VertexBuffer::unbind( )
