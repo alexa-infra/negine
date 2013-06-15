@@ -65,31 +65,15 @@ enum TextureType {
 };
 typedef TextureTypes::TextureType TextureType;
 
-namespace TextureMinFilters
+namespace TextureFilters
 {
-//! Texture minifying function is used whenever the pixel being textured
-//! maps to an area greater than one texture element.
-enum TextureMinFilter {
-    NEAREST                     = GL_NEAREST,
-    LINEAR                      = GL_LINEAR,
-    NEAREST_MIPMAP_NEAREST      = GL_NEAREST_MIPMAP_NEAREST,
-    LINEAR_MIPMAP_NEAREST       = GL_LINEAR_MIPMAP_NEAREST,
-    NEAREST_MIPMAP_LINEAR       = GL_NEAREST_MIPMAP_LINEAR,
-    LINEAR_MIPMAP_LINEAR        = GL_LINEAR_MIPMAP_LINEAR
-};
+    enum TextureFilter {
+        Linear,
+        Anisotropic,
+        Nearest
+    };
 }
-typedef TextureMinFilters::TextureMinFilter TextureMinFilter;
-
-namespace TextureMagFilters
-{
-//! Texture magnification function is used when the pixel being textured
-//! maps to an area less than or equal to one texture element.
-enum TextureMagFilter {
-    NEAREST     = GL_NEAREST,
-    LINEAR      = GL_LINEAR
-};
-}
-typedef TextureMagFilters::TextureMagFilter TextureMagFilter;
+typedef TextureFilters::TextureFilter TextureFilter;
 
 namespace TextureWraps
 {
@@ -106,11 +90,8 @@ typedef TextureWraps::TextureWrap TextureWrap;
 struct TextureInfo {
     TextureUsage Usage;                     //!< Usage
     TextureType Type;                       //!< Texture type
-    TextureMagFilter MagFilter;             //!< Magnification filter
-    TextureMinFilter MinFilter;             //!< Minification filter
-    TextureWrap WrapT;                      //!< Wrap mode of T coordinate
-    TextureWrap WrapS;                      //!< Wrap mode of S coordinate
-    TextureWrap WrapR;                      //!< Wrap mode of R coordinate
+    TextureFilter Filtering;                //!< Filtering type
+    TextureWrap Wrap;                       //!< Wrap texture coordinate
     bool GenerateMipmap;
 
     std::string Filename;                   //!< Source file name

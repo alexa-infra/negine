@@ -68,6 +68,7 @@ public:
     PFNGLSHADERSOURCEPROC       ShaderSource;
     PFNGLTEXIMAGE2DPROC         TexImage2D;
     PFNGLTEXPARAMETERIPROC      TexParameteri;
+    PFNGLTEXPARAMETERFPROC      TexParameterf;
     PFNGLUNIFORM1IPROC          Uniform1i;
     PFNGLUNIFORM3FPROC          Uniform3f;
     PFNGLUNIFORM4FPROC          Uniform4f;

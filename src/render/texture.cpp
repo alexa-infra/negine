@@ -51,11 +51,8 @@ u32 PixelTypes::componentCount(PixelType type)
 
 TextureInfo::TextureInfo()
     : Type( TextureTypes::Texture2D )
-    , MagFilter( TextureMagFilters::LINEAR )
-    , MinFilter( TextureMinFilters::LINEAR )
-    , WrapT( TextureWraps::REPEAT )
-    , WrapS( TextureWraps::REPEAT )
-    , WrapR( TextureWraps::REPEAT )
+    , Filtering( TextureFilters::Linear )
+    , Wrap( TextureWraps::REPEAT )
     , GenerateMipmap( false )
     , Pixel( PixelTypes::RGBA )
     , DataType( GLDataTypes::UByte )
@@ -139,6 +136,12 @@ void Texture::createFromBuffer( const TextureInfo& textureinfo, const u8* data )
         info_.Pixel,
         info_.DataType,
         data );
+
+    if (info_.GenerateMipmap) {
+        ASSERT( info_.Width == info_.Height );
+        GL.GenerateMipmap( info_.Type );
+    }
+
     GL.BindTexture( info_.Type, 0 );
 }
 
@@ -149,18 +152,43 @@ void Texture::createEmpty( const TextureInfo& textureinfo )
 
 void Texture::setup()
 {
-    if ( !info_.GenerateMipmap ) {
-        ASSERT( info_.MinFilter == TextureMinFilters::LINEAR
-                || info_.MinFilter == TextureMinFilters::NEAREST );
-        ASSERT( info_.Width == info_.Height );
-    } else {
-        GL.GenerateMipmap( info_.Type );
+    GLenum minFilter;
+    GLenum magFilter;
+    switch (info_.Filtering) {
+        case TextureFilters::Linear:
+        {
+            if (info_.GenerateMipmap)
+                minFilter = GL_LINEAR_MIPMAP_LINEAR;
+            else
+                minFilter = GL_LINEAR;
+            magFilter = GL_LINEAR;
+            break;
+        }
+        case TextureFilters::Nearest:
+        {
+            if (info_.GenerateMipmap)
+                minFilter = GL_NEAREST_MIPMAP_LINEAR;
+            else
+                minFilter = GL_NEAREST;
+            magFilter = GL_NEAREST;
+            break;
+        }
+        case TextureFilters::Anisotropic:
+        {
+            if (info_.GenerateMipmap)
+                minFilter = GL_LINEAR_MIPMAP_LINEAR;
+            else
+                minFilter = GL_LINEAR;
+            magFilter = GL_LINEAR;
+            GL.TexParameterf(info_.Type, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8.0f);
+            break;
+        }
     }
 
-    GL.TexParameteri( info_.Type, GL_TEXTURE_MIN_FILTER, info_.MinFilter );
-    GL.TexParameteri( info_.Type, GL_TEXTURE_MAG_FILTER, info_.MagFilter );
-    GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_S, info_.WrapS );
-    GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_T, info_.WrapT );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_MIN_FILTER, minFilter );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_MAG_FILTER, magFilter );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_S, info_.Wrap );
+    GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_T, info_.Wrap );
 }
 
 TextureLoader::TextureLoader(DeviceContext& gl)
@@ -208,7 +236,7 @@ Texture* TextureLoader::load( const std::string& filename )
     LOG("load texture: %s", name.c_str());
     TextureInfo tex_info;
     tex_info.Filename = name;
-    tex_info.MinFilter = TextureMinFilters::LINEAR;
+    tex_info.Filtering = TextureFilters::Anisotropic;
     tex_info.GenerateMipmap = true;
     Texture* t = new Texture(context_);
     t->createFromFile( tex_info );

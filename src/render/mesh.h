@@ -84,9 +84,9 @@ public:
     u32 numVertexes() const { return numVertexes_; }
     u32 numIndexes() const { return numIndexes_; }
     u32 rawSize() const { return rawSize_; }
-    void* data() { return &attributeBuffer_.front(); }
+    void* data() { return attributeBuffer_.data(); }
     const MeshLayer* attributes() const { return attributes_; }
-    void* indices() { return &indices_.front(); }
+    void* indices() { return indices_.data(); }
     IndexType indexType() const { return indexType_; }
 
     u32 stride(VertexAttr attr) const;

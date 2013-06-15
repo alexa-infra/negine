@@ -127,7 +127,7 @@ void q3maploader::load()
     std::vector<q3lightmap> lm = read<q3lightmap>( 14 );
     lm_textures.resize( lm.size() );
     TextureInfo ti;
-    ti.MinFilter = TextureMinFilters::LINEAR;
+    ti.Filtering = TextureFilters::Linear;
     ti.GenerateMipmap = true;
     ti.Pixel = PixelTypes::RGB;
     ti.Width = 128;
