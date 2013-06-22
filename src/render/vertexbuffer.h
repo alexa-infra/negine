@@ -17,6 +17,8 @@ namespace opengl
 class BufferObject;
 class DeviceContext;
 
+#define USE_VAO
+
 //! Wraps vertex buffer - combination of two buffers: vertex and index arrays
 //! Uses triangles as data, and u16 indexes
 class VertexBuffer
@@ -25,27 +27,28 @@ public:
     VertexBuffer(DeviceContext& gl);
     ~VertexBuffer();
 
-    void SetVertexData( void* vertexes, u32 vertexCount );
+    void setVertexData( void* vertexes, u32 vertexCount );
 
-    void SetIndexData( void* index, u32 indexCount );
+    void setIndexData( void* index, u32 indexCount );
 
-    void EnableAttribute( VertexAttr attr, u32 stride, void* pointer );
+    void enableAttribute( VertexAttr attr, u32 stride, void* pointer );
 
-    void EnableAttributeMesh( const MeshExt* mesh );
-
-    void Load();
+    void enableAttributeMesh( const Mesh* mesh );
 
     //! Bind components of vertex to active attributes in current shader program
-    void BindAttributes( );
+    void bind( );
 
     //! Unbind attributes
-    void UnbindAttributes( );
+    void unbind( );
 private:
     BufferObject* vertexes_;      //!< Vertex buffer object
     BufferObject* indexes_;       //!< Index buffer object
-    u32 vao_;
     DeviceContext& GL;
+#ifdef USE_VAO
+    u32 vao_;
+#endif
 
+    // TODO: surfaces??
     struct EnabledAttribute
     {
         bool enabled_;

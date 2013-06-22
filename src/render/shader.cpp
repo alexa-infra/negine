@@ -5,6 +5,7 @@
  **/
 #include "render/shader.h"
 #include "base/debug.h"
+#include <vector>
 
 namespace base
 {
@@ -18,10 +19,10 @@ Shader::Shader(DeviceContext& gl)
 
 Shader::~Shader()
 {
-    Destroy();
+    destroy();
 }
 
-void Shader::Destroy()
+void Shader::destroy()
 {
     if ( id_ != 0 ) {
         GL.DeleteShader( id_ );
@@ -29,44 +30,42 @@ void Shader::Destroy()
     }
 }
 
-bool Shader::Create( ShaderType shaderType, const char* const* source, u32 len )
+bool Shader::create( ShaderType type, const char* const* source, u32 len )
 {
-    ASSERT( id_ == 0 );
-    shader_type_ = shaderType;
-    id_ = GL.CreateShader( shader_type_ );
-
-    if ( id_ == 0 )
-        return false;
+    if ( id_ == 0 ) {
+        type_ = type;
+        id_ = GL.CreateShader( type_ );
+        ASSERT( id_ != 0 );
+    } else {
+        ASSERT( type == type_ );
+    }
 
     GL.ShaderSource( id_, len, source, NULL );
     GL.CompileShader( id_ );
 
-    GLint compile_status;
-    GL.GetShaderiv( id_, GL_COMPILE_STATUS, &compile_status );
+    GLint compileStatus;
+    GL.GetShaderiv( id_, GL_COMPILE_STATUS, &compileStatus );
   
-    bool isCompiled = ( compile_status == GL_TRUE );
+    bool isCompiled = ( compileStatus == GL_TRUE );
     return isCompiled;
 }
 
 const std::string Shader::status() const
 {
-    std::string result;
-
     if ( id_ == 0 ) {
-        return result;
+        return "Shader does not exist";
     }
 
-    GLint log_size;
-    GL.GetShaderiv( id_, GL_INFO_LOG_LENGTH, &log_size );
+    GLint logSize;
+    GL.GetShaderiv( id_, GL_INFO_LOG_LENGTH, &logSize );
 
-    if ( log_size == 0 ) {
-        return result;
+    if ( logSize == 0 ) {
+        return "";
     }
 
-    result.resize( static_cast<u32>( log_size ) );
-    char* buffer = const_cast<char*>( result.c_str() );
-    GL.GetShaderInfoLog( id_, log_size, NULL, buffer );
-    return result;
+    std::vector<char> buf(logSize);
+    GL.GetShaderInfoLog( id_, logSize, NULL, &buf[0] );
+    return std::string(buf.begin(), buf.end());
 }
 
 }

@@ -10,6 +10,7 @@
 #include "render/texture.h"
 #include "render/gpuprogram.h"
 #include "render/vertexbuffer.h"
+#include "math/matrix-inl.h"
 
 using namespace base;
 using namespace base::math;
@@ -21,12 +22,13 @@ protected:
     GpuProgram program_;
     q3maploader* q3map_;
     Camera camera_;
-    TextureLoader texure_loader_;
     Matrix4 projection_;
     Matrix4 cameraTransform_;
     u32 keypressed_;
 public:
-    Demo() {
+    Demo()
+        : program_(GL)
+    {
         buffer_ = NULL;
         q3map_ = NULL;
         keypressed_ = 0;
@@ -34,7 +36,7 @@ public:
         //camera_.set_position(Vector3(221.4f, 5.0f, 63.0f));
         //camera_.set_position(Vector3(200, 100, -1200));
         //camera_.set_position(Vector3(0, 0, 0));
-        camera_.set_position( Vector3( 28.4461f, 41.9335f, 300.19f ) );
+        camera_.set_position( vec3f( 28.4461f, 41.9335f, 300.19f ) );
         camera_.set_pitch( 0 );
         //camera_.set_head( -math::pi );
         camera_.set_head( 0 );
@@ -46,29 +48,31 @@ public:
         cameraTransform_ = camera_.GetModelView();
         projection_ = camera_.GetProjection();
         base::FileBinary fb( "maps/q3dm6.bsp" );
-        q3map_ = new q3maploader( fb );
+        q3map_ = new q3maploader( GL, fb );
         q3map_->load();
-        q3map_->PreloadTextures( texure_loader_ );
+        q3map_->PreloadTextures( *GL.texture_loader() );
         program_.create( "q3map.shader.meta" );
     }
     virtual ~Demo() {
-        program_.Destroy();
+        program_.destroy();
         delete q3map_;
         delete buffer_;
     }
 protected:
     void OnFrame() {
         UpdateWorld();
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-        glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
-        glEnable( GL_DEPTH_TEST );
-        program_.Bind();
-        program_.set_uniform( "projection_matrix", projection_ );
-        program_.set_uniform( "modelview_matrix", cameraTransform_ );
-        program_.set_uniform( "clip_matrix", projection_ * cameraTransform_ );
-        q3map_->render( camera_, &program_, texure_loader_ );
-        program_.Unbind();
-        GL_ASSERT();
+        GL.ClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+        GL.Clear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        GL.Enable( GL_DEPTH_TEST );
+        program_.bind();
+        ParameterMap params;
+        params["projection_matrix"] = projection_;
+        params["modelview_matrix"] = cameraTransform_;
+        params["clip_matrix"] = projection_ * cameraTransform_;
+        //program_.setParams(params);
+        q3map_->render( camera_, &program_, params, *GL.texture_loader() );
+        program_.unbind();
+        GL_ASSERT(GL);
         Application::OnFrame();
     }
     VertexBuffer* buffer_;
@@ -106,18 +110,18 @@ protected:
         } else if ( key == 'l' ) {
             keypressed_ |= 128;
         } else if ( key == 'p' ) {
-            std::cout << "camera pos: " << camera_.position() << '\n';
-            std::cout << "camera pitch: " << camera_.pitch() << '\n';
-            std::cout << "camera head: " << camera_.head() << '\n';
-            std::cout.flush();
+            //std::cout << "camera pos: " << camera_.position() << '\n';
+            //std::cout << "camera pitch: " << camera_.pitch() << '\n';
+            //std::cout << "camera head: " << camera_.head() << '\n';
+            //std::cout.flush();
         } else if ( key == 'o' ) {
             for ( int i = 0; i < 6; i++ ) {
-                std::cout << camera_.planes()[i].Normal() << ' ' << camera_.planes()[i].D() << '\n';
+                //std::cout << camera_.planes()[i].Normal() << ' ' << camera_.planes()[i].D() << '\n';
             }
 
-            std::cout.flush();
+            //std::cout.flush();
         } else if ( key == 'm' ) {
-            std::cout << camera_.GetClipMatrix() << std::endl;
+            //std::cout << camera_.GetClipMatrix() << std::endl;
         }
     }
     void OnKeyboardUp( u8 key ) {

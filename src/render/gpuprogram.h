@@ -48,35 +48,32 @@ struct GpuProgramMeta
 class GpuProgram : public GpuResource
 {
 protected:    
-    Shader* pixel_shader_;       //!< Attached pixel shader
-    Shader* vertex_shader_;      //!< Attached vertex shader
+    Shader* pixelShader_;       //!< Attached pixel shader
+    Shader* vertexShader_;      //!< Attached vertex shader
 
-    UniformBinding uni_binding_;
+    UniformBinding uniformBinding_;
     
 public:
     GpuProgram(DeviceContext& gl);
     ~GpuProgram();
 
-    void Destroy();
-
-    //! Gets program creation status
-    bool is_ok() const;
+    void destroy();
 
     //! Returns status string
     const std::string status() const;
 
     //! Sets program to be used at current pipeline
-    void Bind();
+    void bind();
 
     //! Unbind program
-    void Unbind();
+    void unbind();
 
     void setParams(const ParameterMap& params);
 
     void create( const std::string& filename )
     {
         if (!createMeta(filename))
-            Destroy();
+            destroy();
     }
     
 protected:
@@ -85,7 +82,7 @@ protected:
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
-    void getUniformsList();
+    void populateUniformMap();
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };

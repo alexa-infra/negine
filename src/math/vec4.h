@@ -17,12 +17,7 @@ namespace math
 template<typename T>
 struct vec4
 {
-    union {
-        struct {
-            T x, y, z, w;
-        };
-        T arr_[4];
-    };
+    T x, y, z, w;
     vec4() {}
 
     template<typename R>
@@ -65,8 +60,8 @@ struct vec4
     inline vec2<T> zw() const { return vec2<T>(z, w); }
     inline vec3<T> xyz() const { return vec3<T>(x, y, z); }
 
-    inline T& operator[](const int idx) { return arr_[idx]; }
-    inline const T& operator[](const int idx) const { return arr_[idx]; }
+    inline T& operator[](const int idx) { return (&x)[idx]; }
+    inline const T& operator[](const int idx) const { return (&x)[idx]; }
 };
 
 template<typename T, typename R> inline vec4<T> operator+ (R a, const vec4<T>& v) { return vec4<T>(a) + v; }

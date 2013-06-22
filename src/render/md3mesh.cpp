@@ -64,14 +64,14 @@ Md3Model::~Md3Model()
 void Md3Model::load_md3( FileBinary& file )
 {
     /*u32 hdr_start = */file.position();
-    hdr = file.read_type<Md3Header>();
+    hdr = file.readType<Md3Header>();
     ASSERT( hdr.ident == 0x33504449 );
     ASSERT( hdr.version == MD3_VERSION );
     frame_data = new Md3FrameData[hdr.num_frames];
 
 //    file.set_position(hdr_start + hdr.ofs_frames);
     for ( i32 i = 0; i < hdr.num_frames; i++ ) {
-        frame_data[i].frame = file.read_type<Md3Frame>();
+        frame_data[i].frame = file.readType<Md3Frame>();
     }
 
     //    file.set_position(hdr_start + hdr.ofs_tags);
@@ -79,7 +79,7 @@ void Md3Model::load_md3( FileBinary& file )
         frame_data[i].tags = new Md3Tag[hdr.num_tags];
 
         for ( i32 j = 0; j < hdr.num_tags; j++ ) {
-            frame_data[i].tags[j] = file.read_type<Md3Tag>();
+            frame_data[i].tags[j] = file.readType<Md3Tag>();
         }
     }
 
@@ -98,20 +98,20 @@ void Md3Model::load_md3( FileBinary& file )
         /*u32 surface_start = */file.position();
         Md3MeshBase& mesh = meshes[i];
         Md3Surface& surface = mesh.surface;
-        surface = file.read_type<Md3Surface>();
+        surface = file.readType<Md3Surface>();
         ASSERT( surface.ident == 0x33504449 );
         mesh.shaders = new Md3Shader[surface.num_shaders];
 
 //        file.set_position(surface_start + surface.ofs_shaders);
         for ( i32 j = 0; j < surface.num_shaders; j++ ) {
-            mesh.shaders[j] = file.read_type<Md3Shader>();
+            mesh.shaders[j] = file.readType<Md3Shader>();
         }
 
         mesh.triangles = new Md3Triangle[surface.num_triangles];
 
 //        file.set_position(surface_start + surface.ofs_triangles);
         for ( i32 j = 0; j < surface.num_triangles; j++ ) {
-            mesh.triangles[j] = file.read_type<Md3Triangle>();
+            mesh.triangles[j] = file.readType<Md3Triangle>();
         }
 
 //        file.set_position(surface_start + surface.ofs_st);
@@ -120,7 +120,7 @@ void Md3Model::load_md3( FileBinary& file )
             mesh_data.uv = new Md3TexCoord[surface.num_verts];
 
             for ( i32 j = 0; j < surface.num_verts; j++ ) {
-                mesh_data.uv[j] = file.read_type<Md3TexCoord>();
+                mesh_data.uv[j] = file.readType<Md3TexCoord>();
             }
         }
 
@@ -130,7 +130,7 @@ void Md3Model::load_md3( FileBinary& file )
             mesh_data.vertexes = new Md3Vertex[surface.num_verts];
 
             for ( i32 j = 0; j < surface.num_verts; j++ ) {
-                mesh_data.vertexes[j] = file.read_type<Md3Vertex>();
+                mesh_data.vertexes[j] = file.readType<Md3Vertex>();
             }
         }
     }

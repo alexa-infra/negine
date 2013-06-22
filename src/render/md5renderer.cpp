@@ -30,14 +30,16 @@ Md5Renderer::Md5Renderer( Md5Model* model, DeviceContext& gl )
     vb = new VertexBuffer(GL);
     Md5Mesh& mesh = md5->meshes[0];
 
-    MeshBuilder builder;
-    builder
+    mesh_ = new Mesh();
+    (*mesh_)
         .addAttribute(VertexAttrs::tagPosition)
         .addAttribute(VertexAttrs::tagNormal)
         .addAttribute(VertexAttrs::tagTexture)
-        .addAttribute(VertexAttrs::tagTangent);
-    mesh_ = new MeshExt(builder, mesh.num_verts, mesh.num_tris * 3);
-    vb->EnableAttributeMesh(mesh_);
+        .addAttribute(VertexAttrs::tagTangent)
+        .vertexCount(mesh.vertices.size())
+        .indexCount(mesh.triangles.size() * 3, IndexTypes::UInt16)
+        .complete();
+    vb->enableAttributeMesh(mesh_);
 }
 
 Md5Renderer::~Md5Renderer()
@@ -46,33 +48,35 @@ Md5Renderer::~Md5Renderer()
     delete mesh_;
 }
 
-void Md5Renderer::Draw( )
+void Md5Renderer::draw( )
 {
-    vb->BindAttributes();
+    vb->bind();
     GL.DrawElements(
         GL_TRIANGLES, mesh_->numIndexes(), 
-        GL_UNSIGNED_SHORT, (void*)0);
-    vb->UnbindAttributes();
+        mesh_->indexType(), NULL);
+    vb->unbind();
 }
 
-void Md5Renderer::Commit()
+void Md5Renderer::commit()
 {
+    // TODO: draw all meshes from model
     Md5Mesh& mesh = md5->meshes[0];
-    GenerateVertexes( mesh );
-    GenerateIndexes( mesh );
-    GenerateLightningInfo( mesh );
-    vb->SetVertexData( mesh_->data(), mesh_->rawSize() );
-    vb->SetIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
-    vb->Load();
+    generateVertexes( mesh );
+    generateIndexes( mesh );
+    generateLightningInfo( mesh );
+    vb->setVertexData( mesh_->data(), mesh_->rawSize() );
+
+    // TODO: should it be only once?? and Uint32
+    vb->setIndexData( mesh_->indices(), mesh_->numIndexes() * sizeof(u16) );
 }
 
-void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
+void Md5Renderer::generateVertexes( Md5Mesh& mesh )
 {
-    const Md5Joint* skeleton = md5->baseSkel;
+    std::vector<Md5Joint>& skeleton = md5->baseSkel;
     math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
     math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
 
-    for ( i32 i = 0; i < mesh.num_verts; ++i ) {
+    for ( i32 i = 0; i < mesh.vertices.size(); ++i ) {
         tex[i] = mesh.vertices[i].st;
         pos[i] = vec3f( 0.0f );
 
@@ -82,32 +86,32 @@ void Md5Renderer::GenerateVertexes( Md5Mesh& mesh )
             pos[i] += joint.translate( weight.pos ) * weight.bias;
         }
 
-        UpdateBoundingBox( pos[i] );
+        updateBoundingBox( pos[i] );
     }
 }
 
-void Md5Renderer::GenerateIndexes( Md5Mesh& mesh )
+void Md5Renderer::generateIndexes( Md5Mesh& mesh )
 {
-    u16* indicies = mesh_->indices();
-    for ( int i = 0; i < mesh.num_tris; i++ ) {
+    u16* indicies = reinterpret_cast<u16*>(mesh_->indices());
+    for ( int i = 0; i < mesh.triangles.size(); i++ ) {
         for ( int j = 0; j < 3; j++ ) {
-            indicies[3*i + j] = (u16)mesh.triangles[i].index[j];
+            indicies[3*i + j] = static_cast<u16>(mesh.triangles[i].index[j]);
         }
     }
 }
 
-void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
+void Md5Renderer::generateLightningInfo( Md5Mesh& mesh )
 {
     math::vec2f* tex = mesh_->findAttributeTyped<math::vec2f>(VertexAttrs::tagTexture);
     math::vec3f* pos = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagPosition);
 
-    for ( i32 i = 0; i < mesh.num_weights; i++ ) {
+    for ( i32 i = 0; i < mesh.weights.size(); i++ ) {
         Md5Weight& weight = mesh.weights[i];
         weight.normal = vec3f(0.0f);
         weight.tangent = vec3f(0.0f);
     }
 
-    for ( i32 i = 0; i < mesh.num_tris; i++ ) {
+    for ( i32 i = 0; i < mesh.triangles.size(); i++ ) {
         f32 d0[5], d1[5];
         vec3f normal, tangent;
         const vec3f* a = pos + mesh.triangles[i].index[0];
@@ -150,7 +154,7 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
         }
     }
 
-    for ( i32 i = 0; i < mesh.num_weights; i++ ) {
+    for ( i32 i = 0; i < mesh.weights.size(); i++ ) {
         Md5Weight& weight = mesh.weights[i];
         weight.normal = normalize( weight.normal );
         f32 d = dot( weight.tangent, weight.normal );
@@ -160,8 +164,8 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
     math::vec3f* tangent = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagTangent);
     math::vec3f* n = mesh_->findAttributeTyped<math::vec3f>(VertexAttrs::tagNormal);
 
-    const Md5Joint* skeleton = md5->baseSkel;
-    for ( i32 i = 0; i < mesh.num_verts; ++i ) {
+    std::vector<Md5Joint>& skeleton = md5->baseSkel;
+    for ( i32 i = 0; i < mesh.vertices.size(); ++i ) {
         n[i] = vec3f( 0.0f );
         tangent[i] = vec3f( 0.0f );
 
@@ -177,8 +181,9 @@ void Md5Renderer::GenerateLightningInfo( Md5Mesh& mesh )
     }
 }
 
-void Md5Renderer::UpdateBoundingBox( math::vec3f& pos )
+void Md5Renderer::updateBoundingBox( math::vec3f& pos )
 {
+    // TODO bounding box class?
     if ( boundingBox.min.x > pos.x ) {
         boundingBox.min.x = pos.x;
     }

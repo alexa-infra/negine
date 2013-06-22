@@ -10,11 +10,11 @@ uniform mat4 modelview_matrix;
 uniform vec4 light_pos;
 uniform vec4 camera_pos;
 
-varying vec2 tex0;
-varying vec3 eye;
-varying vec3 light;
-varying float distance;
-varying vec3 halfVec;
+varying_vert vec2 tex0;
+varying_vert vec3 eye;
+varying_vert vec3 light;
+varying_vert float distance;
+varying_vert vec3 halfVec;
 
 void main(void) {
     vec3 b = cross(n, t);
@@ -35,6 +35,7 @@ void main(void) {
 
     eye = camera_pos.xyz;
     tex0 = tex;
+
     gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
 }
 #endif
@@ -43,11 +44,11 @@ void main(void) {
 uniform sampler2D diffuse;
 uniform sampler2D bump;
 
-varying vec2 tex0;
-varying vec3 eye;
-varying vec3 light;
-varying float distance;
-varying vec3 halfVec;
+varying_frag vec2 tex0;
+varying_frag vec3 eye;
+varying_frag vec3 light;
+varying_frag float distance;
+varying_frag vec3 halfVec;
 
 void main() {
     vec4 color_sample = texture2D(diffuse, tex0);
@@ -57,6 +58,6 @@ void main() {
     float lamberFactor  = max(dot(light, bump_color), 0.0);
     float specFactor = max(pow(dot(halfVec, bump_color), 28.0), 0.0);
 
-    gl_FragColor = vec4(color * lamberFactor + vec3(1.0) * specFactor, alpha);
+    fragColor = vec4(color * lamberFactor + vec3(1.0) * specFactor, alpha);
 }
 #endif

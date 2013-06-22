@@ -20,14 +20,14 @@ namespace opengl
 class Texture;
 class GpuProgram;
 class VertexBuffer;
-class MeshExt;
+class Mesh;
 class DeviceContext;
 
 class ParticleSystemRenderer
 {
     Texture* texture_;
     VertexBuffer* vbo_;
-    MeshExt* mesh_;
+    Mesh* mesh_;
     DeviceContext& GL;
     resource::ParticleSystem* ps_;
 public:
@@ -35,8 +35,8 @@ public:
     ~ParticleSystemRenderer();
 
     Texture* texture();
-    void Commit();
-    void Draw( GpuProgram* binding );
+    void commit();
+    void draw( GpuProgram* binding );
 };
 
 }

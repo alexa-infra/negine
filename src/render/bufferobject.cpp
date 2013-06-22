@@ -4,77 +4,61 @@
  * \copyright   MIT License
  **/
 #include "render/bufferobject.h"
+#include "base/debug.h"
 
 namespace base
 {
 namespace opengl
 {
 
-BufferObject::BufferObject(DeviceContext& gl)
+BufferObject::BufferObject(DeviceContext& gl, BufferTarget target, BufferUsage usage)
     : GpuResource(gl)
-    , target_( 0 )
-    , is_ok_( false )
+    , target_( target )
+    , usage_( usage )
 {
     GL.GenBuffers( 1, &id_ );
-    is_ok_ = id_ != 0;
+    ASSERT(id_ != 0);
 }
 
 BufferObject::~BufferObject()
 {
-    if ( is_ok_ ) {
-        GL.DeleteBuffers( 1, &id_ );
-    }
+    GL.DeleteBuffers( 1, &id_ );
 }
 
-void BufferObject::Bind( BufferTarget target )
+void BufferObject::bind()
 {
-    GL.BindBuffer( target_ = target, id_ );
+    GL.BindBuffer( target_, id_ );
 }
 
-void BufferObject::Unbind()
+void BufferObject::unbind()
 {
     GL.BindBuffer( target_, 0 );
 }
 
-void BufferObject::BindBase( BufferTarget target, u32 index )
+void BufferObject::bindBase( u32 index )
 {
-    GL.BindBufferBase( target_ = target, index, id_ );
+    GL.BindBufferBase( target_, index, id_ );
 }
 
-void BufferObject::BindRange( BufferTarget target, u32 index, void* offset, void* size )
+void BufferObject::bindRange( u32 index, void* offset, void* size )
 {
-    GL.BindBufferRange( target_ = target, index, id_, ( GLintptr )offset, ( GLsizeiptr )size );
+    GL.BindBufferRange( target_, index, id_, reinterpret_cast<GLintptr>(offset), reinterpret_cast<GLsizeiptr>(size) );
 }
 
-void* BufferObject::Map( BufferAccess access_type )
+void BufferObject::setData( u32 size, const void* dataPtr )
 {
-    return GL.MapBuffer( target_, access_type );
-}
-bool BufferObject::Unmap()
-{
-    return ( GL.UnmapBuffer( target_ ) == GL_TRUE );
+    GL.BufferData( target_, size, dataPtr, usage_ );
 }
 
-void BufferObject::SetData( u32 size, const void* data_ptr, BufferUsage usage )
+void BufferObject::setSubData( u32 offset, u32 size, const void* dataPtr )
 {
-    GL.BufferData( target_, size, data_ptr, usage );
+    GL.BufferSubData( target_, offset, size, dataPtr );
 }
 
-void BufferObject::SetSubData( u32 offset, u32 size, const void* data_ptr )
+void BufferObject::getSubData( u32 offset, u32 size, void* dataPtr )
 {
-    GL.BufferSubData( target_, offset, size, data_ptr );
+    GL.GetBufferSubData( target_, offset, size, dataPtr );
 }
-
-void BufferObject::GetSubData( u32 offset, u32 size, void* data_ptr )
-{
-    GL.GetBufferSubData( target_, offset, size, data_ptr );
-}
-
-void BufferObject::Clear()
-{
-    GL.BufferData( target_, 0, NULL, 0 );
-}
-
 
 }
 }

@@ -17,166 +17,145 @@ namespace resource
 {
 
 Md5Anim::Md5Anim()
-    : jointInfos( NULL )
-    , baseFrame( NULL )
-    , numAnimatedComponents( 0 )
-    , animFrameData( NULL )
-    , num_frames( 0 )
-    , num_joints( 0 )
-    , frame_rate( 0 )
-    , skelFrames( NULL )
-    , bboxes( NULL )
+    : numAnimatedComponents( 0 )
+    , numFrames( 0 )
+    , numJoints( 0 )
+    , frameRate( 0 )
 {
 }
 
 Md5Anim::~Md5Anim()
 {
-    delete[] jointInfos;
-    delete[] baseFrame;
-    delete[] animFrameData;
-    delete[] bboxes;
-
-    for ( u32 i = 0; i < num_frames; ++i ) {
-        delete[] skelFrames[i];
-    }
-
-    delete[] skelFrames;
 }
 
-void Md5Anim::Load( const std::string& filename )
+void Md5Anim::load( const std::string& filename )
 {
     Lexer reader( filename );
 
-    while( reader.HasMoreData() ) {
-        reader.ReadToken();
+    while( reader.hasMoreData() ) {
+        reader.readToken();
 
-        if ( strcmp( reader.CurrentToken(), "MD5Version" ) == 0 ) {
-            u32 version = ( u32 ) reader.ReadFloat();
+        // TODO: strcmp(...) == 0 move to equal<T>
+        if ( strcmp( reader.currentToken(), "MD5Version" ) == 0 ) {
+            u32 version = static_cast<u32>(reader.readFloat());
 
             if ( version != 10 ) {
                 return;
             }
-        } else if ( strcmp( reader.CurrentToken(), "numFrames" ) == 0 ) {
-            num_frames = ( u32 ) reader.ReadFloat();
+        } else if ( strcmp( reader.currentToken(), "numFrames" ) == 0 ) {
+            numFrames = static_cast<u32>(reader.readFloat());
 
             // Allocate memory for skeleton frames and bounding boxes
-            if ( num_frames > 0 ) {
-                skelFrames = new Md5Joint*      [num_frames];
-                bboxes     = new Md5BoundingBox [num_frames];
-            }
-        } else if ( strcmp( reader.CurrentToken(), "numJoints" ) == 0 ) {
-            num_joints = ( u32 ) reader.ReadFloat();
+            skelFrames.resize(numFrames);
+            bboxes.resize(numFrames);
+        } else if ( strcmp( reader.currentToken(), "numJoints" ) == 0 ) {
+            numJoints = static_cast<u32>(reader.readFloat());
 
-            for ( u32 i = 0; i < num_frames; ++i ) {
-                // Allocate memory for joints of each frame
-                skelFrames[i] = new Md5Joint[num_joints];
-            }
+            skelFrames.resize(numJoints * numFrames);
 
-            jointInfos = new JointInfo     [num_joints];
-            baseFrame  = new BaseframeJoint[num_joints];
-        } else if ( strcmp( reader.CurrentToken(), "frameRate" ) == 0 ) {
-            frame_rate = ( u32 ) reader.ReadFloat();
-        } else if ( strcmp( reader.CurrentToken(), "numAnimatedComponents" ) == 0 ) {
-            numAnimatedComponents = ( u32 ) reader.ReadFloat();
+            jointInfos.resize(numJoints);
+            baseFrame.resize(numJoints);
+        } else if ( strcmp( reader.currentToken(), "frameRate" ) == 0 ) {
+            frameRate = static_cast<u32>(reader.readFloat());
+        } else if ( strcmp( reader.currentToken(), "numAnimatedComponents" ) == 0 ) {
+            numAnimatedComponents = static_cast<u32>(reader.readFloat());
 
-            if ( numAnimatedComponents > 0 ) {
-                // Allocate memory for animation frame data
-                animFrameData = new f32[numAnimatedComponents];
-            }
-        } else if ( strcmp( reader.CurrentToken(), "hierarchy" ) == 0 ) {
-            reader.ReadToken(); // {
+            animFrameData.resize(numAnimatedComponents);
+        } else if ( strcmp( reader.currentToken(), "hierarchy" ) == 0 ) {
+            reader.readToken(); // {
 
-            for ( u32 i = 0; i < num_joints; i++ ) {
-                jointInfos[i].name        = reader.ReadToken();
-                jointInfos[i].parent      = ( u32 )reader.ReadFloat();
-                jointInfos[i].flags       = ( u32 )reader.ReadFloat();
-                jointInfos[i].start_index = ( u32 )reader.ReadFloat();
+            for ( u32 i = 0; i < numJoints; i++ ) {
+                jointInfos[i].name        = reader.readToken();
+                jointInfos[i].parent      = static_cast<u32>(reader.readFloat());
+                jointInfos[i].flags       = static_cast<u32>(reader.readFloat());
+                jointInfos[i].startIndex  = static_cast<u32>(reader.readFloat());
             }
 
-            reader.ReadToken(); // }
-        } else if ( strcmp( reader.CurrentToken(), "bounds" ) == 0 ) {
-            reader.ReadToken(); // {
+            reader.readToken(); // }
+        } else if ( strcmp( reader.currentToken(), "bounds" ) == 0 ) {
+            reader.readToken(); // {
 
-            for ( u32 i = 0; i < num_frames; i++ ) {
-                reader.ReadToken(); // (
+            for ( u32 i = 0; i < numFrames; i++ ) {
+                reader.readToken(); // (
                 readVector( reader, bboxes[i].min );
-                reader.ReadToken(); // )
-                reader.ReadToken(); // (
+                reader.readToken(); // )
+                reader.readToken(); // (
                 readVector( reader, bboxes[i].max );
-                reader.ReadToken(); // )
+                reader.readToken(); // )
             }
 
-            reader.ReadToken(); // }
-        } else if ( strcmp( reader.CurrentToken(), "baseframe" ) == 0 ) {
-            reader.ReadToken(); // {
+            reader.readToken(); // }
+        } else if ( strcmp( reader.currentToken(), "baseframe" ) == 0 ) {
+            reader.readToken(); // {
 
-            for ( u32 i = 0; i < num_joints; i++ ) {
-                reader.ReadToken(); // (
+            for ( u32 i = 0; i < numJoints; i++ ) {
+                reader.readToken(); // (
                 readVector( reader, baseFrame[i].pos );
-                reader.ReadToken(); // )
-                reader.ReadToken(); // (
+                reader.readToken(); // )
+                reader.readToken(); // (
                 readQuat( reader, baseFrame[i].orient );
                 baseFrame[i].orient.ComputeW();
-                reader.ReadToken(); // )
+                reader.readToken(); // )
             }
 
-            reader.ReadToken(); // }
-        } else if ( strcmp( reader.CurrentToken(), "frame" ) == 0 ) {
-            u32 frameIndex = ( u32 ) reader.ReadFloat();
-            reader.ReadToken(); // {
+            reader.readToken(); // }
+        } else if ( strcmp( reader.currentToken(), "frame" ) == 0 ) {
+            u32 frameIndex = static_cast<u32>(reader.readFloat());
+            reader.readToken(); // {
 
             for ( u32 i = 0; i < numAnimatedComponents; ++i ) {
-                animFrameData[i] = reader.ReadFloat();
+                animFrameData[i] = reader.readFloat();
             }
 
-            reader.ReadToken(); // }
-            BuildFrameSkeleton( frameIndex );
+            reader.readToken(); // }
+            buildFrameSkeleton( frameIndex );
         }
     }
 }
 
-void Md5Anim::BuildFrameSkeleton( u32 frameIndex )
+void Md5Anim::buildFrameSkeleton( u32 frameIndex )
 {
-    for ( u32 i = 0; i < num_joints; ++i ) {
+    for ( u32 i = 0; i < numJoints; ++i ) {
         const BaseframeJoint& baseJoint = baseFrame[i];
         math::vec3f animatedPos;
-        math::Quat    animatedOrient;
+        math::Quat  animatedOrient;
         i32 j = 0;
         animatedPos    = baseJoint.pos;
         animatedOrient = baseJoint.orient;
 
+        i32 startIndex = jointInfos[i].startIndex;
         if ( jointInfos[i].flags & 1 ) { //Tx
-            animatedPos[0] = animFrameData[jointInfos[i].start_index + j];
+            animatedPos[0] = animFrameData[startIndex + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 2 ) { //Ty
-            animatedPos[1] = animFrameData[jointInfos[i].start_index + j];
+            animatedPos[1] = animFrameData[startIndex + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 4 ) { //Tz
-            animatedPos[2] = animFrameData[jointInfos[i].start_index + j];
+            animatedPos[2] = animFrameData[startIndex + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 8 ) { //Qx
-            animatedOrient.arr[0] = animFrameData[jointInfos[i].start_index + j];
+            animatedOrient.x = animFrameData[startIndex + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 16 ) { //Qy
-            animatedOrient.arr[1] = animFrameData[jointInfos[i].start_index + j];
+            animatedOrient.y = animFrameData[startIndex + j];
             ++j;
         }
 
         if ( jointInfos[i].flags & 32 ) { //Qz
-            animatedOrient.arr[2] = animFrameData[jointInfos[i].start_index + j];
+            animatedOrient.z = animFrameData[startIndex + j];
             ++j;
         }
 
         animatedOrient.ComputeW();
-        Md5Joint& thisJoint = skelFrames[frameIndex][i];
+        Md5Joint& thisJoint = skelFrames[numJoints * frameIndex + i];
         i32 parent          = jointInfos[i].parent;
         thisJoint.parent    = parent;
         thisJoint.name      = jointInfos[i].name;
@@ -185,7 +164,7 @@ void Md5Anim::BuildFrameSkeleton( u32 frameIndex )
             thisJoint.pos    = animatedPos;
             thisJoint.orient = animatedOrient;
         } else {
-            Md5Joint& parentJoint = skelFrames[frameIndex][parent];
+            Md5Joint& parentJoint = skelFrames[numJoints * frameIndex + parent];
             math::vec3f rotatedPos = parentJoint.orient.RotatePoint( animatedPos );
             thisJoint.pos = rotatedPos + parentJoint.pos;
             thisJoint.orient = parentJoint.orient * animatedOrient;
@@ -194,15 +173,15 @@ void Md5Anim::BuildFrameSkeleton( u32 frameIndex )
     }
 }
 
-void Md5Anim::Update( Md5Model* model, u32 frameIndex, f32 interp_phase )
+void Md5Anim::update( Md5Model* model, u32 frameIndex, f32 interpPhase )
 {
-    Md5Joint* previousFrame = skelFrames[frameIndex % num_frames];
-    Md5Joint* nextFrame     = skelFrames[( frameIndex + 1 ) % num_frames];
+    Md5Joint* previousFrame = &skelFrames[(frameIndex % numFrames) * numJoints];
+    Md5Joint* nextFrame     = &skelFrames[(( frameIndex + 1 ) % numFrames) * numJoints];
 
-    for ( u32 i = 0; i < num_joints; ++i ) {
+    for ( u32 i = 0; i < numJoints; ++i ) {
         model->baseSkel[i].parent = previousFrame[i].parent;
-        model->baseSkel[i].pos = previousFrame[i].pos + ( nextFrame[i].pos - previousFrame[i].pos ) * interp_phase;
-        model->baseSkel[i].orient = math::Quat::GetSlerp( previousFrame[i].orient, nextFrame[i].orient, interp_phase );
+        model->baseSkel[i].pos = previousFrame[i].pos + ( nextFrame[i].pos - previousFrame[i].pos ) * interpPhase;
+        model->baseSkel[i].orient = math::Quat::GetSlerp( previousFrame[i].orient, nextFrame[i].orient, interpPhase );
     }
 }
 

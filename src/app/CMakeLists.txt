@@ -36,12 +36,12 @@ if (USE_SDL)
     endif()
     include_directories(${SDL_INCLUDE_DIR})
     add_definitions(-DSDL_ENGINE)
-    if (WIN32)
+    if (WIN32 AND MSVC)
         target_link_libraries(app 
             debug SDL-static-debug.lib
             optimized SDL-static.lib
         )
-    elseif(UNIX)
+    elseif(UNIX OR MINGW)
         target_link_libraries(app
             ${SDL_LIBRARY}
         )

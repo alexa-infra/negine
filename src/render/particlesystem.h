@@ -19,30 +19,28 @@ namespace resource
 {
 
 struct ParticleSystemSetting {
-    u32 max_count;
+    u32 maxCount;
 
-    f32 particle_lifetime;
-    f32 particle_lifetime_spread;
+    f32 lifetime;
+    f32 lifetimeSpread;
 
-    math::vec4f color_start;
-    math::vec4f color_end;
+    math::vec4f colorStart;
+    math::vec4f colorEnd;
 
-    f32 size_start;
-    f32 size_end;
+    f32 sizeStart;
+    f32 sizeEnd;
 
     f32 speed;
 
-    u32 emission_rate;
-    f32 lifetime;
-
+    u32 emissionRate;
     std::string texture;
 
     ParticleSystemSetting();
 };
 
 struct Particle {
-    f32 life_time;
-    f32 life;
+    f32 lifetime;
+    f32 lifetimeLimit;
 
     math::vec2f position;
     math::vec2f speed;
@@ -54,24 +52,17 @@ struct Particle {
 };
 typedef std::list<Particle*> ParticleList;
 
-inline bool sort_particles_from_farest_to_nearest( Particle* first, Particle* second )
-{
-    return first->size < second->size;
-}
-
 class ParticleSystem
 {
 public:
     ParticleSystemSetting settings;     //!< settings
     Particle* particles;                    //!< all particles
-    ParticleList particles_free;     //!< not used particles
-    ParticleList particles_active;   //!< used particles
+    ParticleList particlesFree;     //!< not used particles
+    ParticleList particlesActive;   //!< used particles
 
-    bool emission_active;       //!< emission is enabled
-    u32 emission_rate;          //!< particles/second
-    f32 emission_timer;         //!< emission time
-
-    f32 lifetime;               //!< particle system lifetime
+    bool emissionActive;
+    u32 emissionRate;          //!< particles/second
+    f32 emissionTimer;         //!< emission time
 
     math::vec3f position;           //!< center position
 public:
@@ -79,7 +70,7 @@ public:
 
     ~ParticleSystem();
 
-    void update( f32 frame_time );
+    void update( f32 frameTime );
 protected:
     void add();
 private:

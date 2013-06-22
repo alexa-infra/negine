@@ -12,17 +12,17 @@
 #include "render/statistics.h"
 #include "base/timer.h"
 
-using base::math::Vector3;
-using base::math::Vector4;
+using base::math::vec3f;
+using base::math::vec4f;
 
 namespace base
 {
 namespace opengl
 {
 
-void bind_attr( GpuProgram* pr, const q3vertex& vertexes );
+void bind_attr( DeviceContext& GL, GpuProgram* pr, const q3vertex& vertexes );
 
-void swizzle( Vector3& v )
+void swizzle( vec3f& v )
 {
     std::swap(v.y, v.z);
     std::swap(v.z, v.x);
@@ -47,7 +47,7 @@ public:
     q3vertex                controls[9];
 
     void tessellate( u32 level );
-    void render( GpuProgram* program );
+    void render( DeviceContext& GL, GpuProgram* program );
 };
 
 
@@ -60,9 +60,10 @@ bool q3visibility::isClusterVisible( i32 visCluster, i32 testCluster ) const
     return ( vecs[visCluster * szVecs + ( testCluster >> 3 )] & ( 1 << ( testCluster & 7 ) ) ) != 0;
 }
 
-q3maploader::q3maploader( FileBinary& file )
+q3maploader::q3maploader( DeviceContext& gl, FileBinary& file )
     : f( file )
     , visFaces( NULL )
+    , GL(gl)
 #ifdef USE_PVS
     , _frame_index( 1 )
     , _camera_cluster( -2 )
@@ -111,12 +112,12 @@ void q3maploader::load()
     }
 
     q3lump lump_vis = read_lump( 16 );
-    f.set_position( lump_vis.offset );
-    visibility.nVecs = f.read_type<i32>();
-    visibility.szVecs = f.read_type<i32>();
+    f.setPosition( lump_vis.offset );
+    visibility.nVecs = f.readType<i32>();
+    visibility.szVecs = f.readType<i32>();
     i32 visDataSize = visibility.nVecs * visibility.szVecs;
     visibility.vecs = new u8[visDataSize];
-    f.read( visibility.vecs, visDataSize );
+    f.readRaw( visibility.vecs, visDataSize );
     
     visFaces = new u8[faces.size()];
     tree.resize( nodes.size() + leafs.size() );
@@ -126,15 +127,15 @@ void q3maploader::load()
     std::vector<q3lightmap> lm = read<q3lightmap>( 14 );
     lm_textures.resize( lm.size() );
     TextureInfo ti;
-    ti.MinFilter = TextureMinFilters::LINEAR;
+    ti.Filtering = TextureFilters::Linear;
     ti.GenerateMipmap = true;
     ti.Pixel = PixelTypes::RGB;
     ti.Width = 128;
     ti.Height = 128;
     for( u32 i = 0; i < lm.size(); i++ )    {
         Texture*& t = lm_textures[i];
-        t = new Texture;
-        t->GenerateFromBuffer( ti, (u8*)lm[i].data );
+        t = new Texture(GL);
+        t->createFromBuffer( ti, (u8*)lm[i].data );
     }
 
     for( size_t i = 0; i < nodes.size(); i++ ) {
@@ -172,30 +173,30 @@ void q3maploader::load()
 
 void q3maploader::PreloadTextures( TextureLoader& textureLoader )
 {
-    Texture* checker = textureLoader.Load( "checker.png" );
+    Texture* checker = textureLoader.load( "checker.png" );
 
     d_textures.resize( textures.size() );
     for ( size_t i = 0; i < textures.size(); i++ ) {
-        Texture* t = textureLoader.Load( ( char* )textures[i].name );
+        Texture* t = textureLoader.load( ( const char* )textures[i].name );
         d_textures[i] = (t == NULL) ? checker : t;
     }
 }
 
 void q3maploader::check_header()
 {
-    f.set_position( 0 );
-    q3header hdr = f.read_type<q3header>();
+    f.setPosition( 0 );
+    q3header hdr = f.readType<q3header>();
     ASSERT( strncmp( reinterpret_cast<char*>( hdr.magic ), "IBSP", 4 ) == 0 );
     ASSERT( hdr.version == 0x2e );
 }
 
 q3lump q3maploader::read_lump( i32 index )
 {
-    f.set_position( index * sizeof( q3lump ) + sizeof( q3header ) );
-    return f.read_type<q3lump>();
+    f.setPosition( index * sizeof( q3lump ) + sizeof( q3header ) );
+    return f.readType<q3lump>();
 }
 
-i32 q3maploader::findLeaf( const Vector3& camPos ) const
+i32 q3maploader::findLeaf( const vec3f& camPos ) const
 {
     i32 index = 0;
 
@@ -214,7 +215,7 @@ i32 q3maploader::findLeaf( const Vector3& camPos ) const
     return -index - 1;
 }
 
-void q3maploader::ComputePossibleVisible( const Vector3& cameraPos )
+void q3maploader::ComputePossibleVisible( const vec3f& cameraPos )
 {
     i32 cameraLeafIndex = findLeaf( cameraPos );
     const q3leaf& cameraLeaf = leafs[cameraLeafIndex];
@@ -266,8 +267,8 @@ void q3maploader::ComputeVisible_R( const Camera& camera, Node* node, u32 planeM
         return;
     }
 
-    const Vector3& mins = node->mins;
-    const Vector3& maxs = node->maxs;
+    const vec3f& mins = node->mins;
+    const vec3f& maxs = node->maxs;
     for ( u32 i = 0; i < 6; i++ ) {
         u32 mask = 1 << i;
 
@@ -306,10 +307,10 @@ bool comp_texture_array(const TextureFace& a, const TextureFace& b)
     return a.first < b.first;
 }
 
-void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& txloader )
+void q3maploader::render( const Camera& camera, GpuProgram* pr, ParameterMap& params, TextureLoader& txloader )
 {
     Timer tt;
-    tt.Reset();
+    tt.reset();
 
     memset( visFaces, 0, faces.size() );
     _visible_faces.clear();
@@ -318,7 +319,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
     _program = pr;
     ComputeVisible_R( camera, &tree.front(), ( 1 << 7 ) - 1 );
     //return;
-    //float t1 = tt.Reset();
+    //float t1 = tt.reset();
 
     std::vector<TextureFace> sorted;
     size_t ii = _visible_faces.size();
@@ -330,7 +331,7 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
         sorted.push_back( std::pair<Texture*, int>( t, faceIndex ) );
     }
     std::sort(sorted.begin(), sorted.end(), comp_texture_array);
-    //float t2 = tt.Reset();
+    //float t2 = tt.reset();
 
     int switches = 0;
     int patches = 0;
@@ -340,10 +341,10 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
     for ( std::vector<TextureFace>::iterator ita = sorted.begin(); ita != sorted.end(); ++ita ) {
 
         Texture* t = ( *ita ).first;
-        if (diffuesID != t->id())
+        if (diffuesID != t->handle())
         {
-            pr->set_uniform( "diffuse", t );
-            diffuesID = t->id();
+            params["diffuse"] = t;
+            diffuesID = t->handle();
             switches++;
         }
 
@@ -353,18 +354,20 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
         if ( face.lightmapID >= 0 && lightMapID != face.lightmapID ) {
             lightMapID = face.lightmapID;
             Texture* lightmap = lm_textures[face.lightmapID];
-            pr->set_uniform( "lightmap", lightmap );
+            params["lightmap"] = lightmap;
             switches++;
         }
 
         if ( face.type == 1 ) {
+            pr->setParams(params);
             render_polygons( face, pr );
         } else if ( face.type == 2 ) {
+            pr->setParams(params);
             render_patch( face, pr );
             patches++;
         }
     }
-    //float t3 = tt.Reset();
+    //float t3 = tt.reset();
 
 //    std::cout
 //    << Stats::polygons() << " "
@@ -378,8 +381,8 @@ void q3maploader::render( const Camera& camera, GpuProgram* pr, TextureLoader& t
 
 void q3maploader::render_polygons( const q3face& face, GpuProgram* pr ) const
 {
-    bind_attr( pr, vertexes[face.vertexIndex] );
-    glDrawElements( GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex] );
+    bind_attr( GL, pr, vertexes[face.vertexIndex] );
+    GL.DrawElements( GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex] );
     Stats::add_polygons( face.numOfFaceIndices / 3 );
 }
 
@@ -403,16 +406,16 @@ void q3maploader::render_patch( const q3face& face, GpuProgram* pr ) const
             b.controls[7] = vertexes[offset + ( patchWidth << 1 ) + 1];
             b.controls[8] = vertexes[offset + ( patchWidth << 1 ) + 2];
             b.tessellate( 8 );
-            b.render( pr );
+            b.render( GL, pr );
         }
     }
 }
 
-void bind_attr( GpuProgram* pr, const q3vertex& vertex )
+void bind_attr( DeviceContext& GL, GpuProgram* pr, const q3vertex& vertex )
 {
     u32 bindPos = VertexAttrs::GetAttributeLocation(VertexAttrs::tagPosition);
-    glEnableVertexAttribArray(bindPos);
-    glVertexAttribPointer(
+    GL.EnableVertexAttribArray(bindPos);
+    GL.VertexAttribPointer(
         bindPos,
         3,
         GL_FLOAT,
@@ -420,8 +423,8 @@ void bind_attr( GpuProgram* pr, const q3vertex& vertex )
         sizeof( q3vertex ),
         ( const u8* )&vertex.pos );
     u32 bindTex = VertexAttrs::GetAttributeLocation(VertexAttrs::tagTexture);
-    glEnableVertexAttribArray(bindTex);
-    glVertexAttribPointer(
+    GL.EnableVertexAttribArray(bindTex);
+    GL.VertexAttribPointer(
         bindTex,
         2,
         GL_FLOAT,
@@ -439,8 +442,8 @@ void bind_attr( GpuProgram* pr, const q3vertex& vertex )
             (const u8*)&vertex.normal);
     */
         u32 bindLM = VertexAttrs::GetAttributeLocation(VertexAttrs::tagTangent);
-        glEnableVertexAttribArray(bindLM);
-        glVertexAttribPointer(
+        GL.EnableVertexAttribArray(bindLM);
+        GL.VertexAttribPointer(
             bindLM,
             2,
             GL_FLOAT,
@@ -508,12 +511,12 @@ void Bezier::tessellate( u32 L )
     }
 }
 
-void Bezier::render( GpuProgram* program )
+void Bezier::render( DeviceContext& GL, GpuProgram* program )
 {
-    bind_attr( program, vertex[0] );
+    bind_attr( GL, program, vertex[0] );
 
     for( u32 i = 0; i < level; i++ ) {
-        glDrawElements( GL_TRIANGLE_STRIP,
+        GL.DrawElements( GL_TRIANGLE_STRIP,
                         trianglesPerRow[i],
                         GL_UNSIGNED_INT,
                         rowIndexes[i] );

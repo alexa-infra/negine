@@ -1,9 +1,9 @@
 /**
  * \file
  * \brief       defines preprocessor symbols
- *              operating system:   OS_WIN, OS_MAC, OS_LINUX
- *              posix:              OS_POSIX
- *              compiler:           COMPILER_GCC, COMPILER_MSVC
+ *              operating system:   OS_WIN, OS_MAC, OS_LINUX, OS_IPHONE, OS_IPHONE_SIMULATOR, OS_MINGW
+ *              unix:               OS_UNIX
+ *              compiler:           COMPILER_GCC, COMPILER_MSVC, COMPILER_CLANG
  *              architecture:       OS_ARCH_32, OS_ARCH_64
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
@@ -12,6 +12,9 @@
 
 #if defined(_WIN32) || defined(__WIN32__)
 #   define OS_WIN
+#   if defined(__MINGW32__)
+#       define OS_MINGW
+#   endif
 #elif defined(__APPLE__)
 #   define OS_MAC
 #elif defined(__linux__)
@@ -31,10 +34,12 @@
 #endif
 
 #if defined(OS_MAC) || defined(OS_LINUX)
-#   define OS_POSIX
+#   define OS_UNIX
 #endif
 
-#if defined(__GNUC__)
+#if defined(__clang__)
+#   define COMPILER_CLANG
+#elif defined(__GNUC__)
 #   define COMPILER_GCC
 #elif defined(_MSC_VER)
 #   define COMPILER_MSVC

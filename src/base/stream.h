@@ -8,107 +8,121 @@
 
 #include "base/types.h"
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <string>
 
 namespace base
 {
 
+//! Template base class for binary stream operations
+//! It stores position in stream (read/write)
 template<class T>
-class Stream
+class BinaryStreamBase
 {
-protected:
-    u32 position_;
-
 public:
-    Stream() : position_( 0 ) {}
-    virtual ~Stream() {}
+    BinaryStreamBase() : position_( 0 ) {}
+    virtual ~BinaryStreamBase() {}
 
-    void read( u8* dest, u32 size ) {
+    //! Read raw bytes from stream
+    void readRaw( u8* dest, u32 size ) {
         T* pthis = static_cast<T*>( this );
-        pthis->read_impl( dest, size, position_ );
+        pthis->readImpl( dest, size, position_ );
         position_ += size;
     }
 
+    //! Read raw object from stream
     template <typename TT>
-    TT read_type() {
+    TT readType() {
         TT ret;
-        read( reinterpret_cast<u8*>( &ret ), sizeof( TT ) );
+        u8* ptr = reinterpret_cast<u8*>( &ret );
+        readRaw( ptr, sizeof( ret ) );
         return ret;
     }
 
+    //! Read raw object from stream (reference version)
     template <typename TT>
-    TT read_type_nomove() {
-        TT ret;
-        T* pthis = static_cast<T*>( this );
-        pthis->read_impl( reinterpret_cast<u8*>( &ret ), sizeof( TT ), position_ );
-        return ret;
+    void read( TT& value ) {
+        value = read<TT>();
     }
 
-    template <typename TT>
-    void read_template( TT& value ) {
-        value = read_type<TT>();
-    }
-
-    void write( const u8* source, u32 size ) {
+    //! Write raw bytes to stream
+    void writeRaw( const u8* source, u32 size ) {
         T* pthis = static_cast<T*>( this );
-        pthis->write_impl( source, size, position_ );
+        pthis->writeImpl( source, size, position_ );
         position_ += size;
     }
 
+    //! 
     template <typename TT>
-    void write_template( const TT& value ) {
-        write( reinterpret_cast<const u8*>( &value ), sizeof( TT ) );
+    void write( const TT& value ) {
+        const u8* ptr = reinterpret_cast<const u8*>( &value );
+        writeRaw( ptr, sizeof( value ) );
     }
 
     u32 position() const {
         return position_;
     }
-    void set_position( u32 position ) {
+
+    void setPosition( u32 position ) {
         position_ = position;
     }
+protected:
+    u32 position_;
 };
 
-class FileBinary : public Stream<FileBinary>
+//! Binary file wrapper for input/output
+class FileBinary : public BinaryStreamBase<FileBinary>
 {
-protected:
-    std::fstream file_;
+    friend class BinaryStreamBase<FileBinary>;
+
 public:
     FileBinary( const std::string& filename );
     virtual ~FileBinary();
     u32 size();
-    std::string get_line();
 
 protected:
-    void read_impl( u8* dest, u32 size, u32 position );
-    void write_impl( const u8* source, u32 size, u32 position );
+    void readImpl( u8* dest, u32 size, u32 position );
+    void writeImpl( const u8* source, u32 size, u32 position );
 
-    std::istream& safeGetline( std::istream& is, std::string& t, u32& read_count );
-    friend class Stream<FileBinary>;
+protected:
+    std::fstream file_;
 };
 
+//! Text file wrapper for not-formatted reading 
 class FileText
 {
+public:
+    FileText( const std::string& filename );
+    virtual ~FileText();
+    
+    //! Reads all lines
+    std::vector<std::string> readLines();
+    
+    //! Reads all text to string
+    std::string readAll();
+
+    //! Reads next line
+    std::string readLine();
+
+    //! Gets the character at the current position
+    char currentChar();
+
+    //! Gets the character at the current position, and advances current position 
+    char bumpChar();
+
+    u32 position() const {
+        return position_;
+    }
+
+    u32 size() const {
+        return size_;
+    }
+
 protected:
     std::fstream file_;
     std::streambuf* sb_;
     u32 size_;
     u32 position_;
-public:
-    FileText( const std::string& filename );
-    virtual ~FileText();
-    std::vector<std::string> read_lines();
-    std::string read_all();
-
-    char current_char();
-    char bump_char();
-
-    u32 position() const {
-        return position_;
-    }
-    u32 size() const {
-        return size_;
-    }
 };
 
 } // namespace base

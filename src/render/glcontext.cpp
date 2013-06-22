@@ -9,7 +9,7 @@
     #include <windows.h>
 #endif
 
-#ifdef OS_POSIX
+#ifdef OS_UNIX
     #include <dlfcn.h>
 #endif
 
@@ -58,12 +58,12 @@ public:
     }
     void* getFunc(const char* func)
     {
-        return GetProcAddress(module_, func);
+        return reinterpret_cast<void*>(GetProcAddress(module_, func));
     }
 private:
     HMODULE module_;
 };
-#elif defined(OS_POSIX)
+#elif defined(OS_UNIX)
 class Library
 {
 public:
@@ -92,7 +92,7 @@ public:
     GLFuncLoader()
         : libgl("opengl32.dll")
     {
-        glGetProcAddress = (GLGETPROCADDRESSPROC)libgl.getFunc("wglGetProcAddress");
+        glGetProcAddress = reinterpret_cast<GLGETPROCADDRESSPROC>(libgl.getFunc("wglGetProcAddress"));
         ASSERT(glGetProcAddress != NULL);
     }
 #elif defined(OS_MAC)
@@ -113,10 +113,10 @@ public:
         void* ptr = glGetProcAddress(name);
         if (ptr == NULL)
             ptr = libgl.getFunc(name);
-#elif defined(OS_POSIX)
+#elif defined(OS_UNIX)
         void* ptr = libgl.getFunc(name);
 #endif
-        return (Func)ptr;
+        return reinterpret_cast<Func>(ptr);
     }
     
     template<typename Func>
@@ -184,15 +184,14 @@ void DeviceContext::init()
     LOAD_GL(GetShaderiv                      );
     LOAD_GL(GetUniformLocation               );
     LOAD_GL(LinkProgram                      );
-    LOAD_GL(MapBuffer                        );
     LOAD_GL(ShaderSource                     );
     LOAD_GL(TexImage2D                       );
     LOAD_GL(TexParameteri                    );
+    LOAD_GL(TexParameterf);
     LOAD_GL(Uniform1i                        );
     LOAD_GL(Uniform3f                        );
     LOAD_GL(Uniform4f                        );
     LOAD_GL(UniformMatrix4fv                 );
-    LOAD_GL(UnmapBuffer                      );
     LOAD_GL(UseProgram                       );
     LOAD_GL(VertexAttribPointer              );
 
@@ -203,7 +202,8 @@ void DeviceContext::init()
     LOAD_GL(Disable                          );
     LOAD_GL(GetString                        );
     LOAD_GL(BlendFunc                        );
-    
+    LOAD_GL(Viewport                         );
+
     #undef LOAD_GL
 
     texture_loader_ = new TextureLoader(*this);

@@ -27,24 +27,19 @@ typedef ShaderTypes::ShaderType ShaderType;
 class Shader : public GpuResource
 {
 private:
-    GLenum shader_type_;        //!< Type of shader
+    GLenum type_;        //!< Type of shader
 public:
     Shader(DeviceContext& gl);
     ~Shader();
 
     //! Compile shader from source
-    bool Create( ShaderType shaderType, const char* const* source, u32 len );
+    bool create( ShaderType type, const char* const* source, u32 len );
 
-    void Destroy();
-
-    //! Gets creation status
-    bool is_ok() const {
-        return id_ != 0;
-    }
+    void destroy();
 
     //! Gets shader type
-    GLenum shader_type() const {
-        return shader_type_;
+    GLenum type() const {
+        return type_;
     }
 
     //! Gets status string

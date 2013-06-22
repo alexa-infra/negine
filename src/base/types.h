@@ -8,13 +8,7 @@
 
 #include "base/platform.h"
 
-// Define NULL if it does not defined at platform, note that
-// NULL could be defined differently
-#if !defined(NULL)
-#   define NULL 0
-#endif
-
-#if defined(OS_POSIX)
+#if defined(OS_UNIX) || defined(OS_MINGW)
 #   include <stdint.h>
 #elif defined(OS_WIN)
 #   include <winsdkver.h>
@@ -48,10 +42,6 @@ typedef i32 iptr;
 typedef u64 uptr;
 typedef i64 iptr;
 #endif
-
-//struct hash_string {
-//    size_t operator()( const std::string& x ) const;
-//};
 
 } // namespace base
 

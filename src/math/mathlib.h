@@ -29,5 +29,10 @@ inline void Swap( f32& x, f32& y )
     std::swap( x, y );
 }
 
+template<typename T>
+inline T slerp(const T& a, const T& b, f32 t) {
+	return (1.0f - t) * a + t * b;
+}
+
 }
 }

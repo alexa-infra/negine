@@ -12,32 +12,30 @@ namespace resource
 {
 
 ParticleSystemSetting::ParticleSystemSetting()
-    : max_count( 1000 )
-    , particle_lifetime( 1.0f )
-    , particle_lifetime_spread( 0.2f )
-    , color_start( 1.f, 1.f, 1.f, 0.1f )
-    , color_end( 1.f, 0.f, 0.f, 0.9f )
-    , size_start( 1.0f )
-    , size_end( 12.f )
+    : maxCount( 1000 )
+    , lifetime( 1.0f )
+    , lifetimeSpread( 0.2f )
+    , colorStart( 1.f, 1.f, 1.f, 0.1f )
+    , colorEnd( 1.f, 0.f, 0.f, 0.9f )
+    , sizeStart( 1.0f )
+    , sizeEnd( 12.f )
     , speed( 10.0f )
-    , emission_rate( 50 )
-    , lifetime( 100000000000.f )
+    , emissionRate( 50 )
 {
 }
 
 ParticleSystem::ParticleSystem( ParticleSystemSetting s )
 {
-    particles = new Particle[s.max_count];
+    particles = new Particle[s.maxCount];
 
-    for ( u32 i = 0; i < s.max_count; i++ ) {
-        particles_free.push_back( &particles[i] );
+    for ( u32 i = 0; i < s.maxCount; i++ ) {
+        particlesFree.push_back( &particles[i] );
     }
 
-    emission_active = true;
-    emission_rate = s.emission_rate;
-    emission_timer = 0.f;
-    lifetime = s.lifetime;
+    emissionRate = s.emissionRate;
+    emissionTimer = 0.0f;
     settings = s;
+    emissionActive = true;
 }
 
 ParticleSystem::~ParticleSystem()
@@ -47,65 +45,57 @@ ParticleSystem::~ParticleSystem()
 
 void ParticleSystem::add()
 {
-    if ( particles_free.size() == 0 ) {
+    if ( particlesFree.size() == 0 ) {
         return;
     }
 
-    Particle* p = particles_free.front();
-    particles_free.pop_front();
-    p->life_time = rand() / ( f32 )( RAND_MAX ) * ( 2 * settings.particle_lifetime_spread ) + ( settings.particle_lifetime - settings.particle_lifetime_spread );
-    p->life = 0;
-    f32 direction = rand() / ( f32 )( RAND_MAX ) * ( 2 * math::pi );
+    Particle* p = particlesFree.front();
+    particlesFree.pop_front();
+    p->lifetimeLimit = rand() / static_cast<f32>( RAND_MAX ) * ( 2 * settings.lifetimeSpread ) + ( settings.lifetime - settings.lifetimeSpread );
+    p->lifetime = 0;
+    f32 direction = rand() / static_cast<f32>( RAND_MAX ) * ( 2 * math::pi );
     p->position = position.xy(); 
     p->speed = math::vec2f( cosf( direction ), sinf( direction ) );
-    p->speed *= settings.speed * ( rand() / ( f32 )( RAND_MAX ) );
-    p->acceleration = rand() / ( f32 )( RAND_MAX ) * 200.0f;
-    p->size = settings.size_start;
-    p->rotation = 0.f;
-    p->color = settings.color_start;
-    particles_active.push_back( p );
+    p->speed *= settings.speed * ( rand() / static_cast<f32>( RAND_MAX ) );
+    p->acceleration = rand() / static_cast<f32>( RAND_MAX ) * 200.0f;
+    p->size = settings.sizeStart;
+    p->rotation = 0.0f;
+    p->color = settings.colorStart;
+    particlesActive.push_back( p );
 }
 
-void ParticleSystem::update( f32 frame_time )
+void ParticleSystem::update( f32 frameTime )
 {
-    if ( emission_active ) {
-        emission_timer += frame_time;
-        f32 rate = 1.f / emission_rate;
+    if ( emissionActive ) {
+        emissionTimer += frameTime;
+        f32 rate = 1.f / emissionRate;
 
-        while ( emission_timer > rate ) {
+        while ( emissionTimer > rate ) {
             add();
-            emission_timer -= rate;
-        }
-
-        lifetime -= frame_time;
-
-        if ( lifetime < 0 ) {
-            emission_active = false;
+            emissionTimer -= rate;
         }
     }
 
-    for ( ParticleList::iterator it = particles_active.begin(); it != particles_active.end(); ) {
+    for ( ParticleList::iterator it = particlesActive.begin(); it != particlesActive.end(); ) {
         Particle* p = *it;
-        p->life += frame_time;
+        p->lifetime += frameTime;
 
-        if ( p->life > p->life_time ) {
-            particles_free.push_back( p );
-            it = particles_active.erase( it );
+        if ( p->lifetime > p->lifetimeLimit ) {
+            particlesFree.push_back( p );
+            it = particlesActive.erase( it );
             continue;
         }
 
-        f32 t = p->life / p->life_time;
-        p->size = settings.size_start * ( 1 - t ) + settings.size_end * t;
-        p->color[0] = settings.color_start[0] * ( 1 - t ) + settings.color_end[0] * t;
-        p->color[1] = settings.color_start[1] * ( 1 - t ) + settings.color_end[1] * t;
-        p->color[2] = settings.color_start[2] * ( 1 - t ) + settings.color_end[2] * t;
-        p->color[3] = settings.color_start[3] * ( 1 - t ) + settings.color_end[3] * t;
+        f32 t = p->lifetime / p->lifetimeLimit;
+        p->size = math::slerp( settings.sizeStart, settings.sizeEnd, t );
+        for(u32 i=0; i<4; i++)
+            p->color[i] = math::slerp( settings.colorStart[i], settings.colorEnd[i], t );
         math::vec2f ppos = p->position - position.xy();
         p->position = p->speed * t + normalize( p->speed ) * p->acceleration * t * t / 2.0f;
         ++it;
     }
 
-    particles_active.sort( sort_particles_from_farest_to_nearest );
+    particlesActive.sort( [](Particle* first, Particle* second) { return first->size < second->size; } );
 }
 
 } // opengl

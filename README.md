@@ -5,4 +5,23 @@ Crossplatform OpenGL engine for my needs (experiments, concepts, discovering, an
 
 License: MIT
 
+Build system - cmake 2.8+
+
+Supported platforms:
+* win7/win8 32/64
+* ubuntu 11.04
+* macosx mountain lion
+
+Tested build with:
+* mingw32 gcc 4.7+ / mingw-w64 gcc 4.8
+* clang 3.2 (on ubuntu/macosx)
+* xcode 4+ with clang
+* vs2012 express/prof (note: due to poor c++11 support in visual studio, build could be broken atm, and mingw+gcc is recommended to build under windows)
+
+Thirdparty:
+* SDL - v2, unstable version from trunk (version could be found in INSTALL file). need to build and install, or use some pre-build libraries (could be found in thirdparty/libs-win*).
+* freeglut - source code is included, need to build and install (or use pre-build from thirdparty/libs-win*)
+* google-testing-framework - is included to build, no need to install
+* stb_image - is included to build, no need to install
+
 Happy coding :D

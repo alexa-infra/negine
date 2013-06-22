@@ -43,3 +43,33 @@ TEST(aaa, bb)
     EXPECT_EQ(g, b);
     std::cout << ret << std::endl;
 }
+
+#include "base/path.h"
+
+TEST(path, basic)
+{
+    std::string p("c:\\web\\do");
+    EXPECT_EQ(path::normpath(p), std::string("c:/web/do"));
+
+    EXPECT_EQ(path::toDir("c:/web/do"), std::string("c:/web/do/"));
+    EXPECT_EQ(path::toDir("c:/web/do/"), std::string("c:/web/do/"));
+    
+    auto r1 = path::split("c:/web/do/file");
+    EXPECT_EQ(std::get<0>(r1), std::string("c:/web/do"));
+    EXPECT_EQ(std::get<1>(r1), std::string("file"));
+
+    r1 = path::split("c:/web/do/file/");
+    EXPECT_EQ(std::get<0>(r1), std::string("c:/web/do/file"));
+    EXPECT_EQ(std::get<1>(r1), std::string(""));
+
+    r1 = path::splitext("file.txt");
+    EXPECT_EQ(std::get<0>(r1), std::string("file"));
+    EXPECT_EQ(std::get<1>(r1), std::string(".txt"));
+
+    r1 = path::splitext("filetxt");
+    EXPECT_EQ(std::get<0>(r1), std::string("filetxt"));
+    EXPECT_EQ(std::get<1>(r1), std::string(""));
+
+    EXPECT_EQ(path::join("a", "b", "c"), std::string("a/b/c"));
+    EXPECT_EQ(path::join("a", "b/a/v", "c"), std::string("a/b/a/v/c"));
+}

@@ -100,11 +100,8 @@ typedef u64 GLuint64;
 
 #define GL_ARRAY_BUFFER                   0x8892
 #define GL_ELEMENT_ARRAY_BUFFER           0x8893
-#define GL_UNIFORM_BUFFER                 0x8A11 
-
-#define GL_READ_ONLY                      0x88B8
-#define GL_WRITE_ONLY                     0x88B9
-#define GL_READ_WRITE                     0x88BA 
+#define GL_UNIFORM_BUFFER                 0x8A11
+#define GL_TEXTURE_BUFFER                 0x8C2A
 
 #define GL_STREAM_DRAW                    0x88E0
 #define GL_STREAM_READ                    0x88E1
@@ -150,6 +147,8 @@ typedef u64 GLuint64;
 #define GL_FLOAT_VEC4                     0x8B52
 #define GL_SAMPLER_2D                     0x8B5E
 
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
+
 typedef void (_APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture); 
 typedef void (_APIENTRYP PFNGLATTACHSHADERPROC) (GLuint program, GLuint shader); 
 typedef void (_APIENTRYP PFNGLBINDATTRIBLOCATIONPROC) (GLuint program, GLuint index, const GLchar *name); 
@@ -165,8 +164,6 @@ typedef void (_APIENTRYP PFNGLGENVERTEXARRAYSPROC) (GLsizei n, GLuint *arrays);
 typedef void (_APIENTRYP PFNGLBUFFERDATAPROC) (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage);
 typedef void (_APIENTRYP PFNGLBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 typedef void (_APIENTRYP PFNGLGETBUFFERSUBDATAPROC) (GLenum target, GLintptr offset, GLsizeiptr size, GLvoid *data);
-typedef GLvoid* (_APIENTRYP PFNGLMAPBUFFERPROC) (GLenum target, GLenum access);
-typedef GLboolean (_APIENTRYP PFNGLUNMAPBUFFERPROC) (GLenum target); 
 typedef void (_APIENTRYP PFNGLCOMPILESHADERPROC) (GLuint shader);
 typedef GLuint (_APIENTRYP PFNGLCREATEPROGRAMPROC) (void);
 typedef GLuint (_APIENTRYP PFNGLCREATESHADERPROC) (GLenum type);
@@ -190,6 +187,7 @@ typedef void (_APIENTRYP PFNGLSHADERSOURCEPROC) (GLuint shader, GLsizei count, c
 typedef void (_APIENTRYP PFNGLUSEPROGRAMPROC) (GLuint program); 
 typedef void (_APIENTRYP PFNGLTEXIMAGE2DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels); 
 typedef void (_APIENTRYP PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param); 
+typedef void (_APIENTRYP PFNGLTEXPARAMETERFPROC) (GLenum target, GLenum pname, GLfloat param); 
 typedef void (_APIENTRYP PFNGLUNIFORM1IPROC) (GLint location, GLint v0); 
 typedef void (_APIENTRYP PFNGLUNIFORM3FPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2); 
 typedef void (_APIENTRYP PFNGLUNIFORM4FPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3); 
@@ -203,6 +201,7 @@ typedef GLenum (_APIENTRYP PFNGLGETERRORPROC) (void);
 typedef void (_APIENTRYP PFNGLDISABLEPROC) (GLenum cap);
 typedef const GLubyte* (_APIENTRYP PFNGETSTRINGPROC) (GLenum name);
 typedef void (_APIENTRYP PFNBLENDFUNCPROC) (GLenum sfactor, GLenum dfactor);
+typedef void (_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 }
 }

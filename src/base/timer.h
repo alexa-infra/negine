@@ -11,22 +11,29 @@
 namespace base
 {
 
+//! Timer class, count time in seconds (with decimal part)
+//! TODO: add f64 time return
 class Timer
 {
-private:
-    u64 start_time_;
-#ifdef OS_WIN
-    u64 frequency_;
-#endif
-
 public:
     Timer();
 
-    f32 Reset();
-    f32 Elapsed();
+    //! Reset timer to zero, returns current elapsed time in seconds
+    f32 reset();
+
+    //! Returns current elapsed time in seconds
+    f32 elapsed() const;
+
 private:
-    u64 GetClock();
-    f32 GetMillis( u64 range );
+	//! Gets current timer value
+    u64 getClock() const;
+    
+    //! Convert internal representation to milliseconds
+    f64 convertToMillis( u64 range ) const;
+
+private:
+    u64 startTime_;
+    u64 frequency_;
 };
 
 } // namespace base

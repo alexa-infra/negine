@@ -428,10 +428,12 @@ extern int      stbi_gif_info_from_file   (FILE *f,                  int *x, int
 #include <stdarg.h>
 
 #ifndef _MSC_VER
-  #ifdef __cplusplus
-  #define __forceinline inline
-  #else
-  #define __forceinline
+  #ifndef __forceinline
+    #ifdef __cplusplus
+    #define __forceinline inline
+    #else
+    #define __forceinline
+    #endif
   #endif
 #endif
 

@@ -8,6 +8,7 @@
 
 #include "base/types.h"
 #include <vector>
+#include "render/gl_lite.h"
 
 namespace base
 {
@@ -50,41 +51,43 @@ struct MeshLayer
     MeshLayer(VertexAttr attr, u32 start, u32 stride);
 };
 
-class MeshBuilder
+namespace IndexTypes
 {
-public:
-    std::vector<VertexAttr> attributes_;
-
-    enum Type
-    {
-        Static,
-        Dynamic
+    enum IndexType {
+        UInt16 = GL_UNSIGNED_SHORT,
+        UInt32 = GL_UNSIGNED_INT
     };
-    Type type_;
+}
+typedef IndexTypes::IndexType IndexType;
 
-    MeshBuilder();
-    MeshBuilder& addAttribute(VertexAttr attr);
-};
-
-class MeshExt
+class Mesh
 {
 private:
+    std::vector<VertexAttr> attr_;
+
     u32 numVertexes_;
     u32 numIndexes_;
     MeshLayer attributes_[VertexAttrs::Count];
     std::vector<u8> attributeBuffer_;
-    std::vector<u16> indices_;
+    std::vector<u8> indices_;
     u32 rawSize_;
+    IndexType indexType_;
 public:
-    MeshExt(const MeshBuilder& builder, u32 nVertexes, u32 nIndexes);
-    ~MeshExt();
+    Mesh();
+    ~Mesh();
+
+    Mesh& addAttribute(VertexAttr attr);
+    Mesh& vertexCount(u32 nVertexes);
+    Mesh& indexCount(u32 nIndexes, IndexType type);
+    void complete();
 
     u32 numVertexes() const { return numVertexes_; }
     u32 numIndexes() const { return numIndexes_; }
     u32 rawSize() const { return rawSize_; }
-    void* data() { return &attributeBuffer_.front(); }
+    void* data() { return attributeBuffer_.data(); }
     const MeshLayer* attributes() const { return attributes_; }
-    u16* indices() { return &indices_.front(); }
+    void* indices() { return indices_.data(); }
+    IndexType indexType() const { return indexType_; }
 
     u32 stride(VertexAttr attr) const;
 
@@ -97,14 +100,12 @@ public:
     T* findElement(VertexAttr attr, u32 idx) {
         return reinterpret_cast<T*>(findElementRaw(attr, idx));
     }
-
-    void reserve(u32 vertexCount, u32 indexCount);
 private:
     u8* findAttributeRaw(VertexAttr attr);
 
     u8* findElementRaw(VertexAttr attr, u32 idx);
 private:
-    DISALLOW_COPY_AND_ASSIGN(MeshExt);
+    DISALLOW_COPY_AND_ASSIGN(Mesh);
 };
 
 

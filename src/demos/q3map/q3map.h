@@ -11,8 +11,8 @@
 #include "math/vec3.h"
 #include "math/plane.h"
 #include "base/stream.h"
-#include "render/wirebox.h"
 #include "render/texture.h"
+#include "base/parameter.h"
 
 namespace base
 {
@@ -40,11 +40,11 @@ struct q3texture {
 };
 
 struct q3plane {
-    math::Vector3 normal;
+    math::vec3f normal;
     f32 dist;
 
-    f32 side( const math::Vector3& v ) const {
-        return math::Dot( normal, v ) - dist;
+    f32 side( const math::vec3f& v ) const {
+        return math::dot( normal, v ) - dist;
     }
 };
 
@@ -60,11 +60,11 @@ struct q3node {
     i32 mmin[3];
     i32 mmax[3];
 
-    math::Vector3 mins() const {
-        return math::Vector3( static_cast<f32>(mmin[0]), static_cast<f32>(mmin[1]), static_cast<f32>(mmin[2]) );
+    math::vec3f mins() const {
+        return math::vec3f( mmin[0], mmin[1], mmin[2] );
     }
-    math::Vector3 maxs() const {
-        return math::Vector3( static_cast<f32>(mmax[0]), static_cast<f32>(mmax[1]), static_cast<f32>(mmax[2]) );
+    math::vec3f maxs() const {
+        return math::vec3f( mmax[0], mmax[1], mmax[2] );
     }
 };
 
@@ -92,19 +92,19 @@ struct q3face {
     i32 lMapCornerY;
     i32 lMapSizeX;
     i32 lMapSizeY;
-    math::Vector3 lMapPos;
-    math::Vector3 lMapVecs0;
-    math::Vector3 lMapVecs1;
-    math::Vector3 normal;
+    math::vec3f lMapPos;
+    math::vec3f lMapVecs0;
+    math::vec3f lMapVecs1;
+    math::vec3f normal;
     i32 patchWidth;
     i32 patchHeight;
 };
 
 struct q3vertex {
-    math::Vector3 pos;
-    math::Vector2 surfaceUV;
-    math::Vector2 lightmapUV;
-    math::Vector3 normal;
+    math::vec3f pos;
+    math::vec2f surfaceUV;
+    math::vec2f lightmapUV;
+    math::vec3f normal;
     u8 color[4];
 
     q3vertex operator*( f32 scalar ) const {
@@ -155,11 +155,11 @@ struct q3leaf {
     i32 numberOfLeafFaces;
     i32 leafBrush;
     i32 numberOfLeafBrushes;
-    math::Vector3 minv() const {
-        return math::Vector3( static_cast<f32>(mins[0]), static_cast<f32>(mins[1]), static_cast<f32>(mins[2]) );
+    math::vec3f minv() const {
+        return math::vec3f( mins[0], mins[1], mins[2] );
     }
-    math::Vector3 maxv() const {
-        return math::Vector3( static_cast<f32>(maxs[0]), static_cast<f32>(maxs[1]), static_cast<f32>(maxs[2]) );
+    math::vec3f maxv() const {
+        return math::vec3f( maxs[0], maxs[1], maxs[2] );
     }
 };
 
@@ -178,8 +178,8 @@ struct Node {
     math::Plane     plane;
     i32             cluster;
     i32             area;
-    math::Vector3   maxs;
-    math::Vector3   mins;
+    math::vec3f   maxs;
+    math::vec3f   mins;
     Node*           children[2];
     Node*           parent;
     i32             firstFace;
@@ -220,16 +220,16 @@ public:
     std::vector<math::Plane> planes_;
     std::vector<Texture*>    lm_textures;
     std::vector<Texture*>    d_textures;
-    WireBox _wb;
+    DeviceContext& GL;
     GpuProgram* _program;
 
-    q3maploader( FileBinary& file );
+    q3maploader( DeviceContext& gl, FileBinary& file );
     ~q3maploader();
 
     void load();
     void PreloadTextures( TextureLoader& textureLoader );
 
-    void render( const Camera& camera, GpuProgram* pr, TextureLoader& txloader );
+    void render( const Camera& camera, GpuProgram* pr, ParameterMap& params, TextureLoader& txloader );
 private:
     void check_header();
 
@@ -240,16 +240,16 @@ private:
         q3lump lump = read_lump( lumpIndex );
         const u32 count = lump.length / sizeof( T );
         std::vector<T> items( count );
-        f.set_position( lump.offset );
-        f.read( reinterpret_cast<u8*>( &items.front() ), sizeof( T )*count );
+        f.setPosition( lump.offset );
+        f.readRaw( reinterpret_cast<u8*>( &items.front() ), sizeof( T )*count );
         return items;
     }
-    i32 findLeaf( const math::Vector3& camPos ) const;
+    i32 findLeaf( const math::vec3f& camPos ) const;
 
     void render_polygons( const q3face& face, GpuProgram* pr ) const;
     void render_patch( const q3face& face, GpuProgram* pr ) const;
     void findDrawLeafs( const Camera& camera, const q3leaf& cameraLeaf, std::vector<int>& visFaces, int index ) const;
-    void ComputePossibleVisible( const math::Vector3& cameraPos );
+    void ComputePossibleVisible( const math::vec3f& cameraPos );
     void AddVisibleNode( Node* node );
     void ComputeVisible_R( const Camera& camera, Node* node, u32 planeMask );
 };

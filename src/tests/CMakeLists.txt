@@ -23,8 +23,12 @@ target_link_libraries(tests
 
 if(UNIX)
   target_link_libraries(tests pthread)
-endif(UNIX)
+endif()
 
-if(WIN32)
+if(MINGW)
+  add_definitions(-DGTEST_HAS_PTHREAD=0)
+endif()
+
+if(MSVC)
 	add_definitions(-D_VARIADIC_MAX=10)
 endif()

@@ -15,184 +15,96 @@ namespace base
 namespace math
 {
 
-struct Point {
-    i32 x;
-    i32 y;
-
-    void set( i32 _x, i32 _y ) {
-        x = _x;
-        y = _y;
-    }
-    bool operator== ( const Point& p ) const {
-        return x == p.x && y == p.y;
-    }
-    bool operator!= ( const Point& p ) const {
-        return x != p.x || y != p.y;
-    }
-    static Point init( i32 x, i32 y ) {
-        Point p;
-        p.x = x;
-        p.y = y;
-        return p;
-    }
-};
-
-struct Size {
-    i32 Width;
-    i32 Height;
-
-    void set( i32 w, i32 h ) {
-        Width = w;
-        Height = h;
-    }
-    void set( i32 hw ) {
-        Width = hw;
-        Height = hw;
-    }
-    bool operator== ( const Size& s ) const {
-        return Width == s.Width && Height == s.Height;
-    }
-    bool operator!= ( const Size& s ) const {
-        return Width != s.Width || Height != s.Height;
-    }
-};
-
 class Rect
 {
 public:
-    union {
-        struct {
-            i32 x;
-            i32 y;
-            i32 Width;
-            i32 Height;
-        };
-        struct {
-            Point Position;
-            Size Dimensions;
-        };
-    };
-    Rect() : x( 0 ), y( 0 ), Width( 0 ), Height( 0 ) {}
-    Rect( i32 _x, i32 _y, i32 _w, i32 _h )
-        : x( _x ), y( _y ), Width( _w ), Height( _h ) {}
-    Rect( const Point& p, const Size& s ) {
-        Position = p;
-        Dimensions = s;
+    vec2i position;
+    vec2i size;
+
+    Rect() : position( 0 ), size( 0 )
+    {
+    }
+    Rect( i32 x, i32 y, i32 w, i32 h )
+        : position(x, y), size(w, h)
+    {
+    }
+    Rect( const vec2i& p, const vec2i& s )
+        : position(p), size(s)
+    {
     }
     i32 GetArea() const {
-        return Width * Height;
+        return size.x * size.y;
     }
 
     i32 Bottom() const {
-        return y + Height;
+        return position.y + size.y;
     }
     i32 Right() const {
-        return x + Width;
+        return position.x + size.x;
     }
     i32 Left() const {
-        return x;
+        return position.x;
     }
     i32 Top() const {
-        return y;
+        return position.y;
     }
 
     void SetBottom( i32 bottom ) {
-        Width = bottom - y;
+        size.x = bottom - position.y;
     }
     void SetRight( i32 right ) {
-        Height = right - x;
+        size.y = right - position.x;
     }
 
-    Point LeftTopCorner() const {
-        return Point::init( Left(), Top() );
+    vec2i LeftTopCorner() const {
+        return vec2i( Left(), Top() );
     }
-    Point RightTopCorner() const {
-        return Point::init( Right(), Top() );
+    vec2i RightTopCorner() const {
+        return vec2i( Right(), Top() );
     }
-    Point LeftBottomCorner() const {
-        return Point::init( Left(), Bottom() );
+    vec2i LeftBottomCorner() const {
+        return vec2i( Left(), Bottom() );
     }
-    Point RightBottomCorner() const {
-        return Point::init( Right(), Bottom() );
+    vec2i RightBottomCorner() const {
+        return vec2i( Right(), Bottom() );
     }
-    Point Center() const {
-        return Point::init( x + Width / 2, y + Height / 2 );
+    vec2i Center() const {
+        return vec2i( position.x + size.x / 2, position.y + size.y / 2 );
     }
-    Point RightCenter() const {
-        return Point::init( Right(), y + Height / 2 );
+    vec2i RightCenter() const {
+        return vec2i( Right(), position.y + size.y / 2 );
     }
-    Point LeftCenter() const {
-        return Point::init( Left(), y + Height / 2 );
+    vec2i LeftCenter() const {
+        return vec2i( Left(), position.y + size.y / 2 );
     }
-    Point TopCenter() const {
-        return Point::init( x + Width / 2, Top() );
+    vec2i TopCenter() const {
+        return vec2i( position.x + size.x / 2, Top() );
     }
-    Point BottomCenter() const {
-        return Point::init( x + Width / 2, Bottom() );
+    vec2i BottomCenter() const {
+        return vec2i( position.x + size.x / 2, Bottom() );
     }
 
     void Scale( f32 k ) {
-        Width = ( i32 )( Width * k );
-        Height = ( i32 )( Height * k );
+        size *= k;
     }
     void Scale( f32 kw, f32 kh ) {
-        Width = ( i32 )( Width * kw );
-        Height = ( i32 )( Height * kh );
+        size *= vec2i(kw, kh);
     }
 
-    bool Contains( const Point& p ) const {
-        return ( p.x >= x && p.y >= y && p.x < Right() && p.y < Bottom() );
+    bool Contains( const vec2i& p ) const {
+        return ( p.x >= Left()
+            && p.y >= Top()
+            && p.x < Right()
+            && p.y < Bottom() );
     }
     bool Contains( const i32& x, const i32& y ) const {
-        return Contains( Point::init( x, y ) );
+        return Contains( vec2i( x, y ) );
     }
     bool Contains( const Rect& rect ) const {
-        return rect.x >= x && rect.y >= y
-               && rect.Right() < Right()
-               && rect.Bottom() < Bottom();
-    }
-    bool Intersec( const Rect& rect ) const {
-        if ( Contains( rect ) ) {
-            return true;
-        }
-
-        if ( rect.Contains( *this ) ) {
-            return true;
-        }
-
-        if ( Contains( rect.LeftTopCorner() ) ) {
-            return true;
-        }
-
-        if ( Contains( rect.RightTopCorner() ) ) {
-            return true;
-        }
-
-        if ( Contains( rect.LeftBottomCorner() ) ) {
-            return true;
-        }
-
-        if ( Contains( rect.RightBottomCorner() ) ) {
-            return true;
-        }
-
-        return false;
-    }
-    Rect Union( const Rect& rect ) const {
-        Rect ret;
-        ret.x = ( x > rect.x ) ? x : rect.x;
-        ret.y = ( y > rect.y ) ? y : rect.y;
-        ret.SetRight( ( Right() < rect.Right() ) ? Right() : rect.Right() );
-        ret.SetBottom( ( Bottom() < rect.Bottom() ) ? Bottom() : rect.Bottom() );
-        return ret;
-    }
-    Rect Combine( const Rect& rect ) const {
-        Rect ret;
-        ret.x = ( x < rect.x ) ? x : rect.x;
-        ret.y = ( y < rect.y ) ? y : rect.y;
-        ret.SetRight( ( Right() > rect.Right() ) ? Right() : rect.Right() );
-        ret.SetBottom( ( Bottom() > rect.Bottom() ) ? Bottom() : rect.Bottom() );
-        return ret;
+        return rect.Left() >= Left()
+            && rect.Top() >= Top()
+            && rect.Right() < Right()
+            && rect.Bottom() < Bottom();
     }
 };
 

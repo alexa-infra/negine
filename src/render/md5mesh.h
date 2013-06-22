@@ -12,6 +12,7 @@
 #include "math/vec3.h"
 #include "math/quat.h"
 #include <string>
+#include <vector>
 
 namespace base
 {
@@ -58,26 +59,15 @@ struct Md5BoundingBox {
     math::vec3f max;
 };
 
-struct Md5Mesh {
-    Md5Vertex*   vertices;
-    Md5Triangle* triangles;
-    Md5Weight*   weights;
+struct Md5Mesh
+{
+    std::vector<Md5Vertex>   vertices;
+    std::vector<Md5Triangle> triangles;
+    std::vector<Md5Weight>   weights;
 
-    Md5Mesh()
-        : vertices( NULL )
-        , triangles( NULL )
-        , weights( NULL ) {
-    }
-
-    ~Md5Mesh() {
-        delete[] vertices;
-        delete[] triangles;
-        delete[] weights;
-    }
-
-    i32 num_verts;
-    i32 num_tris;
-    i32 num_weights;
+    i32 numVerts;
+    i32 numTris;
+    i32 numWeights;
 
     std::string shader;
 
@@ -85,21 +75,8 @@ struct Md5Mesh {
 };
 
 struct Md5Model {
-    Md5Joint* baseSkel;
-    Md5Mesh*  meshes;
-
-    Md5Model()
-        : baseSkel( NULL )
-        , meshes( NULL ) {
-    }
-
-    ~Md5Model() {
-        delete[] meshes;
-        delete[] baseSkel;
-    }
-
-    i32 num_joints;
-    i32 num_meshes;
+    std::vector<Md5Joint> baseSkel;
+    std::vector<Md5Mesh>  meshes;
 
     void Read( Lexer& reader );
 };

@@ -30,17 +30,19 @@ Md3Renderer::Md3Renderer( Md3Model* m )
     meshes.resize( model->hdr.num_surfaces );
     vbs.resize( model->hdr.num_surfaces );
 
-    MeshBuilder builder;
-    builder
-        .addAttribute(VertexAttrs::tagPosition)
-        .addAttribute(VertexAttrs::tagNormal)
-        .addAttribute(VertexAttrs::tagColor)
-        .addAttribute(VertexAttrs::tagTexture);
     for ( i32 i = 0; i < model->hdr.num_surfaces; i++ ) {
-         MeshExt* mesh = new MeshExt(builder, model->meshes[i].surface.num_verts, model->meshes[i].surface.num_triangles * 3);
+         Mesh* mesh = new Mesh();
+         (*mesh)
+             .addAttribute(VertexAttrs::tagPosition)
+             .addAttribute(VertexAttrs::tagNormal)
+             .addAttribute(VertexAttrs::tagColor)
+             .addAttribute(VertexAttrs::tagTexture)
+             .vertexCount(model->meshes[i].surface.num_verts)
+             .indexCount(model->meshes[i].surface.num_triangles * 3, IndexTypes::UInt16)
+             .complete();
          meshes[i] = mesh;
 //         vbs[i] = new VertexBuffer;
-         vbs[i]->EnableAttributeMesh(mesh);
+         vbs[i]->enableAttributeMesh(mesh);
     }
 }
 
@@ -61,10 +63,10 @@ void Md3Renderer::Commit()
 
     for ( i32 i = 0; i < model->hdr.num_surfaces; i++ ) {
         Md3Mesh& md3 = frame.meshes[i];
-        MeshExt* mesh = meshes[i];
+        Mesh* mesh = meshes[i];
         Md3Surface& info = md3.mesh_base->surface;
 
-        u16* indices = mesh->indices();
+        u16* indices = reinterpret_cast<u16*>(mesh->indices());
         for ( i32 j = 0; j < info.num_triangles; j++ ) {
             for ( u8 k = 0; k < 3; k++ ) {
                 indices[j + k] = md3.mesh_base->triangles[j].indexes[k];
@@ -88,20 +90,21 @@ void Md3Renderer::Commit()
             color[j] = vec4f( 1, 1, 1, 1 );
         }
 
-        vbs[i]->SetVertexData( mesh->data(), mesh->rawSize());
-        vbs[i]->SetIndexData( mesh->indices(), mesh->numIndexes() * sizeof(u16));
-        vbs[i]->Load();
+        vbs[i]->setVertexData( mesh->data(), mesh->rawSize());
+        vbs[i]->setIndexData( mesh->indices(), mesh->numIndexes() * sizeof(u16));
     }
 }
 
 void Md3Renderer::Draw( )
 {
     for ( u32 i = 0; i < vbs.size(); i++ ) {
-        vbs[i]->BindAttributes();
+        vbs[i]->bind();
+        // TODO: resurrect MD3!
+
         //glDrawElements(
         //    GL_TRIANGLES, meshes[i]->numIndexes(), 
         //    GL_UNSIGNED_SHORT, (void*)0);
-        vbs[i]->UnbindAttributes();
+        vbs[i]->unbind();
     }
 }
 

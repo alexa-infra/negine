@@ -20,7 +20,8 @@ namespace BufferTargets
 enum BufferTarget {
     Array = GL_ARRAY_BUFFER,
     ElementArray = GL_ELEMENT_ARRAY_BUFFER,
-    Uniform = GL_UNIFORM_BUFFER
+    Uniform = GL_UNIFORM_BUFFER,
+    Texture = GL_TEXTURE_BUFFER
 };
 }
 typedef BufferTargets::BufferTarget BufferTarget;
@@ -42,55 +43,31 @@ enum BufferUsage {
 }
 typedef BufferUsages::BufferUsage BufferUsage;
 
-namespace BufferAccesses
-{
-//! access to buffer during mapping
-enum BufferAccess {
-    ReadOnly = GL_READ_ONLY,
-    WriteOnly = GL_WRITE_ONLY,
-    ReadWrite = GL_READ_WRITE
-};
-}
-typedef BufferAccesses::BufferAccess BufferAccess;
-
 //! Wraps Buffer Object
 class BufferObject : public GpuResource
 {
 private:
     GLenum target_; //!< Currently mapped type format
-    bool is_ok_;    //!< Is buffer created
+    GLenum usage_;
 public:
-    BufferObject(DeviceContext& gl);
+    BufferObject(DeviceContext& gl, BufferTarget target, BufferUsage usage);
     ~BufferObject();
 
-    //! Get status of buffer creation
-    bool is_ok() const {
-        return is_ok_;
-    }
-
     //! Bind buffer to target
-    void Bind( BufferTarget target );
+    void bind();
     //! Unbind active target
-    void Unbind();
+    void unbind();
     //! Bind buffer to target by index
-    void BindBase( BufferTarget target, u32 index );
+    void bindBase( u32 index );
     //! Bind buffer to target by index, and to desired position
-    void BindRange( BufferTarget target, u32 index, void* offset, void* size );
-
-    //! Map buffer from GPU to memory
-    void* Map( BufferAccess access_type );
-    //! Unmap buffer, returns buffer to GPU
-    bool Unmap();
+    void bindRange( u32 index, void* offset, void* size );
 
     //! Sets data of buffer, copy from memory to GPU
-    void SetData( u32 size, const void* data_ptr, BufferUsage usage );
+    void setData( u32 size, const void* dataPtr );
     //! Sets sub-data of buffer, copy from memory to GPU
-    void SetSubData( u32 offset, u32 size, const void* data_ptr );
+    void setSubData( u32 offset, u32 size, const void* dataPtr );
     //! Gets sub-data of buffer, copy from GPU to memory
-    void GetSubData( u32 offset, u32 size, void* data_ptr );
-
-    //! Clear allocated memory at GPU
-    void Clear();
+    void getSubData( u32 offset, u32 size, void* dataPtr );
 
 private:
     DISALLOW_COPY_AND_ASSIGN( BufferObject );

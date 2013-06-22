@@ -22,38 +22,38 @@ struct JointInfo {
     std::string name;
     i32 parent;
     i32 flags;
-    i32 start_index;
+    i32 startIndex;
 };
 
 //! Base frame joint
 struct BaseframeJoint {
     math::vec3f pos;
-    math::Quat    orient;
+    math::Quat orient;
 };
 
 class Md5Anim
 {
-private:
-    JointInfo* jointInfos;
-    BaseframeJoint* baseFrame;
-    u32 numAnimatedComponents;
-    f32* animFrameData;
-
 public:
-    u32 num_frames;
-    u32 num_joints;
-    u32 frame_rate;
-
-    Md5Joint** skelFrames;
-    Md5BoundingBox* bboxes;
+    std::vector<Md5Joint> skelFrames;
+    std::vector<Md5BoundingBox> bboxes;
 
     Md5Anim();
     ~Md5Anim();
 
-    void Load( const std::string& filename );
-    void BuildFrameSkeleton( u32 frameIndex );
+    void load( const std::string& filename );
+    void update( Md5Model* model, u32 frameIndex, f32 interpPhase );
+private:
+    void buildFrameSkeleton( u32 frameIndex );
+    
+private:
+    u32 numFrames;
+    u32 numJoints;
+    u32 frameRate;
 
-    void Update( Md5Model* model, u32 frameIndex, f32 interp_phase );
+    std::vector<JointInfo> jointInfos;
+    std::vector<BaseframeJoint> baseFrame;
+    std::vector<f32> animFrameData;
+    u32 numAnimatedComponents;
 };
 
 
