@@ -41,6 +41,12 @@ namespace imp
         math::vec4f color;
     };
 
+    struct Line
+    {
+        u32 v[2];
+        math::vec4f color;
+    };
+
     struct MeshBuilder
     {
         enum {
@@ -55,6 +61,7 @@ namespace imp
 
         std::vector<Vertex> vertexList;
         std::vector<Polygon> polygonList;
+        std::vector<Line> lineList;
         std::vector<Edge> edgeList;
 
         u32 nextVertexIndex() const
@@ -80,7 +87,13 @@ namespace imp
 
         Polygon& addPolygon(u32 x, u32 y, u32 z, const math::vec4f& color);
 
+        Line& addLine(u32 x, u32 y);
+
+        Line& addLine(u32 x, u32 y, const math::vec4f& color);
+
         u32 addEdge(u32 a, u32 b, u32 p);
+
+        void getLineList(opengl::Mesh& mesh);
 
         void getDrawingList(opengl::Mesh& mesh);
 

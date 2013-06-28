@@ -138,8 +138,8 @@ void Texture::createFromBuffer( const TextureInfo& textureinfo, const u8* data )
         data );
 
     if (info_.GenerateMipmap) {
-        ASSERT( info_.Width == info_.Height );
-        GL.GenerateMipmap( info_.Type );
+        if ( info_.Width == info_.Height )
+            GL.GenerateMipmap( info_.Type );
     }
 
     GL.BindTexture( info_.Type, 0 );

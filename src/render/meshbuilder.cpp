@@ -112,6 +112,23 @@ Polygon& MeshBuilder::addPolygon(u32 x, u32 y, u32 z, const vec4f& color)
     return p;
 }
 
+Line& MeshBuilder::addLine(u32 x, u32 y)
+{
+    Line line;
+    line.v[0] = x;
+    line.v[1] = y;
+    u32 idx = lineList.size();
+    return lineList[idx];
+}
+
+Line& MeshBuilder::addLine(u32 x, u32 y, const math::vec4f& color)
+{
+    mask |= hasPolygonColor;
+    Line& line = addLine(x, y);
+    line.color = color;
+    return line;
+}
+
 #define kInvalidIndex 0xffffffff
 
 u32 MeshBuilder::addEdge(u32 a, u32 b, u32 p)
@@ -137,6 +154,36 @@ u32 MeshBuilder::addEdge(u32 a, u32 b, u32 p)
     vertexList[a].edges.push_back(idx);
     vertexList[b].edges.push_back(idx);
     return idx;
+}
+
+void MeshBuilder::getLineList(opengl::Mesh& mesh)
+{
+    u32 vertexCount = lineList.size() * 2;
+    mesh.addAttribute(opengl::VertexAttrs::tagPosition);
+    mesh.addAttribute(opengl::VertexAttrs::tagColor);
+    mesh.vertexCount(vertexCount);
+    mesh.indexCount(vertexCount, opengl::IndexTypes::UInt32);
+    mesh.complete();
+
+    vec3f* position = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagPosition);
+    vec4f* color = mesh.findAttributeTyped<vec4f>(opengl::VertexAttrs::tagColor);
+    u32* indeces = reinterpret_cast<u32*>(mesh.indices());
+
+    bool lineColor = (mask & hasPolygonColor) == hasPolygonColor;
+    bool vertexColor = (mask & hasVertexColor) == hasVertexColor;
+
+    for(u32 i=0, idx=0; i<lineList.size(); i++) {
+        const Line& line = lineList[i];
+        for(u32 j=0; j<2; j++, idx++) {
+            const Vertex& v = vertexList[line.v[j]];
+            position[idx] = v.position;
+            if (lineColor)
+                color[idx] = line.color;
+            else if (vertexColor)
+                color[idx] = v.color;
+            indeces[idx] = idx;
+        }
+    }
 }
 
 void MeshBuilder::getDrawingList(opengl::Mesh& mesh)

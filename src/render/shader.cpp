@@ -64,7 +64,7 @@ const std::string Shader::status() const
     }
 
     std::vector<char> buf(logSize);
-    GL.GetShaderInfoLog( id_, logSize, NULL, &buf[0] );
+    GL.GetShaderInfoLog( id_, logSize, NULL, buf.data() );
     return std::string(buf.begin(), buf.end());
 }
 
