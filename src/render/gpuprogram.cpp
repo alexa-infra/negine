@@ -66,9 +66,9 @@ const std::string GpuProgram::status() const
     }
 
     std::vector<char> buf(len);
-    GL.GetProgramInfoLog( id_, len, NULL, &buf[0] );
+    GL.GetProgramInfoLog( id_, len, NULL, buf.data() );
 
-    return std::string(buf.begin(), buf.end());
+    return std::string(buf.begin(), buf.end());;
 }
 
 GpuProgram::~GpuProgram()
@@ -130,7 +130,7 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
         }
         default:
         {
-            ERR("Uniform type %d is not supported", uniform.type);
+            ERR("Uniform type %#X is not supported", uniform.type);
             break;
         }
     }
@@ -157,7 +157,7 @@ void GpuProgram::populateUniformMap()
         GLsizei nameLength = 0;
         i32 typeSize = 0;
         GLenum uniformType = 0;
-        GL.GetActiveUniform( id_, i, maxNameLength, &nameLength, &typeSize, &uniformType, &buffer[0] );
+        GL.GetActiveUniform( id_, i, maxNameLength, &nameLength, &typeSize, &uniformType, buffer.data() );
         std::string uniformName( buffer.begin(), buffer.begin()+nameLength );
         u32 location = GL.GetUniformLocation( id_, uniformName.c_str() );
         UniformVar uni;

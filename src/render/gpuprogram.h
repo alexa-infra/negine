@@ -70,15 +70,15 @@ public:
 
     void setParams(const ParameterMap& params);
 
-    bool createMeta( const std::string& filename );
-    
     void create( const std::string& filename )
     {
         if (!createMeta(filename))
             destroy();
     }
-
+    
 protected:
+    bool createMeta( const std::string& filename );
+    
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
@@ -86,8 +86,6 @@ protected:
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };
-
-
 
 } // namespace opengl
 } // namespace base
