@@ -44,15 +44,13 @@ LexerPolicy LexerPolicy::defaultPolicy()
 
 Lexer::Lexer( const std::string& filename, const LexerPolicy& policy )
     : file_( new FileText(filename) )
-    , token_( NULL )
     , policy_( policy )
 {
-    token_ = new char[policy_.maxTokenSize];
+    token_.resize(policy_.maxTokenSize);
 }
 
 Lexer::~Lexer()
 {
-    delete[] token_;
     delete file_;
 }
 
@@ -89,12 +87,12 @@ void Lexer::skipRestOfLine()
 
 const char* Lexer::readToken()
 {
-    char* tokenChar = token_;
+    char* tokenChar = const_cast<char*>(token_.c_str());
     *tokenChar = '\0';
     skipWhiteSpace();
 
     if ( !hasMoreData() ) {
-        return token_;
+        return token_.c_str();
     }
 
     if ( policy_.allowString() && file_->currentChar() == '"' ) {
@@ -117,12 +115,12 @@ const char* Lexer::readToken()
     }
 
     *tokenChar = '\0';
-    return token_;
+    return token_.c_str();
 }
 
 bool Lexer::readNumber(f32& ret)
 {
-    char* tokenChar = token_;
+    char* tokenChar = const_cast<char*>(token_.c_str());
     *tokenChar = '\0';
     skipWhiteSpace();
 
@@ -137,7 +135,7 @@ bool Lexer::readNumber(f32& ret)
 
     if ( std::regex_match( token_, std::regex( "-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?" ) ) )
     {
-        ret = atof( token_ );
+        ret = std::stof( token_ );
         return true;
     }
     return false;
@@ -146,7 +144,7 @@ bool Lexer::readNumber(f32& ret)
 f32 Lexer::readFloat()
 {
     readToken();
-    return (f32)atof( token_ );
+    return std::stof( token_.c_str() );
 }
 
 bool Lexer::hasMoreData() const

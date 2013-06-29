@@ -58,9 +58,9 @@ public:
     void   skipRestOfLine();
     const char* readToken();
     const char* currentToken() const {
-        return token_;
+        return token_.c_str();
     }
-    std::string currentTokenStr() const {
+    const std::string& currentTokenStr() const {
         return token_;
     }
     f32    readFloat();
@@ -72,7 +72,7 @@ public:
 
 protected:
     FileText*   file_;
-    char*       token_;
+    std::string token_;
     LexerPolicy policy_;
 };
 
