@@ -91,6 +91,8 @@ namespace imp
 
         Line& addLine(u32 x, u32 y, const math::vec4f& color);
 
+        Line& addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color);
+
         u32 addEdge(u32 a, u32 b, u32 p);
 
         void getLineList(opengl::Mesh& mesh);
@@ -100,6 +102,8 @@ namespace imp
         void createQuad();
 
         void createCube();
+
+        void createGrid();
 
         void readOBJ(const std::string& filename);
     };

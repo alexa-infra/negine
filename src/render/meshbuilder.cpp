@@ -118,6 +118,7 @@ Line& MeshBuilder::addLine(u32 x, u32 y)
     line.v[0] = x;
     line.v[1] = y;
     u32 idx = lineList.size();
+    lineList.push_back(line);
     return lineList[idx];
 }
 
@@ -127,6 +128,14 @@ Line& MeshBuilder::addLine(u32 x, u32 y, const math::vec4f& color)
     Line& line = addLine(x, y);
     line.color = color;
     return line;
+}
+
+Line& MeshBuilder::addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color)
+{
+    u32 idx = nextVertexIndex();
+    addVertex(a);
+    addVertex(b);
+    return addLine(idx, idx+1, color);
 }
 
 #define kInvalidIndex 0xffffffff
@@ -172,7 +181,8 @@ void MeshBuilder::getLineList(opengl::Mesh& mesh)
     bool lineColor = (mask & hasPolygonColor) == hasPolygonColor;
     bool vertexColor = (mask & hasVertexColor) == hasVertexColor;
 
-    for(u32 i=0, idx=0; i<lineList.size(); i++) {
+    u32 idx = 0;
+    for(u32 i=0; i<lineList.size(); i++) {
         const Line& line = lineList[i];
         for(u32 j=0; j<2; j++, idx++) {
             const Vertex& v = vertexList[line.v[j]];
@@ -279,6 +289,44 @@ void MeshBuilder::createCube()
     addPolygonQuad(idx + 1, idx + 2, idx + 6, idx + 5, blue);
     addPolygonQuad(idx + 0, idx + 4, idx + 7, idx + 3, blue);
     addPolygonQuad(idx + 7, idx + 6, idx + 5, idx + 4, red);
+}
+
+void MeshBuilder::createGrid()
+{
+    const u32 minorLineCount = 100;
+    const u32 majorLineCount = 10;
+    const f32 gridSize = 100.0f;
+    f32 cellMinorSize = gridSize / static_cast<f32>(minorLineCount);
+    f32 cellMajorSize = gridSize / static_cast<f32>(majorLineCount);
+
+    math::vec4f minorLineColor(0, 0, 0, 1);
+    math::vec4f majorLineColor(0, 1, 0, 1);
+
+    f32 startPos = -gridSize / 2.0f;
+    f32 endPos = gridSize / 2.0f;
+    for (u32 i = 0; i <= minorLineCount; i++)
+    {
+        u32 idx = nextVertexIndex();
+        f32 pos = startPos + cellMinorSize * i;
+        addVertex(math::vec3f(pos, 0.0f, startPos));
+        addVertex(math::vec3f(pos, 0.0f, endPos));
+        if (i % majorLineCount == 0)
+            addLine(idx, idx+1, majorLineColor);
+        else
+            addLine(idx, idx+1, minorLineColor);
+    }
+
+    for (u32 i = 0; i <= minorLineCount; i++)
+    {
+        u32 idx = nextVertexIndex();
+        f32 pos = startPos + cellMinorSize * i;
+        addVertex(math::vec3f(startPos, 0.0f, pos));
+        addVertex(math::vec3f(endPos, 0.0f, pos));
+        if (i % majorLineCount == 0)
+            addLine(idx, idx+1, majorLineColor);
+        else
+            addLine(idx, idx+1, minorLineColor);
+    }
 }
 
 void MeshBuilder::readOBJ(const std::string& filename)
