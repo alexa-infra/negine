@@ -7,7 +7,7 @@
 #pragma once
 
 #include "base/types.h"
-#include "render/md5mesh.h"
+#include "md5mesh.h"
 #include "render/mesh.h"
 #include "render/vertexbuffer.h"
 

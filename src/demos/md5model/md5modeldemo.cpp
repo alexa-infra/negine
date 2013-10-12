@@ -5,9 +5,9 @@
  * \copyright   MIT License
  **/
 #include "app/app.h"
-#include "render/md5mesh.h"
-#include "render/md5anim.h"
-#include "render/md5renderer.h"
+#include "md5mesh.h"
+#include "md5anim.h"
+#include "md5renderer.h"
 #include "render/camera.h"
 #include "render/texture.h"
 #include "render/gpuprogram.h"

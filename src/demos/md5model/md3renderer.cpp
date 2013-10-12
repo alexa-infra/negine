@@ -4,7 +4,7 @@
  * \author      Alexey Vasilyev <alexa.infra@gmail.com>
  * \copyright   MIT License
  **/
-#include "render/md3renderer.h"
+#include "md3renderer.h"
 #include "render/glcontext.h"
 #include "math/vec4.h"
 

@@ -6,7 +6,7 @@
  **/
 #include "particlesystemrenderer.h"
 #include "particlesystem.h"
-#include "gpuprogram.h"
+#include "render/gpuprogram.h"
 #include "math/rect.h"
 #include "render/texture.h"
 #include "render/vertexbuffer.h"

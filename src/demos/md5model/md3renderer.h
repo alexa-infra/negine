@@ -5,7 +5,7 @@
  * \copyright   MIT License
  **/
 #pragma once
-#include "render/md3mesh.h"
+#include "md3mesh.h"
 #include "render/vertexbuffer.h"
 #include "render/mesh.h"
 #include <vector>

@@ -6,8 +6,8 @@
  **/
 #include "app/app.h"
 #include "base/timer.h"
-#include "render/particlesystem.h"
-#include "render/particlesystemrenderer.h"
+#include "particlesystem.h"
+#include "particlesystemrenderer.h"
 #include "render/texture.h"
 #include "render/gpuprogram.h"
 #include "math/matrix.h"
