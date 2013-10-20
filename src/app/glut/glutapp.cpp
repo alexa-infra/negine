@@ -16,8 +16,6 @@
 #include "GL/glut.h"
 #include "GL/freeglut_ext.h"
 
-#include "render/statistics.h"
-
 using namespace base;
 GlutWindow* GlutWindow::window_ = NULL;
 
@@ -74,12 +72,10 @@ GlutWindow::GlutWindow()
 #elif defined(OS_LINUX)
     glXSwapIntervalSGI( 1 );
 #endif
-    Stats::init();
 }
 
 GlutWindow::~GlutWindow()
 {
-    Stats::shutdown();
     glutDestroyWindow( window_id_ );
     window_ = NULL;
     glutExit();

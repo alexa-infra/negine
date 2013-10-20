@@ -81,7 +81,6 @@ GpuProgram::~GpuProgram()
 void GpuProgram::bind()
 {
     GL.UseProgram( id_ );
-    Stats::instance()->inc_program_switches();
 }
 
 void GpuProgram::unbind()

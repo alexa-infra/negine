@@ -15,7 +15,6 @@
 #include <string>
 
 #include "render/glcontext.h"
-#include "render/statistics.h"
 #include "base/log.h"
 
 namespace base {
@@ -72,13 +71,10 @@ SDLApp::SDLApp()
     GL_ASSERT(GL);
 
     //SDL_GL_SetSwapInterval( 1 );
-
-    Stats::init();
 }
 
 SDLApp::~SDLApp()
 {
-    Stats::shutdown();
     SDL_GL_DeleteContext( maincontext_ );
     SDL_DestroyWindow( mainwindow_ );
     SDL_Quit();
@@ -152,7 +148,6 @@ void SDLApp::OnFrame()
 {
     /* Swap our back buffer to the front */
     SDL_GL_SwapWindow( mainwindow_ );
-    Stats::reset_frame();
 }
 
 void SDLApp::OnMotion( i32 x, i32 y, i32 dx, i32 dy )

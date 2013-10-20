@@ -9,7 +9,6 @@
 #include "stb/stb_image.c"
 
 #include <iostream>
-#include "render/statistics.h"
 #include <string>
 #include "base/log.h"
 #include "base/debug.h"
@@ -81,7 +80,6 @@ void Texture::destroy()
 void Texture::bind()
 {
     GL.BindTexture( info_.Type, id_ );
-    Stats::inc_texture_switches();
 }
 
 void Texture::createFromFile( const TextureInfo& textureinfo )

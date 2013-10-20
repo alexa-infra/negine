@@ -7,7 +7,7 @@
 #include "render/vertexbuffer.h"
 #include "render/glcontext.h"
 #include "render/bufferobject.h"
-#include "render/statistics.h"
+#include "base/debug.h"
 #include <string.h>
 
 namespace base

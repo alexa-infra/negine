@@ -9,8 +9,8 @@
 #include "render/gpuprogram.h"
 #include "render/mesh.h"
 #include "render/texture.h"
-#include "render/statistics.h"
 #include "base/timer.h"
+#include "base/debug.h"
 
 using base::math::vec3f;
 using base::math::vec4f;
@@ -383,7 +383,6 @@ void q3maploader::render_polygons( const q3face& face, GpuProgram* pr ) const
 {
     bind_attr( GL, pr, vertexes[face.vertexIndex] );
     GL.DrawElements( GL_TRIANGLES, face.numOfFaceIndices, GL_UNSIGNED_INT, &faceIndexes[face.faceVertexIndex] );
-    Stats::add_polygons( face.numOfFaceIndices / 3 );
 }
 
 void q3maploader::render_patch( const q3face& face, GpuProgram* pr ) const
@@ -520,7 +519,6 @@ void Bezier::render( DeviceContext& GL, GpuProgram* program )
                         trianglesPerRow[i],
                         GL_UNSIGNED_INT,
                         rowIndexes[i] );
-        Stats::add_polygons( trianglesPerRow[i] );
     }
 }
 
