@@ -9,7 +9,6 @@
 #include "render/texture.h"
 #include <memory>
 #include "base/stringmap.h"
-#include "render/statistics.h"
 #include "render/shader.h"
 #include "base/log.h"
 
