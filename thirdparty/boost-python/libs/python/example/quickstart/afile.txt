@@ -1,0 +1,261 @@
+notice: found boost-build.jam at D:/DevTools/boost_1_54_0/libs/python/example/quickstart/boost-build.jam
+notice: loading Boost.Build from D:/DevTools/boost_1_54_0/tools/build/v2
+notice: Searching 'C:\Windows' 'C:\Users\Юыќур' 'C:\Users\Юыќур' 'D:\DevTools\boost_1_54_0\libs\python\example\quickstart\../../../../tools/build/v2' 'D:/DevTools/boost_1_54_0/tools/build/v2/kernel' 'D:/DevTools/boost_1_54_0/tools/build/v2/util' 'D:/DevTools/boost_1_54_0/tools/build/v2/build' 'D:/DevTools/boost_1_54_0/tools/build/v2/tools' 'D:/DevTools/boost_1_54_0/tools/build/v2/contrib' 'D:/DevTools/boost_1_54_0/tools/build/v2/.' for site-config configuration file 'site-config.jam'.
+notice: Loading site-config configuration file 'site-config.jam' from 'D:/DevTools/boost_1_54_0/tools/build/v2'.
+notice: Searching 'C:\Users\Юыќур' 'C:\Users\Юыќур' 'D:\DevTools\boost_1_54_0\libs\python\example\quickstart\../../../../tools/build/v2' 'D:/DevTools/boost_1_54_0/tools/build/v2/kernel' 'D:/DevTools/boost_1_54_0/tools/build/v2/util' 'D:/DevTools/boost_1_54_0/tools/build/v2/build' 'D:/DevTools/boost_1_54_0/tools/build/v2/tools' 'D:/DevTools/boost_1_54_0/tools/build/v2/contrib' 'D:/DevTools/boost_1_54_0/tools/build/v2/.' for user-config configuration file 'user-config.jam'.
+notice: Loading user-config configuration file 'user-config.jam' from 'D:/DevTools/boost_1_54_0/tools/build/v2'.
+notice: Searching '../../../..' for project-config configuration file 'project-config.jam'.
+notice: Loading project-config configuration file 'project-config.jam' from '../../../..'.
+notice: [msvc-cfg] msvc-11.0 detected, command: 'C:\Program Files (x86)\microsoft visual studio 11.0\vc\bin\cl.exe'
+notice: [msvc-cfg] msvc-10.0 detected, command: 'C:\Program Files (x86)\Microsoft Visual Studio 10.0\vc\bin\cl.exe'
+notice: [msvc-cfg] msvc-10.0express detected, command: 'C:\Program Files (x86)\Microsoft Visual Studio 10.0\vc\bin\cl.exe'
+notice: will use 'C:\Program Files (x86)\microsoft visual studio 11.0\vc\bin\cl.exe' for msvc, condition <toolset>msvc-11.0
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>/<address-model>', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>/<address-model>32', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>x86/<address-model>', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>x86/<address-model>32', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>/<address-model>64', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86_amd64 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>x86/<address-model>64', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86_amd64 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>ia64/<address-model>', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86_ia64 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>ia64/<address-model>64', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86_ia64 >nul
+'
+notice: [msvc-cfg] condition: '<toolset>msvc-11.0/<architecture>arm/<address-model>32', setup: 'call "C:\Program Files (x86)\microsoft visual studio 11.0\vc\vcvarsall.bat" x86_arm >nul
+'
+notice: [cmdline-cfg] toolset gcc not previously configured; attempting to auto-configure now
+notice: will use 'g++' for gcc, condition <toolset>gcc-4.8.1-mingw
+notice: using gcc libraries :: <toolset>gcc-4.8.1-mingw :: D:\DevTools\mingw-x64-4.8.1-release-posix-seh-rev1\mingw64/bin D:\DevTools\mingw-x64-4.8.1-release-posix-seh-rev1\mingw64/lib D:\DevTools\mingw-x64-4.8.1-release-posix-seh-rev1\mingw64/lib32 D:\DevTools\mingw-x64-4.8.1-release-posix-seh-rev1\mingw64/lib64
+warning: toolset gcc initialization: can not find tool d:/devtools/mingw-x64-4.8.1-release-posix-seh-rev1/mingw64/x86_64-w64-mingw32/bin/ar.exe
+warning: initialized from
+notice: using gcc archiver :: <toolset>gcc-4.8.1-mingw :: d:/devtools/mingw-x64-4.8.1-release-posix-seh-rev1/mingw64/x86_64-w64-mingw32/bin/ar.exe
+warning: toolset gcc initialization: can not find tool d:/devtools/mingw-x64-4.8.1-release-posix-seh-rev1/mingw64/x86_64-w64-mingw32/bin/ranlib.exe
+warning: initialized from
+notice: using gcc ranlib :: <toolset>gcc-4.8.1-mingw :: d:/devtools/mingw-x64-4.8.1-release-posix-seh-rev1/mingw64/x86_64-w64-mingw32/bin/ranlib.exe
+notice: using rc compiler :: <toolset>gcc-4.8.1-mingw :: D:\DevTools\mingw-x64-4.8.1-release-posix-seh-rev1\mingw64\bin\windres.exe
+notice: [zlib] Using pre-installed library
+notice: [zlib] Condition
+notice: iostreams: not using bzip2 compression 
+notice: iostreams: not using bzip2 compression 
+notice: [python-cfg] Configuring python...
+notice: [python-cfg] Checking interpreter command "python"...
+notice: [python-cfg] running command 'DIR /-C /A:S "D:\DevTools\Python27\python.exe" 2>&1'
+notice: [python-cfg] running command 'python -c "from sys import *; print('version=%d.%d\nplatform=%s\nprefix=%s\nexec_prefix=%s\nexecutable=%s' % (version_info[0],version_info[1],platform,prefix,exec_prefix,executable))" 2>&1'
+notice: [python-cfg] ...requested configuration matched!
+notice: [python-cfg] Details of this Python configuration:
+notice: [python-cfg]   interpreter command: "python"
+notice: [python-cfg]   include path: "d:\DevTools\Python27\Include"
+notice: [python-cfg]   library path: "d:\DevTools\Python27\libs"
+notice: [python-cfg]   DLL search path: "d:\DevTools\Python27"
+...patience...
+...patience...
+...found 1780 targets...
+...updating 9 targets...
+gcc.link.dll ..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\libboost_python-mgw48-d-1_54.dll.a
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\numeric.o: In function `throw_load_failure':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/numeric.cpp:31: undefined reference to `__imp_PyExc_ImportError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\numeric.o: In function `boost::python::api::object::object()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/object_core.hpp:504: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o: In function `boost::python::detail::list_base::call(boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/list.cpp:17: undefined reference to `__imp_PyList_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o: In function `boost::python::detail::list_base::append(boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/list.cpp:30: undefined reference to `__imp_PyList_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o: In function `boost::python::detail::list_base::insert(int, boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/list.cpp:63: undefined reference to `__imp_PyList_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o: In function `boost::python::detail::list_base::reverse()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/list.cpp:108: undefined reference to `__imp_PyList_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o: In function `boost::python::detail::list_base::sort()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/list.cpp:121: undefined reference to `__imp_PyList_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o:d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/list.cpp:166: more undefined references to `__imp_PyList_Type' follow
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\long.o: In function `boost::python::detail::long_base::call(boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/long.cpp:13: undefined reference to `__imp_PyLong_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\long.o: In function `boost::python::detail::long_base::call(boost::python::api::object const&, boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/long.cpp:20: undefined reference to `__imp_PyLong_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\long.o: In function `boost::python::detail::long_base::long_base()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/long.cpp:26: undefined reference to `__imp_PyLong_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\dict.o: In function `check_exact':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/dict.cpp:25: undefined reference to `__imp_PyDict_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\dict.o: In function `boost::python::detail::dict_base::call(boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/dict.cpp:33: undefined reference to `__imp_PyDict_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\dict.o: In function `boost::python::detail::dict_base::get(boost::python::api::object const&) const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/dict.cpp:72: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\dict.o: In function `boost::python::detail::register_dict_pytype_ptr::register_dict_pytype_ptr()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/dict.cpp:180: undefined reference to `__imp_PyDict_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\tuple.o: In function `boost::python::detail::tuple_base::call(boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/tuple.cpp:13: undefined reference to `__imp_PyTuple_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\tuple.o: In function `boost::python::detail::register_tuple_pytype_ptr::register_tuple_pytype_ptr()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/tuple.cpp:30: undefined reference to `__imp_PyTuple_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\str.o: In function `boost::python::detail::str_base::call(boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/str.cpp:19: undefined reference to `__imp_PyString_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\str.o: In function `boost::python::detail::register_str_pytype_ptr::register_str_pytype_ptr()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/str.cpp:398: undefined reference to `__imp_PyString_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\from_python.o: In function `boost::python::converter::rvalue_from_python_stage2(_object*, boost::python::converter::rvalue_from_python_stage1_data&, boost::python::converter::registration const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/from_python.cpp:107: undefined reference to `__imp_PyExc_TypeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\from_python.o: In function `throw_no_lvalue_from_python':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/from_python.cpp:214: undefined reference to `__imp_PyExc_TypeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\from_python.o: In function `lvalue_result_from_python':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/from_python.cpp:238: undefined reference to `__imp_PyExc_ReferenceError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\from_python.o: In function `boost::python::converter::pointer_result_from_python(_object*, boost::python::converter::registration const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/from_python.cpp:272: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\from_python.o: In function `boost::python::pytype_check(_typeobject*, _object*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/from_python.cpp:297: undefined reference to `__imp_PyExc_TypeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\registry.o: In function `boost::python::converter::registration::get_class_object() const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/registry.cpp:60: undefined reference to `__imp_PyExc_TypeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\registry.o: In function `boost::python::converter::registration::to_python(void const volatile*) const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/registry.cpp:84: undefined reference to `__imp_PyExc_TypeError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/registry.cpp:91: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o: In function `enum_str':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/enum.cpp:76: undefined reference to `__imp_PyInt_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o: In function `new_enum_type':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/enum.cpp:150: undefined reference to `__imp_PyType_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/enum.cpp:154: undefined reference to `__imp_PyInt_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/enum.cpp:160: undefined reference to `__imp_PyType_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o: In function `boost::python::api::object::object()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/object_core.hpp:504: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o: In function `boost::python::scope::scope()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/scope.hpp:48: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o: In function `boost::python::converter::pytype_object_manager_traits<&PyDict_Type, boost::python::dict>::adopt(_object*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/converter/pytype_object_mgr_traits.hpp:37: undefined reference to `__imp_PyDict_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o: In function `_object* boost::python::get_managed_object<_typeobject>(boost::python::handle<_typeobject> const&, boost::python::tag_t)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/handle.hpp:258: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `property_init':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:86: undefined reference to `__imp__Py_NoneStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:88: undefined reference to `__imp__Py_NoneStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:90: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `static_data_descr_set':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:130: undefined reference to `__imp_PyExc_AttributeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `boost::python::objects::static_data()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:211: undefined reference to `__imp_PyType_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:212: undefined reference to `__imp_PyProperty_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `class_setattro':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:246: undefined reference to `__imp_PyType_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `boost::python::objects::class_metatype()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:319: undefined reference to `__imp_PyType_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:320: undefined reference to `__imp_PyType_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `boost::python::objects::class_type()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:474: undefined reference to `__imp_PyBaseObject_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `boost::python::objects::module_prefix()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:503: undefined reference to `__imp_PyModule_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `get_class':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:532: undefined reference to `__imp_PyExc_RuntimeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `new_class':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:576: undefined reference to `__imp_PyType_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:578: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `boost::python::objects::class_base::add_property(char const*, boost::python::api::object const&, char const*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:621: undefined reference to `__imp_PyProperty_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `boost::python::objects::class_base::add_property(char const*, boost::python::api::object const&, boost::python::api::object const&, char const*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:631: undefined reference to `__imp_PyProperty_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `no_init':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:665: undefined reference to `__imp_PyExc_RuntimeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `callable_check':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:702: undefined reference to `__imp_PyExc_TypeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `__static_initialization_and_destruction_0':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/class.cpp:300: undefined reference to `__imp_PyType_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o: In function `_object* boost::python::get_managed_object<_object>(boost::python::handle<_object> const&, boost::python::tag_t)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/handle.hpp:258: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::objects::function::function(boost::python::objects::py_function const&, boost::python::detail::keyword const*, unsigned int)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:81: undefined reference to `__imp__Py_NoneStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:110: undefined reference to `__imp_PyType_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::objects::function::argument_error(_object*, _object*) const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:300: undefined reference to `__imp_PyExc_TypeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `not_implemented':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:399: undefined reference to `__imp__Py_NotImplementedStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:399: undefined reference to `__imp__Py_NotImplementedStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:400: undefined reference to `__imp__Py_NotImplementedStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::objects::function::add_to_namespace(boost::python::api::object const&, char const*, boost::python::api::object const&, char const*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:440: undefined reference to `__imp_PyClass_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:466: undefined reference to `__imp_PyStaticMethod_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:476: undefined reference to `__imp_PyExc_RuntimeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `function_descr_get':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:610: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `function_get_class':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:671: undefined reference to `__imp_PyCFunction_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `function_get_module':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:683: undefined reference to `__imp_PyExc_AttributeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::detail::pure_virtual_called()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/function.cpp:788: undefined reference to `__imp_PyExc_RuntimeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::detail::none()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/detail/none.hpp:16: undefined reference to `__imp__Py_NoneStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/detail/none.hpp:16: undefined reference to `__imp__Py_NoneStruct'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/detail/none.hpp:16: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::api::object_base::is_none() const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/object_core.hpp:548: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o: In function `boost::python::converter::extract_pointer<char const*>::extract_pointer(_object*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/extract.hpp:218: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o:d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/extract.hpp:231: more undefined references to `__imp__Py_NoneStruct' follow
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\life_support.o: In function `boost::python::objects::make_nurse_and_patient(_object*, _object*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/life_support.cpp:96: undefined reference to `__imp_PyType_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\pickle_support.o: In function `instance_reduce':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/pickle_support.cpp:35: undefined reference to `__imp_PyExc_RuntimeError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/pickle_support.cpp:58: undefined reference to `__imp_PyExc_RuntimeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\pickle_support.o: In function `boost::python::converter::pyobject_type<boost::python::tuple, &PyTuple_Type>::get_pytype()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/converter/pyobject_type.hpp:31: undefined reference to `__imp_PyTuple_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\errors.o: In function `boost::python::handle_exception_impl(boost::function0<void>)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/errors.cpp:38: undefined reference to `__imp_PyExc_OverflowError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/errors.cpp:42: undefined reference to `__imp_PyExc_IndexError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/errors.cpp:46: undefined reference to `__imp_PyExc_ValueError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/errors.cpp:50: undefined reference to `__imp_PyExc_RuntimeError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/errors.cpp:54: undefined reference to `__imp_PyExc_RuntimeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\module.o: In function `boost::python::detail::init_module(char const*, void (*)())':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/module.cpp:59: undefined reference to `__imp_Py_InitModule4'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_pytype':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:164: undefined reference to `__imp_PyInt_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:195: undefined reference to `__imp_PyInt_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:256: undefined reference to `__imp_PyLong_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_slot':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:314: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_pytype':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:326: undefined reference to `__imp_PyBool_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_slot':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:349: undefined reference to `__imp_PyFloat_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:349: undefined reference to `__imp_PyFloat_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_pytype':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:366: undefined reference to `__imp_PyFloat_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:400: undefined reference to `__imp_PyString_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:449: undefined reference to `__imp_PyUnicode_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_slot':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:457: undefined reference to `__imp_PyComplex_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:457: undefined reference to `__imp_PyComplex_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `extract':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:465: undefined reference to `__imp_PyComplex_Type'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:465: undefined reference to `__imp_PyComplex_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `get_pytype':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:482: undefined reference to `__imp_PyComplex_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `extract':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:218: undefined reference to `__imp_PyExc_OverflowError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:218: undefined reference to `__imp_PyExc_OverflowError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:218: undefined reference to `__imp_PyExc_OverflowError'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/converter/builtin_converters.cpp:218: undefined reference to `__imp_PyExc_OverflowError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o: In function `boost::python::converter::wrap_pytype<&PyString_Type>::get_pytype()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/converter/pytype_function.hpp:22: undefined reference to `__imp_PyString_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\iterator.o: In function `boost::python::objects::stop_iteration_error()':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/iterator.cpp:35: undefined reference to `__imp_PyExc_StopIteration'
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object/iterator.cpp:35: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object_protocol.o: In function `boost::python::api::getattr(boost::python::api::object const&, boost::python::api::object const&, boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object_protocol.cpp:21: undefined reference to `__imp_PyExc_AttributeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object_protocol.o: In function `boost::python::api::getattr(boost::python::api::object const&, char const*, boost::python::api::object const&)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/object_protocol.cpp:52: undefined reference to `__imp_PyExc_AttributeError'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\wrapper.o: In function `boost::python::detail::wrapper_base::get_override(char const*, _typeobject*) const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../libs/python/src/wrapper.cpp:29: undefined reference to `__imp_PyMethod_Type'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\import.o: In function `boost::python::converter::extract_pointer<char*>::extract_pointer(_object*)':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/extract.hpp:218: undefined reference to `__imp__Py_NoneStruct'
+..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\import.o: In function `boost::python::converter::extract_pointer<char*>::operator()() const':
+d:\DevTools\boost_1_54_0\libs\python\example\quickstart/../../../../boost/python/extract.hpp:231: undefined reference to `__imp__Py_NoneStruct'
+collect2.exe: error: ld returned 1 exit status
+
+    "g++" -L"d:\DevTools\Python27\libs" -Wl,-R -Wl,"d:\DevTools\Python27" -Wl,-R -Wl,"d:\DevTools\Python27\libs" "-Wl,--out-implib,..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\libboost_python-mgw48-d-1_54.dll.a" -o "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\libboost_python-mgw48-d-1_54.dll"  -shared -Wl,--start-group "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\numeric.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\list.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\long.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\dict.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\tuple.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\str.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\slice.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\from_python.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\registry.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\type_id.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\enum.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\class.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\inheritance.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\life_support.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\pickle_support.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\errors.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\module.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\builtin_converters.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\converter\arg_to_python_base.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\iterator.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\stl_iterator.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object_protocol.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object_operators.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\wrapper.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\import.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\exec.o" "..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\object\function_doc_signature.o"  -Wl,-Bstatic  -Wl,-Bdynamic -lpython27 -Wl,--end-group -g 
+
+...failed gcc.link.dll ..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\libboost_python-mgw48-d-1_54.dll.a ..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\libboost_python-mgw48-d-1_54.dll...
+...removing ..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug\libboost_python-mgw48-d-1_54.dll.a
+...skipped <pbin\gcc-mingw-4.8.1\debug>extending.pyd for lack of <p..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug>libboost_python-mgw48-d-1_54.dll.a...
+...skipped <pbin\gcc-mingw-4.8.1\debug>libextending.dll.a for lack of <p..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug>libboost_python-mgw48-d-1_54.dll.a...
+...skipped <pbin\test_ext.test\gcc-mingw-4.8.1\debug>test_ext for lack of <pbin\gcc-mingw-4.8.1\debug>extending.pyd...
+...skipped <pbin\gcc-mingw-4.8.1\debug>embedding.exe for lack of <p..\..\..\..\bin.v2\libs\python\build\gcc-mingw-4.8.1\debug>libboost_python-mgw48-d-1_54.dll.a...
+...skipped <pbin\test_embed.test\gcc-mingw-4.8.1\debug>test_embed.run for lack of <pbin\gcc-mingw-4.8.1\debug>embedding.exe...
+...failed updating 2 targets...
+...skipped 7 targets...
