@@ -4,8 +4,16 @@ project(negine)
 include(cmake/internal_utils.cmake)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
-set(SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(NEGINE_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(TOOLS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
-add_subdirectory(${SRC_PATH})
+if(SHARED)
+	set(NEGINE_SHARED_BUILD ON)
+	set(NEGINE_STATIC_BUILD OFF)
+else()
+	set(NEGINE_SHARED_BUILD OFF)
+	set(NEGINE_STATIC_BUILD ON)
+endif()
+
+add_subdirectory(${NEGINE_SRC_PATH})
 add_subdirectory(${TOOLS_PATH})

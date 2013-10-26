@@ -1,5 +1,4 @@
 set(SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-set(TOOLS_PATH ${negine_SOURCE_DIR}/thirdparty)
 
 add_source_group("base"         ${SRC_PATH}/base        BASE_SRC)
 add_source_group("math"         ${SRC_PATH}/math        MATH_SRC)
@@ -25,7 +24,6 @@ set(CMAKE_DEBUG_POSTFIX "_d")
 include_directories(
     ${TOOLS_PATH}
     ${SRC_PATH}
-    ${TOOLS_PATH}/lua/include
 )
 
 add_library(negine
@@ -33,3 +31,6 @@ add_library(negine
     ${BASE_SRC}
     ${RENDER_SRC}
 )
+
+add_subdirectory(tests)
+add_subdirectory(app)
