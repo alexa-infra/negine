@@ -24,8 +24,35 @@ protected:
     }
 };
 
+#include <cmath>
+#include <boost/python.hpp>
+#include <string>
+
+using namespace boost::python;
+
+std::string greet();
+
+BOOST_PYTHON_MODULE(example)
+{
+	def( "greet", greet );
+}
+
+std::string greet() {
+	return "hello world from embedded python";
+}
+
 int main()
 {
+	Py_Initialize();
+	if (PyImport_AppendInittab("example", initexample) == -1)
+		return 1;
+	object m = import("__main__");
+	object global(m.attr("__dict__"));
+	object result = exec(
+		"from example import greet\n"
+		"print greet()         \n",
+		global, global);
+    
     Demo app;
     app.Run();
     return 0;
