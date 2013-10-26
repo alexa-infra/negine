@@ -2,6 +2,7 @@
 macro(add_source_group FILTER_NAME SOURCE_PATH TARGET_LIST)
     file(GLOB TEMP_SRC
         ${SOURCE_PATH}/*.h
+        ${SOURCE_PATH}/*.hpp
         ${SOURCE_PATH}/*.cpp
         ${SOURCE_PATH}/*.cc
         ${SOURCE_PATH}/*.c

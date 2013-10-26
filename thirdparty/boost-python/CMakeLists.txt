@@ -28,8 +28,9 @@ if (NOT PYTHONLIBS_FOUND)
 	message(FATAL ERROR "Python is not found")
 endif()
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11 -fno-exceptions -fno-rtti")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wattributes")
+if(UNIX OR MINGW)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
+endif()
 
 include_directories(
 	${SRC_PATH}
@@ -37,18 +38,42 @@ include_directories(
 	${PYTHON_INCLUDE_DIRS}
 )
 
-add_library(boostpython SHARED
-	${SRC}
-)
+if(BOOSTPYTHON_STATIC)
+	add_library(boostpython-static STATIC ${SRC})
 
-target_link_libraries(boostpython
-	${PYTHON_LIBRARIES}
-)
+	target_link_libraries(boostpython-static
+		${PYTHON_LIBRARIES}
+	)
 
-add_definitions(-DBOOST_PYTHON_DYNAMIC_LIB
-				-DBOOST_PYTHON_SOURCE
+	set_target_properties(boostpython-static PROPERTIES
+		OUTPUT_NAME "boostpython"
+		)
+endif()
+
+if(BOOSTPYTHON_SHARED)
+	add_library(boostpython SHARED ${SRC})
+
+	target_link_libraries(boostpython
+		${PYTHON_LIBRARIES}
+	)
+
+	set_target_properties(boostpython PROPERTIES
+		COMPILE_FLAGS "-DBOOST_PYTHON_DYNAMIC_LIB"
+		OUTPUT_NAME "boostpython"
+		)
+endif()
+
+
+add_definitions(-DBOOST_PYTHON_SOURCE
 				-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 
-if(WIN64 AND NOT MSVC)
+set(SIZEOF_VOIDP ${CMAKE_SIZEOF_VOID_P})
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	set(ARCH_64 TRUE)
+else()
+	set(ARCH_64 FALSE)
+endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+if(WIN32 AND ARCH_64 AND NOT MSVC)
 	add_definitions(-DMS_WIN64)
 endif()
