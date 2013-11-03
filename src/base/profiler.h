@@ -3,6 +3,7 @@
 #include "base/singleton.h"
 #include "base/timer.h"
 #include <map>
+#include <string>
 #include <ostream>
 
 namespace base {

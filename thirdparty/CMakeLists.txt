@@ -14,6 +14,9 @@ set(SDL_SHARED ${NEGINE_SHARED_BUILD} CACHE BOOL "SDL shared build" FORCE)
 set(BOOSTPYTHON_SHARED ${NEGINE_SHARED_BUILD} CACHE BOOL "Boost python shared build" FORCE)
 set(FREEGLUT_SHARED ${NEGINE_SHARED_BUILD} CACHE BOOL "Freeglut shared build" FORCE)
 
+set(SDL_JOYSTICK OFF)
+set(SDL_HAPTIC OFF)
+
 add_subdirectory(boost-python)
 add_subdirectory(freeglut)
 add_subdirectory(SDL)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/types.h"
 #include <string>
 #include <tuple>
 
@@ -21,9 +22,11 @@ inline std::string join(const std::string& a) {
     return a;
 }
 
+#if !defined COMPILER_MSVC
 template<typename T, typename... Args>
 std::string join(const std::string& a, const T& b, Args... p) {
     return join(a + '/' + b, p...);
 }
+#endif
 
 }}

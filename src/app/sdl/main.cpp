@@ -1,11 +1,25 @@
 #include "sdlapp.h"
+#include <cmath>
+#include <boost/python.hpp>
+#include <string>
 
 using namespace base;
+using namespace boost::python;
+
+extern "C" __declspec(dllexport) void initexample(void);
 
 class Demo : public SDLApp
 {
 public:
-    Demo() {
+    Demo(const std::string& filename) {
+        Py_Initialize();
+        PyImport_AppendInittab("example", initexample);
+        object m = import("__main__");
+        global = object(m.attr("__dict__"));
+
+        exec_file(filename.c_str(), global, global);
+        object fuu = extract<object>(global["fuu"]);
+        fuu();
     }
     virtual ~Demo() {
     }
@@ -21,14 +35,11 @@ protected:
     }
 
     void OnKeyboardDown( u8 key ) {
+        exec("print greet()", global, global);
     }
+
+    object global;
 };
-
-#include <cmath>
-#include <boost/python.hpp>
-#include <string>
-
-using namespace boost::python;
 
 std::string greet();
 
@@ -37,23 +48,14 @@ BOOST_PYTHON_MODULE(example)
 	def( "greet", greet );
 }
 
-std::string greet() {
+std::string greet()
+{
 	return "hello world from embedded python";
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-	Py_Initialize();
-	if (PyImport_AppendInittab("example", initexample) == -1)
-		return 1;
-	object m = import("__main__");
-	object global(m.attr("__dict__"));
-	object result = exec(
-		"from example import greet\n"
-		"print greet()         \n",
-		global, global);
-    
-    Demo app;
+    Demo app(argv[1]);
     app.Run();
     return 0;
 }

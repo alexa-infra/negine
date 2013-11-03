@@ -27,7 +27,7 @@ if(NEGINE_SHARED_BUILD)
     target_link_libraries(sdl-app SDL2 negine boostpython)
 endif()
 
-add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_ALL_NO_LIB)
 
 set(SIZEOF_VOIDP ${CMAKE_SIZEOF_VOID_P})
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
