@@ -55,3 +55,16 @@ typedef i64 iptr;
     void *operator new(size_t size);  \
     void *operator new[](size_t size)
 
+#ifndef NEGINE_API
+#   ifdef OS_WIN
+#       if defined(NEGINE_SHARED_BUILD) // build dll
+#           define NEGINE_API __declspec(dllexport) // gcc supports it too
+#       elif !defined(NEGINE_STATIC_BUILD) // use dll
+#           define NEGINE_API __declspec(dllimport)
+#       else // static library
+#           define NEGINE_API
+#       endif
+#   elif defined(COMPILER_GCC)
+#       define NEGINE_API __attribute__((visibility("default")))
+#   endif
+#endif

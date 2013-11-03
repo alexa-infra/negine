@@ -13,13 +13,10 @@ include_directories(
 )
 add_executable(tests ${TESTS_SRC})
 
-add_dependencies(tests
-    negine
-)
-
 target_link_libraries(tests
-    negine
+    negine-static
 )
+add_definitions(-DNEGINE_STATIC_BUILD)
 
 if(UNIX)
   target_link_libraries(tests pthread)

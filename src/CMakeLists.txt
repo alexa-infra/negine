@@ -5,7 +5,7 @@ add_source_group("math"         ${SRC_PATH}/math        MATH_SRC)
 add_source_group("render"       ${SRC_PATH}/render      RENDER_SRC)
 
 if(UNIX OR MINGW)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11 -fvisibility=hidden")
     add_definitions(-D_DEBUG)
 endif()
 if(APPLE)
@@ -26,11 +26,30 @@ include_directories(
     ${SRC_PATH}
 )
 
-add_library(negine
-    ${MATH_SRC}
-    ${BASE_SRC}
-    ${RENDER_SRC}
-)
+if(NEGINE_STATIC_BUILD)
+    add_library(negine-static STATIC
+        ${MATH_SRC}
+        ${BASE_SRC}
+        ${RENDER_SRC}
+    )
+    set_target_properties(negine-static PROPERTIES
+        COMPILE_FLAGS "-DNEGINE_STATIC_BUILD"
+        OUTPUT_NAME "negine"
+        )
+endif()
+if(NEGINE_SHARED_BUILD)
+    add_library(negine SHARED
+        ${MATH_SRC}
+        ${BASE_SRC}
+        ${RENDER_SRC}
+    )
+    set_target_properties(negine PROPERTIES
+        COMPILE_FLAGS "-DNEGINE_SHARED_BUILD"
+        OUTPUT_NAME "negine"
+        )
+endif()
 
-add_subdirectory(tests)
+if(NEGINE_STATIC_BUILD)
+    add_subdirectory(tests)
+endif()
 add_subdirectory(app)

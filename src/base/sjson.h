@@ -14,7 +14,7 @@ namespace sjson {
         typeTrue, typeFalse, typeInt, typeFloat, typeString, typeArray, typeDict, typeNull
     };
 
-    struct Variant {
+    struct NEGINE_API Variant {
     public:
         typedef std::map<std::string, Variant> Map;
         typedef std::vector<Variant> Array;
@@ -68,11 +68,11 @@ namespace sjson {
         size_t size() const;
     };
 
-    bool parse(const std::string& json, Variant& obj, bool simplified = true);
-    std::string write(const Variant& v, bool simplified = true);
+    NEGINE_API bool parse(const std::string& json, Variant& obj, bool simplified = true);
+    NEGINE_API std::string write(const Variant& v, bool simplified = true);
     
-    bool readFile(const std::string& filename, Variant& obj, bool simplified = true);
-    void writeFile(const std::string& filename, Variant& obj, bool simplified = true);
+    NEGINE_API bool readFile(const std::string& filename, Variant& obj, bool simplified = true);
+    NEGINE_API void writeFile(const std::string& filename, Variant& obj, bool simplified = true);
 
 } // namespace sjson
 } // namespace base

@@ -23,7 +23,7 @@ namespace opengl
 class TextureLoader;
 class GLFuncLoader;
 
-class DeviceContext
+class NEGINE_API DeviceContext
 {
     GLFuncLoader* loader;
     TextureLoader* texture_loader_;

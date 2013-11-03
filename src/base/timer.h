@@ -13,7 +13,7 @@ namespace base
 
 //! Timer class, count time in seconds (with decimal part)
 //! TODO: add f64 time return
-class Timer
+class NEGINE_API Timer
 {
 public:
     Timer();

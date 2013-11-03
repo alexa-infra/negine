@@ -14,16 +14,16 @@ include_directories(
     ${PYTHON_INCLUDE_DIRS}
 )
 
-add_executable(sdl-app ${SRC})
-
 if(NEGINE_STATIC_BUILD)
-    target_link_libraries(sdl-app SDL2-static negine boostpython-static)
-    set_target_properties(sdl-app PROPERTIES
-        COMPILE_FLAGS "-DBOOST_PYTHON_STATIC_LIB"
+    add_executable(sdl-app-static ${SRC})
+    target_link_libraries(sdl-app-static SDL2-static negine-static boostpython-static)
+    set_target_properties(sdl-app-static PROPERTIES
+        COMPILE_FLAGS "-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD"
     )
 endif()
 
 if(NEGINE_SHARED_BUILD)
+    add_executable(sdl-app ${SRC})
     target_link_libraries(sdl-app SDL2 negine boostpython)
 endif()
 
