@@ -13,99 +13,77 @@ namespace opengl
 
 namespace imp
 {
-    struct Edge
-    {
-        u32 v[2];
-        u32 p[2];
-    };
-
     struct Vertex
     {
-        math::vec3f position;
-        math::vec2f uv;
-        math::vec3f normal;
+        u32 pos;
+        u32 normal;
+        u32 uv;
+        u32 color;
 
-        std::vector<u32> edges;
-        f32 weights[4];
-
-        math::vec4f color;
+        Vertex(u32 p, u32 n = -1, u32 v = -1, u32 c = -1)
+            : pos(p), normal(n), uv(v), color(c)
+        {}
     };
 
     struct Polygon
     {
         u32 v[3];
-        u32 e[3];
-        math::vec2f uv[3];
-        math::vec3f normal;
-
-        math::vec4f color;
     };
 
     struct Line
     {
         u32 v[2];
-        math::vec4f color;
     };
 
-    struct MeshBuilder
+    class MeshBuilder
     {
-        enum {
-            hasVertexNormal,
-            hasVertexColor,
-            hasVertexUV,
-            hasPolygonColor
-        };
-        u32 mask;
-
+    public:
         MeshBuilder();
 
-        std::vector<Vertex> vertexList;
-        std::vector<Polygon> polygonList;
-        std::vector<Line> lineList;
-        std::vector<Edge> edgeList;
+        u32 addVertex(const math::vec3f& p);
 
-        u32 nextVertexIndex() const
-        {
-            return vertexList.size();
-        }
+        u32 addVertex(const math::vec3f& p, const math::vec2f& uv);
 
-        Vertex& addVertex(const math::vec3f& p);
+        u32 addVertex(const math::vec3f& p, const math::vec3f& n);
 
-        Vertex& addVertex(const math::vec3f& p, const math::vec2f& uv);
+        u32 addVertex(const math::vec3f& p, const math::vec2f& uv, const math::vec3f& n);
 
-        Vertex& addVertex(const math::vec3f& p, const math::vec3f& n);
+        u32 addVertex(const math::vec3f& p, const math::vec4f& color);
 
-        Vertex& addVertex(const math::vec3f& p, const math::vec2f& uv, const math::vec3f& n);
+        void addPolygonQuad(const math::vec3f& a1, const math::vec3f& a2, const math::vec3f& a3, const math::vec3f& a4, const math::vec4f& color);
 
-        Vertex& addVertex(const math::vec3f& p, const math::vec4f& color);
+        u32 addPolygon(u32 x, u32 y, u32 z);
 
-        void addPolygonQuad(u32 x, u32 y, u32 z, u32 w, const math::vec4f& color);
+        u32 addLine(u32 x, u32 y);
 
-        Polygon& addPolygon(u32 x, u32 y, u32 z);
-
-        Polygon& addPolygon(u32 x, u32 y, u32 z, const math::vec2f& uv1, const math::vec2f& uv2, const math::vec2f& uv3);
-
-        Polygon& addPolygon(u32 x, u32 y, u32 z, const math::vec4f& color);
-
-        Line& addLine(u32 x, u32 y);
-
-        Line& addLine(u32 x, u32 y, const math::vec4f& color);
-
-        Line& addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color);
-
-        u32 addEdge(u32 a, u32 b, u32 p);
+        u32 addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color);
 
         void getLineList(opengl::Mesh& mesh);
 
         void getDrawingList(opengl::Mesh& mesh);
-
-        void createQuad();
 
         void createCube();
 
         void createGrid();
 
         void readOBJ(const std::string& filename);
+    private:
+        std::vector<math::vec3f> posData;
+        std::vector<math::vec2f> uvData;
+        std::vector<math::vec3f> normalData;
+        std::vector<math::vec4f> colorData;
+
+        std::vector<Vertex> vertexList;
+        std::vector<Polygon> polygonList;
+        std::vector<Line> lineList;
+
+        enum
+        {
+            hasVertexNormal,
+            hasVertexColor,
+            hasVertexUV
+        };
+        u32 mask;
     };
 }
 

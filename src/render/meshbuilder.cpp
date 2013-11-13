@@ -14,64 +14,69 @@ namespace imp {
 MeshBuilder::MeshBuilder()
     : mask(0)
 {
-    vertexList.reserve(1000);
-    polygonList.reserve(1000);
-    edgeList.reserve(1000);
 }
 
-Vertex& MeshBuilder::addVertex(const vec3f& p)
+u32 MeshBuilder::addVertex(const vec3f& p)
 {
+    u32 pIdx = posData.size();
+    posData.push_back(p);
+    Vertex v(pIdx);
     u32 idx = vertexList.size();
-    Vertex v;
-    v.position = p;
     vertexList.push_back(v);
-    return vertexList[idx];
+    return idx;
 }
 
-Vertex& MeshBuilder::addVertex(const vec3f& p, const vec2f& uv)
+u32 MeshBuilder::addVertex(const vec3f& p, const vec2f& uv)
 {
     mask |= hasVertexUV;
-    Vertex& v = addVertex(p);
-    v.uv = uv;
-    return v;
+    u32 idx = addVertex(p);
+    Vertex& vertex = vertexList[idx];
+    vertex.uv = uvData.size();
+    uvData.push_back(uv);
+    return idx;
 }
 
-Vertex& MeshBuilder::addVertex(const vec3f& p, const vec3f& n)
+u32 MeshBuilder::addVertex(const vec3f& p, const vec3f& n)
 {
     mask |= hasVertexNormal;
-    Vertex& v = addVertex(p);
-    v.normal = n;
-    return v;
+    u32 idx = addVertex(p);
+    Vertex& vertex = vertexList[idx];
+    vertex.normal = normalData.size();
+    normalData.push_back(n);
+    return idx;
 }
 
-Vertex& MeshBuilder::addVertex(const vec3f& p, const vec2f& uv, const vec3f& n)
+u32 MeshBuilder::addVertex(const vec3f& p, const vec2f& uv, const vec3f& n)
 {
-    mask |= hasVertexUV;
+    u32 idx = addVertex(p, uv);
     mask |= hasVertexNormal;
-    Vertex& v = addVertex(p);
-    v.uv = uv;
-    v.normal = n;
-    return v;
+    Vertex& vertex = vertexList[idx];
+    vertex.normal = normalData.size();
+    normalData.push_back(n);
+    return idx;
 }
 
-Vertex& MeshBuilder::addVertex(const vec3f& p, const vec4f& color)
+u32 MeshBuilder::addVertex(const vec3f& p, const vec4f& color)
 {
     mask |= hasVertexColor;
-    Vertex& v = addVertex(p);
-    v.color = color;
-    return v;
+    u32 idx = addVertex(p);
+    Vertex& vertex = vertexList[idx];
+    vertex.color = colorData.size();
+    colorData.push_back(color);
+    return idx;
 }
 
-void MeshBuilder::addPolygonQuad(u32 x, u32 y, u32 z, u32 w, const vec4f& color)
+void MeshBuilder::addPolygonQuad(const math::vec3f& a1, const vec3f& a2, const vec3f& a3, const vec3f& a4, const vec4f& color)
 {
-    mask |= hasPolygonColor;
-    Polygon& a = addPolygon(x, y, z);
-    a.color = color;
-    Polygon& b = addPolygon(x, z, w);
-    b.color = color;
+    u32 idx1 = addVertex(a1, color);
+    u32 idx2 = addVertex(a2, color);
+    u32 idx3 = addVertex(a3, color);
+    u32 idx4 = addVertex(a4, color);
+    addPolygon(idx1, idx2, idx3);
+    addPolygon(idx1, idx3, idx4);
 }
 
-Polygon& MeshBuilder::addPolygon(u32 x, u32 y, u32 z)
+u32 MeshBuilder::addPolygon(u32 x, u32 y, u32 z)
 {
     Polygon p;
     p.v[0] = x;
@@ -80,89 +85,29 @@ Polygon& MeshBuilder::addPolygon(u32 x, u32 y, u32 z)
     Vertex& a = vertexList[x];
     Vertex& b = vertexList[y];
     Vertex& c = vertexList[z];
-    p.uv[0] = a.uv;
-    p.uv[1] = b.uv;
-    p.uv[2] = c.uv;
-    vec3f xy = b.position - a.position;
-    vec3f xz = c.position - a.position;
-    p.normal = cross(xz, xy);
+    //vec3f xy = b.position - a.position;
+    //vec3f xz = c.position - a.position;
+    //p.normal = cross(xz, xy);
     u32 idx = polygonList.size();
     polygonList.push_back(p);
-    p.e[0] = addEdge(x, y, idx);
-    p.e[1] = addEdge(x, z, idx);
-    p.e[2] = addEdge(y, z, idx);
-    return polygonList[idx];
+    return idx;
 }
 
-Polygon& MeshBuilder::addPolygon(u32 x, u32 y, u32 z, const vec2f& uv1, const vec2f& uv2, const vec2f& uv3)
-{
-    mask |= hasVertexUV;
-    Polygon& p = addPolygon(x, y, z);
-    p.uv[0] = uv1;
-    p.uv[1] = uv2;
-    p.uv[2] = uv3;
-    return p;
-}
-
-Polygon& MeshBuilder::addPolygon(u32 x, u32 y, u32 z, const vec4f& color)
-{
-    mask |= hasPolygonColor;
-    Polygon& p = addPolygon(x, y, z);
-    p.color = color;
-    return p;
-}
-
-Line& MeshBuilder::addLine(u32 x, u32 y)
+u32 MeshBuilder::addLine(u32 x, u32 y)
 {
     Line line;
     line.v[0] = x;
     line.v[1] = y;
     u32 idx = lineList.size();
     lineList.push_back(line);
-    return lineList[idx];
-}
-
-Line& MeshBuilder::addLine(u32 x, u32 y, const math::vec4f& color)
-{
-    mask |= hasPolygonColor;
-    Line& line = addLine(x, y);
-    line.color = color;
-    return line;
-}
-
-Line& MeshBuilder::addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color)
-{
-    u32 idx = nextVertexIndex();
-    addVertex(a);
-    addVertex(b);
-    return addLine(idx, idx+1, color);
-}
-
-#define kInvalidIndex 0xffffffff
-
-u32 MeshBuilder::addEdge(u32 a, u32 b, u32 p)
-{
-    Edge tmp;
-    tmp.v[0] = std::min(a, b);
-    tmp.v[1] = std::max(a, b);
-    tmp.p[0] = p;
-    tmp.p[1] = kInvalidIndex;
-    bool found = false;
-    for(u32 i=0; i<edgeList.size(); i++)
-    {
-        Edge& edge = edgeList[i];
-        if (edge.v[0] == tmp.v[0] && edge.v[1] == tmp.v[1])
-        {
-//                    ASSERT(edgeList[i].p[2] == kInvalidIndex);
-            edgeList[i].p[1] = p;
-            return i;
-        }
-    }
-    u32 idx = edgeList.size();
-    edgeList.push_back(tmp);
-    vertexList[a].edges.push_back(idx);
-    vertexList[b].edges.push_back(idx);
     return idx;
+}
+
+u32 MeshBuilder::addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color)
+{
+    u32 aIdx = addVertex(a, color);
+    u32 bIdx = addVertex(b, color);
+    return addLine(aIdx, bIdx);
 }
 
 void MeshBuilder::getLineList(opengl::Mesh& mesh)
@@ -177,8 +122,6 @@ void MeshBuilder::getLineList(opengl::Mesh& mesh)
     vec3f* position = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagPosition);
     vec4f* color = mesh.findAttributeTyped<vec4f>(opengl::VertexAttrs::tagColor);
     u32* indeces = reinterpret_cast<u32*>(mesh.indices());
-
-    bool lineColor = (mask & hasPolygonColor) == hasPolygonColor;
     bool vertexColor = (mask & hasVertexColor) == hasVertexColor;
 
     u32 idx = 0;
@@ -186,11 +129,9 @@ void MeshBuilder::getLineList(opengl::Mesh& mesh)
         const Line& line = lineList[i];
         for(u32 j=0; j<2; j++, idx++) {
             const Vertex& v = vertexList[line.v[j]];
-            position[idx] = v.position;
-            if (lineColor)
-                color[idx] = line.color;
-            else if (vertexColor)
-                color[idx] = v.color;
+            position[idx] = posData[v.pos];
+            if (vertexColor)
+                color[idx] = colorData[v.color];
             indeces[idx] = idx;
         }
     }
@@ -200,11 +141,13 @@ void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
 {
     u32 vertexCount = polygonList.size() * 3;
     mesh.addAttribute(opengl::VertexAttrs::tagPosition);
-    mesh.addAttribute(opengl::VertexAttrs::tagNormal);
+    bool hasNormal = (mask & hasVertexNormal) == hasVertexNormal;
+    if (hasNormal)
+        mesh.addAttribute(opengl::VertexAttrs::tagNormal);
     bool hasUV = (mask & hasVertexUV) == hasVertexUV;
     if (hasUV)
         mesh.addAttribute(opengl::VertexAttrs::tagTexture);
-    bool hasColor = (mask & hasPolygonColor) == hasPolygonColor || (mask & hasVertexColor) == hasVertexColor;
+    bool hasColor = (mask & hasVertexColor) == hasVertexColor;
     if (hasColor)
         mesh.addAttribute(opengl::VertexAttrs::tagColor);
     mesh.vertexCount(vertexCount);
@@ -212,7 +155,9 @@ void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
     mesh.complete();
 
     vec3f* position = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagPosition);
-    vec3f* normal = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagNormal);
+    vec3f* normal = nullptr;
+    if (hasNormal)
+        normal = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagNormal);
     vec4f* color = nullptr;
     if (hasColor)
         color = mesh.findAttributeTyped<vec4f>(opengl::VertexAttrs::tagColor);
@@ -227,39 +172,20 @@ void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
         for(u32 k=0, idx=j; k<3; k++, idx++)
         {
             const Vertex& v = vertexList[polygon.v[k]];
-            position[idx] = v.position;
-            if ((mask & hasVertexNormal) == hasVertexNormal)
-                normal[idx] = v.normal;
-            else
-                normal[idx] = polygon.normal;
+            position[idx] = posData[v.pos];
+
+            if (hasNormal)
+                normal[idx] = normalData[v.normal];
 
             if (hasColor)
-            {
-                if ((mask & hasPolygonColor) == hasPolygonColor)
-                    color[idx] = polygon.color;
-                else if ((mask & hasVertexColor) == hasVertexColor)
-                    color[idx] = v.color;
-            }
+                color[idx] = colorData[v.color];
 
             if (hasUV)
-                uv[idx] = v.uv;
+                uv[idx] = uvData[v.uv];
 
             indeces[idx] = idx;
         }
     }
-}
-
-void MeshBuilder::createQuad()
-{
-    vec3f x(1, 0, 0);
-    vec3f y(0, 1, 0);
-    vec3f z(0, 0, 1);
-    u32 idx = nextVertexIndex();
-    addVertex(x * 0 + y * 0);
-    addVertex(x * 1 + y * 0);
-    addVertex(x * 0 + y * 1);
-    vec4f red(1, 0, 0, 1);
-    addPolygon(idx+2, idx+1, idx, red);
 }
 
 void MeshBuilder::createCube()
@@ -269,26 +195,26 @@ void MeshBuilder::createCube()
     vec3f z(0, 0, 1);
     vec3f ori(-0.5f, -0.5f, -0.5f);
 
-    u32 idx = nextVertexIndex();
-    addVertex(ori);
-    addVertex(ori + x);
-    addVertex(ori + x + z);
-    addVertex(ori + z);
-    addVertex(ori + y);
-    addVertex(ori + y + x);
-    addVertex(ori + y + x + z);
-    addVertex(ori + y + z);
+    std::vector<vec3f> pos;
+    pos.push_back(ori);
+    pos.push_back(ori + x);
+    pos.push_back(ori + x + z);
+    pos.push_back(ori + z);
+    pos.push_back(ori + y);
+    pos.push_back(ori + y + x);
+    pos.push_back(ori + y + x + z);
+    pos.push_back(ori + y + z);
 
     vec4f red(1, 0, 0, 1);
     vec4f green(0, 1, 0, 1);
     vec4f blue(0, 0, 1, 1);
     vec4f black(0, 0, 0, 1);
-    addPolygonQuad(idx + 0, idx + 1, idx + 2, idx + 3, red);
-    addPolygonQuad(idx + 0, idx + 1, idx + 5, idx + 4, green);
-    addPolygonQuad(idx + 2, idx + 3, idx + 7, idx + 6, green);
-    addPolygonQuad(idx + 1, idx + 2, idx + 6, idx + 5, blue);
-    addPolygonQuad(idx + 0, idx + 4, idx + 7, idx + 3, blue);
-    addPolygonQuad(idx + 7, idx + 6, idx + 5, idx + 4, red);
+    addPolygonQuad(pos[0], pos[1], pos[2], pos[3], red);
+    addPolygonQuad(pos[0], pos[1], pos[5], pos[4], green);
+    addPolygonQuad(pos[2], pos[3], pos[7], pos[6], green);
+    addPolygonQuad(pos[1], pos[2], pos[6], pos[5], blue);
+    addPolygonQuad(pos[0], pos[4], pos[7], pos[3], blue);
+    addPolygonQuad(pos[7], pos[6], pos[5], pos[4], red);
 }
 
 void MeshBuilder::createGrid()
@@ -306,38 +232,29 @@ void MeshBuilder::createGrid()
     f32 endPos = gridSize / 2.0f;
     for (u32 i = 0; i <= minorLineCount; i++)
     {
-        u32 idx = nextVertexIndex();
         f32 pos = startPos + cellMinorSize * i;
-        addVertex(math::vec3f(pos, 0.0f, startPos));
-        addVertex(math::vec3f(pos, 0.0f, endPos));
+        math::vec3f a(pos, 0.0f, startPos);
+        math::vec3f b(pos, 0.0f, endPos);
         if (i % majorLineCount == 0)
-            addLine(idx, idx+1, majorLineColor);
+            addLine(a, b, majorLineColor);
         else
-            addLine(idx, idx+1, minorLineColor);
+            addLine(a, b, minorLineColor);
     }
 
     for (u32 i = 0; i <= minorLineCount; i++)
     {
-        u32 idx = nextVertexIndex();
         f32 pos = startPos + cellMinorSize * i;
-        addVertex(math::vec3f(startPos, 0.0f, pos));
-        addVertex(math::vec3f(endPos, 0.0f, pos));
+        math::vec3f a(startPos, 0.0f, pos);
+        math::vec3f b(endPos, 0.0f, pos);
         if (i % majorLineCount == 0)
-            addLine(idx, idx+1, majorLineColor);
+            addLine(a, b, majorLineColor);
         else
-            addLine(idx, idx+1, minorLineColor);
+            addLine(a, b, minorLineColor);
     }
 }
 
 void MeshBuilder::readOBJ(const std::string& filename)
 {
-    std::vector<vec3f> pos;
-    std::vector<vec2f> uv;
-    std::vector<vec3f> normal;
-
-    pos.reserve(1000);
-    normal.reserve(1000);
-
     LexerPolicy policy(LexerPolicy::POLICY_PYTHON_COMMENT);
     policy.setWhitespaces(" \t\n\r/");
 
@@ -351,38 +268,38 @@ void MeshBuilder::readOBJ(const std::string& filename)
             p.x = lexer.readFloat();
             p.y = lexer.readFloat();
             p.z = lexer.readFloat();
-            pos.push_back(p);
+            posData.push_back(p);
         } else if (token == "vt") {
             vec2f v;
             v.x = lexer.readFloat();
             v.y = lexer.readFloat();
-            uv.push_back(v);
+            uvData.push_back(v);
         } else if (token == "vn") {
             vec3f n;
             n.x = lexer.readFloat();
             n.y = lexer.readFloat();
             n.z = lexer.readFloat();
             n = normalize(n);
-            normal.push_back(n);
+            normalData.push_back(n);
         } else if (token == "f") {
-            u32 idx = nextVertexIndex();
+            u32 idx[3];
             for(u32 i=0; i<3; i++) {
                 u32 vertexIdx = static_cast<u32>(lexer.readFloat());
-                if ( uv.size() != 0 && normal.size() != 0 ) {
+                if ( uvData.size() != 0 && normalData.size() != 0 ) {
                     u32 uvIdx = static_cast<u32>(lexer.readFloat());
                     u32 normalIdx = static_cast<u32>(lexer.readFloat());
-                    addVertex(pos[vertexIdx-1], uv[uvIdx-1], normal[normalIdx-1]);
-                } else if ( uv.size() != 0 ) {
+                    idx[i] = addVertex(posData[vertexIdx-1], uvData[uvIdx-1], normalData[normalIdx-1]);
+                } else if ( uvData.size() != 0 ) {
                     u32 uvIdx = static_cast<u32>(lexer.readFloat());
-                    addVertex(pos[vertexIdx-1], uv[uvIdx-1]);
-                } else if ( normal.size() != 0 ) {
+                    idx[i] = addVertex(posData[vertexIdx-1], uvData[uvIdx-1]);
+                } else if ( normalData.size() != 0 ) {
                     u32 normalIdx = static_cast<u32>(lexer.readFloat());
-                    addVertex(pos[vertexIdx-1], normal[normalIdx-1]);
+                    idx[i] = addVertex(posData[vertexIdx-1], normalData[normalIdx-1]);
                 } else {
-                    addVertex(pos[vertexIdx-1]);
+                    idx[i] = addVertex(posData[vertexIdx-1]);
                 }
             }
-            addPolygon(idx, idx + 1, idx + 2);
+            addPolygon(idx[0], idx[1], idx[2]);
         } else if (token == "mtllib") {
             lexer.readToken();
         } else if (token == "usemtl") {
