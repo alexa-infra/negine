@@ -19,7 +19,16 @@ set(LIBASSIMP-DEV_COMPONENT libassimp${ASSIMP_VERSION_MAJOR}.${ASSIMP_VERSION_MI
 set(CPACK_COMPONENTS_ALL assimp-bin ${LIBASSIMP_COMPONENT} ${LIBASSIMP-DEV_COMPONENT} assimp-dev)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  add_definitions(-fPIC) # this is a very important switch and some libraries seem now to have it....
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCH_64 TRUE)
+  else()
+    set(ARCH_64 FALSE)
+  endif()
+  if(MINGW AND ARCH_64)
+    add_definitions(-DASSIMP_BUILD_NO_IFC_IMPORTER)
+  else()
+    add_definitions(-fPIC) # this is a very important switch and some libraries seem now to have it....
+  endif()
   ## hide all not-exported symbols
   add_definitions( -fvisibility=hidden )
 endif()
