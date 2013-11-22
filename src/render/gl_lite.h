@@ -128,7 +128,6 @@ typedef u64 GLuint64;
 #define GL_COLOR_BUFFER_BIT               0x00004000
 
 #define GL_DEPTH_TEST                     0x0B71
-#define GL_DEPTH_WRITEMASK                0x0B72
 
 #define GL_BLEND_DST                      0x0BE0
 #define GL_BLEND_SRC                      0x0BE1
@@ -148,6 +147,8 @@ typedef u64 GLuint64;
 #define GL_SAMPLER_2D                     0x8B5E
 
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
+
+#define GL_CULL_FACE                      0x0B44
 
 typedef void (_APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture); 
 typedef void (_APIENTRYP PFNGLATTACHSHADERPROC) (GLuint program, GLuint shader); 
@@ -202,6 +203,7 @@ typedef void (_APIENTRYP PFNGLDISABLEPROC) (GLenum cap);
 typedef const GLubyte* (_APIENTRYP PFNGETSTRINGPROC) (GLenum name);
 typedef void (_APIENTRYP PFNBLENDFUNCPROC) (GLenum sfactor, GLenum dfactor);
 typedef void (_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
+typedef void (_APIENTRYP PFNGLDEPTHMASKPROC) (GLboolean flag);
 
 }
 }

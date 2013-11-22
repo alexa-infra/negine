@@ -203,6 +203,7 @@ void DeviceContext::init()
     LOAD_GL(GetString                        );
     LOAD_GL(BlendFunc                        );
     LOAD_GL(Viewport                         );
+    LOAD_GL(DepthMask                        );
 
     #undef LOAD_GL
 

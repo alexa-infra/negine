@@ -84,6 +84,7 @@ public:
     PFNGETSTRINGPROC            GetString;
     PFNBLENDFUNCPROC            BlendFunc;
     PFNGLVIEWPORTPROC           Viewport;
+    PFNGLDEPTHMASKPROC          DepthMask;
 
     void Assert(const char* file, int line);
 
