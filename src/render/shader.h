@@ -26,8 +26,6 @@ typedef ShaderTypes::ShaderType ShaderType;
 //! Shader object
 class Shader : public GpuResource
 {
-private:
-    GLenum type_;        //!< Type of shader
 public:
     Shader(DeviceContext& gl);
     ~Shader();
@@ -36,11 +34,6 @@ public:
     bool create( ShaderType type, const char* const* source, u32 len );
 
     void destroy();
-
-    //! Gets shader type
-    GLenum type() const {
-        return type_;
-    }
 
     //! Gets status string
     const std::string status() const;

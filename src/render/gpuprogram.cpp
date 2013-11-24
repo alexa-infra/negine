@@ -8,13 +8,7 @@
 #include "math/matrix-inl.h"
 #include "render/texture.h"
 #include <memory>
-#include "base/stringmap.h"
-#include "render/shader.h"
 #include "base/log.h"
-
-#include "base/reflect.h"
-#include <sstream>
-#include <fstream>
 
 namespace base
 {
@@ -23,21 +17,11 @@ namespace opengl
 
 using namespace math;
 
-StringMap<VertexAttr, VertexAttrs::Count>::Entry attr_map_str[VertexAttrs::Count] = {
-    { "position",  VertexAttrs::tagPosition },
-    { "tex",       VertexAttrs::tagTexture },
-    { "col",       VertexAttrs::tagColor },
-    { "n",         VertexAttrs::tagNormal },
-    { "t",         VertexAttrs::tagTangent },
-    { "bi",        VertexAttrs::tagBinormal }
-};
-StringMap<VertexAttr, VertexAttrs::Count> attr_map( attr_map_str );
-
 GpuProgram::GpuProgram(DeviceContext& gl)
     : GpuResource(gl)
+    , vertexShader_(gl)
+    , pixelShader_(gl)
 {
-    vertexShader_ = new Shader(gl);
-    pixelShader_ = new Shader(gl);
 }
 
 void GpuProgram::destroy()
@@ -45,10 +29,9 @@ void GpuProgram::destroy()
     if ( id_ != 0 ) {
         GL.DeleteProgram( id_ );
         id_ = 0;
-
-        pixelShader_->destroy();
-        vertexShader_->destroy();
     }
+    pixelShader_.destroy();
+    vertexShader_.destroy();
 }
 
 const std::string GpuProgram::status() const
@@ -73,8 +56,6 @@ const std::string GpuProgram::status() const
 GpuProgram::~GpuProgram()
 {
     destroy();
-    delete vertexShader_;
-    delete pixelShader_;
 }
 
 void GpuProgram::bind()
@@ -165,83 +146,49 @@ void GpuProgram::populateUniformMap()
         uniformBinding_.push_back(uni);
     }
 }
-    
-bool GpuProgram::createMeta( const std::string& filename )
+
+void GpuProgram::setAttribute(const std::string& name, VertexAttr attr)
+{
+    attributes_[name.c_str()] = attr;
+}
+
+bool GpuProgram::setShaderSource(ShaderType type, const std::string& source)
 {
     ASSERT(id_ == 0);
-    
-    GpuProgramMeta meta;
-    iarchive::deserializeFile(filename, meta);
-    std::ostringstream ss;
-    ss << "#version " << meta.version << '\n';
-    for(u32 i=0; i<meta.defines.size(); i++)
-        ss << "#define " << meta.defines[i] << '\n';
-    for(u32 i=0; i<meta.headers.size(); i++)
-        ss << meta.headers[i] << '\n';
-    std::string header = ss.str();
-    
-    const char* source[4];
-    source[0] = header.c_str();
-    
-    std::ifstream file(meta.codePath.c_str());
-    if (!file.is_open() || !file.good())
-    {
-        ERR("in meta file '%s', could not open file '%s'",
-            filename.c_str(),
-            meta.codePath.c_str());
-        return false;
+    const char* sources[1];
+    sources[0] = source.c_str();
+    if (type == ShaderTypes::VERTEX) {
+        vertexShader_.destroy();
+        bool res = vertexShader_.create(ShaderTypes::VERTEX, sources, 1);
+        WARN(vertexShader_.status().c_str());
+        if (!res) ERR("errors during compilation of shader");
+        return res;
+    } else if (type == ShaderTypes::PIXEL) {
+        pixelShader_.destroy();
+        bool res = pixelShader_.create(ShaderTypes::PIXEL, sources, 1);
+        WARN(pixelShader_.status().c_str());
+        if (!res) ERR("errors during compilation of shader");
+        return res;
     }
-    std::string text((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    source[3] = text.c_str();
-    
-    std::string includeText;
-    if (!meta.include.empty())
-    {
-        std::ifstream includeFile(meta.include.c_str());
-        if (!file.is_open() || !file.good())
-        {
-            ERR("in meta file '%s', could not open file '%s'",
-                filename.c_str(),
-                meta.include.c_str());
-            return false;
-        }
-        includeText = std::string((std::istreambuf_iterator<char>(includeFile)), std::istreambuf_iterator<char>());
-    }
-    source[1] = includeText.c_str();
-    
-    source[2] = "#define PIXEL_SHADER\n ";
-    if (!pixelShader_->create(ShaderTypes::PIXEL, source, 4))
-    {
-        ERR("in meta file '%s', for pixel shader compilation error\n%s",
-            filename.c_str(),
-            pixelShader_->status().c_str());
-        return false;
-    }
-    WARN(pixelShader_->status().c_str());
-    
-    source[2] = "#define VERTEX_SHADER\n ";
-    if (!vertexShader_->create(ShaderTypes::VERTEX, source, 4))
-    {
-        ERR("in meta file '%s', for vertex shader compilation error\n%s",
-            filename.c_str(),
-            vertexShader_->status().c_str());
-        return false;
-    }
-    WARN(vertexShader_->status().c_str());
-    
+    return false;
+}
+
+bool GpuProgram::complete()
+{
+    ASSERT(id_ == 0);
+    ASSERT(vertexShader_.handle() != 0);
+    ASSERT(pixelShader_.handle() != 0);
+
     id_ = GL.CreateProgram( );
     
-    GL.AttachShader( id_, vertexShader_->handle() );
-    GL.AttachShader( id_, pixelShader_->handle() );
+    GL.AttachShader( id_, vertexShader_.handle() );
+    GL.AttachShader( id_, pixelShader_.handle() );
     
-    for (u32 i=0; i<VertexAttrs::Count; i++)
-    {
-        VertexAttr attr = static_cast<VertexAttr>(i);
-        std::string name;
-        attr_map.to_string(attr, name);
-        GL.BindAttribLocation(id_,
-                             VertexAttrs::GetAttributeLocation(attr),
-                             name.c_str());
+    for (AttrMap::Iterator it = attributes_.iterator(); !it.isDone(); it.advance()) {
+        VertexAttr attr = it.value();
+        u32 location = VertexAttrs::GetAttributeLocation(attr);
+        const char* name = it.name();
+        GL.BindAttribLocation(id_, location, name);
     }
     
     GL.LinkProgram( id_ );
@@ -249,16 +196,14 @@ bool GpuProgram::createMeta( const std::string& filename )
     GLint linkStatus;
     GL.GetProgramiv( id_, GL_LINK_STATUS, &linkStatus );
     bool linked = ( linkStatus == GL_TRUE );
-    if (!linked)
-    {
-        ERR("in meta file '%s', linkage error\n%s",
-            filename.c_str(), status().c_str());
+    WARN(status().c_str());
+
+    if (!linked) {
+        ERR("error in linkage of shader program");
         return false;
     }
-    WARN(status().c_str());
     
     populateUniformMap();
-    
     return true;
 }
 

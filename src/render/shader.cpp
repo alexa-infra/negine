@@ -33,11 +33,8 @@ void Shader::destroy()
 bool Shader::create( ShaderType type, const char* const* source, u32 len )
 {
     if ( id_ == 0 ) {
-        type_ = type;
-        id_ = GL.CreateShader( type_ );
+        id_ = GL.CreateShader( type );
         ASSERT( id_ != 0 );
-    } else {
-        ASSERT( type == type_ );
     }
 
     GL.ShaderSource( id_, len, source, NULL );

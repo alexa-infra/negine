@@ -9,6 +9,8 @@
 #include "render/gpuresource.h"
 #include "render/mesh.h"
 #include "base/parameter.h"
+#include "render/shader.h"
+#include "base/fixedmap.h"
 
 namespace base
 {
@@ -23,36 +25,18 @@ struct UniformVar
 };
 typedef std::vector<UniformVar> UniformBinding;
 
-class Shader;
-
-struct GpuProgramMeta
-{
-    std::string version;
-    std::string codePath;
-    std::string include;
-    std::vector<std::string> defines;
-    std::vector<std::string> headers;
-    
-    template<typename archive>
-    void reflect(archive& ar)
-    {
-        ar.reflect("version", version, std::string("150"));
-        ar.reflect("code", codePath);
-        ar.reflect("include", include, std::string(""));
-        ar.vreflect("define", defines);
-        ar.vreflect("header", headers);
-    }
-};
-    
 //! Shader program object
 class GpuProgram : public GpuResource
 {
-protected:    
-    Shader* pixelShader_;       //!< Attached pixel shader
-    Shader* vertexShader_;      //!< Attached vertex shader
+protected:
+    Shader pixelShader_;       //!< Attached pixel shader
+    Shader vertexShader_;      //!< Attached vertex shader
 
     UniformBinding uniformBinding_;
     
+    typedef FixedMap<SmallString, VertexAttr> AttrMap;
+    AttrMap attributes_;
+
 public:
     GpuProgram(DeviceContext& gl);
     ~GpuProgram();
@@ -70,14 +54,20 @@ public:
 
     void setParams(const ParameterMap& params);
 
-    void create( const std::string& filename )
+    /*void create( const std::string& filename )
     {
         if (!createMeta(filename))
             destroy();
-    }
-    
+    }*/
+
+    void setAttribute(const std::string& name, VertexAttr attr);
+
+    bool setShaderSource(ShaderType type, const std::string& source);
+
+    bool complete();
+
 protected:
-    bool createMeta( const std::string& filename );
+    //bool createMeta( const std::string& filename );
     
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
