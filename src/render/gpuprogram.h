@@ -9,7 +9,6 @@
 #include "render/gpuresource.h"
 #include "render/mesh.h"
 #include "base/parameter.h"
-#include "render/shader.h"
 #include "base/fixedmap.h"
 
 namespace base
@@ -17,25 +16,45 @@ namespace base
 namespace opengl
 {
 
-struct UniformVar
+namespace ShaderTypes
 {
-    std::string name;
-    u32 location;
-    u32 type;
+enum ShaderType {
+    VERTEX = GL_VERTEX_SHADER,
+    PIXEL = GL_FRAGMENT_SHADER
 };
-typedef std::vector<UniformVar> UniformBinding;
+}
+typedef ShaderTypes::ShaderType ShaderType;
 
 //! Shader program object
 class GpuProgram : public GpuResource
 {
-protected:
-    Shader pixelShader_;       //!< Attached pixel shader
-    Shader vertexShader_;      //!< Attached vertex shader
-
-    UniformBinding uniformBinding_;
-    
+    struct UniformVar
+    {
+        std::string name;
+        u32 location;
+        u32 type;
+    };
+    typedef std::vector<UniformVar> UniformBinding;
     typedef FixedMap<SmallString, VertexAttr> AttrMap;
-    AttrMap attributes_;
+
+    //! Shader object
+    class Shader : public GpuResource
+    {
+    public:
+        Shader(DeviceContext& gl);
+        ~Shader();
+
+        //! Compile shader from source
+        bool create( ShaderType type, const char* const* source, u32 len );
+
+        void destroy();
+
+        //! Gets status string
+        const std::string status() const;
+
+    private:
+        DISALLOW_COPY_AND_ASSIGN( Shader );
+    };
 
 public:
     GpuProgram(DeviceContext& gl);
@@ -66,13 +85,20 @@ public:
 
     bool complete();
 
-protected:
+private:
     //bool createMeta( const std::string& filename );
     
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
     void populateUniformMap();
+
+private:
+    Shader pixelShader_;       //!< Attached pixel shader
+    Shader vertexShader_;      //!< Attached vertex shader
+
+    UniformBinding uniformBinding_;
+    AttrMap attributes_;
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };
