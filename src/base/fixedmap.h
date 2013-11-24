@@ -72,11 +72,18 @@ public:
 	T& operator[](const char* name) {
 		return map_[name];
 	}
-	const T& get(const char* name, const T& defaultValue) const {
+	const T& get(const String& name, const T& defaultValue) const {
 		IteratorT it = map_.find(name);
 		if (it == map_.end())
 			return defaultValue;
 		return it->second;
+	}
+	bool tryGet(const String& name, T& value) const {
+		IteratorT it = map_.find(name);
+		if (it == map_.end())
+			return false;
+		value = it->second;
+		return true;
 	}
 	class Iterator
 	{
@@ -89,7 +96,10 @@ public:
 		bool isDone() const {
 			return it == Map.end();
 		}
-		T value() const {
+		const String& key() {
+			return it->first;
+		}
+		const T& value() const {
 			return it->second;
 		}
 		const char* name() const {
@@ -105,6 +115,9 @@ public:
 	void merge(const SelfT& other) {
 		for (Iterator it = other.iterator(); !it.isDone(); it.advance())
 			(*this)[it.name()] = it.value();
+	}
+	void clear() {
+		map_.clear();
 	}
 private:
 	MapT map_;

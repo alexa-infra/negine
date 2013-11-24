@@ -9,7 +9,6 @@
 #include "render/gpuresource.h"
 #include "render/mesh.h"
 #include "base/parameter.h"
-#include "base/fixedmap.h"
 
 namespace base
 {
@@ -30,11 +29,10 @@ class GpuProgram : public GpuResource
 {
     struct UniformVar
     {
-        std::string name;
         u32 location;
         u32 type;
     };
-    typedef std::vector<UniformVar> UniformBinding;
+    typedef FixedMap<SmallString, UniformVar> UniformMap;
     typedef FixedMap<SmallString, VertexAttr> AttrMap;
 
     //! Shader object
@@ -62,22 +60,11 @@ public:
 
     void destroy();
 
-    //! Returns status string
-    const std::string status() const;
-
     //! Sets program to be used at current pipeline
     void bind();
 
     //! Unbind program
     void unbind();
-
-    void setParams(const ParameterMap& params);
-
-    /*void create( const std::string& filename )
-    {
-        if (!createMeta(filename))
-            destroy();
-    }*/
 
     void setAttribute(const std::string& name, VertexAttr attr);
 
@@ -85,20 +72,23 @@ public:
 
     bool complete();
 
+    void setParams(const Params& params);
 private:
-    //bool createMeta( const std::string& filename );
     
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
 
     //! Populate list of active uniforms
     void populateUniformMap();
 
+    //! Returns status string
+    const std::string status() const;
 private:
     Shader pixelShader_;       //!< Attached pixel shader
     Shader vertexShader_;      //!< Attached vertex shader
 
-    UniformBinding uniformBinding_;
+    UniformMap uniformBinding_;
     AttrMap attributes_;
+    Params uniformCache_;
 private:
     DISALLOW_COPY_AND_ASSIGN( GpuProgram );
 };

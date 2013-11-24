@@ -68,18 +68,18 @@ void GpuProgram::unbind()
     GL.UseProgram(0);
 }
 
-void GpuProgram::setParams(const ParameterMap& params)
+void GpuProgram::setParams(const Params& params)
 {
     u32 samplerIdx = 0;
-    for(u32 i=0; i<uniformBinding_.size(); i++)
+    for(UniformMap::Iterator it = uniformBinding_.iterator(); !it.isDone(); it.advance())
     {
-        const UniformVar& uniform = uniformBinding_[i];
-        ParameterMap::const_iterator it = params.find(uniform.name);
-        if (it == params.end()) {
-            ERR("Uniform '%s' is not supplied", uniform.name.c_str());
+        const UniformVar& uniform = it.value();
+        any value;
+        if (params.tryGet(it.key(), value)) {
+            ERR("Uniform '%s' is not supplied", it.name());
             return;
         }
-        setParam(uniform, it->second, samplerIdx);
+        setParam(uniform, value, samplerIdx);
     }
 }
     
@@ -127,7 +127,6 @@ void GpuProgram::populateUniformMap()
     }
 
     uniformBinding_.clear();
-    uniformBinding_.reserve(static_cast<u32>(uniformCount));
 
     std::vector<char> buffer(maxNameLength);
 
@@ -142,8 +141,7 @@ void GpuProgram::populateUniformMap()
         UniformVar uni;
         uni.location = location;
         uni.type = uniformType;
-        uni.name = uniformName;
-        uniformBinding_.push_back(uni);
+        uniformBinding_[uniformName.c_str()] = uni;
     }
 }
 
