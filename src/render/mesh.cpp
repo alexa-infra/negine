@@ -134,7 +134,7 @@ void Mesh::complete()
         u32 vertexSize = 0;
         for(u32 i=0; i<attr_.size(); i++) {
             VertexAttr attr = attr_[i];
-            vertexSize = VertexAttrs::GetSize(attr);
+            vertexSize += VertexAttrs::GetSize(attr);
         }
         u32 pos = 0;
         for(u32 i=0; i<attr_.size(); i++) {
@@ -144,7 +144,6 @@ void Mesh::complete()
             pos += size;
         }
         rawSize_ += vertexSize * numVertexes_;
-    }
     #endif
     attributeBuffer_.resize(rawSize_);
     if (indexType_ == IndexTypes::UInt16)

@@ -7,6 +7,7 @@
 #include "math/vec4.h"
 #include "math/matrix-inl.h"
 #include "render/texture.h"
+#include "render/renderstate.h"
 #include <memory>
 #include "base/log.h"
 
@@ -74,12 +75,13 @@ void GpuProgram::setParams(const Params& params)
     for(UniformMap::Iterator it = uniformBinding_.iterator(); !it.isDone(); it.advance())
     {
         const UniformVar& uniform = it.value();
-        any value;
-        if (params.tryGet(it.key(), value)) {
+        /*any value;
+        if (!params.tryGet(it.key(), value)) {
             ERR("Uniform '%s' is not supplied", it.name());
             return;
-        }
-        setParam(uniform, value, samplerIdx);
+        }*/
+        any value;
+        setParam(uniform, params.get(it.key(), value), samplerIdx);
     }
 }
     
@@ -89,7 +91,7 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
         case GL_SAMPLER_2D:
         {
             Texture* texture = any_cast<Texture*>(value);
-            GL.ActiveTexture( GL_TEXTURE0 + samplerIdx );
+            GL.renderState().activeTexture.set(samplerIdx);
             texture->bind();
             GL.Uniform1i( uniform.location, samplerIdx );
             samplerIdx++;

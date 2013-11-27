@@ -69,7 +69,7 @@ class FixedMap
 	typedef typename MapT::const_iterator IteratorT;
 	typedef FixedMap<String, T> SelfT;
 public:
-	T& operator[](const char* name) {
+	T& operator[](const String& name) {
 		return map_[name];
 	}
 	const T& get(const String& name, const T& defaultValue) const {

@@ -2,6 +2,7 @@
 #include "base/log.h"
 #include "base/debug.h"
 #include "render/texture.h"
+#include "render/renderstate.h"
 #include <type_traits>
 
 #ifdef OS_WIN
@@ -41,6 +42,12 @@ TextureLoader* DeviceContext::texture_loader()
 {
     ASSERT(texture_loader_ != NULL);
     return texture_loader_;
+}
+
+RenderState& DeviceContext::renderState()
+{
+    ASSERT(state != NULL);
+    return *state;    
 }
 
 #ifdef OS_WIN
@@ -135,12 +142,14 @@ private:
 
 DeviceContext::DeviceContext()
     : loader(NULL)
+    , state(NULL)
 {
 }
 
 DeviceContext::~DeviceContext()
 {
     delete loader;
+    delete state;
 }
 
 void DeviceContext::init()
@@ -208,6 +217,7 @@ void DeviceContext::init()
     #undef LOAD_GL
 
     texture_loader_ = new TextureLoader(*this);
+    state = new RenderState(*this);
 }
 
 }

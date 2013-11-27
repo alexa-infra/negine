@@ -22,11 +22,13 @@ namespace opengl
 
 class TextureLoader;
 class GLFuncLoader;
+class RenderState;
 
 class NEGINE_API DeviceContext
 {
     GLFuncLoader* loader;
     TextureLoader* texture_loader_;
+    RenderState* state;
 public:
     DeviceContext();
     ~DeviceContext();
@@ -89,6 +91,8 @@ public:
     void Assert(const char* file, int line);
 
     TextureLoader* texture_loader();
+
+    RenderState& renderState();
 
     void init();
 private:
