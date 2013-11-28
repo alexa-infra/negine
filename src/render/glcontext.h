@@ -55,6 +55,7 @@ public:
     PFNGLDISABLEVERTEXATTRIBARRAYPROC   DisableVertexAttribArray;
     PFNGLENABLEVERTEXATTRIBARRAYPROC    EnableVertexAttribArray;
     PFNGLDRAWELEMENTSPROC       DrawElements;
+    PFNGLDRAWARRAYSPROC         DrawArrays;
     PFNGLGENBUFFERSPROC         GenBuffers;
     PFNGLGENTEXTURESPROC        GenTextures;
     PFNGLGENVERTEXARRAYSPROC    GenVertexArrays;

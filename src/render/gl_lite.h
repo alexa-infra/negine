@@ -175,6 +175,7 @@ typedef void (_APIENTRYP PFNGLDELETEBUFFERSPROC) (GLsizei n, const GLuint *buffe
 typedef void (_APIENTRYP PFNGLDISABLEVERTEXATTRIBARRAYPROC) (GLuint index);
 typedef void (_APIENTRYP PFNGLENABLEVERTEXATTRIBARRAYPROC) (GLuint index); 
 typedef void (_APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum mode, GLsizei count, GLenum type, const GLvoid *indices); 
+typedef void (_APIENTRYP PFNGLDRAWARRAYSPROC) (GLenum mode, GLint first, GLsizei count);
 typedef void (_APIENTRYP PFNGLGENBUFFERSPROC) (GLsizei n, GLuint *buffers); 
 typedef void (_APIENTRYP PFNGLGENERATEMIPMAPPROC) (GLenum target); 
 typedef void (_APIENTRYP PFNGLGETACTIVEUNIFORMPROC) (GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name); 

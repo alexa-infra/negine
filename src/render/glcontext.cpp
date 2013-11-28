@@ -180,6 +180,7 @@ void DeviceContext::init()
     LOAD_GL(DetachShader                     );
     LOAD_GL(DisableVertexAttribArray         );
     LOAD_GL(DrawElements                     );
+    LOAD_GL(DrawArrays                       );
     LOAD_GL(EnableVertexAttribArray          );
     LOAD_GL(GenBuffers                       );
     LOAD_GL(GenTextures                      );
