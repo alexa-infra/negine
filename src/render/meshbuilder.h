@@ -25,6 +25,21 @@ namespace imp
         {}
     };
 
+    struct Surface
+    {
+        u32 pos;
+        u32 normal;
+        u32 uv;
+        u32 color;
+        u32 vertex;
+        u32 polygon;
+
+        Surface()
+            : pos(0), normal(0), uv(0), color(0), vertex(0), polygon(0)
+        {
+        }
+    };
+
     struct Polygon
     {
         u32 v[3];
@@ -50,11 +65,17 @@ namespace imp
 
         u32 addVertex(const math::vec3f& p, const math::vec4f& color);
 
+        u32 addVertex(i32 p, i32 n = 0, i32 v = 0, i32 c = 0);
+
         void addPolygonQuad(const math::vec3f& a1, const math::vec3f& a2, const math::vec3f& a3, const math::vec3f& a4, const math::vec4f& color);
 
         u32 addPolygon(u32 x, u32 y, u32 z);
 
         u32 addLine(u32 x, u32 y);
+
+        void beginSurface();
+
+        void endSurface();
 
         u32 addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color);
 
@@ -76,6 +97,9 @@ namespace imp
         std::vector<Vertex> vertexList;
         std::vector<Polygon> polygonList;
         std::vector<Line> lineList;
+
+        std::vector<Surface> surfaces;
+        Surface currentSurface;
 
         enum
         {

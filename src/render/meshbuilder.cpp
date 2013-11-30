@@ -66,6 +66,34 @@ u32 MeshBuilder::addVertex(const vec3f& p, const vec4f& color)
     return idx;
 }
 
+u32 MeshBuilder::addVertex(i32 p, i32 n, i32 v, i32 c)
+{
+    Vertex ver(u32(-1), u32(-1), u32(-1), u32(-1));
+    if (p < 0)
+        ver.pos = posData.size() + p;
+    else if (p > 0)
+        ver.pos = currentSurface.pos + p - 1;
+
+    if (n < 0)
+        ver.normal = normalData.size() + n;
+    else if (n > 0)
+        ver.normal = currentSurface.normal + n - 1;
+
+    if (v < 0)
+        ver.uv = uvData.size() + v;
+    else if (v > 0)
+        ver.uv = currentSurface.uv + v - 1;
+
+    if (c < 0)
+        ver.color = colorData.size() + c;
+    else if (c > 0)
+        ver.color = currentSurface.uv + c - 1;
+
+    u32 idx = vertexList.size();
+    vertexList.push_back(ver);
+    return idx;
+}
+
 void MeshBuilder::addPolygonQuad(const math::vec3f& a1, const vec3f& a2, const vec3f& a3, const vec3f& a4, const vec4f& color)
 {
     u32 idx1 = addVertex(a1, color);
@@ -101,6 +129,24 @@ u32 MeshBuilder::addLine(u32 x, u32 y)
     u32 idx = lineList.size();
     lineList.push_back(line);
     return idx;
+}
+
+void MeshBuilder::beginSurface()
+{
+    Surface s;
+    s.pos = posData.size();
+    s.normal = normalData.size();
+    s.uv = uvData.size();
+    s.color = colorData.size();
+    s.vertex = vertexList.size();
+    s.polygon = polygonList.size();
+
+    currentSurface = s;
+}
+
+void MeshBuilder::endSurface()
+{
+    surfaces.push_back(currentSurface);
 }
 
 u32 MeshBuilder::addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color)
@@ -255,6 +301,8 @@ void MeshBuilder::createGrid()
 
 void MeshBuilder::readOBJ(const std::string& filename)
 {
+    beginSurface();
+
     LexerPolicy policy(LexerPolicy::POLICY_PYTHON_COMMENT);
     policy.setWhitespaces(" \t\n\r/");
 
@@ -284,19 +332,19 @@ void MeshBuilder::readOBJ(const std::string& filename)
         } else if (token == "f") {
             u32 idx[3];
             for(u32 i=0; i<3; i++) {
-                u32 vertexIdx = static_cast<u32>(lexer.readFloat());
+                i32 vertexIdx = static_cast<i32>(lexer.readFloat());
                 if ( uvData.size() != 0 && normalData.size() != 0 ) {
-                    u32 uvIdx = static_cast<u32>(lexer.readFloat());
-                    u32 normalIdx = static_cast<u32>(lexer.readFloat());
-                    idx[i] = addVertex(posData[vertexIdx-1], uvData[uvIdx-1], normalData[normalIdx-1]);
+                    i32 uvIdx = static_cast<i32>(lexer.readFloat());
+                    i32 normalIdx = static_cast<i32>(lexer.readFloat());
+                    idx[i] = addVertex(vertexIdx, normalIdx, uvIdx);
                 } else if ( uvData.size() != 0 ) {
-                    u32 uvIdx = static_cast<u32>(lexer.readFloat());
-                    idx[i] = addVertex(posData[vertexIdx-1], uvData[uvIdx-1]);
+                    i32 uvIdx = static_cast<i32>(lexer.readFloat());
+                    idx[i] = addVertex(vertexIdx, 0, uvIdx);
                 } else if ( normalData.size() != 0 ) {
-                    u32 normalIdx = static_cast<u32>(lexer.readFloat());
-                    idx[i] = addVertex(posData[vertexIdx-1], normalData[normalIdx-1]);
+                    i32 normalIdx = static_cast<i32>(lexer.readFloat());
+                    idx[i] = addVertex(vertexIdx, normalIdx);
                 } else {
-                    idx[i] = addVertex(posData[vertexIdx-1]);
+                    idx[i] = addVertex(vertexIdx);
                 }
             }
             addPolygon(idx[0], idx[1], idx[2]);
@@ -310,6 +358,8 @@ void MeshBuilder::readOBJ(const std::string& filename)
             ERR("unknown token in OBJ: '%s'", token.c_str());
         }
     }
+
+    endSurface();
 }
 
 } // namespace imp
