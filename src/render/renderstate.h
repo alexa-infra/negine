@@ -120,6 +120,7 @@ private:
     u32 current;
 };
 
+class Mesh;
 
 class RenderState
 {
@@ -138,6 +139,8 @@ public:
     BufferState<GL_ELEMENT_ARRAY_BUFFER> indexBuffer;
     BufferState<GL_ARRAY_BUFFER> vertexBuffer;
     TextureUnitState activeTexture;
+
+    void render(const Mesh& mesh);
 };
 
 

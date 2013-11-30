@@ -146,10 +146,12 @@ void Mesh::complete()
         rawSize_ += vertexSize * numVertexes_;
     #endif
     attributeBuffer_.resize(rawSize_);
-    if (indexType_ == IndexTypes::UInt16)
-        indices_.resize(numIndexes_ * 2);
-    else if (indexType_ == IndexTypes::UInt32)
-        indices_.resize(numIndexes_ * 4);
+    if (numIndexes_ != 0) {
+        if (indexType_ == IndexTypes::UInt16)
+            indices_.resize(numIndexes_ * 2);
+        else if (indexType_ == IndexTypes::UInt32)
+            indices_.resize(numIndexes_ * 4);
+    }
 }
 
 u32 Mesh::stride(VertexAttr attr) const
