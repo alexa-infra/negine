@@ -44,4 +44,13 @@ if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
 endif()
 
-
+if(MSVC)
+    if(NEGINE_STATIC_BUILD)
+        configure_file(${CMAKE_SOURCE_DIR}/cmake/project.vcxproj.user.in
+            ${CMAKE_CURRENT_BINARY_DIR}/sdl-app-static.vcxproj.user @ONLY)
+    endif()
+    if(NEGINE_SHARED_BUILD)
+        configure_file(${CMAKE_SOURCE_DIR}/cmake/project.vcxproj.user.in
+            ${CMAKE_CURRENT_BINARY_DIR}/sdl-app.vcxproj.user @ONLY)
+    endif()
+endif() 
