@@ -75,12 +75,13 @@ class GpuProgramState
 {
 public:
     GpuProgramState(DeviceContext& context) : gl(context), current(0) {}
-    void set(u32 program)
+    bool set(u32 program)
     {
         if (current == program)
-            return;
+            return false;
         current = program;
         gl.UseProgram(current);
+        return true;
     }
 private:
     DeviceContext& gl;
@@ -131,7 +132,7 @@ public:
     DeviceContext& gl;
 
     BoolState<GL_CULL_FACE, false> cullface;
-    BoolState<GL_DEPTH_TEST, true> depthTest;
+    BoolState<GL_DEPTH_TEST, false> depthTest;
     BoolState<GL_BLEND, false> blend;
     DepthWriteState<true> depthWrite;
     ViewportState viewportArea;
@@ -140,7 +141,7 @@ public:
     BufferState<GL_ARRAY_BUFFER> vertexBuffer;
     TextureUnitState activeTexture;
 
-    void render(const Mesh& mesh);
+    void render(const Mesh& mesh, u32 from, u32 count);
 };
 
 

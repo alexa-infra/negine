@@ -18,7 +18,7 @@ RenderState::RenderState(DeviceContext& context)
 {
 }
 
-void RenderState::render(const Mesh& mesh)
+void RenderState::render(const Mesh& mesh, u32 from, u32 count)
 {
     if (true /*do not use buffers */) {
         const MeshLayer* attributes = mesh.attributes();
@@ -37,11 +37,11 @@ void RenderState::render(const Mesh& mesh)
                 attr.stride_,
                 const_cast<Mesh&>(mesh).findAttributeTyped<void*>(vertexAttr) );
         }
-        if (mesh.numIndexes() == 0) {
-            gl.DrawArrays(GL_TRIANGLES, 0, mesh.numIndexes());
-        } else {
-            gl.DrawElements(GL_TRIANGLES, mesh.numIndexes(), mesh.indexType(), const_cast<Mesh&>(mesh).indices());
-        }
+        //if (mesh.numIndexes() == 0) {
+        //    gl.DrawArrays(GL_TRIANGLES, from, count);
+        //} else {
+            gl.DrawElements(GL_TRIANGLES, count, mesh.indexType(), (u32*)const_cast<Mesh&>(mesh).indices() + from);
+        //}
         for (u32 i=0; i<VertexAttrs::Count; i++) {
             const MeshLayer& attr = attributes[i];
             if (!attr.valid_)
