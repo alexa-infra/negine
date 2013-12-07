@@ -109,6 +109,12 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
             GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
             break;
         }
+        case GL_FLOAT:
+        {
+            f32 v = any_cast<f32>(value);
+            GL.Uniform1f ( uniform.location, v );
+            break;
+        }
         default:
         {
             ERR("Uniform type %#X is not supported", uniform.type);

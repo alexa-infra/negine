@@ -199,6 +199,7 @@ void DeviceContext::init()
     LOAD_GL(TexParameteri                    );
     LOAD_GL(TexParameterf);
     LOAD_GL(Uniform1i                        );
+    LOAD_GL(Uniform1f                        );
     LOAD_GL(Uniform3f                        );
     LOAD_GL(Uniform4f                        );
     LOAD_GL(UniformMatrix4fv                 );

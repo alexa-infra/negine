@@ -191,6 +191,7 @@ typedef void (_APIENTRYP PFNGLTEXIMAGE2DPROC) (GLenum target, GLint level, GLint
 typedef void (_APIENTRYP PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param); 
 typedef void (_APIENTRYP PFNGLTEXPARAMETERFPROC) (GLenum target, GLenum pname, GLfloat param); 
 typedef void (_APIENTRYP PFNGLUNIFORM1IPROC) (GLint location, GLint v0); 
+typedef void (_APIENTRYP PFNGLUNIFORM1FPROC) (GLint location, GLfloat v0); 
 typedef void (_APIENTRYP PFNGLUNIFORM3FPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2); 
 typedef void (_APIENTRYP PFNGLUNIFORM4FPROC) (GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3); 
 typedef void (_APIENTRYP PFNGLUNIFORMMATRIX4FVPROC) (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value); 

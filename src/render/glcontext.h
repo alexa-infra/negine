@@ -73,6 +73,7 @@ public:
     PFNGLTEXPARAMETERIPROC      TexParameteri;
     PFNGLTEXPARAMETERFPROC      TexParameterf;
     PFNGLUNIFORM1IPROC          Uniform1i;
+    PFNGLUNIFORM1FPROC          Uniform1f;
     PFNGLUNIFORM3FPROC          Uniform3f;
     PFNGLUNIFORM4FPROC          Uniform4f;
     PFNGLUNIFORMMATRIX4FVPROC   UniformMatrix4fv;
