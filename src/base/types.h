@@ -55,6 +55,14 @@ typedef i64 iptr;
     void *operator new(size_t size);  \
     void *operator new[](size_t size)
 
+#ifdef OS_WIN
+#   define NEGINE_EXPORT __declspec(dllexport)
+#   define NEGINE_IMPORT __declspec(dllimport)
+#else
+#   define NEGINE_EXPORT __attribute__((visibility("default")))
+#   define NEGINE_IMPORT NEGINE_EXPORT
+#endif
+
 #ifndef NEGINE_API
 #   ifdef OS_WIN
 #       if defined(NEGINE_SHARED_BUILD) // build dll
