@@ -85,6 +85,9 @@ public:
 		value = it->second;
 		return true;
 	}
+    size_t size() const {
+        return map_.size();
+    }
 	class Iterator
 	{
 	public:

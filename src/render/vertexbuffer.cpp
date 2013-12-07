@@ -43,13 +43,13 @@ void VertexBuffer::enableAttribute( VertexAttr attr, u32 stride, void* pointer )
 
 void VertexBuffer::enableAttributeMesh( const Mesh* mesh )
 {
-    const MeshLayer* attributes = mesh->attributes();
-    for (u32 i=0; i<VertexAttrs::Count; i++)
-    {
-        if (!attributes[i].valid_)
-            continue;
-        enableAttribute(attributes[i].attr_, attributes[i].stride_, reinterpret_cast<u8*>(NULL) + attributes[i].start_);
-    }
+    //const MeshLayer* attributes = mesh->attributes();
+    //for (u32 i=0; i<VertexAttrs::Count; i++)
+    //{
+    //    if (!attributes[i].valid_)
+    //        continue;
+    //    enableAttribute(attributes[i].attr_, attributes[i].stride_, reinterpret_cast<u8*>(NULL) + attributes[i].start_);
+    //}
 }
 
 void VertexBuffer::setVertexData( void* vertexes, u32 vertexCount )
@@ -80,27 +80,27 @@ void VertexBuffer::bind( )
 #endif
     vertexes_->bind();
 
-    for (u32 i=0; i<VertexAttrs::Count; i++)
-    {
-        const EnabledAttribute& attr = enabledAttributes_[i];
-        VertexAttr vertexAttr = static_cast<VertexAttr>(i);
-        u32 location = VertexAttrs::GetAttributeLocation( vertexAttr );
-        if (attr.enabled_)
-        {
-            GL.EnableVertexAttribArray( location );
-            GL.VertexAttribPointer(
-                location,
-                VertexAttrs::GetComponentCount( vertexAttr ),
-                VertexAttrs::GetGLType( vertexAttr ),
-                GL_FALSE,
-                attr.stride_,
-                attr.pointer_ );
-        }
-        else
-        {
-            GL.DisableVertexAttribArray(location);
-        }
-    }
+    //for (u32 i=0; i<VertexAttrs::Count; i++)
+    //{
+    //    const EnabledAttribute& attr = enabledAttributes_[i];
+    //    VertexAttr vertexAttr = static_cast<VertexAttr>(i);
+    //    u32 location = VertexAttrs::GetAttributeLocation( vertexAttr );
+    //    if (attr.enabled_)
+    //    {
+    //        GL.EnableVertexAttribArray( location );
+    //        GL.VertexAttribPointer(
+    //            location,
+    //            VertexAttrs::GetComponentCount( vertexAttr ),
+    //            VertexAttrs::GetGLType( vertexAttr ),
+    //            GL_FALSE,
+    //            attr.stride_,
+    //            attr.pointer_ );
+    //    }
+    //    else
+    //    {
+    //        GL.DisableVertexAttribArray(location);
+    //    }
+    //}
 
     indexes_->bind();
 }

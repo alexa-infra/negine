@@ -32,18 +32,13 @@ u8 GetComponentCount( VertexAttr attr )
         return 2;
     case tagTangent:
         return 3;
-    case tagBinormal:
+    case tagBitangent:
         return 3;
     case tagColor:
         return 4;
     default:
         return 0;
     }
-}
-
-u32 GetAttributeLocation( VertexAttr attr )
-{
-    return static_cast<u32>(attr);
 }
 
 u32 GetGLType( VertexAttr attr )
@@ -62,7 +57,7 @@ u32 GetSize( VertexAttr attr )
         return sizeof(vec2f);
     case tagTangent:
         return sizeof(vec3f);
-    case tagBinormal:
+    case tagBitangent:
         return sizeof(vec3f);
     case tagColor:
         return sizeof(vec4f);
@@ -78,8 +73,9 @@ MeshLayer::MeshLayer()
 {
 }
 
-MeshLayer::MeshLayer(VertexAttr attr, u32 start, u32 stride)
+MeshLayer::MeshLayer(VertexAttr attr, u32 idx, u32 start, u32 stride)
     : attr_(attr)
+    , idx_(idx)
     , start_(start)
     , stride_(stride)
     , valid_(true)
@@ -118,17 +114,19 @@ Mesh& Mesh::indexCount(u32 nIndexes, IndexType type)
 
 void Mesh::complete()
 {
+    u32 attrCounter[VertexAttrs::Count];
+    memset(attrCounter, 0, VertexAttrs::Count * sizeof(u32));
+
     #define MESH_ATTR_IN_ARRAY
         rawSize_ = 0;
-        for(u32 i=0; i<VertexAttrs::Count; i++) {
-            attributes_[i] = MeshLayer();
-        }
     #ifdef MESH_ATTR_IN_ARRAY
         for(u32 i=0; i<attr_.size(); i++) {
             VertexAttr attr = attr_[i];
+            u32& idx = attrCounter[static_cast<u32>(attr)];
             u32 size = VertexAttrs::GetSize(attr);
-            attributes_[attr] = MeshLayer(attr, rawSize_, size);
+            attributes_.push_back(MeshLayer(attr, idx, rawSize_, size));
             rawSize_ += size * numVertexes_;
+            idx++;
         }
     #else
         u32 vertexSize = 0;
@@ -139,8 +137,9 @@ void Mesh::complete()
         u32 pos = 0;
         for(u32 i=0; i<attr_.size(); i++) {
             VertexAttr attr = attr_[i];
+            u32& idx = attrCounter[static_cast<u32>(attr)];
             u32 size = VertexAttrs::GetSize(attr);
-            attributes_[attr] = MeshLayer(attr, pos, vertexSize);
+            attributes_.push_back(MeshLayer(attr, idx, pos, vertexSize));
             pos += size;
         }
         rawSize_ += vertexSize * numVertexes_;
@@ -154,26 +153,31 @@ void Mesh::complete()
     }
 }
 
-u32 Mesh::stride(VertexAttr attr) const
+u32 Mesh::stride(VertexAttr attr, u32 idx) const
 {
-    const MeshLayer& layer = attributes_[attr];
+    const MeshLayer& layer = getLayer(attr, idx);
     ASSERT(layer.valid_);
     return layer.stride_;
 }
 
-u8* Mesh::findAttributeRaw(VertexAttr attr)
-{
-    const MeshLayer& layer = attributes_[attr];
-    ASSERT(layer.valid_);
-    return &attributeBuffer_[layer.start_];
+const MeshLayer& Mesh::getLayer(VertexAttr attr, u32 idx) const {
+    u32 size = attributes_.size();
+    for(u32 i=0; i<size; i++) {
+        const MeshLayer& layer = attributes_[i];
+        if (attr == layer.attr_ && idx == layer.idx_) {
+            return layer;
+        }
+    }
+    ASSERT(false);
+    static MeshLayer invalidLayer;
+    return invalidLayer;
 }
 
-u8* Mesh::findElementRaw(VertexAttr attr, u32 idx)
+u8* Mesh::findAttributeRaw(VertexAttr attr, u32 idx) const
 {
-    ASSERT(idx < numVertexes_);
-    const MeshLayer& layer = attributes_[attr];
+    const MeshLayer& layer = getLayer(attr, idx);
     ASSERT(layer.valid_);
-    return &attributeBuffer_[layer.start_ + layer.stride_ * idx];
+    return const_cast<u8*>(&attributeBuffer_[layer.start_]);
 }
 
 }

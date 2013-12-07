@@ -23,7 +23,7 @@ enum VertexAttr {
     tagNormal,
     tagTexture,
     tagTangent,
-    tagBinormal,
+    tagBitangent,
     tagColor,
 
     Count
@@ -31,8 +31,6 @@ enum VertexAttr {
 
 //! Gets component count in attribute
 u8 GetComponentCount( VertexAttr attr );
-
-u32 GetAttributeLocation( VertexAttr attr );
 
 u32 GetGLType( VertexAttr attr );
 
@@ -43,12 +41,13 @@ typedef VertexAttrs::VertexAttr VertexAttr;
 struct MeshLayer
 {
     VertexAttr attr_;
+    u32 idx_;
     u32 start_;
     u32 stride_;
     bool valid_;
 
     MeshLayer();
-    MeshLayer(VertexAttr attr, u32 start, u32 stride);
+    MeshLayer(VertexAttr attr, u32 idx, u32 start, u32 stride);
 };
 
 namespace IndexTypes
@@ -63,11 +62,11 @@ typedef IndexTypes::IndexType IndexType;
 class Mesh
 {
 private:
-    std::vector<VertexAttr> attr_;
+    std::vector< VertexAttr > attr_;
 
     u32 numVertexes_;
     u32 numIndexes_;
-    MeshLayer attributes_[VertexAttrs::Count];
+    std::vector<MeshLayer> attributes_;
     std::vector<u8> attributeBuffer_;
     std::vector<u8> indices_;
     u32 rawSize_;
@@ -85,25 +84,20 @@ public:
     u32 numIndexes() const { return numIndexes_; }
     u32 rawSize() const { return rawSize_; }
     void* data() { return attributeBuffer_.data(); }
-    const MeshLayer* attributes() const { return attributes_; }
+    const std::vector<MeshLayer>& attributes() const { return attributes_; }
     void* indices() { return indices_.data(); }
     IndexType indexType() const { return indexType_; }
 
-    u32 stride(VertexAttr attr) const;
+    u32 stride(VertexAttr attr, u32 idx = 0) const;
 
     template<typename T>
-    T* findAttributeTyped(VertexAttr attr) {
-        return reinterpret_cast<T*>(findAttributeRaw(attr));
+    T* findAttribute(VertexAttr attr, u32 idx = 0) const {
+        return reinterpret_cast<T*>(findAttributeRaw(attr, idx));
     }
 
-    template<typename T>
-    T* findElement(VertexAttr attr, u32 idx) {
-        return reinterpret_cast<T*>(findElementRaw(attr, idx));
-    }
+    const MeshLayer& getLayer(VertexAttr attr, u32 idx) const;
 private:
-    u8* findAttributeRaw(VertexAttr attr);
-
-    u8* findElementRaw(VertexAttr attr, u32 idx);
+    u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
 private:
     DISALLOW_COPY_AND_ASSIGN(Mesh);
 };

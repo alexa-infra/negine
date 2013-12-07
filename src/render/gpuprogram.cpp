@@ -153,9 +153,23 @@ void GpuProgram::populateUniformMap()
     }
 }
 
-void GpuProgram::setAttribute(const std::string& name, VertexAttr attr)
+void GpuProgram::setAttribute(const std::string& name, VertexAttr attr, u32 idx)
 {
-    attributes_[name.c_str()] = attr;
+    AttrVar v;
+    v.attr = attr;
+    v.idx = idx;
+    v.location = attributes_.size();
+    attributes_[name.c_str()] = v;
+}
+
+u32 GpuProgram::getAttributeLoc(VertexAttr attr, u32 idx) const
+{
+    for (AttrMap::Iterator it = attributes_.iterator(); !it.isDone(); it.advance()) {
+        const AttrVar& v = it.value();
+        if (v.attr == attr && v.idx == idx)
+            return v.location;
+    }
+    return u32(-1);
 }
 
 bool GpuProgram::setShaderSource(ShaderType type, const std::string& source)
@@ -191,8 +205,8 @@ bool GpuProgram::complete()
     GL.AttachShader( id_, pixelShader_.handle() );
     
     for (AttrMap::Iterator it = attributes_.iterator(); !it.isDone(); it.advance()) {
-        VertexAttr attr = it.value();
-        u32 location = VertexAttrs::GetAttributeLocation(attr);
+        const AttrVar& attr = it.value();
+        u32 location = attr.location;
         const char* name = it.name();
         GL.BindAttribLocation(id_, location, name);
     }

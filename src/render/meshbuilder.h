@@ -33,6 +33,10 @@ namespace imp
         u32 color;
         u32 vertex;
         u32 polygon;
+        u32 polygonCount;
+
+        std::string name;
+        std::string texture;
 
         Surface()
             : pos(0), normal(0), uv(0), color(0), vertex(0), polygon(0)
@@ -88,24 +92,26 @@ namespace imp
         void createGrid();
 
         void readOBJ(const std::string& filename);
-    private:
+    public:
         std::vector<math::vec3f> posData;
         std::vector<math::vec2f> uvData;
         std::vector<math::vec3f> normalData;
         std::vector<math::vec4f> colorData;
-
+        
+        std::vector<Surface> surfaces;
+        Surface currentSurface;
+    private:
         std::vector<Vertex> vertexList;
         std::vector<Polygon> polygonList;
         std::vector<Line> lineList;
 
-        std::vector<Surface> surfaces;
-        Surface currentSurface;
+        
 
         enum
         {
-            hasVertexNormal,
-            hasVertexColor,
-            hasVertexUV
+            hasVertexNormal = 1 << 0,
+            hasVertexColor = 1 << 1,
+            hasVertexUV = 1 << 2
         };
         u32 mask;
     };

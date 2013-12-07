@@ -146,6 +146,7 @@ void MeshBuilder::beginSurface()
 
 void MeshBuilder::endSurface()
 {
+    currentSurface.polygonCount = polygonList.size() - currentSurface.polygon;
     surfaces.push_back(currentSurface);
 }
 
@@ -165,8 +166,8 @@ void MeshBuilder::getLineList(opengl::Mesh& mesh)
     mesh.indexCount(vertexCount, opengl::IndexTypes::UInt32);
     mesh.complete();
 
-    vec3f* position = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagPosition);
-    vec4f* color = mesh.findAttributeTyped<vec4f>(opengl::VertexAttrs::tagColor);
+    vec3f* position = mesh.findAttribute<vec3f>(opengl::VertexAttrs::tagPosition);
+    vec4f* color = mesh.findAttribute<vec4f>(opengl::VertexAttrs::tagColor);
     u32* indeces = reinterpret_cast<u32*>(mesh.indices());
     bool vertexColor = (mask & hasVertexColor) == hasVertexColor;
 
@@ -200,16 +201,16 @@ void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
     mesh.indexCount(vertexCount, opengl::IndexTypes::UInt32);
     mesh.complete();
 
-    vec3f* position = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagPosition);
+    vec3f* position = mesh.findAttribute<vec3f>(opengl::VertexAttrs::tagPosition);
     vec3f* normal = nullptr;
     if (hasNormal)
-        normal = mesh.findAttributeTyped<vec3f>(opengl::VertexAttrs::tagNormal);
+        normal = mesh.findAttribute<vec3f>(opengl::VertexAttrs::tagNormal);
     vec4f* color = nullptr;
     if (hasColor)
-        color = mesh.findAttributeTyped<vec4f>(opengl::VertexAttrs::tagColor);
+        color = mesh.findAttribute<vec4f>(opengl::VertexAttrs::tagColor);
     vec2f* uv = nullptr;
     if (hasUV)
-        uv = mesh.findAttributeTyped<vec2f>(opengl::VertexAttrs::tagTexture);
+        uv = mesh.findAttribute<vec2f>(opengl::VertexAttrs::tagTexture);
     u32* indeces = reinterpret_cast<u32*>(mesh.indices());
 
     for(u32 i=0, j=0; i<polygonList.size(); i++, j+=3)

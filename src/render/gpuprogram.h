@@ -32,8 +32,14 @@ class GpuProgram : public GpuResource
         u32 location;
         u32 type;
     };
+    struct AttrVar
+    {
+        u32 location;
+        VertexAttr attr;
+        u32 idx;
+    };
     typedef FixedMap<SmallString, UniformVar> UniformMap;
-    typedef FixedMap<SmallString, VertexAttr> AttrMap;
+    typedef FixedMap<SmallString, AttrVar> AttrMap;
 
     //! Shader object
     class Shader : public GpuResource
@@ -66,7 +72,9 @@ public:
     //! Unbind program
     void unbind();
 
-    void setAttribute(const std::string& name, VertexAttr attr);
+    void setAttribute(const std::string& name, VertexAttr attr, u32 idx = 0);
+
+    u32 getAttributeLoc(VertexAttr attr, u32 idx = 0) const;
 
     bool setShaderSource(ShaderType type, const std::string& source);
 

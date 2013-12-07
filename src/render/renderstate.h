@@ -3,6 +3,7 @@
 #include "base/types.h"
 #include "render/glcontext.h"
 #include "math/vec4.h"
+#include "render/gpuprogram.h"
 
 namespace base
 {
@@ -74,18 +75,22 @@ private:
 class GpuProgramState
 {
 public:
-    GpuProgramState(DeviceContext& context) : gl(context), current(0) {}
-    bool set(u32 program)
+    GpuProgramState(DeviceContext& context) : gl(context), current_(nullptr) {}
+    bool set(GpuProgram* program)
     {
-        if (current == program)
+        if (current_ == program)
             return false;
-        current = program;
-        gl.UseProgram(current);
+        current_ = program;
+        if (current_ == nullptr)
+            gl.UseProgram(0u);
+        else
+            gl.UseProgram(current_->handle());
         return true;
     }
+    GpuProgram& current() { return *current_; }
 private:
     DeviceContext& gl;
-    u32 current;
+    GpuProgram* current_;
 };
 
 template<GLenum Buffer>
