@@ -128,7 +128,7 @@ private:
 
 class Mesh;
 
-class RenderState
+class NEGINE_API RenderState
 {
 public:
     RenderState(DeviceContext& context);

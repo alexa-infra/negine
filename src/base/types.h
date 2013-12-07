@@ -55,24 +55,34 @@ typedef i64 iptr;
     void *operator new(size_t size);  \
     void *operator new[](size_t size)
 
-#ifdef OS_WIN
-#   define NEGINE_EXPORT __declspec(dllexport)
+#if defined OS_WIN
+#   define NEGINE_EXPORT __declspec(dllexport) // gcc supports it too
 #   define NEGINE_IMPORT __declspec(dllimport)
-#else
+#   define NEGINE_STATIC
+#elif defined(COMPILER_GCC)
 #   define NEGINE_EXPORT __attribute__((visibility("default")))
 #   define NEGINE_IMPORT NEGINE_EXPORT
+#   define NEGINE_STATIC NEGINE_EXPORT
+#endif
+
+#if defined NEGINE_SHARED_BUILD
+#   if defined NEGINE_STATIC_BUILD
+#       undef NEGINE_STATIC_BUILD
+#   endif
+#elif !defined NEGINE_STATIC_BUILD
+#   define NEGINE_SHARED_BUILD
 #endif
 
 #ifndef NEGINE_API
-#   ifdef OS_WIN
-#       if defined(NEGINE_SHARED_BUILD) // build dll
-#           define NEGINE_API __declspec(dllexport) // gcc supports it too
-#       elif !defined(NEGINE_STATIC_BUILD) // use dll
-#           define NEGINE_API __declspec(dllimport)
-#       else // static library
-#           define NEGINE_API
-#       endif
-#   elif defined(COMPILER_GCC)
-#       define NEGINE_API __attribute__((visibility("default")))
+
+#if defined NEGINE_SHARED_BUILD
+#   if defined NEGINE_SOURCE
+#       define NEGINE_API NEGINE_EXPORT
+#   else
+#       define NEGINE_API NEGINE_IMPORT
 #   endif
+#elif defined NEGINE_STATIC_BUILD
+#   define NEGINE_API NEGINE_STATIC
 #endif
+
+#endif // NEGINE_API

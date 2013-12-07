@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/types.h"
 #include <type_traits>
 
 namespace base {
@@ -7,7 +8,7 @@ namespace base {
 //! Any type holder
 //! Unsafe version of boost.any class
 //! https://github.com/ryppl/boost-svn/blob/master/boost/any.hpp
-class any
+class NEGINE_API any
 {
 private:
     class placeholder

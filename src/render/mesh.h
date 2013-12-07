@@ -59,7 +59,7 @@ namespace IndexTypes
 }
 typedef IndexTypes::IndexType IndexType;
 
-class Mesh
+class NEGINE_API Mesh
 {
 private:
     std::vector< VertexAttr > attr_;

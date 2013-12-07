@@ -14,7 +14,7 @@ namespace math
 {
 
 //! 4x4 matrix, column-major order
-class Matrix4
+class NEGINE_API Matrix4
 {
 private:
     vec4f column0_;

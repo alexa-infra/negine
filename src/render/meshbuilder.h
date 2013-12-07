@@ -54,7 +54,7 @@ namespace imp
         u32 v[2];
     };
 
-    class MeshBuilder
+    class NEGINE_API MeshBuilder
     {
     public:
         MeshBuilder();

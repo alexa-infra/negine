@@ -16,7 +16,7 @@ namespace base
 namespace opengl
 {
 
-class Camera
+class NEGINE_API Camera
 {
 private:
     math::Plane planes_[6];

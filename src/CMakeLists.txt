@@ -40,8 +40,9 @@ if(NEGINE_STATIC_BUILD)
     )
     set_target_properties(negine-static PROPERTIES
         OUTPUT_NAME "negine"
+        COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
-    add_definitions(-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD)
+    add_definitions(-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD -DBOOST_PYTHON_STATIC_MODULE)
     target_link_libraries(negine-static boostpython-static)
 endif()
 if(NEGINE_SHARED_BUILD)
@@ -52,6 +53,7 @@ if(NEGINE_SHARED_BUILD)
     )
     set_target_properties(negine PROPERTIES
         OUTPUT_NAME "negine"
+        COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DNEGINE_SHARED_BUILD)
     target_link_libraries(negine boostpython)

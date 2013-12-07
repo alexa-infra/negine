@@ -7,7 +7,7 @@ namespace base
 namespace opengl
 {
 
-class GpuResource
+class NEGINE_API GpuResource
 {
 public:
     GpuResource(DeviceContext& context);
