@@ -1,4 +1,4 @@
-#include "sdlapp.h"
+#include "app/app.h"
 #include <cmath>
 #include <boost/python.hpp>
 #include <string>
@@ -46,7 +46,7 @@ static const char pixelShader[] =
     "}\n"
     "";
 
-class Demo : public SDLApp
+class Demo : public Application
 {
     base::opengl::Renderer ren;
     base::opengl::GpuProgram prog;
