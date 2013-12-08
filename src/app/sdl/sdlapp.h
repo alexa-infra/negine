@@ -28,6 +28,7 @@ public:
     SDLApp();
     virtual ~SDLApp();
     void Run();
+    opengl::DeviceContext& context() { return GL; }
 protected:
     virtual void OnFrame();
     virtual void OnMotion( i32 x, i32 y, i32 dx, i32 dy );

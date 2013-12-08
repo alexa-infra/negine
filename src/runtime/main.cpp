@@ -13,6 +13,8 @@
 using namespace base;
 using namespace boost::python;
 
+extern "C" NEGINE_EXPORT void initnegine_runtime(void);
+
 static const char vertexShader[] = 
     "#version 150\n"
     "\n"
@@ -46,6 +48,8 @@ static const char pixelShader[] =
     "}\n"
     "";
 
+static Application* intstance_ = nullptr;
+
 class Demo : public Application
 {
     base::opengl::Renderer ren;
@@ -58,8 +62,10 @@ class Demo : public Application
 
 public:
     Demo(const std::string& filename) : ren(GL), prog(GL) {
+        intstance_ = this;
         Py_Initialize();
         PyImport_AppendInittab("neginecore", initneginecore);
+        PyImport_AppendInittab("negine_runtime", initnegine_runtime);
         object m = import("__main__");
         global = object(m.attr("__dict__"));
 
@@ -223,4 +229,17 @@ int main(int argc, char* argv[])
     Demo app(argv[1]);
     app.Run();
     return 0;
+}
+
+static Application& globalApp() {
+    ASSERT(intstance_ != nullptr);
+    return *intstance_;
+}
+
+
+BOOST_PYTHON_MODULE(negine_runtime)
+{
+    def("globalApp", globalApp, return_value_policy<reference_existing_object>());
+    class_<Demo, boost::noncopyable>("App", no_init)
+        .add_property( "context", make_function( static_cast< opengl::DeviceContext& (Application::*)() >( &Application::context ), return_value_policy<reference_existing_object>() ) );
 }
