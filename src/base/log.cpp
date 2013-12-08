@@ -25,8 +25,8 @@ struct LogWrapper
     }
     ~LogWrapper()
     {
-        u32 len = loggers_.size();
-        for (u32 i=0; i<len; i++)
+        size_t len = loggers_.size();
+        for (size_t i=0; i<len; i++)
             delete loggers_[i];
     }
 } logWrapper;
@@ -43,8 +43,8 @@ void writeLog(Log::Level level, const char* fmt, ...)
     if (level < logWrapper.level_)
         return;
     vsnprintf(logBuffer_, LOG_BUFFER_SIZE, fmt, args);
-    u32 len = logWrapper.loggers_.size();
-    for (u32 i=0; i<len; i++)
+    size_t len = logWrapper.loggers_.size();
+    for (size_t i=0; i<len; i++)
          logWrapper.loggers_[i]->write(level, logBuffer_);
     va_end(args);
 }

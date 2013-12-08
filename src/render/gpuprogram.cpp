@@ -158,7 +158,7 @@ void GpuProgram::setAttribute(const std::string& name, VertexAttr attr, u32 idx)
     AttrVar v;
     v.attr = attr;
     v.idx = idx;
-    v.location = attributes_.size();
+    v.location = static_cast<u32>(attributes_.size());
     attributes_[name.c_str()] = v;
 }
 

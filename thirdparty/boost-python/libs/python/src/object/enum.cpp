@@ -229,7 +229,7 @@ void enum_base::export_values()
     list items = d.items();
     scope current;
 
-    for (unsigned i = 0, max = len(items); i < max; ++i)
+    for (std::size_t i = 0, max = len(items); i < max; ++i)
         api::setattr(current, items[i][0], items[i][1]);
  }
 

@@ -65,7 +65,7 @@ public:
         if (v == viewport)
             return;
         viewport = v;
-        gl.Viewport(viewport.x, viewport.y, viewport.z, viewport.w);
+        gl.Viewport(static_cast<i32>(viewport.x), static_cast<i32>(viewport.y), static_cast<i32>(viewport.z), static_cast<i32>(viewport.w));
     }
 private:
     DeviceContext& gl;

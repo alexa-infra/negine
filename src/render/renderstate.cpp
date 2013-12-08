@@ -23,8 +23,8 @@ void RenderState::render(const Mesh& mesh, u32 from, u32 count)
 {
     if (true /*do not use buffers */) {
         const std::vector<MeshLayer>& attributes = mesh.attributes();
-        u32 size = attributes.size();
-        for (u32 i=0; i<size; i++) {
+        size_t size = attributes.size();
+        for (size_t i=0; i<size; i++) {
             const MeshLayer& attr = attributes[i];
             ASSERT(attr.valid_);
             u32 location = program.current().getAttributeLoc(attr.attr_, attr.idx_);
