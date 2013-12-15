@@ -17,10 +17,13 @@ set(FREEGLUT_SHARED ${NEGINE_SHARED_BUILD} CACHE BOOL "Freeglut shared build" FO
 
 set(SDL_JOYSTICK OFF)
 set(SDL_HAPTIC OFF)
+set(BUILD_SDLMAIN OFF)
 set(ENABLE_BOOST_WORKAROUND ON CACHE BOOL "Enable Boost in assimp" FORCE)
 set(BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Assimp tools" FORCE)
+set(DEBUG_POSTFIX "" CACHE BOOL "Debug postfix" FORCE)
+set(BUILD_SHARED_LIB ${NEGINE_SHARED_BUILD})
 
 add_subdirectory(boost-python)
-add_subdirectory(freeglut)
+#add_subdirectory(freeglut)
 add_subdirectory(SDL)
 add_subdirectory(assimp-3.0.1270)

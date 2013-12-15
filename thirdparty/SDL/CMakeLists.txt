@@ -1171,9 +1171,11 @@ endif(UNIX)
 # Ensure that the extra cflags are used at compile time
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
 
-# Always build SDLmain
-add_library(SDL2main STATIC ${SDLMAIN_SOURCES})
-set(_INSTALL_LIBS "SDL2main")
+if(BUILD_SDLMAIN)
+  # Always build SDLmain
+  add_library(SDL2main STATIC ${SDLMAIN_SOURCES})
+  set(_INSTALL_LIBS "SDL2main")
+endif(BUILD_SDLMAIN)
 
 if(SDL_SHARED)
   add_library(SDL2 SHARED ${SOURCE_FILES})
