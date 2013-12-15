@@ -42,7 +42,7 @@ public:
     //! Read raw object from stream (reference version)
     template <typename TT>
     void read( TT& value ) {
-		value = readType<TT>();
+        value = readType<TT>();
     }
 
     //! Write raw bytes to stream

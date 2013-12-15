@@ -826,7 +826,7 @@ static void start_mem(stbi *s, uint8 const *buffer, int len)
 #ifndef STBI_NO_STDIO
 static void refill_buffer(stbi *s)
 {
-   int n = fread(s->buffer_start, 1, s->buflen, s->img_file);
+   size_t n = fread(s->buffer_start, 1, s->buflen, s->img_file);
    if (n == 0) {
       s->from_file = 0;
       s->img_buffer = s->img_buffer_end-1;
@@ -873,7 +873,7 @@ static void skip(stbi *s, int n)
 {
 #ifndef STBI_NO_STDIO
    if (s->img_file) {
-      int blen = s->img_buffer_end - s->img_buffer;
+      int blen = (int)(s->img_buffer_end - s->img_buffer);
       if (blen < n) {
          s->img_buffer = s->img_buffer_end;
          fseek(s->img_file, n - blen, SEEK_CUR);
@@ -888,7 +888,7 @@ static int getn(stbi *s, stbi_uc *buffer, int n)
 {
 #ifndef STBI_NO_STDIO
    if (s->img_file) {
-      int blen = s->img_buffer_end - s->img_buffer;
+      int blen = (int)(s->img_buffer_end - s->img_buffer);
       if (blen < n) {
          int res;
          memcpy(buffer, s->img_buffer, blen);

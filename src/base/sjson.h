@@ -14,6 +14,8 @@ namespace sjson {
         typeTrue, typeFalse, typeInt, typeFloat, typeString, typeArray, typeDict, typeNull
     };
 
+    //! JSON data object
+    //! TODO: avoid internal shared_ptr
     struct NEGINE_API Variant {
     public:
         typedef std::map<std::string, Variant> Map;
@@ -68,10 +70,13 @@ namespace sjson {
         size_t size() const;
     };
 
+    //! Parse JSON/sJSON data from string
     NEGINE_API bool parse(const std::string& json, Variant& obj, bool simplified = true);
+    //! Pritty print JSON/sJSON data to string
     NEGINE_API std::string write(const Variant& v, bool simplified = true);
-    
+    //! Parse JSON/sJSON data from file
     NEGINE_API bool readFile(const std::string& filename, Variant& obj, bool simplified = true);
+    //! Print JSON/sJSON data to file
     NEGINE_API void writeFile(const std::string& filename, Variant& obj, bool simplified = true);
 
 } // namespace sjson

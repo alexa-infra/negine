@@ -161,8 +161,8 @@ u32 Mesh::stride(VertexAttr attr, u32 idx) const
 }
 
 const MeshLayer& Mesh::getLayer(VertexAttr attr, u32 idx) const {
-    u32 size = attributes_.size();
-    for(u32 i=0; i<size; i++) {
+    std::size_t size = attributes_.size();
+    for(std::size_t i=0; i<size; i++) {
         const MeshLayer& layer = attributes_[i];
         if (attr == layer.attr_ && idx == layer.idx_) {
             return layer;

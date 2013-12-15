@@ -21,11 +21,11 @@ public:
     //! Reset timer to zero, returns current elapsed time in seconds
     f32 reset();
 
-    //! Returns current elapsed time in seconds
+    //! Returns current elapsed time in milliseconds
     f32 elapsed() const;
 
 private:
-	//! Gets current timer value
+    //! Gets current timer value
     u64 getClock() const;
     
     //! Convert internal representation to milliseconds

@@ -21,6 +21,7 @@ public:
         delete instance_;
         instance_ = nullptr;
     }
+protected:
     static bool hasInstance() {
         return instance_ != nullptr;
     }

@@ -36,11 +36,11 @@ typedef float       f32;
 typedef double      f64;
 
 #if defined(OS_ARCH_32)
-typedef u32 uptr;
-typedef i32 iptr;
+    typedef u32 uptr;
+    typedef i32 iptr;
 #elif defined(OS_ARCH_64)
-typedef u64 uptr;
-typedef i64 iptr;
+    typedef u64 uptr;
+    typedef i64 iptr;
 #endif
 
 } // namespace base
@@ -73,16 +73,14 @@ typedef i64 iptr;
 #   define NEGINE_SHARED_BUILD
 #endif
 
-#ifndef NEGINE_API
-
-#if defined NEGINE_SHARED_BUILD
-#   if defined NEGINE_SOURCE
-#       define NEGINE_API NEGINE_EXPORT
-#   else
-#       define NEGINE_API NEGINE_IMPORT
+#if !defined NEGINE_API
+#   if defined NEGINE_SHARED_BUILD
+#      if defined NEGINE_SOURCE
+#          define NEGINE_API NEGINE_EXPORT
+#      else
+#          define NEGINE_API NEGINE_IMPORT
+#      endif
+#   elif defined NEGINE_STATIC_BUILD
+#      define NEGINE_API NEGINE_STATIC
 #   endif
-#elif defined NEGINE_STATIC_BUILD
-#   define NEGINE_API NEGINE_STATIC
 #endif
-
-#endif // NEGINE_API
