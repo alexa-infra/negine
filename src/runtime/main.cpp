@@ -64,7 +64,7 @@ public:
     Demo(const std::string& filename) : ren(GL), prog(GL) {
         intstance_ = this;
         Py_Initialize();
-        PyImport_AppendInittab("neginecore", initneginecore);
+        PyImport_AppendInittab("negine_core", initnegine_core);
         PyImport_AppendInittab("negine_runtime", initnegine_runtime);
         object m = import("__main__");
         global = object(m.attr("__dict__"));

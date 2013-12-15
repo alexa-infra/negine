@@ -56,6 +56,7 @@ TextureInfo::TextureInfo()
     , Pixel( PixelTypes::RGBA )
     , DataType( GLDataTypes::UByte )
     , InternalType( GL_RGBA )
+    , Usage( TextureUsages::StaticData )
 {
 }
 
@@ -80,6 +81,14 @@ void Texture::destroy()
 void Texture::bind()
 {
     GL.BindTexture( info_.Type, id_ );
+}
+
+void Texture::create(const TextureInfo& textureinfo)
+{
+    if (textureinfo.Usage == TextureUsages::StaticData)
+        createEmpty(textureinfo);
+    else
+        createFromFile(textureinfo);
 }
 
 void Texture::createFromFile( const TextureInfo& textureinfo )
@@ -237,7 +246,7 @@ Texture* TextureLoader::load( const std::string& filename )
     tex_info.Filtering = TextureFilters::Anisotropic;
     tex_info.GenerateMipmap = true;
     Texture* t = new Texture(context_);
-    t->createFromFile( tex_info );
+    t->create( tex_info );
     cache_[filename] = t;
     return t;
 }

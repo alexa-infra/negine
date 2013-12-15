@@ -5,7 +5,7 @@
 
 using namespace boost::python;
 
-BOOST_PYTHON_MODULE(neginecore)
+BOOST_PYTHON_MODULE(negine_core)
 {
     init_py_math();
     init_py_render();

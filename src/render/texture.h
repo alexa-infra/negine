@@ -125,6 +125,12 @@ public:
     //! Bind texture
     void bind();
 
+    void create(const TextureInfo& textureinfo);
+
+    void destroy();
+private:
+    void setup();
+
     //! Generate texture object from texture info
     void createFromFile( const TextureInfo& textureinfo );
 
@@ -132,11 +138,6 @@ public:
     void createFromBuffer( const TextureInfo& textureinfo, const u8* data );
 
     void createEmpty( const TextureInfo& textureinfo );
-
-    void destroy();
-
-private:
-    void setup();
 private:
     DISALLOW_COPY_AND_ASSIGN( Texture );
 };

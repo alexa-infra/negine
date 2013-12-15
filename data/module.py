@@ -1,4 +1,4 @@
-from neginecore import *
+from negine_core import *
 from negine_runtime import *
 
 a = vec4f(1.0, 0.0, 0.0, 1.0)

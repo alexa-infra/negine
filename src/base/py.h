@@ -2,4 +2,4 @@
 
 #include "base/types.h"
 
-extern "C" NEGINE_API void initneginecore(void);
+extern "C" NEGINE_API void initnegine_core(void);
