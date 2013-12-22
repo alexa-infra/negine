@@ -52,7 +52,7 @@ struct SceneGenerator
                     prog->setParams(obj.material->defaultParams);
                     prog->setParams(rpParams);
                 }
-                params["mvp"] = obj.transform * cam.GetClipMatrix();
+                params["mvp"] = obj.transform * cam.clipMatrix();
                 prog->setParams(params);
 
                 //GL.renderState().render(*obj.mesh);

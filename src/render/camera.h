@@ -18,7 +18,48 @@ namespace opengl
 
 class NEGINE_API Camera
 {
+public:
+    Camera();
+
+    inline const math::vec3f& forward() const { return forward_; }
+    inline const math::vec3f& right() const { return right_; }
+    inline const math::vec3f& up() const { return up_; }
+
+    inline const math::vec3f& position() const { return position_; }
+    inline f32 pitch() const { return pitch_; }
+    inline f32 head() const { return head_; }
+    inline f32 aspect() const { return aspect_; }
+    inline f32 fov() const { return fov_; }
+    inline f32 zNear() const { return zNear_; }
+    inline f32 zFar() const { return zFar_; }
+
+    inline const math::Plane* planes() const { return planes_; }
+    inline const math::Matrix4& projection() const { return projection_; }
+    inline const math::Matrix4& modelView() const { return modelview_; }
+    inline const math::Matrix4& clipMatrix() const { return clip_; }
+
+    void moveForward(f32 dist);
+    void moveBackward(f32 dist);
+    void moveRight(f32 dist);
+    void moveLeft(f32 dist);
+    void turnPitch(f32 radians);
+    void turnHead(f32 radians);
+
+    void setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar);
+    void setPosition(const math::vec3f& v );
+    void setPitch(f32 radians);
+    void setHead(f32 radians);
+    void setAspect(f32 ratio);
+    void setFov(f32 radians);
+    void setZNear(f32 dist);
+    void setZFar(f32 dist);
+
+    void Update();
 private:
+    void UpdateOrientation();
+    void UpdateFrustum();
+
+    bool dirty_;
     math::Plane planes_[6];
     math::Matrix4 projection_;
     math::Matrix4 modelview_;
@@ -37,85 +78,6 @@ private:
     f32 fov_;
     f32 zNear_;
     f32 zFar_;
-public:
-    Camera();
-
-    const math::vec3f& forward() const {
-        return forward_;
-    }
-    const math::vec3f& right() const {
-        return right_;
-    }
-    const math::vec3f& up() const {
-        return up_;
-    }
-
-    void set_position( const math::vec3f& v ) {
-        position_ = v;
-    }
-    const math::vec3f& position() const {
-        return position_;
-    }
-
-    void set_pitch( f32 v ) {
-        pitch_ = v;
-    }
-    f32 pitch() const {
-        return pitch_;
-    }
-    void set_head( f32 v ) {
-        head_ = v;
-    }
-    f32 head() const {
-        return head_;
-    }
-
-    void set_aspect( f32 v ) {
-        aspect_ = v;
-    }
-    f32 aspect() const {
-        return aspect_;
-    }
-
-    void set_fov( f32 v ) {
-        fov_ = v;
-    };
-    f32 fov() const {
-        return fov_;
-    }
-
-    void set_zNear( f32 v ) {
-        zNear_ = v;
-    }
-    f32 zNear() const {
-        return zNear_;
-    }
-
-    void set_zFar( f32 v ) {
-        zFar_ = v;
-    }
-    f32 zFar() const {
-        return zFar_;
-    }
-
-    const math::Plane* planes() const {
-        return planes_;
-    }
-
-    const math::Matrix4& GetProjection() const {
-        return projection_;
-    }
-    const math::Matrix4& GetModelView() const {
-        return modelview_;
-    }
-    const math::Matrix4& GetClipMatrix() const {
-        return clip_;
-    }
-
-    void Update();
-private:
-    void UpdateOrientation();
-    void UpdateFrustum();
 
 private:
     DISALLOW_COPY_AND_ASSIGN( Camera );

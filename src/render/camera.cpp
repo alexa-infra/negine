@@ -16,10 +16,15 @@ namespace opengl
 
 Camera::Camera()
 {
+    dirty_ = false;
 }
 
 void Camera::Update()
 {
+    if (!dirty_)
+        return;
+    dirty_ = false;
+
     UpdateOrientation();
 
     projection_ = Matrix4::Perspective( fov_, aspect_, zNear_, zFar_ );
@@ -58,6 +63,80 @@ void Camera::UpdateFrustum()
     planes_[4].set( v4 + v3 );
     planes_[5].set( v4 - v3 );
 }
+
+void Camera::moveForward(f32 dist) {
+    position_ += forward_ * dist;
+    dirty_ = true;
+}
+
+void Camera::moveBackward(f32 dist) {
+    position_ -= forward_ * dist;
+    dirty_ = true;
+}
+
+void Camera::moveRight(f32 dist) {
+    position_ += right_ * dist;
+    dirty_ = true;
+}
+
+void Camera::moveLeft(f32 dist) {
+    position_ -= right_ * dist;
+    dirty_ = true;
+}
+
+void Camera::setPosition( const math::vec3f& v ) {
+    position_ = v;
+    dirty_ = true;
+}
+
+void Camera::setPitch( f32 v ) { 
+    pitch_ = v;
+    dirty_ = true;
+}
+
+void Camera::setHead( f32 v ) {
+    head_ = v;
+    dirty_ = true;
+}
+
+void Camera::turnPitch(f32 v) {
+    pitch_ += v;
+    dirty_ = true;
+}
+
+void Camera::turnHead(f32 v) {
+    head_ += v;
+    dirty_ = true;
+}
+
+void Camera::setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar) {
+    aspect_ = aspect;
+    fov_ = fov;
+    zNear_ = zNear;
+    zFar_ = zFar;
+    dirty_ = true;
+}
+
+void Camera::setAspect( f32 v ) {
+    aspect_ = v;
+    dirty_ = true;
+}
+
+void Camera::setFov( f32 v ) {
+    fov_ = v;
+    dirty_ = true;
+};
+
+void Camera::setZNear( f32 v ) {
+    zNear_ = v;
+    dirty_ = true;
+}
+    
+void Camera::setZFar( f32 v ) {
+    zFar_ = v;
+    dirty_ = true;
+}
+
 
 } // namespace opengl
 } // namespace base
