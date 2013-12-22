@@ -24,8 +24,14 @@ file(GLOB SDLAPP_SRC ${SRC_PATH}/app/sdl/*.cpp)
 file(GLOB SDLAPP_HDR ${SRC_PATH}/app/sdl/*.h)
 source_group("app" FILES ${APP_SRC} ${APP_HDR} ${SDLAPP_SRC} ${SDLAPP_HDR})
 
-set(SRC ${APP_SRC} ${SDLAPP_SRC} ${BASE_SRC} ${MATH_SRC} ${RENDER_SRC})
-set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR})
+file(GLOB GAME_SRC ${SRC_PATH}/game/*.cpp)
+file(GLOB GAME_HDR ${SRC_PATH}/game/*.h)
+file(GLOB GAME_COMP_SRC ${SRC_PATH}/game/components/*.cpp)
+file(GLOB GAME_COMP_HDR ${SRC_PATH}/game/components/*.h)
+source_group("game" FILES ${GAME_HDR} ${GAME_SRC} ${GAME_COMP_HDR} ${GAME_COMP_SRC})
+
+set(SRC ${APP_SRC} ${SDLAPP_SRC} ${BASE_SRC} ${MATH_SRC} ${RENDER_SRC} ${GAME_SRC} ${GAME_COMP_SRC})
+set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR} ${GAME_HDR} ${GAME_COMP_HDR})
 
 if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11 -fvisibility=hidden")
