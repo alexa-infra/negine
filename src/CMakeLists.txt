@@ -48,6 +48,7 @@ include_directories(
     ${TOOLS_PATH}/boost-python
     ${PYTHON_INCLUDE_DIRS}
     ${TOOLS_PATH}/SDL/include
+    ${TOOLS_PATH}/assimp-3.0.1270/include
 )
 
 if(NEGINE_STATIC_BUILD)
@@ -59,7 +60,7 @@ if(NEGINE_STATIC_BUILD)
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD -DBOOST_PYTHON_STATIC_MODULE)
-    target_link_libraries(negine-static boostpython-static SDL2-static)
+    target_link_libraries(negine-static boostpython-static SDL2-static assimp-static)
 endif()
 if(NEGINE_SHARED_BUILD)
     add_library(negine SHARED
@@ -70,7 +71,7 @@ if(NEGINE_SHARED_BUILD)
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DNEGINE_SHARED_BUILD)
-    target_link_libraries(negine boostpython SDL2)
+    target_link_libraries(negine boostpython SDL2 assimp)
 endif()
 
 add_definitions(-DSDL_ENGINE)
