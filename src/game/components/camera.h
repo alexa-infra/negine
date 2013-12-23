@@ -27,6 +27,8 @@ public:
     void setFov(f32 radians);
     void setZNear(f32 dist);
     void setZFar(f32 dist);
+
+    static void updateTree(Entity* root);
 private:
     void update();
 

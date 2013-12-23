@@ -39,7 +39,7 @@ void Transform::update() {
 
     Matrix4 local = Matrix4::Translation( position_ ) * orientation;
 
-    ComponentBase* parent = get_parent(parent_, type());
+    ComponentBase* parent = get_parent(parent_->parent(), type());
     if (parent == nullptr) {
         world_ = local;
         return;

@@ -43,7 +43,7 @@ CompList find_siblings(Entity* root, CompType type) {
 
 CompList find_parent(Entity* item, CompType type) {
     CompList result;
-    Entity* it = item->parent();
+    Entity* it = item;
     while(it != nullptr) {
         if (it->has(type))
             result.push_back(it->get(type));
@@ -53,7 +53,7 @@ CompList find_parent(Entity* item, CompType type) {
 }
 
 ComponentBase* get_parent(Entity* item, CompType type) {
-    Entity* it = item->parent();
+    Entity* it = item;
     while(it != nullptr) {
         if (it->has(type))
             return it->get(type);

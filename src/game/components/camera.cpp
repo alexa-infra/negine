@@ -55,17 +55,24 @@ void Camera::update() {
         //Matrix4::LookAt( position, position + parentTransform->forward(), parentTransform->up() );
     clip_ = projection_ * modelview_;
 
-    const Matrix4& m = clip_;
-    const math::vec4f v1 = m.Row( 0 );
-    const math::vec4f v2 = m.Row( 1 );
-    const math::vec4f v3 = m.Row( 2 );
-    const math::vec4f v4 = m.Row( 3 );
+    const math::vec4f v1 = clip_.Row( 0 );
+    const math::vec4f v2 = clip_.Row( 1 );
+    const math::vec4f v3 = clip_.Row( 2 );
+    const math::vec4f v4 = clip_.Row( 3 );
     planes_[0].set( v4 + v1 );
     planes_[1].set( v4 - v1 );
     planes_[2].set( v4 + v2 );
     planes_[3].set( v4 - v2 );
     planes_[4].set( v4 + v3 );
     planes_[5].set( v4 - v3 );
+}
+
+void Camera::updateTree(Entity* root) {
+    CompList components = find_all(root, Type());
+    for(auto c: components) {
+        Camera* cam = dynamic_cast<Camera*>(c);
+        cam->update();
+    }
 }
 
 }
