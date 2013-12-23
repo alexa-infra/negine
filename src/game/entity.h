@@ -15,13 +15,13 @@ typedef std::deque<ComponentBase*> CompList;
 typedef std::map<CompType, ComponentBase*> CompMap;
 typedef std::deque<Entity*> EntityList;
 
-class NEGINE_API Entity {
+class Entity {
 public:
-    ~Entity();
-    bool has(CompType type) const;
-    ComponentBase* get(CompType type) const;
-    void addChild(Entity* e);
-    void add(ComponentBase* c);
+    NEGINE_API ~Entity();
+    NEGINE_API bool has(CompType type) const;
+    NEGINE_API ComponentBase* get(CompType type) const;
+    NEGINE_API void addChild(Entity* e);
+    NEGINE_API void add(ComponentBase* c);
 
     inline Entity* parent() const { return parent_; }
     inline const EntityList& children() const { return children_; }

@@ -25,7 +25,7 @@ enum ShaderType {
 typedef ShaderTypes::ShaderType ShaderType;
 
 //! Shader program object
-class NEGINE_API GpuProgram : public GpuResource
+class GpuProgram : public GpuResource
 {
     struct UniformVar
     {
@@ -61,26 +61,26 @@ class NEGINE_API GpuProgram : public GpuResource
     };
 
 public:
-    GpuProgram(DeviceContext& gl);
-    ~GpuProgram();
+    NEGINE_API GpuProgram(DeviceContext& gl);
+    NEGINE_API ~GpuProgram();
 
-    void destroy();
+    NEGINE_API void destroy();
 
     //! Sets program to be used at current pipeline
-    void bind();
+    NEGINE_API void bind();
 
     //! Unbind program
-    void unbind();
+    NEGINE_API void unbind();
 
-    void setAttribute(const std::string& name, VertexAttr attr, u32 idx = 0);
+    NEGINE_API void setAttribute(const std::string& name, VertexAttr attr, u32 idx = 0);
 
-    u32 getAttributeLoc(VertexAttr attr, u32 idx = 0) const;
+    NEGINE_API u32 getAttributeLoc(VertexAttr attr, u32 idx = 0) const;
 
-    bool setShaderSource(ShaderType type, const std::string& source);
+    NEGINE_API bool setShaderSource(ShaderType type, const std::string& source);
 
-    bool complete();
+    NEGINE_API bool complete();
 
-    void setParams(const Params& params);
+    NEGINE_API void setParams(const Params& params);
 private:
     
     void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);

@@ -77,10 +77,13 @@ typedef double      f64;
 #   if defined NEGINE_SHARED_BUILD
 #      if defined NEGINE_SOURCE
 #          define NEGINE_API NEGINE_EXPORT
+#          define NEGINE_TEMPLATE
 #      else
 #          define NEGINE_API NEGINE_IMPORT
+#          define NEGINE_TEMPLATE extern
 #      endif
 #   elif defined NEGINE_STATIC_BUILD
 #      define NEGINE_API NEGINE_STATIC
+#      define NEGINE_TEMPLATE
 #   endif
 #endif

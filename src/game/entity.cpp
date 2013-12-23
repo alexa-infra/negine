@@ -4,9 +4,9 @@ namespace base {
 namespace game {
 
 Entity::~Entity() {
-    for(auto c: components_) {
-        delete c.second;
-    }
+    //for(auto c: components_) {
+    //    delete c.second;
+    //}
 }
 
 bool Entity::has(CompType type) const {

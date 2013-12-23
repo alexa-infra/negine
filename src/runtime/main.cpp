@@ -9,6 +9,8 @@
 #include "render/camera.h"
 #include "base/timer.h"
 #include "base/py.h"
+#include "render/model_loader.h"
+#include "math/matrix-inl.h"
 
 using namespace base;
 using namespace boost::python;
@@ -100,14 +102,13 @@ public:
         prog.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader);
         prog.complete();
 
-        cam.set_position( base::math::vec3f( 0.f, 0.f, -5.f ) );
-        cam.set_pitch( 50 * base::math::deg_to_rad );
-        cam.set_head( 180 * base::math::deg_to_rad );
-        cam.set_aspect( width_ / ( f32 )height_ );
-        cam.set_fov( 45.0f );
-        cam.set_zNear( 1 );
-        cam.set_zFar( 1000 );
+        cam.setPosition( base::math::vec3f( 0.f, 0.f, -5.f ) );
+        cam.setPitch( 50 * base::math::deg_to_rad );
+        cam.setHead( 180 * base::math::deg_to_rad );
+        cam.setPerspective(width_ / ( f32 )height_, 45.0f, 1, 1000);
         cam.Update();
+
+        opengl::ModelLoader::load("trunk.obj");
     }
     virtual ~Demo() {
     }
@@ -172,12 +173,12 @@ protected:
     }
 
     void OnMotion( i32 x, i32 y, i32 dx, i32 dy ) {
-        cam.set_head( cam.head()  + math::deg_to_rad * dx);
+        cam.turnHead( math::deg_to_rad * dx);
 
         if (fabs (cam.pitch() + math::deg_to_rad * dy ) < base::math::pi/2.0f ) {
-            cam.set_pitch(cam.pitch() + math::deg_to_rad * dy );
+            cam.turnPitch( math::deg_to_rad * dy );
         } else if (dy != 0 ) {
-            cam.set_pitch( base::math::pi/2.0f * dy / fabs( (f32)dy ) );
+            cam.setPitch( base::math::pi/2.0f * dy / fabs( (f32)dy ) );
         }
     }
 
@@ -185,37 +186,37 @@ protected:
         const f32 speed = 0.1f;
 
         if ( keypressed_ & 1 ) {
-            cam.set_position( cam.position() + cam.forward() * speed );
+            cam.moveForward( speed );
         }
 
         if ( keypressed_ & 2 ) {
-            cam.set_position( cam.position() - cam.forward() * speed );
+            cam.moveBackward( speed );
         }
 
         if ( keypressed_ & 4 ) {
-            cam.set_position( cam.position() - cam.right()   * speed );
+            cam.moveLeft( speed );
         }
 
         if ( keypressed_ & 8 ) {
-            cam.set_position( cam.position() + cam.right()   * speed );
+            cam.moveRight( speed );
         }
 
         if ( keypressed_ & 16 ) {
             if ( fabs( cam.pitch() + math::deg_to_rad ) < math::pi / 2.0f )
-                cam.set_pitch( cam.pitch() + math::deg_to_rad );
+                cam.turnPitch( math::deg_to_rad );
         }
 
         if ( keypressed_ & 32 ) {
             if ( fabs( cam.pitch() - math::deg_to_rad ) < math::pi / 2.0f )
-                cam.set_pitch( cam.pitch() - math::deg_to_rad );
+                cam.turnPitch( -math::deg_to_rad );
         }
 
         if ( keypressed_ & 64 ) {
-            cam.set_head( cam.head() + math::deg_to_rad );
+            cam.turnHead( math::deg_to_rad );
         }
 
         if ( keypressed_ & 128 ) {
-            cam.set_head( cam.head() - math::deg_to_rad );
+            cam.turnHead( -math::deg_to_rad );
         }
 
         cam.Update();

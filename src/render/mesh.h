@@ -59,7 +59,7 @@ namespace IndexTypes
 }
 typedef IndexTypes::IndexType IndexType;
 
-class NEGINE_API Mesh
+class Mesh
 {
 private:
     std::vector< VertexAttr > attr_;
@@ -72,32 +72,32 @@ private:
     u32 rawSize_;
     IndexType indexType_;
 public:
-    Mesh();
-    ~Mesh();
+    NEGINE_API Mesh();
+    NEGINE_API ~Mesh();
 
-    Mesh& addAttribute(VertexAttr attr);
-    Mesh& vertexCount(u32 nVertexes);
-    Mesh& indexCount(u32 nIndexes, IndexType type);
-    void complete();
+    NEGINE_API Mesh& addAttribute(VertexAttr attr);
+    NEGINE_API Mesh& vertexCount(u32 nVertexes);
+    NEGINE_API Mesh& indexCount(u32 nIndexes, IndexType type);
+    NEGINE_API void complete();
 
-    u32 numVertexes() const { return numVertexes_; }
-    u32 numIndexes() const { return numIndexes_; }
-    u32 rawSize() const { return rawSize_; }
-    void* data() { return attributeBuffer_.data(); }
+    NEGINE_API u32 numVertexes() const { return numVertexes_; }
+    NEGINE_API u32 numIndexes() const { return numIndexes_; }
+    NEGINE_API u32 rawSize() const { return rawSize_; }
+    NEGINE_API void* data() { return attributeBuffer_.data(); }
     const std::vector<MeshLayer>& attributes() const { return attributes_; }
-    void* indices() { return indices_.data(); }
-    IndexType indexType() const { return indexType_; }
+    NEGINE_API void* indices() { return indices_.data(); }
+    NEGINE_API IndexType indexType() const { return indexType_; }
 
-    u32 stride(VertexAttr attr, u32 idx = 0) const;
+    NEGINE_API u32 stride(VertexAttr attr, u32 idx = 0) const;
 
     template<typename T>
     T* findAttribute(VertexAttr attr, u32 idx = 0) const {
         return reinterpret_cast<T*>(findAttributeRaw(attr, idx));
     }
 
-    const MeshLayer& getLayer(VertexAttr attr, u32 idx) const;
+    NEGINE_API const MeshLayer& getLayer(VertexAttr attr, u32 idx) const;
 private:
-    u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
+    NEGINE_API u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
 private:
     DISALLOW_COPY_AND_ASSIGN(Mesh);
 };

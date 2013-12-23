@@ -14,7 +14,7 @@ namespace math
 {
 
 //! 4x4 matrix, column-major order
-class NEGINE_API Matrix4
+class Matrix4
 {
 private:
     vec4f column0_;
@@ -69,21 +69,21 @@ public:
     static const Matrix4 Translation( const vec3f& tr );
 
 public:
-    static const Matrix4 LookAt( const vec3f& eyePos, const vec3f& lookAtPos, const vec3f& up );
-    static const Matrix4 Perspective( f32 fovyRadians, f32 aspect, f32 zNear, f32 zFar );
-    static const Matrix4 Frustum( f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar );
-    static const Matrix4 Orthographic( f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar );
+    NEGINE_API static const Matrix4 LookAt( const vec3f& eyePos, const vec3f& lookAtPos, const vec3f& up );
+    NEGINE_API static const Matrix4 Perspective( f32 fovyRadians, f32 aspect, f32 zNear, f32 zFar );
+    NEGINE_API static const Matrix4 Frustum( f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar );
+    NEGINE_API static const Matrix4 Orthographic( f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar );
 
 private:
     friend std::ostream& operator<< ( std::ostream& o, const Matrix4& m );
 };
 
-const Matrix4 operator *( f32 s, const Matrix4& m );
-const Matrix4 Transpose( const Matrix4& m );
-const Matrix4 Inverse( const Matrix4& m );
-const Matrix4 AffineInverse( const Matrix4& m );
-const Matrix4 OrthoInverse( const Matrix4& m );
-f32 Determinant( const Matrix4& m );
+NEGINE_API const Matrix4 operator *( f32 s, const Matrix4& m );
+NEGINE_API const Matrix4 Transpose( const Matrix4& m );
+NEGINE_API const Matrix4 Inverse( const Matrix4& m );
+NEGINE_API const Matrix4 AffineInverse( const Matrix4& m );
+NEGINE_API const Matrix4 OrthoInverse( const Matrix4& m );
+NEGINE_API f32 Determinant( const Matrix4& m );
 
 }
 }

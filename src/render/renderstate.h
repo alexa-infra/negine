@@ -128,7 +128,7 @@ private:
 
 class Mesh;
 
-class NEGINE_API RenderState
+class RenderState
 {
 public:
     RenderState(DeviceContext& context);
@@ -146,7 +146,7 @@ public:
     BufferState<GL_ARRAY_BUFFER> vertexBuffer;
     TextureUnitState activeTexture;
 
-    void render(const Mesh& mesh, u32 from, u32 count);
+    NEGINE_API void render(const Mesh& mesh, u32 from, u32 count);
 };
 
 

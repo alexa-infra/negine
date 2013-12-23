@@ -54,44 +54,44 @@ namespace imp
         u32 v[2];
     };
 
-    class NEGINE_API MeshBuilder
+    class MeshBuilder
     {
     public:
-        MeshBuilder();
+        NEGINE_API MeshBuilder();
 
-        u32 addVertex(const math::vec3f& p);
+        NEGINE_API u32 addVertex(const math::vec3f& p);
 
-        u32 addVertex(const math::vec3f& p, const math::vec2f& uv);
+        NEGINE_API u32 addVertex(const math::vec3f& p, const math::vec2f& uv);
 
-        u32 addVertex(const math::vec3f& p, const math::vec3f& n);
+        NEGINE_API u32 addVertex(const math::vec3f& p, const math::vec3f& n);
 
-        u32 addVertex(const math::vec3f& p, const math::vec2f& uv, const math::vec3f& n);
+        NEGINE_API u32 addVertex(const math::vec3f& p, const math::vec2f& uv, const math::vec3f& n);
 
-        u32 addVertex(const math::vec3f& p, const math::vec4f& color);
+        NEGINE_API u32 addVertex(const math::vec3f& p, const math::vec4f& color);
 
         u32 addVertex(i32 p, i32 n = 0, i32 v = 0, i32 c = 0);
 
         void addPolygonQuad(const math::vec3f& a1, const math::vec3f& a2, const math::vec3f& a3, const math::vec3f& a4, const math::vec4f& color);
 
-        u32 addPolygon(u32 x, u32 y, u32 z);
+        NEGINE_API u32 addPolygon(u32 x, u32 y, u32 z);
 
         u32 addLine(u32 x, u32 y);
 
-        void beginSurface();
+        NEGINE_API void beginSurface();
 
-        void endSurface();
+        NEGINE_API void endSurface();
 
         u32 addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color);
 
         void getLineList(opengl::Mesh& mesh);
 
-        void getDrawingList(opengl::Mesh& mesh);
+        NEGINE_API void getDrawingList(opengl::Mesh& mesh);
 
         void createCube();
 
         void createGrid();
 
-        void readOBJ(const std::string& filename);
+        NEGINE_API void readOBJ(const std::string& filename);
     public:
         std::vector<math::vec3f> posData;
         std::vector<math::vec2f> uvData;

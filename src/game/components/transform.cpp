@@ -1,4 +1,5 @@
 #include "transform.h"
+#include "math/matrix-inl.h"
 
 namespace base {
 namespace game {

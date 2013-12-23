@@ -71,7 +71,7 @@ protected:
 };
 
 //! Binary file wrapper for input/output
-class NEGINE_API FileBinary : public BinaryStreamBase<FileBinary>
+class FileBinary : public BinaryStreamBase<FileBinary>
 {
     friend class BinaryStreamBase<FileBinary>;
 
@@ -89,7 +89,7 @@ protected:
 };
 
 //! Text file wrapper for not-formatted reading 
-class NEGINE_API FileText
+class FileText
 {
 public:
     FileText( const std::string& filename );

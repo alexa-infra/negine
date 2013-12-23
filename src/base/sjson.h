@@ -16,7 +16,7 @@ namespace sjson {
 
     //! JSON data object
     //! TODO: avoid internal shared_ptr
-    struct NEGINE_API Variant {
+    struct Variant {
     public:
         typedef std::map<std::string, Variant> Map;
         typedef std::vector<Variant> Array;

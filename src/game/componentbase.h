@@ -12,15 +12,15 @@ class Entity;
 //! Abstract component type
 //! Every child should implement type() method, where returned value
 //!        should be obtained once from registerType() static method
-class NEGINE_API ComponentBase {
+class ComponentBase {
     friend class Entity;
 public:
-    ComponentBase();
-    virtual ~ComponentBase();
+    NEGINE_API ComponentBase();
+    NEGINE_API virtual ~ComponentBase();
 
     virtual CompType type() const = 0;
 
-    static CompType registerType();
+    NEGINE_API static CompType registerType();
 
     inline Entity* parent() const { return parent_; }
 protected:

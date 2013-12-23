@@ -16,10 +16,10 @@ namespace base
 namespace opengl
 {
 
-class NEGINE_API Camera
+class Camera
 {
 public:
-    Camera();
+    NEGINE_API Camera();
 
     inline const math::vec3f& forward() const { return forward_; }
     inline const math::vec3f& right() const { return right_; }
@@ -38,23 +38,23 @@ public:
     inline const math::Matrix4& modelView() const { return modelview_; }
     inline const math::Matrix4& clipMatrix() const { return clip_; }
 
-    void moveForward(f32 dist);
-    void moveBackward(f32 dist);
-    void moveRight(f32 dist);
-    void moveLeft(f32 dist);
-    void turnPitch(f32 radians);
-    void turnHead(f32 radians);
+    NEGINE_API void moveForward(f32 dist);
+    NEGINE_API void moveBackward(f32 dist);
+    NEGINE_API void moveRight(f32 dist);
+    NEGINE_API void moveLeft(f32 dist);
+    NEGINE_API void turnPitch(f32 radians);
+    NEGINE_API void turnHead(f32 radians);
 
-    void setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar);
-    void setPosition(const math::vec3f& v );
-    void setPitch(f32 radians);
-    void setHead(f32 radians);
-    void setAspect(f32 ratio);
-    void setFov(f32 radians);
-    void setZNear(f32 dist);
-    void setZFar(f32 dist);
-
-    void Update();
+    NEGINE_API void setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar);
+    NEGINE_API void setPosition(const math::vec3f& v );
+    NEGINE_API void setPitch(f32 radians);
+    NEGINE_API void setHead(f32 radians);
+    NEGINE_API void setAspect(f32 ratio);
+    NEGINE_API void setFov(f32 radians);
+    NEGINE_API void setZNear(f32 dist);
+    NEGINE_API void setZFar(f32 dist);
+    
+    NEGINE_API void Update();
 private:
     void UpdateOrientation();
     void UpdateFrustum();
