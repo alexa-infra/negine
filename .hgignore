@@ -2,3 +2,5 @@
 ^_build_msvc/
 glob:.DS_Store
 ^src/unused/
+syntax: regexp
+^_build_msvc
