@@ -76,7 +76,7 @@ if(NEGINE_SHARED_BUILD)
         OUTPUT_NAME "negine"
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
-    add_definitions(-DNEGINE_SHARED_BUILD)
+    add_definitions(-DNEGINE_SHARED_BUILD -DASSIMP_DLL)
     target_link_libraries(negine boostpython SDL2 assimp)
 endif()
 
