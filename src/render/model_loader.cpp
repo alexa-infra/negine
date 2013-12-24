@@ -35,16 +35,33 @@ protected:
 namespace base {
 namespace opengl {
 
+using namespace Assimp;
+
+class Importer {
+public:
+    Importer(const std::string& filename) {
+        DefaultLogger::set(new AiLog);
+        scene_ = aiImportFile(filename.c_str(), 0);
+    }
+    bool importOk() const {
+        return scene_ != nullptr && scene_->mRootNode != nullptr;
+    }
+    const aiScene* scene() const { return scene_; }
+    ~Importer() {
+        if (scene_ != nullptr)
+            aiReleaseImport(scene_); 
+        DefaultLogger::kill();
+    }
+private:
+    const aiScene* scene_;
+};
+
 Model* ModelLoader::load(const std::string& filename)
 {
-    using namespace Assimp;
-    DefaultLogger::set(new AiLog);
-    const aiScene * scene = aiImportFile(filename.c_str(), 0);
-
-    if(!scene || !scene->mRootNode) {
-        DefaultLogger::kill();
+    Importer imp(filename);
+    if (!imp.importOk())
         return nullptr;
-    }
+    const aiScene* scene = imp.scene();
 
     unsigned int ppFlags = 
         aiProcess_ImproveCacheLocality |
@@ -53,14 +70,11 @@ Model* ModelLoader::load(const std::string& filename)
         aiProcess_Triangulate |
         aiProcess_SortByPType |
         aiProcess_OptimizeMeshes;
+    const aiScene* ppScene = aiApplyPostProcessing(scene, ppFlags);
+    if (ppScene == nullptr)
+        return nullptr;
 
-    if(!aiApplyPostProcessing(scene, ppFlags))
-        return nullptr; 
 
-    // copy model/material data here
-
-    aiReleaseImport(scene); 
-    DefaultLogger::kill();
 
     return nullptr;
 }
