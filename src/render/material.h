@@ -6,7 +6,7 @@
 #include "render/glcontext.h"
 #include "render/renderstate.h"
 #include "base/parameter.h"
-#include "render/camera.h"
+#include "math/matrix.h"
 #include "render/gpuprogram.h"
 #include <vector>
 
@@ -40,7 +40,7 @@ struct SceneGenerator
 {
     DeviceContext& GL;
     Scene& scene;
-    Camera& cam;
+    //Camera& cam;
 
     void perform(const Params& rpParams, const SmallString& mode)
     {
@@ -52,7 +52,7 @@ struct SceneGenerator
                     prog->setParams(obj.material->defaultParams);
                     prog->setParams(rpParams);
                 }
-                params["mvp"] = obj.transform * cam.clipMatrix();
+                //params["mvp"] = obj.transform * cam.clipMatrix();
                 prog->setParams(params);
 
                 //GL.renderState().render(*obj.mesh);

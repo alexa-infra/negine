@@ -17,6 +17,7 @@ typedef std::deque<Entity*> EntityList;
 
 class Entity {
 public:
+    NEGINE_API Entity();
     NEGINE_API ~Entity();
     NEGINE_API bool has(CompType type) const;
     NEGINE_API ComponentBase* get(CompType type) const;

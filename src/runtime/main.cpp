@@ -6,11 +6,13 @@
 #include "render/meshbuilder.h"
 #include "render/mesh.h"
 #include "render/gpuprogram.h"
-#include "render/camera.h"
 #include "base/timer.h"
 #include "base/py.h"
 #include "render/model_loader.h"
 #include "math/matrix-inl.h"
+
+#include "game/components/transform.h"
+#include "game/components/camera.h"
 
 using namespace base;
 using namespace boost::python;
@@ -52,11 +54,23 @@ static const char pixelShader[] =
 
 static Application* intstance_ = nullptr;
 
+class GameCamera {
+public:
+    game::Transform transform;
+    game::Camera camera;
+    game::Entity object;
+
+    GameCamera() {
+        object.add(&transform);
+        object.add(&camera);
+    }
+};
+
 class Demo : public Application
 {
     base::opengl::Renderer ren;
     base::opengl::GpuProgram prog;
-    base::opengl::Camera cam;
+    GameCamera cam;
     base::opengl::Mesh mesh;
     u32 keypressed_; 
     base::imp::MeshBuilder bb;
@@ -102,11 +116,10 @@ public:
         prog.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader);
         prog.complete();
 
-        cam.setPosition( base::math::vec3f( 0.f, 0.f, -5.f ) );
-        cam.setPitch( 50 * base::math::deg_to_rad );
-        cam.setHead( 180 * base::math::deg_to_rad );
-        cam.setPerspective(width_ / ( f32 )height_, 45.0f, 1, 1000);
-        cam.Update();
+        cam.transform.setPosition( base::math::vec3f( 0.f, 0.f, -5.f ) );
+        cam.transform.setPitch( 50 * base::math::deg_to_rad );
+        cam.transform.setHead( 180 * base::math::deg_to_rad );
+        cam.camera.setPerspective(width_ / ( f32 )height_, 45.0f, 1, 1000);
 
         opengl::ModelLoader::load("trunk.obj");
     }
@@ -173,12 +186,12 @@ protected:
     }
 
     void OnMotion( i32 x, i32 y, i32 dx, i32 dy ) {
-        cam.turnHead( math::deg_to_rad * dx);
+        cam.transform.turnHead( math::deg_to_rad * dx);
 
-        if (fabs (cam.pitch() + math::deg_to_rad * dy ) < base::math::pi/2.0f ) {
-            cam.turnPitch( math::deg_to_rad * dy );
+        if (fabs (cam.transform.pitch() + math::deg_to_rad * dy ) < base::math::pi/2.0f ) {
+            cam.transform.turnPitch( math::deg_to_rad * dy );
         } else if (dy != 0 ) {
-            cam.setPitch( base::math::pi/2.0f * dy / fabs( (f32)dy ) );
+            cam.transform.setPitch( base::math::pi/2.0f * dy / fabs( (f32)dy ) );
         }
     }
 
@@ -186,40 +199,41 @@ protected:
         const f32 speed = 0.1f;
 
         if ( keypressed_ & 1 ) {
-            cam.moveForward( speed );
+            cam.transform.moveForward( speed );
         }
 
         if ( keypressed_ & 2 ) {
-            cam.moveBackward( speed );
+            cam.transform.moveBackward( speed );
         }
 
         if ( keypressed_ & 4 ) {
-            cam.moveLeft( speed );
+            cam.transform.moveLeft( speed );
         }
 
         if ( keypressed_ & 8 ) {
-            cam.moveRight( speed );
+            cam.transform.moveRight( speed );
         }
 
         if ( keypressed_ & 16 ) {
-            if ( fabs( cam.pitch() + math::deg_to_rad ) < math::pi / 2.0f )
-                cam.turnPitch( math::deg_to_rad );
+            if ( fabs( cam.transform.pitch() + math::deg_to_rad ) < math::pi / 2.0f )
+                cam.transform.turnPitch( math::deg_to_rad );
         }
 
         if ( keypressed_ & 32 ) {
-            if ( fabs( cam.pitch() - math::deg_to_rad ) < math::pi / 2.0f )
-                cam.turnPitch( -math::deg_to_rad );
+            if ( fabs( cam.transform.pitch() - math::deg_to_rad ) < math::pi / 2.0f )
+                cam.transform.turnPitch( -math::deg_to_rad );
         }
 
         if ( keypressed_ & 64 ) {
-            cam.turnHead( math::deg_to_rad );
+            cam.transform.turnHead( math::deg_to_rad );
         }
 
         if ( keypressed_ & 128 ) {
-            cam.turnHead( -math::deg_to_rad );
+            cam.transform.turnHead( -math::deg_to_rad );
         }
 
-        cam.Update();
+        game::Transform::updateTree(&cam.object);
+        game::Camera::updateTree(&cam.object);
     } 
 
     object global;

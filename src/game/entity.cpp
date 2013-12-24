@@ -3,6 +3,10 @@
 namespace base {
 namespace game {
 
+Entity::Entity() {
+    parent_ = nullptr;
+}
+
 Entity::~Entity() {
     //for(auto c: components_) {
     //    delete c.second;
