@@ -22,10 +22,10 @@ RenderState::RenderState(DeviceContext& context)
 void RenderState::render(const Mesh& mesh, u32 from, u32 count)
 {
     if (true /*do not use buffers */) {
-        const std::vector<MeshLayer>& attributes = mesh.attributes();
+        const std::vector<MeshAttribute>& attributes = mesh.attributes();
         size_t size = attributes.size();
         for (size_t i=0; i<size; i++) {
-            const MeshLayer& attr = attributes[i];
+            const MeshAttribute& attr = attributes[i];
             ASSERT(attr.valid_);
             u32 location = program.current().getAttributeLoc(attr.attr_, attr.idx_);
             gl.EnableVertexAttribArray( location );
@@ -43,7 +43,7 @@ void RenderState::render(const Mesh& mesh, u32 from, u32 count)
             gl.DrawElements(GL_TRIANGLES, count, mesh.indexType(), (u32*)const_cast<Mesh&>(mesh).indices() + from);
         //}
         for (u32 i=0; i<size; i++) {
-            const MeshLayer& attr = attributes[i];
+            const MeshAttribute& attr = attributes[i];
             ASSERT(attr.valid_);
             u32 location = program.current().getAttributeLoc(attr.attr_, attr.idx_);
             gl.DisableVertexAttribArray(location);

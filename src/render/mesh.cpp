@@ -68,12 +68,12 @@ u32 GetSize( VertexAttr attr )
 
 } // namespace VertexAttr
 
-MeshLayer::MeshLayer()
+MeshAttribute::MeshAttribute()
     : valid_(false)
 {
 }
 
-MeshLayer::MeshLayer(VertexAttr attr, u32 idx, u32 start, u32 stride)
+MeshAttribute::MeshAttribute(VertexAttr attr, u32 idx, u32 start, u32 stride)
     : attr_(attr)
     , idx_(idx)
     , start_(start)
@@ -124,7 +124,7 @@ void Mesh::complete()
             VertexAttr attr = attr_[i];
             u32& idx = attrCounter[static_cast<u32>(attr)];
             u32 size = VertexAttrs::GetSize(attr);
-            attributes_.push_back(MeshLayer(attr, idx, rawSize_, size));
+            attributes_.push_back(MeshAttribute(attr, idx, rawSize_, size));
             rawSize_ += size * numVertexes_;
             idx++;
         }
@@ -139,7 +139,7 @@ void Mesh::complete()
             VertexAttr attr = attr_[i];
             u32& idx = attrCounter[static_cast<u32>(attr)];
             u32 size = VertexAttrs::GetSize(attr);
-            attributes_.push_back(MeshLayer(attr, idx, pos, vertexSize));
+            attributes_.push_back(MeshAttribute(attr, idx, pos, vertexSize));
             pos += size;
         }
         rawSize_ += vertexSize * numVertexes_;
@@ -155,27 +155,27 @@ void Mesh::complete()
 
 u32 Mesh::stride(VertexAttr attr, u32 idx) const
 {
-    const MeshLayer& layer = getLayer(attr, idx);
+    const MeshAttribute& layer = getLayer(attr, idx);
     ASSERT(layer.valid_);
     return layer.stride_;
 }
 
-const MeshLayer& Mesh::getLayer(VertexAttr attr, u32 idx) const {
+const MeshAttribute& Mesh::getLayer(VertexAttr attr, u32 idx) const {
     std::size_t size = attributes_.size();
     for(std::size_t i=0; i<size; i++) {
-        const MeshLayer& layer = attributes_[i];
+        const MeshAttribute& layer = attributes_[i];
         if (attr == layer.attr_ && idx == layer.idx_) {
             return layer;
         }
     }
     ASSERT(false);
-    static MeshLayer invalidLayer;
+    static MeshAttribute invalidLayer;
     return invalidLayer;
 }
 
 u8* Mesh::findAttributeRaw(VertexAttr attr, u32 idx) const
 {
-    const MeshLayer& layer = getLayer(attr, idx);
+    const MeshAttribute& layer = getLayer(attr, idx);
     ASSERT(layer.valid_);
     return const_cast<u8*>(&attributeBuffer_[layer.start_]);
 }

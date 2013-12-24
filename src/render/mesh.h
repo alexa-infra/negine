@@ -38,7 +38,7 @@ u32 GetSize( VertexAttr attr );
 }
 typedef VertexAttrs::VertexAttr VertexAttr;
 
-struct MeshLayer
+struct MeshAttribute
 {
     VertexAttr attr_;
     u32 idx_;
@@ -46,8 +46,8 @@ struct MeshLayer
     u32 stride_;
     bool valid_;
 
-    MeshLayer();
-    MeshLayer(VertexAttr attr, u32 idx, u32 start, u32 stride);
+    MeshAttribute();
+    MeshAttribute(VertexAttr attr, u32 idx, u32 start, u32 stride);
 };
 
 namespace IndexTypes
@@ -66,7 +66,7 @@ private:
 
     u32 numVertexes_;
     u32 numIndexes_;
-    std::vector<MeshLayer> attributes_;
+    std::vector<MeshAttribute> attributes_;
     std::vector<u8> attributeBuffer_;
     std::vector<u8> indices_;
     u32 rawSize_;
@@ -84,7 +84,7 @@ public:
     NEGINE_API u32 numIndexes() const { return numIndexes_; }
     NEGINE_API u32 rawSize() const { return rawSize_; }
     NEGINE_API void* data() { return attributeBuffer_.data(); }
-    const std::vector<MeshLayer>& attributes() const { return attributes_; }
+    const std::vector<MeshAttribute>& attributes() const { return attributes_; }
     NEGINE_API void* indices() { return indices_.data(); }
     NEGINE_API IndexType indexType() const { return indexType_; }
 
@@ -95,7 +95,7 @@ public:
         return reinterpret_cast<T*>(findAttributeRaw(attr, idx));
     }
 
-    NEGINE_API const MeshLayer& getLayer(VertexAttr attr, u32 idx) const;
+    NEGINE_API const MeshAttribute& getLayer(VertexAttr attr, u32 idx) const;
 private:
     NEGINE_API u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
 private:
