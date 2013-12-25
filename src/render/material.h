@@ -24,40 +24,28 @@ struct Material
     Params defaultParams;
 };
 
-struct Model
-{
-    Mesh* mesh;
-    math::Matrix4 transform;
-    Material* material;
-};
-
-struct Scene
-{
-    std::vector<Model> objects;
-};
-
 struct SceneGenerator
 {
     DeviceContext& GL;
-    Scene& scene;
+    //Scene& scene;
     //Camera& cam;
 
     void perform(const Params& rpParams, const SmallString& mode)
     {
-        base::Params params;
-        for (auto obj: scene.objects) {
-            GpuProgram* prog;
-            if (obj.material->programs.tryGet(mode, prog)) {
-                if (GL.renderState().program.set(prog)) {
-                    prog->setParams(obj.material->defaultParams);
-                    prog->setParams(rpParams);
-                }
-                //params["mvp"] = obj.transform * cam.clipMatrix();
-                prog->setParams(params);
-
-                //GL.renderState().render(*obj.mesh);
-            }
-        }
+        //base::Params params;
+        //for (auto obj: scene.objects) {
+        //    GpuProgram* prog;
+        //    if (obj.material->programs.tryGet(mode, prog)) {
+        //        if (GL.renderState().program.set(prog)) {
+        //            prog->setParams(obj.material->defaultParams);
+        //            prog->setParams(rpParams);
+        //        }
+        //        //params["mvp"] = obj.transform * cam.clipMatrix();
+        //        prog->setParams(params);
+        //
+        //        //GL.renderState().render(*obj.mesh);
+        //    }
+        //}
     }
 };
 

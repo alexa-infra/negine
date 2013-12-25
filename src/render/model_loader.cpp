@@ -67,6 +67,9 @@ Model* ModelLoader::load(const std::string& filename)
         aiProcess_ImproveCacheLocality |
         aiProcess_RemoveRedundantMaterials |
         aiProcess_SplitLargeMeshes |
+        aiProcess_GenSmoothNormals |
+        //aiProcess_GenNormals |
+        aiProcess_JoinIdenticalVertices |
         aiProcess_Triangulate |
         aiProcess_SortByPType |
         aiProcess_OptimizeMeshes;
@@ -74,9 +77,46 @@ Model* ModelLoader::load(const std::string& filename)
     if (ppScene == nullptr)
         return nullptr;
 
+    Model* model = new Model;
+    for(u32 i=0; i<scene->mNumMeshes; i++) {
+        aiMesh* subMesh = scene->mMeshes[i];
+        Model::Surface& surface = model->beginSurface();
+        Mesh& m = surface.mesh;
 
+        if (subMesh->HasPositions())
+            m.addAttribute(VertexAttrs::tagPosition);
+        if (subMesh->HasNormals())
+            m.addAttribute(VertexAttrs::tagNormal);
+        m.vertexCount(subMesh->mNumVertices);
+        m.indexCount(subMesh->mNumFaces * 3, IndexTypes::UInt32);
+        m.complete();
+        if (subMesh->HasPositions()) {
+            math::vec3f* posData = m.findAttribute<math::vec3f>(VertexAttrs::tagPosition);
+            for(u32 j=0; j<subMesh->mNumVertices; j++) {
+                const aiVector3D& p = subMesh->mVertices[j];
+                posData[j] = math::vec3f(p.x, p.y, p.z);
+            }
+        }
+        if (subMesh->HasNormals()) {
+            math::vec3f* normData = m.findAttribute<math::vec3f>(VertexAttrs::tagNormal);
+            for(u32 j=0; j<subMesh->mNumVertices; j++) {
+                const aiVector3D& p = subMesh->mNormals[j];
+                normData[j] = math::vec3f(p.x, p.y, p.z);
+            }
+        }
+        u32* indices = reinterpret_cast<u32*>(m.indices());
+        for(u32 f=0; f<subMesh->mNumFaces; f++)
+        {
+            aiFace& face = subMesh->mFaces[f];
+            for(u32 v=0; v<3; v++){
+                indices[f*3+v] = face.mIndices[v];
+            }
+        }   
 
-    return nullptr;
+        model->endSurface();
+    }
+
+    return model;
 }
 
 } // namespace base

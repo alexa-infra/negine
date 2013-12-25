@@ -61,16 +61,6 @@ typedef IndexTypes::IndexType IndexType;
 
 class Mesh
 {
-private:
-    std::vector< VertexAttr > attr_;
-
-    u32 numVertexes_;
-    u32 numIndexes_;
-    std::vector<MeshAttribute> attributes_;
-    std::vector<u8> attributeBuffer_;
-    std::vector<u8> indices_;
-    u32 rawSize_;
-    IndexType indexType_;
 public:
     NEGINE_API Mesh();
     NEGINE_API ~Mesh();
@@ -94,12 +84,49 @@ public:
     T* findAttribute(VertexAttr attr, u32 idx = 0) const {
         return reinterpret_cast<T*>(findAttributeRaw(attr, idx));
     }
-
+    
     NEGINE_API const MeshAttribute& getLayer(VertexAttr attr, u32 idx) const;
 private:
     NEGINE_API u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
+
 private:
-    DISALLOW_COPY_AND_ASSIGN(Mesh);
+    std::vector<VertexAttr> attr_;
+    u32 numVertexes_;
+    u32 numIndexes_;
+    std::vector<MeshAttribute> attributes_;
+    std::vector<u8> attributeBuffer_;
+    std::vector<u8> indices_;
+    u32 rawSize_;
+    IndexType indexType_;
+
+private:
+    //DISALLOW_COPY_AND_ASSIGN(Mesh);
+};
+
+class Model {
+public:
+    NEGINE_API Model();
+
+    struct Surface {
+        Mesh mesh;
+        //std::string name;
+        //math::Matrix4 transform;
+        //std::string material;
+        //Params params;
+        u32 vertexStart;    //! bytes
+        u32 indexStart;     //! bytes
+    };
+
+    NEGINE_API size_t surfaceCount() const;
+    NEGINE_API const Surface& surfaceAt(size_t i) const;
+    NEGINE_API Surface& beginSurface();
+    NEGINE_API void endSurface();
+    NEGINE_API void done();
+private:
+    Surface* currentSurface_;
+    std::vector<Surface> surfaces_;
+    u32 vertexSize_;
+    u32 indexSize_;
 };
 
 
