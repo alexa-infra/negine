@@ -12,10 +12,11 @@ using base::math::vec2f;
 using base::math::vec3f;
 using base::math::vec4f;
 
-namespace base
-{
-namespace opengl
-{
+namespace base {
+
+u32 opengl::Model::type_ = ResourceManager::registerResource();
+
+namespace opengl {
 
 namespace VertexAttrs
 {
@@ -178,8 +179,6 @@ u8* Mesh::findAttributeRaw(VertexAttr attr, u32 idx) const
     ASSERT(layer.valid_);
     return const_cast<u8*>(&attributeBuffer_[layer.start_]);
 }
-
-u32 Model::type_ = ResourceManager::registerResource();
 
 Model::Model() {
     vertexSize_ = 0;

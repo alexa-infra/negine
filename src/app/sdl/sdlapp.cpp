@@ -17,6 +17,8 @@
 #include "render/glcontext.h"
 #include "base/log.h"
 
+#include "engine/engine.h"
+
 namespace base {
 
 using namespace opengl;
@@ -28,6 +30,8 @@ SDLApp::SDLApp()
     , width_( 640 )
     , height_( 480 )
 {
+    Engine::init(GL);
+
     LOG("start");
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         ERR("Unable to init SDL: %s", SDL_GetError());
@@ -79,6 +83,8 @@ SDLApp::~SDLApp()
     SDL_DestroyWindow( mainwindow_ );
     SDL_Quit();
     LOG("quit");
+
+    Engine::shutdown();
 }
 
 void SDLApp::Pump()
