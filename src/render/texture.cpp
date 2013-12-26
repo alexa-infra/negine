@@ -5,17 +5,15 @@
  **/
 #include "render/texture.h"
 
-#define STBI_FAILURE_USERMSG
-#include "stb/stb_image.c"
-
-#include <iostream>
 #include <string>
 #include "base/log.h"
 #include "base/debug.h"
-#include "base/env.h"
 
 namespace base
 {
+
+ResourceType opengl::Texture::type_ = ResourceManager::registerResource();
+
 namespace opengl
 {
 
@@ -81,46 +79,6 @@ void Texture::destroy()
 void Texture::bind()
 {
     GL.BindTexture( info_.Type, id_ );
-}
-
-void Texture::create(const TextureInfo& textureinfo)
-{
-    if (textureinfo.Usage == TextureUsages::StaticData)
-        createEmpty(textureinfo);
-    else
-        createFromFile(textureinfo);
-}
-
-void Texture::createFromFile( const TextureInfo& textureinfo )
-{
-    info_ = textureinfo;
-    u8* image = stbi_load( info_.Filename.c_str(), &info_.Width, &info_.Height, &info_.ComponentCount, 0 );
-
-    if( image == NULL ) {
-        ERR("Failed load image: %s", stbi_failure_reason());
-        return;
-    }
-
-    // stbi - only 8bit formats are supported
-    info_.DataType = GLDataTypes::UByte;
-
-    switch( info_.ComponentCount ) {
-    case 1:
-        info_.Pixel = PixelTypes::R;
-        break;
-    case 2:
-        info_.Pixel = PixelTypes::RG;
-        break;
-    case 3:
-        info_.Pixel = PixelTypes::RGB;
-        break;
-    case 4:
-        info_.Pixel = PixelTypes::RGBA;
-        break;
-    }
-
-    createFromBuffer( info_, image );
-    stbi_image_free( image );
 }
 
 void Texture::createFromBuffer( const TextureInfo& textureinfo, const u8* data )
@@ -196,59 +154,6 @@ void Texture::setup()
     GL.TexParameteri( info_.Type, GL_TEXTURE_MAG_FILTER, magFilter );
     GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_S, info_.Wrap );
     GL.TexParameteri( info_.Type, GL_TEXTURE_WRAP_T, info_.Wrap );
-}
-
-TextureLoader::TextureLoader(DeviceContext& gl)
-    : context_(gl)
-{
-}
-
-TextureLoader::~TextureLoader()
-{
-    clearCache();
-}
-
-void TextureLoader::clearCache()
-{
-    for( TextureCache::iterator it = cache_.begin(); it != cache_.end(); ++it ) {
-        delete it->second;
-    }
-
-    cache_.clear();
-}
-
-Texture* TextureLoader::load( const std::string& filename )
-{
-    TextureCache::iterator found = cache_.find( filename );
-    if ( found != cache_.end() ) {
-        return found->second;
-    }
-
-    std::string name;
-
-    if ( fileExists( filename ) ) {
-        name = filename;
-    } else if ( fileExists( filename + ".jpg" ) ) {
-        name = filename + ".jpg";
-    } else if ( fileExists( filename + ".tga" ) ) {
-        name = filename + ".tga";
-    } else if ( fileExists( filename + ".png" ) ) {
-        name = filename + ".png";
-    } else {
-        WARN("%s not found", filename.c_str());
-        cache_[filename] = NULL;
-        return NULL;
-    }
-
-    LOG("load texture: %s", name.c_str());
-    TextureInfo tex_info;
-    tex_info.Filename = name;
-    tex_info.Filtering = TextureFilters::Anisotropic;
-    tex_info.GenerateMipmap = true;
-    Texture* t = new Texture(context_);
-    t->create( tex_info );
-    cache_[filename] = t;
-    return t;
 }
 
 }

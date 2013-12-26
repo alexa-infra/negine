@@ -10,6 +10,7 @@
 #include "render/gpuresource.h"
 #include <map>
 #include <string>
+#include "engine/resource.h"
 
 namespace base
 {
@@ -109,7 +110,7 @@ struct TextureInfo {
 };
 
 //! Texture object
-class Texture : public GpuResource
+class Texture : public GpuResource, public BaseResource<Texture>
 {
 protected:
     TextureInfo info_;  //!< Current info
@@ -125,36 +126,17 @@ public:
     //! Bind texture
     void bind();
 
-    void create(const TextureInfo& textureinfo);
+    //! Generate texture object from texture info
+    void createFromBuffer( const TextureInfo& textureinfo, const u8* data );
+
+    void createEmpty( const TextureInfo& textureinfo );
 
     void destroy();
 private:
     void setup();
 
-    //! Generate texture object from texture info
-    void createFromFile( const TextureInfo& textureinfo );
-
-    //! Generate texture object from texture info
-    void createFromBuffer( const TextureInfo& textureinfo, const u8* data );
-
-    void createEmpty( const TextureInfo& textureinfo );
 private:
     DISALLOW_COPY_AND_ASSIGN( Texture );
-};
-
-class TextureLoader
-{
-    typedef std::map<std::string, Texture*> TextureCache;
-    TextureCache cache_;
-    DeviceContext& context_;
-
-public:
-    TextureLoader(DeviceContext& gl);
-    ~TextureLoader();
-    Texture* load( const std::string& filename );
-    void clearCache();
-private:
-    DISALLOW_COPY_AND_ASSIGN( TextureLoader );
 };
 
 }

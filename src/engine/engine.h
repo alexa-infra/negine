@@ -12,6 +12,9 @@ public:
 
     static void init(opengl::DeviceContext& context);
     static void shutdown();
+    static opengl::DeviceContext& context() {
+        return instance_->GL;
+    }
 private:
     Engine(opengl::DeviceContext& context);
 

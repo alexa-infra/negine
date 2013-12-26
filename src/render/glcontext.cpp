@@ -1,7 +1,6 @@
 #include "render/glcontext.h"
 #include "base/log.h"
 #include "base/debug.h"
-#include "render/texture.h"
 #include "render/renderstate.h"
 #include <type_traits>
 
@@ -36,12 +35,6 @@ void DeviceContext::Assert(const char* file, int line)
         ERR("GL error: %s [%#X] @ %s, %d", glErrorToString(err), err, file, line);
         debugBreak();
     }
-}
-
-TextureLoader* DeviceContext::texture_loader()
-{
-    ASSERT(texture_loader_ != NULL);
-    return texture_loader_;
 }
 
 RenderState& DeviceContext::renderState()
@@ -218,7 +211,6 @@ void DeviceContext::init()
 
     #undef LOAD_GL
 
-    texture_loader_ = new TextureLoader(*this);
     state = new RenderState(*this);
 }
 

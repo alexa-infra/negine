@@ -2,6 +2,7 @@
 #include "render/glcontext.h"
 #include "engine/resource.h"
 #include "engine/model_loader.h"
+#include "engine/texture_loader.h"
 
 namespace base {
 
@@ -13,6 +14,13 @@ Engine::Engine(DeviceContext& context) : GL(context) {
     ResourceManager::addFactory(Model::Type(), [](const std::string& p) { 
         Model* model = loadModel(p);
         return dynamic_cast<Resource*>(model);
+    });
+    ResourceManager::addFactory(Texture::Type(), [](const std::string& p) { 
+        TextureInfo defaultSettings;
+        defaultSettings.Filtering = TextureFilters::Anisotropic;
+        defaultSettings.GenerateMipmap = true;
+        Texture* texture = loadTexture(Engine::context(), defaultSettings, p);
+        return dynamic_cast<Resource*>(texture);
     });
 }
 

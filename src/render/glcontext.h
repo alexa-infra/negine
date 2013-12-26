@@ -20,14 +20,12 @@ namespace opengl
 #define GL_ASSERT(gl) {}
 #endif
 
-class TextureLoader;
 class GLFuncLoader;
 class RenderState;
 
 class NEGINE_API DeviceContext
 {
     GLFuncLoader* loader;
-    TextureLoader* texture_loader_;
     RenderState* state;
 public:
     DeviceContext();
@@ -91,8 +89,6 @@ public:
     PFNGLDEPTHMASKPROC          DepthMask;
 
     void Assert(const char* file, int line);
-
-    TextureLoader* texture_loader();
 
     RenderState& renderState();
 
