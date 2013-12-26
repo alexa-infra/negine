@@ -1,5 +1,6 @@
 #include "model_loader.h"
 #include "base/log.h"
+#include "render/resourceref.h"
 
 #include <assimp/cimport.h>
 #include <assimp/Logger.hpp>
@@ -56,7 +57,7 @@ private:
     const aiScene* scene_;
 };
 
-Model* ModelLoader::load(const std::string& filename)
+Model* loadModel(const std::string& filename)
 {
     Importer imp(filename);
     if (!imp.importOk())

@@ -180,6 +180,8 @@ u8* Mesh::findAttributeRaw(VertexAttr attr, u32 idx) const
     return const_cast<u8*>(&attributeBuffer_[layer.start_]);
 }
 
+u32 Model::type_ = ResourceManager::registerResource();
+
 Model::Model() {
     vertexSize_ = 0;
     indexSize_ = 0;

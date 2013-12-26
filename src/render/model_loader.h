@@ -7,14 +7,7 @@
 namespace base {
 namespace opengl {
 
-class ModelLoader
-{
-public:
-    std::vector<Mesh*> subMeshes;
-
-    NEGINE_API static Model* load(const std::string& filename);
-private:
-};
+NEGINE_API Model* loadModel(const std::string& filename);
 
 } // namespace opengl
 } // namespace base

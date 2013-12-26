@@ -9,6 +9,7 @@
 #include "base/types.h"
 #include <vector>
 #include "render/gl_lite.h"
+#include "render/resourceref.h"
 
 namespace base
 {
@@ -103,9 +104,10 @@ private:
     //DISALLOW_COPY_AND_ASSIGN(Mesh);
 };
 
-class Model {
+class Model : public BaseResource<Model> {
 public:
     NEGINE_API Model();
+    NEGINE_API ~Model() {}
 
     struct Surface {
         Mesh mesh;
