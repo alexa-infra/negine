@@ -9,7 +9,7 @@
 #include "base/types.h"
 #include <vector>
 #include "render/gl_lite.h"
-#include "render/resourceref.h"
+#include "engine/resourceref.h"
 
 namespace base
 {

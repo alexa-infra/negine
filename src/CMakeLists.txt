@@ -17,6 +17,10 @@ file(GLOB RENDER_SRC ${SRC_PATH}/render/*.cpp)
 file(GLOB RENDER_HDR ${SRC_PATH}/render/*.h)
 source_group("render" FILES ${RENDER_SRC} ${RENDER_HDR})
 
+file(GLOB ENGINE_SRC ${SRC_PATH}/engine/*.cpp)
+file(GLOB ENGINE_HDR ${SRC_PATH}/engine/*.h)
+source_group("engine" FILES ${ENGINE_SRC} ${ENGINE_HDR})
+
 file(GLOB APP_SRC ${SRC_PATH}/app/*.cpp)
 file(GLOB APP_HDR ${SRC_PATH}/app/*.h)
 
@@ -30,8 +34,8 @@ file(GLOB GAME_COMP_SRC ${SRC_PATH}/game/components/*.cpp)
 file(GLOB GAME_COMP_HDR ${SRC_PATH}/game/components/*.h)
 source_group("game" FILES ${GAME_HDR} ${GAME_SRC} ${GAME_COMP_HDR} ${GAME_COMP_SRC})
 
-set(SRC ${APP_SRC} ${SDLAPP_SRC} ${BASE_SRC} ${MATH_SRC} ${RENDER_SRC} ${GAME_SRC} ${GAME_COMP_SRC})
-set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR} ${GAME_HDR} ${GAME_COMP_HDR})
+set(SRC ${APP_SRC} ${SDLAPP_SRC} ${BASE_SRC} ${MATH_SRC} ${RENDER_SRC} ${GAME_SRC} ${GAME_COMP_SRC} ${ENGINE_SRC})
+set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR} ${GAME_HDR} ${GAME_COMP_HDR} ${ENGINE_HDR})
 
 if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11 -fvisibility=hidden")

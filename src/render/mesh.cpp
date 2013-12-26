@@ -4,7 +4,6 @@
  * \copyright   MIT License
  **/
 #include "render/mesh.h"
-#include "render/vertexbuffer.h"
 #include "render/glcontext.h"
 #include "math/vec4.h"
 #include "base/debug.h"

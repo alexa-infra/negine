@@ -1,6 +1,6 @@
 #include "model_loader.h"
 #include "base/log.h"
-#include "render/resourceref.h"
+#include "engine/resourceref.h"
 
 #include <assimp/cimport.h>
 #include <assimp/Logger.hpp>

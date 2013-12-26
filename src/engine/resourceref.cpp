@@ -1,6 +1,6 @@
 #include "resourceref.h"
 #include "base/debug.h"
-#include "render/model_loader.h"
+#include "engine/model_loader.h"
 
 namespace base {
 namespace opengl {
