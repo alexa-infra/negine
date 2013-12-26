@@ -54,7 +54,6 @@ TextureInfo::TextureInfo()
     , Pixel( PixelTypes::RGBA )
     , DataType( GLDataTypes::UByte )
     , InternalType( GL_RGBA )
-    , Usage( TextureUsages::StaticData )
 {
 }
 

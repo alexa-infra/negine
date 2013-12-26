@@ -8,62 +8,47 @@
 
 #include "base/types.h"
 #include "render/gpuresource.h"
-#include <map>
-#include <string>
 #include "engine/resource.h"
 
-namespace base
-{
-namespace opengl
-{
+namespace base {
+namespace opengl {
 
 namespace GLDataTypes
 {
-enum GLDataType {
-    Byte        = GL_BYTE,
-    UByte       = GL_UNSIGNED_BYTE,
-    Short       = GL_SHORT,
-    UShort      = GL_UNSIGNED_SHORT,
-    Int         = GL_INT,
-    UInt        = GL_UNSIGNED_INT,
-    Float       = GL_FLOAT,
-    Double      = GL_DOUBLE
-};
-u32 sizeInBytes(GLDataType dt);
+    enum GLDataType {
+        Byte        = GL_BYTE,
+        UByte       = GL_UNSIGNED_BYTE,
+        Short       = GL_SHORT,
+        UShort      = GL_UNSIGNED_SHORT,
+        Int         = GL_INT,
+        UInt        = GL_UNSIGNED_INT,
+        Float       = GL_FLOAT,
+        Double      = GL_DOUBLE
+    };
+    u32 sizeInBytes(GLDataType dt);
 }
 typedef GLDataTypes::GLDataType GLDataType;
 
 namespace PixelTypes
 {
-//! Enumerates pixel types.
-enum PixelType {
-    R       = GL_RED,
-    RG      = GL_RG,
-    RGB     = GL_RGB,
-    RGBA    = GL_RGBA,
-    Depth   = GL_DEPTH_COMPONENT
-};
-u32 componentCount(PixelType type);
+    enum PixelType {
+        R       = GL_RED,
+        RG      = GL_RG,
+        RGB     = GL_RGB,
+        RGBA    = GL_RGBA,
+        Depth   = GL_DEPTH_COMPONENT
+    };
+    u32 componentCount(PixelType type);
 }
 typedef PixelTypes::PixelType PixelType;
 
-namespace TextureUsages
-{
-enum TextureUsage {
-    RenderTarget,
-    StaticData
-};
-}
-typedef TextureUsages::TextureUsage TextureUsage;
-
 namespace TextureTypes
 {
-//! Texture type
-enum TextureType {
-    Texture2D   = GL_TEXTURE_2D,
-    TextureRect = GL_TEXTURE_RECTANGLE
-};
-};
+    enum TextureType {
+        Texture2D   = GL_TEXTURE_2D,
+        TextureRect = GL_TEXTURE_RECTANGLE
+    };
+}
 typedef TextureTypes::TextureType TextureType;
 
 namespace TextureFilters
@@ -78,28 +63,25 @@ typedef TextureFilters::TextureFilter TextureFilter;
 
 namespace TextureWraps
 {
-//! Enumerates texture wrap modes
-enum TextureWrap {
-    CLAMP_TO_EDGE       = GL_CLAMP_TO_EDGE,
-    MIRROR_REPEAT       = GL_MIRRORED_REPEAT,
-    REPEAT              = GL_REPEAT
-};
+    enum TextureWrap {
+        CLAMP_TO_EDGE       = GL_CLAMP_TO_EDGE,
+        MIRROR_REPEAT       = GL_MIRRORED_REPEAT,
+        REPEAT              = GL_REPEAT
+    };
 }
 typedef TextureWraps::TextureWrap TextureWrap;
 
-//! Texture creation info
-struct TextureInfo {
-    TextureUsage Usage;                     //!< Usage
-    TextureType Type;                       //!< Texture type
-    TextureFilter Filtering;                //!< Filtering type
-    TextureWrap Wrap;                       //!< Wrap texture coordinate
+struct TextureInfo
+{
+    TextureType Type;
+    TextureFilter Filtering;
+    TextureWrap Wrap;
     bool GenerateMipmap;
 
-    std::string Filename;                   //!< Source file name
-    i32 Width;                              //!< Width of image
-    i32 Height;                             //!< Height of image
-    i32 ComponentCount;                     //!< Component count
-    PixelType Pixel;                        //!< Pixel format
+    i32 Width;
+    i32 Height;
+    i32 ComponentCount;
+    PixelType Pixel;
     GLDataType DataType;
     GLenum InternalType;
 
@@ -112,21 +94,15 @@ struct TextureInfo {
 //! Texture object
 class Texture : public GpuResource, public BaseResource<Texture>
 {
-protected:
-    TextureInfo info_;  //!< Current info
 public:
     Texture(DeviceContext& gl);
+
     ~Texture();
 
-    //! Gets texture info
-    const TextureInfo& info() {
-        return info_;
-    }
+    inline const TextureInfo& info() const { return info_; }
 
-    //! Bind texture
     void bind();
 
-    //! Generate texture object from texture info
     void createFromBuffer( const TextureInfo& textureinfo, const u8* data );
 
     void createEmpty( const TextureInfo& textureinfo );
@@ -135,9 +111,10 @@ public:
 private:
     void setup();
 
+    TextureInfo info_;
 private:
     DISALLOW_COPY_AND_ASSIGN( Texture );
 };
 
-}
-}
+} // namespace opengl
+} // namespace base
