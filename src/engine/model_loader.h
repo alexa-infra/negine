@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "render/mesh.h"
+#include "render/model.h"
 #include "render/material.h"
 
 namespace base {

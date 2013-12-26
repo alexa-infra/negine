@@ -9,12 +9,9 @@
 #include "base/types.h"
 #include <vector>
 #include "render/gl_lite.h"
-#include "engine/resourceref.h"
 
-namespace base
-{
-namespace opengl
-{
+namespace base {
+namespace opengl {
 
 namespace VertexAttrs
 {
@@ -99,38 +96,7 @@ private:
     std::vector<u8> indices_;
     u32 rawSize_;
     IndexType indexType_;
-
-private:
-    //DISALLOW_COPY_AND_ASSIGN(Mesh);
 };
-
-class Model : public BaseResource<Model> {
-public:
-    NEGINE_API Model();
-    NEGINE_API ~Model() {}
-
-    struct Surface {
-        Mesh mesh;
-        //std::string name;
-        //math::Matrix4 transform;
-        //std::string material;
-        //Params params;
-        u32 vertexStart;    //! bytes
-        u32 indexStart;     //! bytes
-    };
-
-    NEGINE_API size_t surfaceCount() const;
-    NEGINE_API const Surface& surfaceAt(size_t i) const;
-    NEGINE_API Surface& beginSurface();
-    NEGINE_API void endSurface();
-    NEGINE_API void done();
-private:
-    Surface* currentSurface_;
-    std::vector<Surface> surfaces_;
-    u32 vertexSize_;
-    u32 indexSize_;
-};
-
 
 } // namespace opengl
-} // base
+} // namespace base

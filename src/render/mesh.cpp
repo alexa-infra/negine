@@ -13,13 +13,9 @@ using base::math::vec3f;
 using base::math::vec4f;
 
 namespace base {
-
-u32 opengl::Model::type_ = ResourceManager::registerResource();
-
 namespace opengl {
 
-namespace VertexAttrs
-{
+namespace VertexAttrs {
 
 u8 GetComponentCount( VertexAttr attr )
 {
@@ -180,47 +176,5 @@ u8* Mesh::findAttributeRaw(VertexAttr attr, u32 idx) const
     return const_cast<u8*>(&attributeBuffer_[layer.start_]);
 }
 
-Model::Model() {
-    vertexSize_ = 0;
-    indexSize_ = 0;
-    currentSurface_ = nullptr;
-}
-
-size_t Model::surfaceCount() const {
-    return surfaces_.size();
-}
-
-const Model::Surface& Model::surfaceAt(size_t i) const {
-    return surfaces_.at(i);
-}
-
-Model::Surface& Model::beginSurface() {
-    if (currentSurface_ != nullptr)
-        endSurface();
-    Surface m;
-    surfaces_.push_back(m);
-    currentSurface_ = &surfaces_.back();
-    currentSurface_->vertexStart = vertexSize_;
-    currentSurface_->indexStart = indexSize_;
-    return *currentSurface_;
-}
-
-void Model::endSurface() {
-    if (currentSurface_ == nullptr)
-        return;
-    const Mesh& mesh = currentSurface_->mesh;
-    vertexSize_ += mesh.rawSize();
-    if (mesh.indexType() == IndexTypes::UInt32)
-        indexSize_ += mesh.numIndexes() * 4;
-    else if (mesh.indexType() == IndexTypes::UInt16)
-        indexSize_ += mesh.numIndexes() * 2;
-    currentSurface_ = nullptr;
-}
-
-void Model::done() {
-    if (currentSurface_ != nullptr)
-        endSurface();
-}
-
-}
-}
+} // namespace opengl
+} // namespace base
