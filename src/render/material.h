@@ -48,15 +48,11 @@ struct SceneGenerator
     }
 };
 
-struct Framebuffer
-{
-    //Params::TextureMap textures;
-    //math::vec2f dimensions;
-};
-
 struct Generator
 {
 };
+
+class Framebuffer;
 
 struct RenderPass
 {
@@ -88,8 +84,8 @@ struct Renderer {
         rp.generator = nullptr;
         rp.viewport = math::vec4f(0, 0, 640, 480);
         rp.clear = true;
-        rp.depthTest = false;
-        rp.depthWrite = false;
+        rp.depthTest = true;
+        rp.depthWrite = true;
         rp.cullBackFace = false;
         rp.blend = false;
         rp.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -97,13 +93,10 @@ struct Renderer {
     }
     void rendering() {
         for(auto pass: passesList) {
-            bind(pass.target);
+            GL.setFramebuffer(pass.target);
             renderState(pass);
             //generator->draw(pass.mode);
         }
-    }
-    void bind(Framebuffer* fbo) {
-        if (fbo == nullptr) return;
     }
     void renderState(const RenderPass& rp) {
         GL.setViewport(rp.viewport);

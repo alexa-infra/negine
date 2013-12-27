@@ -117,6 +117,7 @@ public:
     void setIndexBuffer(BufferObject* buffer);
     void setTextureUnit(u32 id);
     void setTexture(Texture* texture);
+    void setFramebuffer(Framebuffer* fbo);
 
     RenderState& renderState();
 private:

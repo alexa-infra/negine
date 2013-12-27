@@ -3,16 +3,20 @@
 #include <boost/python.hpp>
 #include <string>
 #include "render/material.h"
-#include "render/meshbuilder.h"
-#include "render/mesh.h"
+#include "engine/meshbuilder.h"
+#include "render/model.h"
 #include "render/gpuprogram.h"
 #include "base/timer.h"
 #include "base/py.h"
-#include "render/model_loader.h"
 #include "math/matrix-inl.h"
+#include "engine/resourceref.h"
+#include "render/renderstate.h"
+
+#include "render/texture.h"
 
 #include "game/components/transform.h"
 #include "game/components/camera.h"
+#include "base/log.h"
 
 using namespace base;
 using namespace boost::python;
@@ -22,33 +26,55 @@ extern "C" NEGINE_EXPORT void initnegine_runtime(void);
 static const char vertexShader[] = 
     "#version 150\n"
     "\n"
-    "attribute vec3 position;\n"
-    "attribute vec2 uv;\n"
+    "in vec3 position;\n"
+    "in vec3 normal;\n"
     "\n"
     "uniform mat4 mvp;\n"
     "\n"
-    "varying vec2 texCoord;\n"
+    "out vec3 n;\n"
     "\n"
     "void main()\n"
     "{\n"
-    "    texCoord = uv;\n"
+    "    n = 0.5*normalize(normal) + 0.5;\n"
     "    vec4 pos = vec4(position, 1);\n"
     "    gl_Position = mvp * pos;\n"
     "}\n"
     "";
 static const char pixelShader[] = 
-    "uniform float time;\n"
-    "uniform vec4 viewport;\n"
-    "varying vec2 texCoord;\n"
+    "#version 150\n"
+    "\n"
+    "in vec3 n;\n"
+    "out vec4 fragColor;\n"
     "\n"
     "void main() {\n"
-    "    vec4 newColor = vec4(1.0, 0, 0, 1.0);\n"
-    "    float x = texCoord.s / viewport.x;\n"
-    "    float y = texCoord.t / viewport.y;\n"
-    "    newColor.g = sin(x * cos(time/15.0) * 120.0) +\n"
-    "                cos(y * sin(time/10.0) * 120.0) +\n"
-    "                sin(sqrt(y*y + x*x) * 40.0);\n"
-    "    gl_FragColor = newColor;\n"
+    "    fragColor = vec4(n, 1);\n"
+    "}\n"
+    "";
+
+static const char vertexShader1[] = 
+    "#version 150\n"
+    "\n"
+    "in vec3 position;\n"
+    "in vec2 uv;\n"
+    "\n"
+    "out vec2 tex;\n"
+    "\n"
+    "void main()\n"
+    "{\n"
+    "    tex = uv;\n"
+    "    vec4 pos = vec4(position, 1);\n"
+    "    gl_Position = pos;\n"
+    "}\n"
+    "";
+static const char pixelShader1[] = 
+    "#version 150\n"
+    "\n"
+    "uniform sampler2D atexture;\n"
+    "in vec2 tex;\n"
+    "out vec4 fragColor;\n"
+    "\n"
+    "void main() {\n"
+    "    fragColor = texture(atexture, tex);\n"
     "}\n"
     "";
 
@@ -70,14 +96,19 @@ class Demo : public Application
 {
     base::opengl::Renderer ren;
     base::opengl::GpuProgram prog;
+    base::opengl::GpuProgram prog2;
+
     GameCamera cam;
     base::opengl::Mesh mesh;
     u32 keypressed_; 
     base::imp::MeshBuilder bb;
     base::Timer timer_;
+    opengl::Model* umesh;
+
+    opengl::Framebuffer fbo;
 
 public:
-    Demo(const std::string& filename) : ren(GL), prog(GL) {
+    Demo(const std::string& filename) : ren(GL), prog(GL), prog2(GL), fbo(GL) {
         intstance_ = this;
         Py_Initialize();
         PyImport_AppendInittab("negine_core", initnegine_core);
@@ -110,18 +141,38 @@ public:
         }
 
         prog.setAttribute("position", base::opengl::VertexAttrs::tagPosition);
-        prog.setAttribute("uv", base::opengl::VertexAttrs::tagTexture);
+        prog.setAttribute("normal", base::opengl::VertexAttrs::tagNormal);
 
         prog.setShaderSource(base::opengl::ShaderTypes::VERTEX, vertexShader);
         prog.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader);
         prog.complete();
 
+        prog2.setAttribute("position", opengl::VertexAttrs::tagPosition);
+        prog2.setAttribute("uv", opengl::VertexAttrs::tagTexture);
+        prog2.setShaderSource(base::opengl::ShaderTypes::VERTEX, vertexShader1);
+        prog2.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader1);
+        prog2.complete();
+
         cam.transform.setPosition( base::math::vec3f( 0.f, 0.f, -5.f ) );
         cam.transform.setPitch( 50 * base::math::deg_to_rad );
         cam.transform.setHead( 180 * base::math::deg_to_rad );
         cam.camera.setPerspective(width_ / ( f32 )height_, 45.0f, 1, 1000);
+        
+        ResourceRef checkers("checkers");
+        checkers.loadDefault<opengl::Texture>("checker.png");
+        ASSERT(checkers.resourceAs<opengl::Texture>() != nullptr);
+        
+        //fbo.addTarget(opengl::InternalTypes::RGBA8);
+        fbo.addTargetTexture(checkers.resourceAs<opengl::Texture>());
+        fbo.addTarget(opengl::InternalTypes::D32F);
+        fbo.resizeWindow(math::vec2i(width_, height_));
+        //fbo.complete();
+        
+        GL_ASSERT(GL);
 
-        opengl::ModelLoader::load("trunk.obj");
+        ResourceRef model("themodel");
+        model.loadDefault<opengl::Model>("trunk.obj");
+        umesh = model.resourceAs<opengl::Model>();
     }
     virtual ~Demo() {
     }
@@ -130,17 +181,40 @@ protected:
     void OnFrame() {
         UpdateWorld();
 
-        ren.rendering();
+        //ren.rendering();
 
-        GL.renderState().program.set(&prog);
-        para["mvp"] = math::Matrix4::Identity();
-        para["time"] = timer_.elapsed() / 1000.0f;
-        para["viewport"] = math::vec4f(1u, 1u, 0u, 0u);
+        GL.setFramebuffer(&fbo);
+
+        GL.setDepthWrite(true);
+        GL.setDepthTest(true);
+        GL.setViewport(math::vec4f(0u, 0u, width_, height_));
+        GL.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        GL.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        GL.setProgram(&prog);
+        para["mvp"] = cam.camera.clipMatrix();
         prog.setParams(para);
-        for (u32 i=0; i<bb.surfaces.size(); i++) {
-            imp::Surface& s = bb.surfaces[i];
-            GL.renderState().render(mesh, s.polygon, s.polygonCount * 3);
+        
+        size_t meshCount = umesh->surfaceCount();
+        for(size_t i=0; i<meshCount; i++) {
+            const opengl::Mesh& m = umesh->surfaceAt(i).mesh;
+            GL.renderState().render(m, 0, m.numIndexes());
         }
+
+        
+        GL.setFramebuffer(nullptr);
+        GL.setDepthWrite(false);
+        GL.setDepthTest(false);
+        GL.setViewport(math::vec4f(0u, 0u, width_, height_));
+        GL.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        GL.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        base::Params pp;
+        ResourceRef checkers("checkers");
+        pp["atexture"] = checkers.resourceAs<opengl::Texture>();
+        GL.setProgram(&prog2);
+        prog2.setParams(pp);
+        GL.renderState().render(mesh, 0, mesh.numIndexes());
 
         GL_ASSERT(GL);
         SDLApp::OnFrame();

@@ -71,6 +71,35 @@ namespace TextureWraps
 }
 typedef TextureWraps::TextureWrap TextureWrap;
 
+namespace InternalTypes
+{
+    enum InternalType {
+        RGB8        = GL_RGB8,
+        RGBA8       = GL_RGBA8,
+        RGBA16F     = GL_RGBA16F,
+
+        D24S8       = GL_DEPTH24_STENCIL8,
+        D32FS8      = GL_DEPTH32F_STENCIL8,
+
+        D16         = GL_DEPTH_COMPONENT16,
+        D24         = GL_DEPTH_COMPONENT24, 
+        D32         = GL_DEPTH_COMPONENT32,
+        D32F        = GL_DEPTH_COMPONENT32F,
+
+        S1          = GL_STENCIL_INDEX1,
+        S4          = GL_STENCIL_INDEX4,
+        S8          = GL_STENCIL_INDEX8,
+        S16         = GL_STENCIL_INDEX16
+    };
+    GLenum toDataType(InternalType value);
+    bool isColor(InternalType value);
+    bool isStencil(InternalType value);
+    bool isDepth(InternalType value);
+    bool isDepthStencil(InternalType value);
+    u32 sizeInBytes(InternalType value);
+}
+typedef InternalTypes::InternalType InternalType;
+
 struct TextureInfo
 {
     TextureType Type;
@@ -82,12 +111,11 @@ struct TextureInfo
     i32 Height;
     i32 ComponentCount;
     PixelType Pixel;
-    GLDataType DataType;
-    GLenum InternalType;
+    InternalType InternalType;
 
     TextureInfo();
 
-    u32 pixelSize() const { return PixelTypes::componentCount(Pixel) * GLDataTypes::sizeInBytes(DataType); }
+    u32 pixelSize() const { return PixelTypes::componentCount(Pixel) * InternalTypes::sizeInBytes(InternalType); }
     u32 dataSize() const { return Width * Height * pixelSize(); }
 };
 

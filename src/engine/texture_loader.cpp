@@ -31,7 +31,6 @@ Texture* loadTexture(opengl::DeviceContext& GL, const TextureInfo& defaultInfo, 
         ERR("Failed load image: %s", stbi_failure_reason());
         return nullptr;
     }
-    info.DataType = GLDataTypes::UByte;
 
     switch( info.ComponentCount ) {
         case 1: info.Pixel = PixelTypes::R;    break;
@@ -39,6 +38,8 @@ Texture* loadTexture(opengl::DeviceContext& GL, const TextureInfo& defaultInfo, 
         case 3: info.Pixel = PixelTypes::RGB;  break;
         case 4: info.Pixel = PixelTypes::RGBA; break;
     }
+    info.Filtering = TextureFilters::Linear;
+    info.GenerateMipmap = false;
 
     Texture* texture = new Texture(GL);
     texture->createFromBuffer(info, image.buffer);

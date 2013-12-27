@@ -46,14 +46,53 @@ u32 PixelTypes::componentCount(PixelType type)
     }
 }
 
+GLenum InternalTypes::toDataType(InternalType value) {
+    switch (value) {
+        case D16:       return GL_UNSIGNED_SHORT;
+        case D24:       return GL_UNSIGNED_INT;
+        case D32:       return GL_UNSIGNED_INT;
+        case D32F:      return GL_FLOAT;
+        case D24S8:     return GL_UNSIGNED_INT_24_8;
+        case RGBA8:     return GL_UNSIGNED_BYTE;
+        case RGBA16F:   return GL_HALF_FLOAT;
+
+        default:        return GL_UNSIGNED_BYTE;
+    }
+}
+bool InternalTypes::isColor(InternalType value) {
+    return value == RGB8 || value == RGBA8 || value == RGBA16F;
+}
+bool InternalTypes::isStencil(InternalType value) {
+    return value == S1 || value == S4 || value == S8 || value == S16;
+}
+bool InternalTypes::isDepth(InternalType value) {
+    return value == D16 || value == D24 || value == D32 || value == D32F;	
+}
+bool InternalTypes::isDepthStencil(InternalType value) {
+    return value == D24S8 || value == D32FS8;	
+}
+
+u32 InternalTypes::sizeInBytes(InternalType value) {
+    switch (value) {
+        case D16:       return 2;
+        case D24:       return 4;
+        case D32:       return 4;
+        case D32F:      return 4;
+        case D24S8:     return 4;
+        case RGBA8:     return 4;
+        case RGBA16F:   return 8;
+
+        default:        return 4;
+    }
+}
+
 TextureInfo::TextureInfo()
     : Type( TextureTypes::Texture2D )
     , Filtering( TextureFilters::Linear )
     , Wrap( TextureWraps::REPEAT )
     , GenerateMipmap( false )
     , Pixel( PixelTypes::RGBA )
-    , DataType( GLDataTypes::UByte )
-    , InternalType( GL_RGBA )
+    , InternalType( InternalTypes::RGBA8 )
 {
 }
 
@@ -89,10 +128,10 @@ void Texture::createFromBuffer( const TextureInfo& textureinfo, const u8* data )
 {
     info_ = textureinfo;
 
-    ASSERT( id_ == 0 );
-    GL.GenTextures( 1, &id_ );
+    if( id_ == 0 )
+        GL.GenTextures( 1, &id_ );
 
-    GL.BindTexture( info_.Type, id_ );
+    GL.setTexture( this );
     setup();
 
     GL.TexImage2D(
@@ -103,15 +142,14 @@ void Texture::createFromBuffer( const TextureInfo& textureinfo, const u8* data )
         info_.Height,
         0,
         info_.Pixel,
-        info_.DataType,
+        InternalTypes::toDataType(info_.InternalType),
         data );
 
     if (info_.GenerateMipmap) {
         if ( info_.Width == info_.Height )
             GL.GenerateMipmap( info_.Type );
     }
-
-    GL.BindTexture( info_.Type, 0 );
+    GL_ASSERT(GL);
 }
 
 void Texture::createEmpty( const TextureInfo& textureinfo )

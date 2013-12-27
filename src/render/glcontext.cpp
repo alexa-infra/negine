@@ -85,6 +85,10 @@ void DeviceContext::setTexture(Texture* texture) {
     state->textureState.set(texture);
 }
 
+void DeviceContext::setFramebuffer(Framebuffer* fbo) {
+    state->framebuffer.set(fbo);
+}
+
 #ifdef OS_WIN
 class Library
 {
