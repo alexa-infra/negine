@@ -80,11 +80,11 @@ public:
 
     PFNGLCLEARPROC              Clear;
     PFNGLCLEARCOLORPROC         ClearColor;
-    PFNENABLEPROC               Enable;
+    PFNGLENABLEPROC             Enable;
     PFNGLGETERRORPROC           GetError;
     PFNGLDISABLEPROC            Disable;
-    PFNGETSTRINGPROC            GetString;
-    PFNBLENDFUNCPROC            BlendFunc;
+    PFNGLGETSTRINGPROC          GetString;
+    PFNGLBLENDFUNCPROC          BlendFunc;
     PFNGLVIEWPORTPROC           Viewport;
     PFNGLDEPTHMASKPROC          DepthMask;
 
