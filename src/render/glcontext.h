@@ -8,11 +8,10 @@
 
 #include "base/types.h"
 #include "render/gl_lite.h"
+#include "math/vec4.h"
 
-namespace base
-{
-namespace opengl
-{
+namespace base {
+namespace opengl {
 
 #ifdef _DEBUG
 #define GL_ASSERT(gl) gl.Assert(__FILE__, __LINE__)
@@ -22,11 +21,11 @@ namespace opengl
 
 class GLFuncLoader;
 class RenderState;
+class GpuProgram;
+class BufferObject;
 
 class NEGINE_API DeviceContext
 {
-    GLFuncLoader* loader;
-    RenderState* state;
 public:
     DeviceContext();
     ~DeviceContext();
@@ -90,9 +89,23 @@ public:
 
     void Assert(const char* file, int line);
 
-    RenderState& renderState();
-
     void init();
+
+    void setCullface(bool enable);
+    void setDepthTest(bool enable);
+    void setBlend(bool enable);
+    void setDepthWrite(bool enable);
+    void setViewport(const math::vec4f& area);
+    void setProgram(GpuProgram* pr);
+    void setVertexBuffer(BufferObject* buffer);
+    void setIndexBuffer(BufferObject* buffer);
+    void setTextureUnit(u32 id);
+
+    RenderState& renderState();
+private:
+    GLFuncLoader* loader;
+    RenderState* state;
+
 private:
     DISALLOW_COPY_AND_ASSIGN( DeviceContext );
 };

@@ -3,6 +3,8 @@
 #include "base/debug.h"
 #include "render/renderstate.h"
 #include <type_traits>
+#include "render/bufferobject.h"
+#include "render/gpuprogram.h"
 
 #ifdef OS_WIN
     #define WIN32_LEAN_AND_MEAN
@@ -41,6 +43,42 @@ RenderState& DeviceContext::renderState()
 {
     ASSERT(state != NULL);
     return *state;    
+}
+
+void DeviceContext::setCullface(bool enable) {
+    state->cullface.set(enable);
+}
+
+void DeviceContext::setDepthTest(bool enable) {
+    state->depthTest.set(enable);
+}
+
+void DeviceContext::setBlend(bool enable) {
+    state->blend.set(enable);
+}
+
+void DeviceContext::setDepthWrite(bool enable) {
+    state->depthWrite.set(enable);
+}
+
+void DeviceContext::setViewport(const math::vec4f& area) {
+    state->viewportArea.set(area);
+}
+
+void DeviceContext::setProgram(GpuProgram* pr) {
+    state->program.set(pr);
+}
+
+void DeviceContext::setVertexBuffer(BufferObject* buffer) {
+    state->vertexBuffer.set(buffer->handle());
+}
+
+void DeviceContext::setIndexBuffer(BufferObject* buffer) {
+    state->indexBuffer.set(buffer->handle());
+}
+
+void DeviceContext::setTextureUnit(u32 id) {
+    state->activeTexture.set(id);
 }
 
 #ifdef OS_WIN

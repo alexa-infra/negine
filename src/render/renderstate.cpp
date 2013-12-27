@@ -7,15 +7,15 @@ namespace opengl {
 
 RenderState::RenderState(DeviceContext& context)
     : gl(context)
-    , cullface(gl)
-    , depthTest(gl)
-    , blend(gl)
-    , depthWrite(gl)
-    , viewportArea(gl)
-    , program(gl)
-    , indexBuffer(gl)
-    , vertexBuffer(gl)
-    , activeTexture(gl)
+    , cullface(context)
+    , depthTest(context)
+    , blend(context)
+    , depthWrite(context)
+    , viewportArea(context)
+    , program(context)
+    , indexBuffer(context)
+    , vertexBuffer(context)
+    , activeTexture(context)
 {
 }
 

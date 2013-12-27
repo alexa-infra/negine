@@ -107,9 +107,9 @@ struct Renderer {
         if (fbo == nullptr) return;
     }
     void renderState(const RenderPass& rp) {
-        GL.renderState().viewportArea.set(rp.viewport);
-        GL.renderState().depthTest.set(rp.depthTest);
-        GL.renderState().depthWrite.set(rp.depthWrite);
+        GL.setViewport(rp.viewport);
+        GL.setDepthTest(rp.depthTest);
+        GL.setDepthWrite(rp.depthWrite);
         if (rp.clear) {
             GL.ClearColor(rp.clearColor.x, rp.clearColor.y, rp.clearColor.z, rp.clearColor.w);
             GL.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

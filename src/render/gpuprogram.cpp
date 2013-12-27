@@ -91,7 +91,7 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
         case GL_SAMPLER_2D:
         {
             Texture* texture = any_cast<Texture*>(value);
-            GL.renderState().activeTexture.set(samplerIdx);
+            GL.setTextureUnit(samplerIdx);
             texture->bind();
             GL.Uniform1i( uniform.location, samplerIdx );
             samplerIdx++;

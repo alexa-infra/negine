@@ -134,7 +134,6 @@ public:
     RenderState(DeviceContext& context);
 
 public:
-    DeviceContext& gl;
 
     BoolState<GL_CULL_FACE, false> cullface;
     BoolState<GL_DEPTH_TEST, false> depthTest;
@@ -147,6 +146,8 @@ public:
     TextureUnitState activeTexture;
 
     NEGINE_API void render(const Mesh& mesh, u32 from, u32 count);
+private:
+    DeviceContext& gl;
 };
 
 
