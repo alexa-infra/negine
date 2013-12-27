@@ -24,6 +24,7 @@ class RenderState;
 class GpuProgram;
 class BufferObject;
 class Texture;
+class Framebuffer;
 
 class NEGINE_API DeviceContext
 {
@@ -87,6 +88,20 @@ public:
     PFNGLBLENDFUNCPROC          BlendFunc;
     PFNGLVIEWPORTPROC           Viewport;
     PFNGLDEPTHMASKPROC          DepthMask;
+
+    PFNGLBINDFRAMEBUFFERPROC    BindFramebuffer;
+    PFNGLDRAWBUFFERPROC         DrawBuffer;
+    PFNGLREADBUFFERPROC         ReadBuffer;
+    PFNGLDRAWBUFFERSPROC        DrawBuffers;
+    PFNGLGENRENDERBUFFERSPROC   GenRenderbuffers;
+    PFNGLFRAMEBUFFERTEXTURE2DPROC FramebufferTexture2D;
+    PFNGLBINDRENDERBUFFERPROC   BindRenderbuffer;
+    PFNGLRENDERBUFFERSTORAGEPROC RenderbufferStorage;
+    PFNGLFRAMEBUFFERRENDERBUFFERPROC FramebufferRenderbuffer;
+    PFNGLCHECKFRAMEBUFFERSTATUSPROC CheckFramebufferStatus;
+    PFNGLGENFRAMEBUFFERSPROC    GenFramebuffers;
+    PFNGLDELETEFRAMEBUFFERSPROC DeleteFramebuffers;
+    PFNGLDELETERENDERBUFFERSPROC DeleteRenderbuffers;
 
     void Assert(const char* file, int line);
 

@@ -251,6 +251,20 @@ void DeviceContext::init()
     LOAD_GL(Viewport                         );
     LOAD_GL(DepthMask                        );
 
+    LOAD_GL(BindFramebuffer                  );
+    LOAD_GL(DrawBuffer                       );
+    LOAD_GL(ReadBuffer                       );
+    LOAD_GL(DrawBuffers                      );
+    LOAD_GL(GenRenderbuffers                 );
+    LOAD_GL(FramebufferTexture2D             );
+    LOAD_GL(BindRenderbuffer                 );
+    LOAD_GL(RenderbufferStorage              );
+    LOAD_GL(FramebufferRenderbuffer          );
+    LOAD_GL(CheckFramebufferStatus           );
+    LOAD_GL(GenFramebuffers                  );
+    LOAD_GL(DeleteFramebuffers               );
+    LOAD_GL(DeleteRenderbuffers              );
+
     #undef LOAD_GL
 
     state = new RenderState(*this);
