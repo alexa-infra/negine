@@ -7,7 +7,6 @@
 #include "math/vec4.h"
 #include "math/matrix-inl.h"
 #include "render/texture.h"
-#include "render/renderstate.h"
 #include <memory>
 #include "base/log.h"
 
@@ -92,7 +91,7 @@ void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samp
         {
             Texture* texture = any_cast<Texture*>(value);
             GL.setTextureUnit(samplerIdx);
-            texture->bind();
+            GL.setTexture(texture);
             GL.Uniform1i( uniform.location, samplerIdx );
             samplerIdx++;
             break;

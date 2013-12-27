@@ -23,6 +23,7 @@ class GLFuncLoader;
 class RenderState;
 class GpuProgram;
 class BufferObject;
+class Texture;
 
 class NEGINE_API DeviceContext
 {
@@ -100,6 +101,7 @@ public:
     void setVertexBuffer(BufferObject* buffer);
     void setIndexBuffer(BufferObject* buffer);
     void setTextureUnit(u32 id);
+    void setTexture(Texture* texture);
 
     RenderState& renderState();
 private:

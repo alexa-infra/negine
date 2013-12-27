@@ -80,6 +80,11 @@ void Texture::bind()
     GL.BindTexture( info_.Type, id_ );
 }
 
+void Texture::unbind()
+{
+    GL.BindTexture( info_.Type, 0 );
+}
+
 void Texture::createFromBuffer( const TextureInfo& textureinfo, const u8* data )
 {
     info_ = textureinfo;

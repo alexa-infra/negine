@@ -4,6 +4,7 @@
 #include "render/glcontext.h"
 #include "math/vec4.h"
 #include "render/gpuprogram.h"
+#include "render/texture.h"
 
 namespace base
 {
@@ -126,6 +127,21 @@ private:
     u32 current;
 };
 
+class TextureState
+{
+public:
+    Texture* current_;
+    TextureState() : current_(nullptr) {}
+    void set(Texture* newState) {
+        if (current_ == newState)
+            return;
+        if (newState == nullptr)
+            current_->unbind();
+        else
+            newState->bind();
+    }
+};
+
 class Mesh;
 
 class RenderState
@@ -144,6 +160,7 @@ public:
     BufferState<GL_ELEMENT_ARRAY_BUFFER> indexBuffer;
     BufferState<GL_ARRAY_BUFFER> vertexBuffer;
     TextureUnitState activeTexture;
+    TextureState textureState;
 
     NEGINE_API void render(const Mesh& mesh, u32 from, u32 count);
 private:

@@ -81,6 +81,10 @@ void DeviceContext::setTextureUnit(u32 id) {
     state->activeTexture.set(id);
 }
 
+void DeviceContext::setTexture(Texture* texture) {
+    state->textureState.set(texture);
+}
+
 #ifdef OS_WIN
 class Library
 {

@@ -103,6 +103,8 @@ public:
 
     void bind();
 
+    void unbind();
+
     void createFromBuffer( const TextureInfo& textureinfo, const u8* data );
 
     void createEmpty( const TextureInfo& textureinfo );

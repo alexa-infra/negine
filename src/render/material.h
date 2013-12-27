@@ -4,7 +4,6 @@
 #include "base/fixedmap.h"
 #include "math/vec4.h"
 #include "render/glcontext.h"
-#include "render/renderstate.h"
 #include "base/parameter.h"
 #include "math/matrix.h"
 #include "render/gpuprogram.h"
