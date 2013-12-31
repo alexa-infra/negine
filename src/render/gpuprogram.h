@@ -25,7 +25,7 @@ enum ShaderType {
 typedef ShaderTypes::ShaderType ShaderType;
 
 //! Shader program object
-class GpuProgram : public GpuResource
+class GpuProgram : public GpuResource, public BaseResource<GpuProgram>
 {
     struct UniformVar
     {

@@ -10,10 +10,11 @@
 #include <memory>
 #include "base/log.h"
 
-namespace base
-{
-namespace opengl
-{
+namespace base {
+
+ResourceType opengl::GpuProgram::type_ = ResourceManager::registerResource();
+
+namespace opengl {
 
 using namespace math;
 

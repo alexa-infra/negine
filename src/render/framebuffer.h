@@ -5,11 +5,12 @@
 #include "render/gpuresource.h"
 #include "math/vec2.h"
 #include "render/texture.h"
+#include "engine/resource.h"
 
 namespace base {
 namespace opengl {
 
-class Framebuffer : public GpuResource
+class Framebuffer : public GpuResource, public BaseResource<Framebuffer>
 {
 public:
     Framebuffer(DeviceContext& context);
