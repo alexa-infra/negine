@@ -11,11 +11,10 @@
 #include "math/matrix-inl.h"
 #include "engine/resourceref.h"
 #include "render/renderstate.h"
-
 #include "render/texture.h"
-
 #include "game/components/transform.h"
 #include "game/components/camera.h"
+#include "game/components/renderable.h"
 #include "base/log.h"
 
 using namespace base;
@@ -92,13 +91,24 @@ public:
     }
 };
 
+class GameObject {
+public:
+    game::Renderable r;
+    game::Entity object;
+    GameObject() {
+        object.add(&r);
+    }
+};
+
 class Demo : public Application
 {
     base::opengl::Renderer ren;
     base::opengl::GpuProgram prog;
     base::opengl::GpuProgram prog2;
 
+    GameObject obj;
     GameCamera cam;
+    game::Entity root;
     base::opengl::Mesh mesh;
     u32 keypressed_; 
     base::imp::MeshBuilder bb;
@@ -106,7 +116,7 @@ class Demo : public Application
     opengl::Model* umesh;
 
     opengl::Framebuffer fbo;
-
+    opengl::Material material;
 public:
     Demo(const std::string& filename) : ren(GL), prog(GL), prog2(GL), fbo(GL) {
         intstance_ = this;
@@ -146,12 +156,14 @@ public:
         prog.setShaderSource(base::opengl::ShaderTypes::VERTEX, vertexShader);
         prog.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader);
         prog.complete();
+        ResourceRef("prog1").setResource(&prog);
 
         prog2.setAttribute("position", opengl::VertexAttrs::tagPosition);
         prog2.setAttribute("uv", opengl::VertexAttrs::tagTexture);
         prog2.setShaderSource(base::opengl::ShaderTypes::VERTEX, vertexShader1);
         prog2.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader1);
         prog2.complete();
+        ResourceRef("prog2").setResource(&prog2);
 
         cam.transform.setPosition( base::math::vec3f( 0.f, 0.f, -5.f ) );
         cam.transform.setPitch( 50 * base::math::deg_to_rad );
@@ -167,12 +179,52 @@ public:
         fbo.addTarget(opengl::InternalTypes::D32F);
         fbo.resizeWindow(math::vec2i(width_, height_));
         //fbo.complete();
-        
+        ResourceRef("fbo").setResource(&fbo);
+        ResourceRef("default_fbo").setResource(nullptr);
+
         GL_ASSERT(GL);
 
         ResourceRef model("themodel");
         model.loadDefault<opengl::Model>("trunk.obj");
         umesh = model.resourceAs<opengl::Model>();
+
+        obj.r.model_ = model;
+        root.addChild(&obj.object);
+        root.addChild(&cam.object);
+
+        material.modeMap["normal"] = ResourceRef("prog1");
+        ResourceRef maa("material");
+        maa.setResource(&material);
+        const_cast<opengl::Mesh&>(umesh->surfaceAt(0).mesh).material_ = maa;
+
+        ren.root = &root;
+        ren.camera = &cam.camera;
+
+        opengl::RenderPass rp;
+        rp.target = ResourceRef("fbo");
+        rp.mode = "normal";
+        rp.generator = "scene";
+        rp.viewport = math::vec4f(0, 0, 640, 480);
+        rp.clear = true;
+        rp.depthTest = true;
+        rp.depthWrite = true;
+        rp.cullBackFace = false;
+        rp.blend = false;
+        rp.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+        ren.passesList.push_back(rp);
+
+        opengl::RenderPass rp2;
+        rp2.target = ResourceRef("default_fbo");
+        rp2.mode = "prog2";
+        rp2.generator = "fullscreen";
+        rp2.viewport = math::vec4f(0, 0, 640, 480);
+        rp2.clear = true;
+        rp2.depthTest = false;
+        rp2.depthWrite = false;
+        rp2.cullBackFace = false;
+        rp2.blend = false;
+        rp2.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
+        ren.passesList.push_back(rp2);
     }
     virtual ~Demo() {
     }
@@ -180,42 +232,7 @@ protected:
     base::Params para;
     void OnFrame() {
         UpdateWorld();
-
-        //ren.rendering();
-
-        GL.setFramebuffer(&fbo);
-
-        GL.setDepthWrite(true);
-        GL.setDepthTest(true);
-        GL.setViewport(math::vec4f(0u, 0u, width_, height_));
-        GL.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        GL.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        GL.setProgram(&prog);
-        para["mvp"] = cam.camera.clipMatrix();
-        prog.setParams(para);
-        
-        size_t meshCount = umesh->surfaceCount();
-        for(size_t i=0; i<meshCount; i++) {
-            const opengl::Mesh& m = umesh->surfaceAt(i).mesh;
-            GL.renderState().render(m, 0, m.numIndexes());
-        }
-
-        
-        GL.setFramebuffer(nullptr);
-        GL.setDepthWrite(false);
-        GL.setDepthTest(false);
-        GL.setViewport(math::vec4f(0u, 0u, width_, height_));
-        GL.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        GL.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        base::Params pp;
-        ResourceRef checkers("checkers");
-        pp["atexture"] = checkers.resourceAs<opengl::Texture>();
-        GL.setProgram(&prog2);
-        prog2.setParams(pp);
-        GL.renderState().render(mesh, 0, mesh.numIndexes());
-
+        ren.rendering();
         GL_ASSERT(GL);
         SDLApp::OnFrame();
     }

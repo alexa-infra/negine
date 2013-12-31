@@ -7,9 +7,11 @@ namespace base {
 
 class ResourceRef {
 public:
+    ResourceRef();
     explicit ResourceRef(const std::string& uri);
     ResourceRef(const std::string& uri, Resource* res);
-    
+    ResourceRef& operator=(const ResourceRef& r);
+
     Resource* resource();
     void setResource(Resource* res);
     void destroy();

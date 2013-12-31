@@ -3,63 +3,36 @@
 #include "base/types.h"
 #include "base/fixedmap.h"
 #include "math/vec4.h"
-#include "render/glcontext.h"
 #include "base/parameter.h"
-#include "math/matrix.h"
-#include "render/gpuprogram.h"
+#include "engine/resourceref.h"
+#include "render/mesh.h"
 #include <vector>
 
-namespace base
-{
-namespace opengl
-{
+namespace base {
 
-class Mesh;
+namespace game { class Entity; class Camera; }
 
-struct Material
+namespace opengl {
+
+class DeviceContext;
+class GpuProgram;
+
+struct Material : public BaseResource<Material>
 {
-    typedef FixedMap<SmallString, GpuProgram*> ProgramMap;
-    ProgramMap programs;
+    typedef FixedMap<SmallString, ResourceRef> ProgramMap;
+    ProgramMap modeMap; // mode -> gpu program
     Params defaultParams;
+
+    bool hasMode(const SmallString& mode) const;
+
+    opengl::GpuProgram* program(const SmallString& mode) const;
 };
-
-struct SceneGenerator
-{
-    DeviceContext& GL;
-    //Scene& scene;
-    //Camera& cam;
-
-    void perform(const Params& rpParams, const SmallString& mode)
-    {
-        //base::Params params;
-        //for (auto obj: scene.objects) {
-        //    GpuProgram* prog;
-        //    if (obj.material->programs.tryGet(mode, prog)) {
-        //        if (GL.renderState().program.set(prog)) {
-        //            prog->setParams(obj.material->defaultParams);
-        //            prog->setParams(rpParams);
-        //        }
-        //        //params["mvp"] = obj.transform * cam.clipMatrix();
-        //        prog->setParams(params);
-        //
-        //        //GL.renderState().render(*obj.mesh);
-        //    }
-        //}
-    }
-};
-
-struct Generator
-{
-};
-
-class Framebuffer;
 
 struct RenderPass
 {
-    Framebuffer* target;
-    SmallString mode;
-    Generator* generator;
-
+    ResourceRef target;
+    std::string generator;
+    std::string mode;
     math::vec4f viewport;
     Params params;
 
@@ -75,38 +48,19 @@ struct Renderer {
 
     Renderer(DeviceContext& gl) : GL(gl) {}
 
-    DeviceContext& GL;
+    void init();
+    void rendering();
+    void renderState(const RenderPass& rp);
+    void sceneRenderer(const std::string& mode, const Params& pp);
+    void fullscreenRenderer(const std::string& mode, const Params& pp);
+
     std::vector<RenderPass> passesList;
-    void init() {
-        RenderPass rp;
-        rp.target = nullptr;
-        rp.mode = "normal";
-        rp.generator = nullptr;
-        rp.viewport = math::vec4f(0, 0, 640, 480);
-        rp.clear = true;
-        rp.depthTest = true;
-        rp.depthWrite = true;
-        rp.cullBackFace = false;
-        rp.blend = false;
-        rp.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-        passesList.push_back(rp);
-    }
-    void rendering() {
-        for(auto pass: passesList) {
-            GL.setFramebuffer(pass.target);
-            renderState(pass);
-            //generator->draw(pass.mode);
-        }
-    }
-    void renderState(const RenderPass& rp) {
-        GL.setViewport(rp.viewport);
-        GL.setDepthTest(rp.depthTest);
-        GL.setDepthWrite(rp.depthWrite);
-        if (rp.clear) {
-            GL.ClearColor(rp.clearColor.x, rp.clearColor.y, rp.clearColor.z, rp.clearColor.w);
-            GL.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
-    }
+    game::Entity* root;
+    game::Camera* camera;
+
+private:
+    Mesh fullscreenQuad;
+    DeviceContext& GL;
 };
 
 }

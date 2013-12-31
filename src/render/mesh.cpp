@@ -149,12 +149,12 @@ void Mesh::complete()
     }
 }
 
-u32 Mesh::stride(VertexAttr attr, u32 idx) const
-{
-    const MeshAttribute& layer = getLayer(attr, idx);
-    ASSERT(layer.valid_);
-    return layer.stride_;
-}
+//u32 Mesh::stride(VertexAttr attr, u32 idx) const
+//{
+//    const MeshAttribute& layer = getLayer(attr, idx);
+//    ASSERT(layer.valid_);
+//    return layer.stride_;
+//}
 
 const MeshAttribute& Mesh::getLayer(VertexAttr attr, u32 idx) const {
     std::size_t size = attributes_.size();

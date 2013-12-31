@@ -2,6 +2,10 @@
 
 namespace base {
 
+ResourceRef::ResourceRef() {
+    hash_ = 0;
+}
+
 ResourceRef::ResourceRef(const std::string& uri) {
     std::hash<std::string> h;
     hash_ = h(uri);
@@ -11,6 +15,11 @@ ResourceRef::ResourceRef(const std::string& uri, Resource* res) {
     std::hash<std::string> h;
     hash_ = h(uri);
     setResource(res);
+}
+
+ResourceRef& ResourceRef::operator=(const ResourceRef& r) {
+    hash_ = r.hash_;
+    return *this;
 }
 
 Resource* ResourceRef::resource() {

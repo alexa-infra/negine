@@ -9,6 +9,8 @@
 #include "base/types.h"
 #include <vector>
 #include "render/gl_lite.h"
+#include "engine/resourceref.h"
+#include "base/parameter.h"
 
 namespace base {
 namespace opengl {
@@ -68,24 +70,25 @@ public:
     NEGINE_API Mesh& indexCount(u32 nIndexes, IndexType type);
     NEGINE_API void complete();
 
-    NEGINE_API u32 numVertexes() const { return numVertexes_; }
-    NEGINE_API u32 numIndexes() const { return numIndexes_; }
-    NEGINE_API u32 rawSize() const { return rawSize_; }
-    NEGINE_API void* data() { return attributeBuffer_.data(); }
-    const std::vector<MeshAttribute>& attributes() const { return attributes_; }
-    NEGINE_API void* indices() { return indices_.data(); }
-    NEGINE_API IndexType indexType() const { return indexType_; }
+    inline u32 numVertexes() const { return numVertexes_; }
+    inline u32 numIndexes() const { return numIndexes_; }
+    inline u32 rawSize() const { return rawSize_; }
+    inline void* data() { return attributeBuffer_.data(); }
+    inline const std::vector<MeshAttribute>& attributes() const { return attributes_; }
+    inline void* indices() { return indices_.data(); }
+    inline IndexType indexType() const { return indexType_; }
 
-    NEGINE_API u32 stride(VertexAttr attr, u32 idx = 0) const;
+    ResourceRef material_;
+    Params params_;
 
     template<typename T>
     T* findAttribute(VertexAttr attr, u32 idx = 0) const {
         return reinterpret_cast<T*>(findAttributeRaw(attr, idx));
     }
-    
-    NEGINE_API const MeshAttribute& getLayer(VertexAttr attr, u32 idx) const;
+
+    const MeshAttribute& getLayer(VertexAttr attr, u32 idx) const;
 private:
-    NEGINE_API u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
+    u8* findAttributeRaw(VertexAttr attr, u32 idx) const;
 
 private:
     std::vector<VertexAttr> attr_;
