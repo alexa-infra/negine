@@ -31,6 +31,8 @@ class GpuProgram : public GpuResource, public BaseResource<GpuProgram>
     {
         u32 location;
         u32 type;
+        any value;
+        u32 samplerIdx;
     };
     struct AttrVar
     {
@@ -66,24 +68,24 @@ public:
 
     NEGINE_API void destroy();
 
-    //! Sets program to be used at current pipeline
     NEGINE_API void bind();
 
-    //! Unbind program
     NEGINE_API void unbind();
 
     NEGINE_API void setAttribute(const std::string& name, VertexAttr attr, u32 idx = 0);
 
-    NEGINE_API u32 getAttributeLoc(VertexAttr attr, u32 idx = 0) const;
+    u32 getAttributeLoc(VertexAttr attr, u32 idx = 0) const;
 
     NEGINE_API bool setShaderSource(ShaderType type, const std::string& source);
 
     NEGINE_API bool complete();
 
     NEGINE_API void setParams(const Params& params);
+
+    NEGINE_API void setParam(const std::string& paramName, const any& value);
 private:
     
-    void setParam(const UniformVar& uniform, const any& value, u32& samplerIdx);
+    void setParam(UniformVar& uniform, const any& value);
 
     //! Populate list of active uniforms
     void populateUniformMap();

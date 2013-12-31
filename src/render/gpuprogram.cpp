@@ -71,47 +71,75 @@ void GpuProgram::unbind()
 
 void GpuProgram::setParams(const Params& params)
 {
-    u32 samplerIdx = 0;
-    for(UniformMap::Iterator it = uniformBinding_.iterator(); !it.isDone(); it.advance())
+    for(Params::Iterator it = params.iterator(); !it.isDone(); it.advance())
     {
-        const UniformVar& uniform = it.value();
-        /*any value;
-        if (!params.tryGet(it.key(), value)) {
-            ERR("Uniform '%s' is not supplied", it.name());
-            return;
-        }*/
-        any value;
-        setParam(uniform, params.get(it.key(), value), samplerIdx);
+        UniformVar* uniform = nullptr;
+        if (uniformBinding_.tryGet(it.key(), uniform)) {
+            setParam(*uniform, it.value());
+        } else {
+            ERR("uniform variable '%s' is not presented in program", it.key().c_str());
+        }
     }
 }
-    
-void GpuProgram::setParam(const UniformVar& uniform, const any& value, u32& samplerIdx)
+
+void GpuProgram::setParam(const std::string& paramName, const any& value)
+{
+    UniformVar* uniform = nullptr;
+    if (uniformBinding_.tryGet(paramName.c_str(), uniform)) {
+        setParam(*uniform, value);
+    }
+}
+
+void GpuProgram::setParam(UniformVar& uniform, const any& value)
 {
     switch(uniform.type) {
         case GL_SAMPLER_2D:
         {
             Texture* texture = any_cast<Texture*>(value);
-            GL.setTextureUnit(samplerIdx);
+            if (!uniform.value.empty()) {
+                Texture* prev = any_cast<Texture*>(uniform.value);
+                if (prev == texture)
+                    return;
+            }
+            uniform.value = value;
+            GL.setTextureUnit(uniform.samplerIdx);
             GL.setTexture(texture);
-            GL.Uniform1i( uniform.location, samplerIdx );
-            samplerIdx++;
+            GL.Uniform1i( uniform.location, uniform.samplerIdx );
             break;
         }
         case GL_FLOAT_MAT4:
         {
             const Matrix4& m = any_cast<const Matrix4&>(value);
+            if (!uniform.value.empty()) {
+                const Matrix4& prev = any_cast<const Matrix4&>(uniform.value);
+                if (prev == m)
+                    return;
+            }
+            uniform.value = value;
             GL.UniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
             break;
         }
         case GL_FLOAT_VEC4:
         {
             const vec4f& v = any_cast<const vec4f&>(value);
+            if (!uniform.value.empty()) {
+                const vec4f& prev = any_cast<const vec4f&>(uniform.value);
+                if (prev == v)
+                    return;
+            }
+            uniform.value = value;
             GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
             break;
         }
         case GL_FLOAT:
         {
             f32 v = any_cast<f32>(value);
+            if (!uniform.value.empty()) {
+                f32 prev = any_cast<f32>(uniform.value);
+                if (prev == v)
+                    return;
+            }
+            uniform.value = value;
             GL.Uniform1f ( uniform.location, v );
             break;
         }
@@ -149,6 +177,10 @@ void GpuProgram::populateUniformMap()
         UniformVar uni;
         uni.location = location;
         uni.type = uniformType;
+        if (uniformType == GL_SAMPLER_2D)
+            uni.samplerIdx = index++;
+        else
+            uni.samplerIdx = 0;
         uniformBinding_[uniformName.c_str()] = uni;
     }
 }

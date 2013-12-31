@@ -78,13 +78,18 @@ public:
 			return defaultValue;
 		return it->second;
 	}
-	bool tryGet(const String& name, T& value) const {
-		IteratorT it = map_.find(name);
-		if (it == map_.end())
-			return false;
-		value = it->second;
-		return true;
-	}
+    bool contains(const String& name) const {
+        IteratorT it = map_.find(name);
+        return (it != map_.end());
+    }
+    bool tryGet(const String& name, T*& value) const {
+        IteratorT it = map_.find(name);
+        if (it == map_.end())
+            return false;
+        const T& v = it->second;
+        value = const_cast<T*>(&v);
+        return true;
+    }
     size_t size() const {
         return map_.size();
     }

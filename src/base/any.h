@@ -32,6 +32,11 @@ public:
 
     any() : content(nullptr) {}
 
+    any(const any& rhs) : content(nullptr) {
+        if (!rhs.empty()) 
+            content = rhs.content->clone();
+    }
+
     template<typename ValueType>
     any(const ValueType& value) : content(new holder<ValueType>(value)) {}
 
