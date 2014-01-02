@@ -19,10 +19,10 @@ add_source_group("src"      ${SRC_LIB_PATH}           SRC)
 add_source_group("include"  ${SRC_PATH}/boost      	  HDR)
 
 if(MSVC)
-	set(PYTHON_INCLUDE_DIR "d:/devtools/python27/include")
-	set(PYTHON_LIBRARY "d:/devtools/python27/libs/python27.lib")
+    add_definitions(-DMS_NO_COREDLL -DPy_ENABLE_SHARED)
 endif()
 
+set(Python_ADDITIONAL_VERSIONS 3.3)
 find_package(PythonLibs REQUIRED)
 if (NOT PYTHONLIBS_FOUND)
 	message(FATAL ERROR "Python is not found")
@@ -42,7 +42,8 @@ if(BOOSTPYTHON_STATIC)
 	add_library(boostpython-static STATIC ${SRC})
 
 	target_link_libraries(boostpython-static
-		${PYTHON_LIBRARIES}
+		debug ${PYTHON_LIBRARY_DEBUG}
+		optimized ${PYTHON_LIBRARY_RELEASE}
 	)
 
 	set_target_properties(boostpython-static PROPERTIES
@@ -54,7 +55,8 @@ if(BOOSTPYTHON_SHARED)
 	add_library(boostpython SHARED ${SRC})
 
 	target_link_libraries(boostpython
-		${PYTHON_LIBRARIES}
+		debug ${PYTHON_LIBRARY_DEBUG}
+		optimized ${PYTHON_LIBRARY_RELEASE}
 	)
 
 	set_target_properties(boostpython PROPERTIES
@@ -63,6 +65,9 @@ if(BOOSTPYTHON_SHARED)
 		)
 endif()
 
+if (NOT ${PYTHON_LIBRARY_DEBUG} STREQUAL ${PYTHON_LIBRARY_RELEASE})
+	add_definitions(-DBOOST_DEBUG_PYTHON)
+endif()
 
 add_definitions(-DBOOST_PYTHON_SOURCE
 				-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
@@ -73,7 +78,3 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
 	set(ARCH_64 FALSE)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-
-if(WIN32 AND ARCH_64 AND NOT MSVC)
-	add_definitions(-DMS_WIN64)
-endif()

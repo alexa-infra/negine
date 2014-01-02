@@ -3,7 +3,6 @@
 #include <boost/python.hpp>
 #include <string>
 #include "render/material.h"
-#include "engine/meshbuilder.h"
 #include "render/model.h"
 #include "render/gpuprogram.h"
 #include "base/timer.h"
@@ -20,7 +19,7 @@
 using namespace base;
 using namespace boost::python;
 
-extern "C" NEGINE_EXPORT void initnegine_runtime(void);
+extern "C" NEGINE_EXPORT PyObject* PyInit_negine_runtime(void);
 
 static const char vertexShader[] = 
     "#version 150\n"
@@ -109,9 +108,7 @@ class Demo : public Application
     GameObject obj;
     GameCamera cam;
     game::Entity root;
-    base::opengl::Mesh mesh;
     u32 keypressed_; 
-    base::imp::MeshBuilder bb;
     base::Timer timer_;
     opengl::Model* umesh;
 
@@ -120,9 +117,9 @@ class Demo : public Application
 public:
     Demo(const std::string& filename) : ren(GL), prog(GL), prog2(GL), fbo(GL) {
         intstance_ = this;
+        PyImport_AppendInittab("negine_core", PyInit_negine_core);
+        PyImport_AppendInittab("negine_runtime", PyInit_negine_runtime);
         Py_Initialize();
-        PyImport_AppendInittab("negine_core", initnegine_core);
-        PyImport_AppendInittab("negine_runtime", initnegine_runtime);
         object m = import("__main__");
         global = object(m.attr("__dict__"));
 
@@ -130,25 +127,7 @@ public:
 
         keypressed_ = 0; 
 
-        bb.beginSurface();
-        bb.addVertex(math::vec3f( 1, -1, -1), math::vec2f(0, 0));
-        bb.addVertex(math::vec3f( 1,  1, -1), math::vec2f(0, 1));
-        bb.addVertex(math::vec3f(-1,  1, -1), math::vec2f(1, 1));
-        bb.addVertex(math::vec3f(-1, -1, -1), math::vec2f(1, 0));
-
-        bb.addPolygon(0, 1, 2);
-        bb.addPolygon(0, 2, 3);
-        bb.endSurface();
-
         ren.init();
-        {
-            //bb.readOBJ("trunk.obj");
-            //bb.readOBJ("leaves.obj");
-
-            {
-                bb.getDrawingList(mesh);
-            }
-        }
 
         prog.setAttribute("position", base::opengl::VertexAttrs::tagPosition);
         prog.setAttribute("normal", base::opengl::VertexAttrs::tagNormal);
@@ -229,7 +208,6 @@ public:
     virtual ~Demo() {
     }
 protected:
-    base::Params para;
     void OnFrame() {
         UpdateWorld();
         ren.rendering();

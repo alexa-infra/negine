@@ -2,4 +2,10 @@
 
 #include "base/types.h"
 
-extern "C" NEGINE_API void initnegine_core(void);
+#ifndef PyObject_HEAD
+struct _object;
+typedef _object PyObject;
+#endif
+
+extern "C" NEGINE_API PyObject* PyInit_negine_core();
+

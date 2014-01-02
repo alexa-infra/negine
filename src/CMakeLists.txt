@@ -1,5 +1,6 @@
 set(SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
+set(Python_ADDITIONAL_VERSIONS 3.3)
 find_package(PythonLibs REQUIRED)
 if (NOT PYTHONLIBS_FOUND)
     message(FATAL ERROR "Python is not found")
@@ -87,14 +88,12 @@ endif()
 add_definitions(-DSDL_ENGINE)
 add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_ALL_NO_LIB)
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(ARCH_64 TRUE)
-else()
-    set(ARCH_64 FALSE)
+if(MSVC)
+    add_definitions(-DMS_NO_COREDLL -DPy_ENABLE_SHARED)
 endif()
 
-if(WIN32 AND ARCH_64 AND NOT MSVC)
-    add_definitions(-DMS_WIN64)
+if (NOT ${PYTHON_LIBRARY_DEBUG} STREQUAL ${PYTHON_LIBRARY_RELEASE})
+    add_definitions(-DBOOST_DEBUG_PYTHON)
 endif()
 
 if(UNIX OR MINGW)

@@ -1,9 +1,10 @@
+print("hello")
 from negine_core import *
 from negine_runtime import *
 
 a = vec4f(1.0, 0.0, 0.0, 1.0)
-print a.x, a.y, a.z, a.w
-print a
+print(a.x, a.y, a.z, a.w)
+print(a)
 
 vertexShader = """
 #version 150
@@ -34,13 +35,13 @@ void main() {
 """
 
 app = globalApp()
-print app.context
+print(app.context)
 prog = app.context.createProgram()
 prog.setAttribute("position", VertexAttrs.tagPosition)
 prog.setAttribute("uv", VertexAttrs.tagTexture)
 prog.setShaderSource(ShaderTypes.VERTEX, vertexShader)
 prog.setShaderSource(ShaderTypes.PIXEL, pixelShader)
 if prog.complete():
-	print "program has been compiled!"
+	print("program has been compiled!")
 del(prog)
-#prog.destroy()
+##prog.destroy()
