@@ -13,13 +13,13 @@ namespace opengl {
 class Framebuffer : public GpuResource, public BaseResource<Framebuffer>
 {
 public:
-    Framebuffer(DeviceContext& context);
+    NEGINE_API Framebuffer(DeviceContext& context);
     
-    ~Framebuffer();
+    NEGINE_API ~Framebuffer();
 
-    void resizeWindow(const math::vec2i& newSize);
+    NEGINE_API void resizeWindow(const math::vec2i& newSize);
 
-    void destroy();
+    NEGINE_API void destroy();
 
     void bind();
 
@@ -36,11 +36,11 @@ public:
         }
     };
 
-    void addTarget(InternalType format);
+    NEGINE_API void addTarget(InternalType format);
 
-    void addTargetTexture(Texture* texture);
+    NEGINE_API void addTargetTexture(Texture* texture);
 
-    void complete();
+    NEGINE_API void complete();
 
     bool checkStatus(const char*& message);
 

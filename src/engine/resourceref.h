@@ -7,14 +7,14 @@ namespace base {
 
 class ResourceRef {
 public:
-    ResourceRef();
-    explicit ResourceRef(const std::string& uri);
-    ResourceRef(const std::string& uri, Resource* res);
-    ResourceRef& operator=(const ResourceRef& r);
+    NEGINE_API ResourceRef();
+    NEGINE_API explicit ResourceRef(const std::string& uri);
+    NEGINE_API ResourceRef(const std::string& uri, Resource* res);
+    NEGINE_API ResourceRef& operator=(const ResourceRef& r);
 
-    Resource* resource();
-    void setResource(Resource* res);
-    void destroy();
+    NEGINE_API Resource* resource();
+    NEGINE_API void setResource(Resource* res);
+    NEGINE_API void destroy();
 
     template<class T>
     T* resourceAs() {

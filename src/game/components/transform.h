@@ -10,9 +10,9 @@ namespace game {
 class Transform : public Component<Transform>
 {
 public:
-    Transform();
+    NEGINE_API Transform();
 
-    static void updateTree(Entity* root);
+    NEGINE_API static void updateTree(Entity* root);
 
     inline const math::vec3f& forward() const { return forward_; }
     inline const math::vec3f& right() const { return right_; }
@@ -24,16 +24,16 @@ public:
 
     inline const math::Matrix4& world() const { return world_; }
 
-    void moveForward(f32 dist);
-    void moveBackward(f32 dist);
-    void moveRight(f32 dist);
-    void moveLeft(f32 dist);
-    void turnPitch(f32 radians);
-    void turnHead(f32 radians);
+    NEGINE_API void moveForward(f32 dist);
+    NEGINE_API void moveBackward(f32 dist);
+    NEGINE_API void moveRight(f32 dist);
+    NEGINE_API void moveLeft(f32 dist);
+    NEGINE_API void turnPitch(f32 radians);
+    NEGINE_API void turnHead(f32 radians);
 
-    void setPosition(const math::vec3f& v );
-    void setPitch(f32 radians);
-    void setHead(f32 radians);
+    NEGINE_API void setPosition(const math::vec3f& v );
+    NEGINE_API void setPitch(f32 radians);
+    NEGINE_API void setHead(f32 radians);
 private:
     void update();
     void makeDirty();

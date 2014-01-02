@@ -22,7 +22,7 @@ public:
     ResourceType type() const { return type_; }
     static ResourceType Type() { return type_; }
 private:
-    static ResourceType type_;
+    NEGINE_API static ResourceType type_;
 };
 
 typedef Resource* (*ResourceFactoryFunc) (const std::string& name);
@@ -36,10 +36,10 @@ public:
 
     static void init();
     static void shutdown();
-    static u32 registerResource();
-    static void addFactory(u32 type, ResourceFactoryFunc factory);
+    NEGINE_API static u32 registerResource();
+    NEGINE_API static void addFactory(u32 type, ResourceFactoryFunc factory);
 
-    static Resource* loadDefault(u32 type, std::size_t uri, const std::string& path);
+    NEGINE_API static Resource* loadDefault(u32 type, std::size_t uri, const std::string& path);
 private:
     static ResourceManager& instance();
     ResourceManager();

@@ -10,7 +10,7 @@ namespace game {
 class Camera : public Component<Camera>
 {
 public:
-    Camera();
+    NEGINE_API Camera();
 
     inline f32 aspect() const { return aspect_; }
     inline f32 fov() const { return fov_; }
@@ -22,13 +22,13 @@ public:
     inline const math::Matrix4& modelView() const { return modelview_; }
     inline const math::Matrix4& clipMatrix() const { return clip_; }
 
-    void setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar);
-    void setAspect(f32 ratio);
-    void setFov(f32 radians);
-    void setZNear(f32 dist);
-    void setZFar(f32 dist);
+    NEGINE_API void setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar);
+    NEGINE_API void setAspect(f32 ratio);
+    NEGINE_API void setFov(f32 radians);
+    NEGINE_API void setZNear(f32 dist);
+    NEGINE_API void setZFar(f32 dist);
 
-    static void updateTree(Entity* root);
+    NEGINE_API static void updateTree(Entity* root);
 private:
     void update();
 

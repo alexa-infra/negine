@@ -48,17 +48,18 @@ struct Renderer {
 
     Renderer(DeviceContext& gl) : GL(gl) {}
 
-    void init();
-    void rendering();
-    void renderState(const RenderPass& rp);
-    void sceneRenderer(const std::string& mode, const Params& pp);
-    void fullscreenRenderer(const std::string& mode, const Params& pp);
+    NEGINE_API void init();
+    NEGINE_API void rendering();
 
     std::vector<RenderPass> passesList;
     game::Entity* root;
     game::Camera* camera;
 
 private:
+    void renderState(const RenderPass& rp);
+    void sceneRenderer(const std::string& mode, const Params& pp);
+    void fullscreenRenderer(const std::string& mode, const Params& pp);
+
     Mesh fullscreenQuad;
     DeviceContext& GL;
 };
