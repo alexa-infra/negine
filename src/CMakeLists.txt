@@ -60,6 +60,7 @@ include_directories(
     ${PYTHON_INCLUDE_DIRS}
     ${TOOLS_PATH}/SDL/include
     ${TOOLS_PATH}/assimp-3.0.1270/include
+    ${TOOLS_PATH}/bitsquid/foundation
 )
 
 if(NEGINE_STATIC_BUILD)
@@ -71,7 +72,7 @@ if(NEGINE_STATIC_BUILD)
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD -DBOOST_PYTHON_STATIC_MODULE)
-    target_link_libraries(negine-static boostpython-static SDL2-static assimp-static)
+    target_link_libraries(negine-static boostpython-static SDL2-static assimp-static bitsquid-foundation)
 endif()
 if(NEGINE_SHARED_BUILD)
     add_library(negine SHARED
@@ -82,7 +83,7 @@ if(NEGINE_SHARED_BUILD)
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DNEGINE_SHARED_BUILD -DASSIMP_DLL)
-    target_link_libraries(negine boostpython SDL2 assimp)
+    target_link_libraries(negine boostpython SDL2 assimp bitsquid-foundation)
 endif()
 
 add_definitions(-DSDL_ENGINE)
