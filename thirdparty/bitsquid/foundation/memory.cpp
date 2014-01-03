@@ -150,6 +150,11 @@ namespace {
 			assert(align % 4 == 0);
 			size = ((size + 3)/4)*4;
 
+			if ((int)(size + sizeof(Header) + align-1) > (_end - _begin)) {
+				// too large for ring buffer
+				return _backing.allocate(size, align);
+			}
+
 			char *p = _allocate;
 			Header *h = (Header *)p;
 			char *data = (char *)data_pointer(h, align);
@@ -170,6 +175,8 @@ namespace {
 				return _backing.allocate(size, align);
 
 			fill(h, data, p - (char *)h);
+			if (p == _end)
+				p = _begin;
 			_allocate = p;
 			return data;
 		}
