@@ -1,7 +1,7 @@
 #pragma once
 
-#include "collection_types.h"
-#include "memory.h"
+#include "foundation/collection_types.h"
+#include "foundation/memory.h"
 
 #include <memory>
 

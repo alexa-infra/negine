@@ -1,12 +1,12 @@
 #pragma once
 
-#include "collection_types.h"
-#include "array.h"
+#include "foundation/collection_types.h"
+#include "foundation/array.h"
 
 #include <string.h>
 #include <stdio.h>
 
-#include "snprintf_msvc.h"
+#include "foundation/snprintf_msvc.h"
 
 namespace foundation
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "types.h"
-#include "memory_types.h"
+#include "foundation/types.h"
+#include "foundation/memory_types.h"
 
 /// All collection types assume that they are used to store POD objects. I.e. they:
 ///

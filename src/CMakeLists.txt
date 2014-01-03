@@ -60,7 +60,7 @@ include_directories(
     ${PYTHON_INCLUDE_DIRS}
     ${TOOLS_PATH}/SDL/include
     ${TOOLS_PATH}/assimp-3.0.1270/include
-    ${TOOLS_PATH}/bitsquid/foundation
+    ${TOOLS_PATH}/bitsquid
 )
 
 if(NEGINE_STATIC_BUILD)

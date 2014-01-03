@@ -1,5 +1,7 @@
-#include "collection_types.h"
-#include "array.h"
+#pragma once
+
+#include "foundation/collection_types.h"
+#include "foundation/array.h"
 
 namespace foundation
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "array.h"
-#include "collection_types.h"
+#include "foundation/array.h"
+#include "foundation/collection_types.h"
 
 namespace foundation {
 
