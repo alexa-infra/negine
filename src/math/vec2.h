@@ -18,12 +18,10 @@ template<typename T>
 struct vec2
 {
     T x, y;
-    vec2() {}
+    vec2() = default;
 
     template<typename R>
     vec2(R a, R b) : x(static_cast<T>(a)), y(static_cast<T>(b)) {}
-
-    vec2(const vec2<T>& v) : x(v.x), y(v.y) {}
 
     template<typename R> explicit vec2(const vec2<R>& v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) {}
     template<typename R> explicit vec2(R a) : x(static_cast<T>(a)), y(static_cast<T>(a)) {}

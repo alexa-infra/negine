@@ -18,12 +18,10 @@ template<typename T>
 struct vec3
 {
     T x, y, z;
-    vec3() {}
+    vec3() = default;
 
     template<typename R>
     vec3(R a, R b, R c) : x(static_cast<T>(a)), y(static_cast<T>(b)), z(static_cast<T>(c)) {}
-
-    vec3(const vec3<T>& v) : x(v.x), y(v.y), z(v.z) {}
 
     template<typename R> explicit vec3(const vec3<R>& v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)) {}
     template<typename R> explicit vec3(R a) : x(static_cast<T>(a)), y(static_cast<T>(a)), z(static_cast<T>(a)) {}

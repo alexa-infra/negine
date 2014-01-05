@@ -18,12 +18,10 @@ template<typename T>
 struct vec4
 {
     T x, y, z, w;
-    vec4() {}
+    vec4() = default;
 
     template<typename R>
     vec4(R a, R b, R c, R d) : x(static_cast<T>(a)), y(static_cast<T>(b)), z(static_cast<T>(c)), w(static_cast<T>(d)) {}
-
-    vec4(const vec4<T>& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
     template<typename R> explicit vec4(const vec4<R>& v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)), w(static_cast<T>(v.w)) {}
     template<typename R> explicit vec4(R a) : x(static_cast<T>(a)), y(static_cast<T>(a)), z(static_cast<T>(a)), w(static_cast<T>(a)) {}

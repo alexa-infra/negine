@@ -23,7 +23,7 @@ private:
     vec4f column3_;
 
 public:
-    Matrix4() {}
+    Matrix4() = default;
     Matrix4( const vec4f& col0, const vec4f& col1, const vec4f& col2, const vec4f& col3 );
     Matrix4( const Matrix4& m );
     Matrix4& operator =( const Matrix4& m );

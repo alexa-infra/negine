@@ -21,7 +21,7 @@ private:
     vec3f normal_;
     f32 distance_;
 public:
-    Plane();
+    Plane() = default;
     Plane( const vec3f* points ) {
         set( points[0], points[1], points[2] );
     }

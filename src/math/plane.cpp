@@ -10,11 +10,6 @@ namespace base
 namespace math
 {
 
-Plane::Plane()
-{
-    set( 0.f, 0.f, 0.f, 0.f );
-}
-
 void Plane::set( const vec3f* points )
 {
     set( points[0], points[1], points[2] );
