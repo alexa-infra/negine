@@ -40,6 +40,7 @@ set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR} ${GAME_HD
 
 if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11 -fvisibility=hidden")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif()
 if(APPLE)
     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
@@ -89,8 +90,23 @@ endif()
 add_definitions(-DSDL_ENGINE)
 add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_ALL_NO_LIB)
 
-if(MSVC)
+if(WIN32)
     add_definitions(-DMS_NO_COREDLL -DPy_ENABLE_SHARED)
+endif()
+
+set(SIZEOF_VOIDP ${CMAKE_SIZEOF_VOID_P})
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCH_64 TRUE)
+else()
+    set(ARCH_64 FALSE)
+endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+if(WIN32 AND ARCH_64 AND NOT MSVC)
+    add_definitions(-DMS_WIN64)
+endif()
+
+if(WIN32)
+    add_definitions(-DWIN32)
 endif()
 
 if (NOT ${PYTHON_LIBRARY_DEBUG} STREQUAL ${PYTHON_LIBRARY_RELEASE})

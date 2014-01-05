@@ -18,7 +18,7 @@ endmacro(add_source_group)
 add_source_group("src"      ${SRC_LIB_PATH}           SRC)
 add_source_group("include"  ${SRC_PATH}/boost      	  HDR)
 
-if(MSVC)
+if(WIN32)
     add_definitions(-DMS_NO_COREDLL -DPy_ENABLE_SHARED)
 endif()
 
@@ -30,6 +30,7 @@ endif()
 
 if(UNIX OR MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 endif()
 
 include_directories(
@@ -78,3 +79,11 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
 	set(ARCH_64 FALSE)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+if(WIN32 AND ARCH_64 AND NOT MSVC)
+	add_definitions(-DMS_WIN64)
+endif()
+
+if(WIN32)
+	add_definitions(-DWIN32)
+endif()
