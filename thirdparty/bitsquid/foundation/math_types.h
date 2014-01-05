@@ -31,26 +31,26 @@ namespace foundation
 	template<typename T>
 	struct Matrix3x3
 	{
-		Vector3 x, y, z;
+		Vector3<T> x, y, z;
 	};
 
 	template<typename T>
 	struct Matrix4x4
 	{
-		Vector4 x, y, z, t;
+		Vector4<T> x, y, z, t;
 	};
 
 	template<typename T>
 	struct AABB
 	{
-		Vector3 min, max;
+		Vector3<T> min, max;
 	};
 
 	template<typename T>
 	struct OOBB
 	{
-		Matrix4x4 tm;
-		AABB aabb;
+		Matrix4x4<T> tm;
+		AABB<T> aabb;
 	};
 
 	typedef Vector2<float> vec2f;

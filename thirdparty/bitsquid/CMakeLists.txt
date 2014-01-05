@@ -11,4 +11,8 @@ include_directories(
 	${SRC_PATH}
 )
 
+if(UNIX OR MINGW)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+endif()
+
 add_library(bitsquid-foundation STATIC ${FOUNDATION_SRC} ${FOUNDATION_HDR})
