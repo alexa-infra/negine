@@ -1,3 +1,4 @@
+#include <cmath>
 #include <boost/python.hpp>
 #include "math/vec4.h"
 #include <string>

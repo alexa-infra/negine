@@ -1,4 +1,5 @@
 #include "py_render.h"
+#include <cmath>
 #include <boost/python.hpp>
 #include "render/glcontext.h"
 #include "render/gpuprogram.h"

@@ -1,4 +1,5 @@
 #include "base/py.h"
+#include <cmath>
 #include <boost/python.hpp>
 #include "math/py_math.h"
 #include "render/py_render.h"
