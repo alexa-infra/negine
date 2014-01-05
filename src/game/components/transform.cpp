@@ -6,7 +6,8 @@ namespace game {
 
 using namespace math;
 
-CompType Transform::type_ = ComponentBase::registerType();
+template<>
+CompType Component<Transform>::type_ = ComponentBase::registerType();
 
 Transform::Transform() {
     world_ = Matrix4::Identity();

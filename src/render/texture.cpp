@@ -9,13 +9,11 @@
 #include "base/log.h"
 #include "base/debug.h"
 
-namespace base
-{
+namespace base {
+namespace opengl {
 
-ResourceType opengl::Texture::type_ = ResourceManager::registerResource();
-
-namespace opengl
-{
+template<>
+ResourceType BaseResource<Texture>::type_ = ResourceManager::registerResource();
 
 u32 GLDataTypes::sizeInBytes(GLDataType dt)
 {

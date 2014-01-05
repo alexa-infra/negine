@@ -10,10 +10,10 @@
 #include "render/glcontext.h"
 
 namespace base {
-
-ResourceType opengl::Material::type_ = ResourceManager::registerResource();
-
 namespace opengl {
+
+template<>
+ResourceType BaseResource<Material>::type_ = ResourceManager::registerResource();
 
 bool Material::hasMode(const SmallString& mode) const {
     return modeMap.contains(mode);

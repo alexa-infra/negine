@@ -7,7 +7,8 @@ namespace game {
 
 using namespace math;
 
-CompType Camera::type_ = ComponentBase::registerType();
+template<>
+CompType Component<Camera>::type_ = ComponentBase::registerType();
 
 Camera::Camera() {
     dirty_ = true;

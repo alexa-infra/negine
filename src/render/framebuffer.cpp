@@ -3,10 +3,10 @@
 #include "base/log.h"
 
 namespace base {
-
-ResourceType opengl::Framebuffer::type_ = ResourceManager::registerResource();
-
 namespace opengl {
+
+template<>
+ResourceType BaseResource<Framebuffer>::type_ = ResourceManager::registerResource();
 
 Framebuffer::Framebuffer(DeviceContext& context) : GpuResource(context) {
     initialized_ = false;

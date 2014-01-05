@@ -111,7 +111,7 @@ struct TextureInfo
     i32 Height;
     i32 ComponentCount;
     PixelType Pixel;
-    InternalType InternalType;
+    InternalTypes::InternalType InternalType;
 
     TextureInfo();
 

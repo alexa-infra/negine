@@ -5,7 +5,8 @@
 namespace base {
 namespace game {
 
-CompType Renderable::type_ = ComponentBase::registerType();
+template<>
+CompType Component<Renderable>::type_ = ComponentBase::registerType();
 
 opengl::Model* Renderable::model() {
     return model_.resourceAs<opengl::Model>();

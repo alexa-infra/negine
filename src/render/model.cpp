@@ -12,10 +12,10 @@ using base::math::vec3f;
 using base::math::vec4f;
 
 namespace base {
-
-u32 opengl::Model::type_ = ResourceManager::registerResource();
-
 namespace opengl {
+
+template<>
+ResourceType BaseResource<Model>::type_ = ResourceManager::registerResource();
 
 Model::Model() {
     vertexSize_ = 0;
