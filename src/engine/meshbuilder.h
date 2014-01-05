@@ -1,24 +1,26 @@
 #pragma once
 
+#include "base/types.h"
+#include "foundation/array.h"
+#include "math/vec3.h"
 #include "math/vec4.h"
-#include <vector>
+#include <string>
 
-namespace base
-{
+namespace base {
 
-namespace opengl
-{
+namespace opengl {
     class Mesh;
 }
 
-namespace imp
-{
+namespace imp {
     struct Vertex
     {
         u32 pos;
         u32 normal;
         u32 uv;
         u32 color;
+
+        Vertex() = default;
 
         Vertex(u32 p, u32 n = -1, u32 v = -1, u32 c = -1)
             : pos(p), normal(n), uv(v), color(c)
@@ -35,13 +37,7 @@ namespace imp
         u32 polygon;
         u32 polygonCount;
 
-        std::string name;
-        std::string texture;
-
-        Surface()
-            : pos(0), normal(0), uv(0), color(0), vertex(0), polygon(0)
-        {
-        }
+        Surface() = default;
     };
 
     struct Polygon
@@ -53,6 +49,8 @@ namespace imp
     {
         u32 v[2];
     };
+
+	using namespace foundation;
 
     class MeshBuilder
     {
@@ -93,19 +91,17 @@ namespace imp
 
         NEGINE_API void readOBJ(const std::string& filename);
     public:
-        std::vector<math::vec3f> posData;
-        std::vector<math::vec2f> uvData;
-        std::vector<math::vec3f> normalData;
-        std::vector<math::vec4f> colorData;
+        Array<math::vec3f> posData;
+        Array<math::vec2f> uvData;
+        Array<math::vec3f> normalData;
+        Array<math::vec4f> colorData;
         
-        std::vector<Surface> surfaces;
+        Array<Surface> surfaces;
         Surface currentSurface;
     private:
-        std::vector<Vertex> vertexList;
-        std::vector<Polygon> polygonList;
-        std::vector<Line> lineList;
-
-        
+        Array<Vertex> vertexList;
+        Array<Polygon> polygonList;
+        Array<Line> lineList;
 
         enum
         {

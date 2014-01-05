@@ -5,24 +5,31 @@
 #include "render/mesh.h"
 
 namespace base {
-
-using namespace math;
-
 namespace imp {
 
+using namespace math;
+using namespace foundation;
 
 MeshBuilder::MeshBuilder()
     : mask(0)
+    , posData(memory_globals::default_allocator())
+    , normalData(memory_globals::default_allocator())
+    , uvData(memory_globals::default_allocator())
+    , colorData(memory_globals::default_allocator())
+    , surfaces(memory_globals::default_allocator())
+    , vertexList(memory_globals::default_allocator())
+    , polygonList(memory_globals::default_allocator())
+    , lineList(memory_globals::default_allocator())
 {
 }
 
 u32 MeshBuilder::addVertex(const vec3f& p)
 {
-    u32 pIdx = static_cast<u32>(posData.size());
-    posData.push_back(p);
+    u32 pIdx = array::size(posData);
+    array::push_back(posData, p);
     Vertex v(pIdx);
-    u32 idx = static_cast<u32>(vertexList.size());
-    vertexList.push_back(v);
+    u32 idx = array::size(vertexList);
+    array::push_back(vertexList, v);
     return idx;
 }
 
@@ -31,8 +38,8 @@ u32 MeshBuilder::addVertex(const vec3f& p, const vec2f& uv)
     mask |= hasVertexUV;
     u32 idx = addVertex(p);
     Vertex& vertex = vertexList[idx];
-    vertex.uv = static_cast<u32>(uvData.size());
-    uvData.push_back(uv);
+    vertex.uv = array::size(uvData);
+    array::push_back(uvData, uv);
     return idx;
 }
 
@@ -41,8 +48,8 @@ u32 MeshBuilder::addVertex(const vec3f& p, const vec3f& n)
     mask |= hasVertexNormal;
     u32 idx = addVertex(p);
     Vertex& vertex = vertexList[idx];
-    vertex.normal = static_cast<u32>(normalData.size());
-    normalData.push_back(n);
+    vertex.normal = array::size(normalData);
+    array::push_back(normalData, n);
     return idx;
 }
 
@@ -50,9 +57,12 @@ u32 MeshBuilder::addVertex(const vec3f& p, const vec2f& uv, const vec3f& n)
 {
     u32 idx = addVertex(p, uv);
     mask |= hasVertexNormal;
+    mask |= hasVertexUV;
     Vertex& vertex = vertexList[idx];
-    vertex.normal = static_cast<u32>(normalData.size());
-    normalData.push_back(n);
+    vertex.uv = array::size(uvData);
+    array::push_back(uvData, uv);
+    vertex.normal = array::size(normalData);
+    array::push_back(normalData, n);
     return idx;
 }
 
@@ -61,8 +71,8 @@ u32 MeshBuilder::addVertex(const vec3f& p, const vec4f& color)
     mask |= hasVertexColor;
     u32 idx = addVertex(p);
     Vertex& vertex = vertexList[idx];
-    vertex.color = static_cast<u32>(colorData.size());
-    colorData.push_back(color);
+    vertex.color = array::size(colorData);
+    array::push_back(colorData, color);
     return idx;
 }
 
@@ -70,31 +80,31 @@ u32 MeshBuilder::addVertex(i32 p, i32 n, i32 v, i32 c)
 {
     Vertex ver(u32(-1), u32(-1), u32(-1), u32(-1));
     if (p < 0)
-        ver.pos = static_cast<u32>(posData.size()) + p;
+        ver.pos = array::size(posData) + p;
     else if (p > 0)
         ver.pos = currentSurface.pos + p - 1;
 
     if (n < 0)
-        ver.normal = static_cast<u32>(normalData.size()) + n;
+        ver.normal = array::size(normalData) + n;
     else if (n > 0)
         ver.normal = currentSurface.normal + n - 1;
 
     if (v < 0)
-        ver.uv = static_cast<u32>(uvData.size()) + v;
+        ver.uv = array::size(uvData) + v;
     else if (v > 0)
         ver.uv = currentSurface.uv + v - 1;
 
     if (c < 0)
-        ver.color = static_cast<u32>(colorData.size()) + c;
+        ver.color = array::size(colorData) + c;
     else if (c > 0)
         ver.color = currentSurface.uv + c - 1;
 
-    u32 idx = static_cast<u32>(vertexList.size());
-    vertexList.push_back(ver);
+    u32 idx = array::size(vertexList);
+    array::push_back(vertexList, ver);
     return idx;
 }
 
-void MeshBuilder::addPolygonQuad(const math::vec3f& a1, const vec3f& a2, const vec3f& a3, const vec3f& a4, const vec4f& color)
+void MeshBuilder::addPolygonQuad(const vec3f& a1, const vec3f& a2, const vec3f& a3, const vec3f& a4, const vec4f& color)
 {
     u32 idx1 = addVertex(a1, color);
     u32 idx2 = addVertex(a2, color);
@@ -110,14 +120,8 @@ u32 MeshBuilder::addPolygon(u32 x, u32 y, u32 z)
     p.v[0] = x;
     p.v[1] = y;
     p.v[2] = z;
-    Vertex& a = vertexList[x];
-    Vertex& b = vertexList[y];
-    Vertex& c = vertexList[z];
-    //vec3f xy = b.position - a.position;
-    //vec3f xz = c.position - a.position;
-    //p.normal = cross(xz, xy);
-    u32 idx = static_cast<u32>(polygonList.size());
-    polygonList.push_back(p);
+    u32 idx = array::size(polygonList);
+    array::push_back(polygonList, p);
     return idx;
 }
 
@@ -126,31 +130,31 @@ u32 MeshBuilder::addLine(u32 x, u32 y)
     Line line;
     line.v[0] = x;
     line.v[1] = y;
-    u32 idx = static_cast<u32>(lineList.size());
-    lineList.push_back(line);
+    u32 idx = array::size(lineList);
+    array::push_back(lineList, line);
     return idx;
 }
 
 void MeshBuilder::beginSurface()
 {
     Surface s;
-    s.pos = static_cast<u32>(posData.size());
-    s.normal = static_cast<u32>(normalData.size());
-    s.uv = static_cast<u32>(uvData.size());
-    s.color = static_cast<u32>(colorData.size());
-    s.vertex = static_cast<u32>(vertexList.size());
-    s.polygon = static_cast<u32>(polygonList.size());
+    s.pos = array::size(posData);
+    s.normal = array::size(normalData);
+    s.uv = array::size(uvData);
+    s.color = array::size(colorData);
+    s.vertex = array::size(vertexList);
+    s.polygon = array::size(polygonList);
 
     currentSurface = s;
 }
 
 void MeshBuilder::endSurface()
 {
-    currentSurface.polygonCount = static_cast<u32>(polygonList.size()) - currentSurface.polygon;
-    surfaces.push_back(currentSurface);
+    currentSurface.polygonCount = array::size(polygonList) - currentSurface.polygon;
+    array::push_back(surfaces, currentSurface);
 }
 
-u32 MeshBuilder::addLine(const math::vec3f& a, const math::vec3f& b, const math::vec4f& color)
+u32 MeshBuilder::addLine(const vec3f& a, const vec3f& b, const vec4f& color)
 {
     u32 aIdx = addVertex(a, color);
     u32 bIdx = addVertex(b, color);
@@ -159,7 +163,8 @@ u32 MeshBuilder::addLine(const math::vec3f& a, const math::vec3f& b, const math:
 
 void MeshBuilder::getLineList(opengl::Mesh& mesh)
 {
-    u32 vertexCount = static_cast<u32>(lineList.size()) * 2;
+    u32 lineCount = array::size(lineList);
+    u32 vertexCount = lineCount * 2;
     mesh.addAttribute(opengl::VertexAttrs::tagPosition);
     mesh.addAttribute(opengl::VertexAttrs::tagColor);
     mesh.vertexCount(vertexCount);
@@ -172,7 +177,7 @@ void MeshBuilder::getLineList(opengl::Mesh& mesh)
     bool vertexColor = (mask & hasVertexColor) == hasVertexColor;
 
     u32 idx = 0;
-    for(u32 i=0; i<lineList.size(); i++) {
+    for(u32 i=0; i<lineCount; i++) {
         const Line& line = lineList[i];
         for(u32 j=0; j<2; j++, idx++) {
             const Vertex& v = vertexList[line.v[j]];
@@ -186,7 +191,8 @@ void MeshBuilder::getLineList(opengl::Mesh& mesh)
 
 void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
 {
-    u32 vertexCount = static_cast<u32>(polygonList.size()) * 3;
+    u32 polygonCount = array::size(polygonList);
+    u32 vertexCount = polygonCount * 3;
     mesh.addAttribute(opengl::VertexAttrs::tagPosition);
     bool hasNormal = (mask & hasVertexNormal) == hasVertexNormal;
     if (hasNormal)
@@ -213,7 +219,7 @@ void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
         uv = mesh.findAttribute<vec2f>(opengl::VertexAttrs::tagTexture);
     u32* indeces = reinterpret_cast<u32*>(mesh.indices());
 
-    for(u32 i=0, j=0; i<polygonList.size(); i++, j+=3)
+    for(u32 i=0, j=0; i<polygonCount; i++, j+=3)
     {
         const Polygon& polygon = polygonList[i];
         for(u32 k=0, idx=j; k<3; k++, idx++)
@@ -237,25 +243,26 @@ void MeshBuilder::getDrawingList(opengl::Mesh& mesh)
 
 void MeshBuilder::createCube()
 {
-    vec3f x(1, 0, 0);
-    vec3f y(0, 1, 0);
-    vec3f z(0, 0, 1);
-    vec3f ori(-0.5f, -0.5f, -0.5f);
+    const vec3f x = {1, 0, 0};
+    const vec3f y = {0, 1, 0};
+    const vec3f z = {0, 0, 1};
+    const vec3f ori = {-0.5f, -0.5f, -0.5f};
+    
+    vec3f pos[8];
+    pos[0] = ori;
+    pos[1] = ori + x;
+    pos[2] = pos[1] + z;
+    pos[3] = ori + z;
+    pos[4] = ori + y;
+    pos[5] = pos[4] + x;
+    pos[6] = pos[5] + z;
+    pos[7] = pos[4] + z;
+    
+    const vec4f red   = { 1, 0, 0, 1 };
+    const vec4f green = { 0, 1, 0, 1 };
+    const vec4f blue  = { 0, 0, 1, 1 };
+    const vec4f black = { 0, 0, 0, 1 };
 
-    std::vector<vec3f> pos;
-    pos.push_back(ori);
-    pos.push_back(ori + x);
-    pos.push_back(ori + x + z);
-    pos.push_back(ori + z);
-    pos.push_back(ori + y);
-    pos.push_back(ori + y + x);
-    pos.push_back(ori + y + x + z);
-    pos.push_back(ori + y + z);
-
-    vec4f red(1, 0, 0, 1);
-    vec4f green(0, 1, 0, 1);
-    vec4f blue(0, 0, 1, 1);
-    vec4f black(0, 0, 0, 1);
     addPolygonQuad(pos[0], pos[1], pos[2], pos[3], red);
     addPolygonQuad(pos[0], pos[1], pos[5], pos[4], green);
     addPolygonQuad(pos[2], pos[3], pos[7], pos[6], green);
@@ -269,19 +276,20 @@ void MeshBuilder::createGrid()
     const u32 minorLineCount = 100;
     const u32 majorLineCount = 10;
     const f32 gridSize = 100.0f;
-    f32 cellMinorSize = gridSize / static_cast<f32>(minorLineCount);
-    f32 cellMajorSize = gridSize / static_cast<f32>(majorLineCount);
 
-    math::vec4f minorLineColor(0, 0, 0, 1);
-    math::vec4f majorLineColor(0, 1, 0, 1);
+    const f32 cellMinorSize = gridSize / static_cast<f32>(minorLineCount);
+    const f32 cellMajorSize = gridSize / static_cast<f32>(majorLineCount);
 
-    f32 startPos = -gridSize / 2.0f;
-    f32 endPos = gridSize / 2.0f;
+    const vec4f minorLineColor = {0, 0, 0, 1};
+    const vec4f majorLineColor = {0, 1, 0, 1};
+
+    const f32 startPos = -gridSize / 2.0f;
+    const f32 endPos = gridSize / 2.0f;
     for (u32 i = 0; i <= minorLineCount; i++)
     {
-        f32 pos = startPos + cellMinorSize * i;
-        math::vec3f a(pos, 0.0f, startPos);
-        math::vec3f b(pos, 0.0f, endPos);
+        const f32 pos = startPos + cellMinorSize * i;
+        const vec3f a = {pos, 0.0f, startPos};
+        const vec3f b = {pos, 0.0f, endPos};
         if (i % majorLineCount == 0)
             addLine(a, b, majorLineColor);
         else
@@ -290,9 +298,9 @@ void MeshBuilder::createGrid()
 
     for (u32 i = 0; i <= minorLineCount; i++)
     {
-        f32 pos = startPos + cellMinorSize * i;
-        math::vec3f a(startPos, 0.0f, pos);
-        math::vec3f b(endPos, 0.0f, pos);
+        const f32 pos = startPos + cellMinorSize * i;
+        const vec3f a = {startPos, 0.0f, pos};
+        const vec3f b = {endPos, 0.0f, pos};
         if (i % majorLineCount == 0)
             addLine(a, b, majorLineColor);
         else
@@ -317,31 +325,33 @@ void MeshBuilder::readOBJ(const std::string& filename)
             p.x = lexer.readFloat();
             p.y = lexer.readFloat();
             p.z = lexer.readFloat();
-            posData.push_back(p);
+            array::push_back(posData, p);
         } else if (token == "vt") {
             vec2f v;
             v.x = lexer.readFloat();
             v.y = lexer.readFloat();
-            uvData.push_back(v);
+            array::push_back(uvData, v);
         } else if (token == "vn") {
             vec3f n;
             n.x = lexer.readFloat();
             n.y = lexer.readFloat();
             n.z = lexer.readFloat();
             n = normalize(n);
-            normalData.push_back(n);
+            array::push_back(normalData, n);
         } else if (token == "f") {
             u32 idx[3];
+            bool hasUV = array::any(uvData);
+            bool hasNormal = array::any(normalData);
             for(u32 i=0; i<3; i++) {
                 i32 vertexIdx = static_cast<i32>(lexer.readFloat());
-                if ( uvData.size() != 0 && normalData.size() != 0 ) {
+                if ( hasUV && hasNormal ) {
                     i32 uvIdx = static_cast<i32>(lexer.readFloat());
                     i32 normalIdx = static_cast<i32>(lexer.readFloat());
                     idx[i] = addVertex(vertexIdx, normalIdx, uvIdx);
-                } else if ( uvData.size() != 0 ) {
+                } else if ( hasUV ) {
                     i32 uvIdx = static_cast<i32>(lexer.readFloat());
                     idx[i] = addVertex(vertexIdx, 0, uvIdx);
-                } else if ( normalData.size() != 0 ) {
+                } else if ( hasNormal ) {
                     i32 normalIdx = static_cast<i32>(lexer.readFloat());
                     idx[i] = addVertex(vertexIdx, normalIdx);
                 } else {
