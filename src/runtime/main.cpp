@@ -308,10 +308,19 @@ protected:
     object global;
 };
 
+void run(const char* module) {
+    Demo app(module);
+    app.Run();    
+}
+
 int main(int argc, char* argv[])
 {
-    Demo app(argv[1]);
-    app.Run();
+    if (handle_exception(boost::bind(run, argv[1]))) {
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
+    }
+
     return 0;
 }
 
