@@ -88,7 +88,9 @@ object BOOST_PYTHON_DECL exec_file(str filename, object global, object local)
   // TODO(bhy) temporary workaround for Python 3.
   // should figure out a way to avoid binary incompatibilities as the Python 2
   // version did.
-  FILE *fs = fopen(f, "r");
+  //FILE *fs = fopen(f, "r");
+  FILE *fs = _Py_fopen(filename.ptr(), "r");
+  if (!fs) throw std::invalid_argument(std::string(f) + " : no such file");
 #else
   // Let python open the file to avoid potential binary incompatibilities.
   PyObject *pyfile = PyFile_FromString(f, const_cast<char*>("r"));
