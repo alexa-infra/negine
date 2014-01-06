@@ -87,3 +87,7 @@ endif()
 if(WIN32)
 	add_definitions(-DWIN32)
 endif()
+
+if(MSVC)
+	add_definitions(-DHAVE_ROUND)
+endif()

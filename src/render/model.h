@@ -16,7 +16,7 @@ namespace opengl {
 class Model : public BaseResource<Model> {
 public:
     NEGINE_API Model();
-    NEGINE_API ~Model() {}
+    NEGINE_API ~Model();
 
     struct Surface {
         Mesh mesh;

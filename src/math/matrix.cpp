@@ -180,7 +180,7 @@ const Matrix4 OrthoInverse( const Matrix4& m )
 
 f32 Determinant( const Matrix4& m )
 {
-    vec4f res0, res1, res2, res3;
+    vec4f res0;
     f32 mA = m.Col0().x;
     f32 mB = m.Col0().y;
     f32 mC = m.Col0().z;

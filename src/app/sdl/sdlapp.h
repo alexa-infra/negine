@@ -28,13 +28,13 @@ public:
     NEGINE_API SDLApp();
     NEGINE_API virtual ~SDLApp();
     NEGINE_API void Run();
-    NEGINE_API opengl::DeviceContext& context() { return GL; }
+    inline opengl::DeviceContext& context() { return GL; }
 protected:
     NEGINE_API virtual void OnFrame();
     NEGINE_API virtual void OnMotion( i32 x, i32 y, i32 dx, i32 dy );
     NEGINE_API virtual void OnReshape( i32 width, i32 height );
-    NEGINE_API virtual void OnKeyboardDown( u8 key ) {}
-    NEGINE_API virtual void OnKeyboardUp( u8 key ) {}
+    NEGINE_API virtual void OnKeyboardDown( u8 key );
+    NEGINE_API virtual void OnKeyboardUp( u8 key );
     NEGINE_API void Pump();
 };
 

@@ -2,7 +2,6 @@
 
 #include "foundation/types.h"
 #include "foundation/memory_types.h"
-#include <type_traits>
 
 /// All collection types assume that they are used to store POD objects. I.e. they:
 ///
@@ -16,7 +15,6 @@ namespace foundation
 	/// Dynamically resizable array of POD objects.
 	template<typename T> struct Array
 	{
-		static_assert(std::is_pod<T>::value, "only POD objects!");
 		Array(Allocator &a);
 		~Array();
 		Array(const Array &other);
@@ -34,7 +32,6 @@ namespace foundation
 	/// A double-ended queue/ring buffer.
 	template <typename T> struct Queue
 	{
-		static_assert(std::is_pod<T>::value, "only POD objects!");
 		Queue(Allocator &a);
 
 		T &operator[](uint32_t i);
@@ -49,7 +46,6 @@ namespace foundation
 	/// object, use a hash function to map that object to an uint64_t.
 	template<typename T> struct Hash
 	{
-		static_assert(std::is_pod<T>::value, "only POD objects!");
 	public:
 		Hash(Allocator &a);
 		

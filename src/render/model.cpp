@@ -12,15 +12,19 @@ using base::math::vec3f;
 using base::math::vec4f;
 
 namespace base {
-namespace opengl {
 
 template<>
-ResourceType BaseResource<Model>::type_ = ResourceManager::registerResource();
+ResourceType BaseResource<opengl::Model>::type_ = ResourceManager::registerResource();
+
+namespace opengl {
 
 Model::Model() {
     vertexSize_ = 0;
     indexSize_ = 0;
     currentSurface_ = nullptr;
+}
+
+Model::~Model() {
 }
 
 size_t Model::surfaceCount() const {

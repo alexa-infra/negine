@@ -1,6 +1,7 @@
 #include "renderable.h"
 #include "game/scene.h"
 #include "game/components/transform.h"
+#include "math/matrix-inl.h"
 
 namespace base {
 namespace game {

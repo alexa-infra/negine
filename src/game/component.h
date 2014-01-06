@@ -13,10 +13,10 @@ namespace game {
 template<class T>
 class Component : public ComponentBase {
 public:
-    NEGINE_API CompType type() const { return type_; }
+    inline CompType type() const { return type_; }
     inline static CompType Type() { return type_; }
 private:
-    static CompType type_;
+    NEGINE_API static CompType type_;
 };
 
 } // namespace game

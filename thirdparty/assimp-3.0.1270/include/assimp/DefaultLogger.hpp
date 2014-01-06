@@ -56,10 +56,12 @@ struct LogStreamInfo;
 /** default name of logfile */
 #define ASSIMP_DEFAULT_LOG_NAME "AssimpLog.txt"
 
-#if defined(ASSIMP_BUILD_DLL_EXPORT)
-    template class ASSIMP_API std::vector<LogStreamInfo*>;
-#elif defined(ASSIMP_DLL)
-    extern template class ASSIMP_API std::vector<LogStreamInfo*>;
+#if defined _MSC_VER
+    #if defined(ASSIMP_BUILD_DLL_EXPORT)
+        template class ASSIMP_API std::vector<LogStreamInfo*>;
+    #elif defined(ASSIMP_DLL)
+        extern template class ASSIMP_API std::vector<LogStreamInfo*>;
+    #endif
 #endif
 
 // ------------------------------------------------------------------------------------

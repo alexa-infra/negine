@@ -109,6 +109,10 @@ if(WIN32)
     add_definitions(-DWIN32)
 endif()
 
+if(MSVC)
+    add_definitions(-DHAVE_ROUND)
+endif()
+
 if (NOT ${PYTHON_LIBRARY_DEBUG} STREQUAL ${PYTHON_LIBRARY_RELEASE})
     add_definitions(-DBOOST_DEBUG_PYTHON)
 endif()

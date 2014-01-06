@@ -11,8 +11,8 @@ public:
     enum Level {
         LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR
     };
-    NEGINE_API virtual ~Log() {}
-    NEGINE_API virtual void write(Level l, const char* message) = 0;
+    virtual ~Log() {}
+    virtual void write(Level l, const char* message) = 0;
 };
 
 NEGINE_API void openLog(Log* log);
@@ -31,7 +31,7 @@ public:
         COLOR_DEFAULT, COLOR_YELLOW, COLOR_RED
     };
     NEGINE_API ConsoleLog();
-    NEGINE_API virtual ~ConsoleLog() {}
+    virtual ~ConsoleLog() {}
     NEGINE_API void write(Level level, const char* message);
     NEGINE_API void writeColored(Color color, const char* message);
 private:

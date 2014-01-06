@@ -8,12 +8,14 @@
 #include "render/gpuprogram.h"
 #include "render/renderstate.h"
 #include "render/glcontext.h"
+#include "math/matrix-inl.h"
 
 namespace base {
-namespace opengl {
 
 template<>
-ResourceType BaseResource<Material>::type_ = ResourceManager::registerResource();
+ResourceType BaseResource<opengl::Material>::type_ = ResourceManager::registerResource();
+
+namespace opengl {
 
 bool Material::hasMode(const SmallString& mode) const {
     return modeMap.contains(mode);

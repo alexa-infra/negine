@@ -164,4 +164,12 @@ void SDLApp::OnReshape( i32 width, i32 height )
 {
 }
 
+void SDLApp::OnKeyboardDown( u8 key )
+{   
+}
+
+void SDLApp::OnKeyboardUp( u8 key )
+{   
+}
+
 } // namespace base
