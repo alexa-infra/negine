@@ -4,7 +4,6 @@
 #include <string>
 #include "render/material.h"
 #include "render/model.h"
-#include "render/gpuprogram.h"
 #include "base/timer.h"
 #include "base/py.h"
 #include "math/matrix-inl.h"
@@ -20,61 +19,6 @@ using namespace base;
 using namespace boost::python;
 
 extern "C" NEGINE_EXPORT PyObject* PyInit_negine_runtime(void);
-
-static const char vertexShader[] = 
-    "#version 150\n"
-    "\n"
-    "in vec3 position;\n"
-    "in vec3 normal;\n"
-    "\n"
-    "uniform mat4 mvp;\n"
-    "\n"
-    "out vec3 n;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    n = 0.5*normalize(normal) + 0.5;\n"
-    "    vec4 pos = vec4(position, 1);\n"
-    "    gl_Position = mvp * pos;\n"
-    "}\n"
-    "";
-static const char pixelShader[] = 
-    "#version 150\n"
-    "\n"
-    "in vec3 n;\n"
-    "out vec4 fragColor;\n"
-    "\n"
-    "void main() {\n"
-    "    fragColor = vec4(n, 1);\n"
-    "}\n"
-    "";
-
-static const char vertexShader1[] = 
-    "#version 150\n"
-    "\n"
-    "in vec3 position;\n"
-    "in vec2 uv;\n"
-    "\n"
-    "out vec2 tex;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "    tex = uv;\n"
-    "    vec4 pos = vec4(position, 1);\n"
-    "    gl_Position = pos;\n"
-    "}\n"
-    "";
-static const char pixelShader1[] = 
-    "#version 150\n"
-    "\n"
-    "uniform sampler2D atexture;\n"
-    "in vec2 tex;\n"
-    "out vec4 fragColor;\n"
-    "\n"
-    "void main() {\n"
-    "    fragColor = texture(atexture, tex);\n"
-    "}\n"
-    "";
 
 static Application* intstance_ = nullptr;
 
@@ -101,21 +45,17 @@ public:
 
 class Demo : public Application
 {
-    base::opengl::Renderer ren;
-    base::opengl::GpuProgram prog;
-    base::opengl::GpuProgram prog2;
+    opengl::Renderer ren;
 
     GameObject obj;
     GameCamera cam;
     game::Entity root;
     u32 keypressed_; 
-    base::Timer timer_;
+    Timer timer_;
     opengl::Model* umesh;
-
-    opengl::Framebuffer fbo;
     opengl::Material material;
 public:
-    Demo(const std::string& filename) : ren(GL), prog(GL), prog2(GL), fbo(GL) {
+    Demo(const std::string& filename) : ren(GL) {
         intstance_ = this;
         PyImport_AppendInittab("negine_core", PyInit_negine_core);
         PyImport_AppendInittab("negine_runtime", PyInit_negine_runtime);
@@ -129,36 +69,12 @@ public:
 
         ren.init();
 
-        prog.setAttribute("position", base::opengl::VertexAttrs::tagPosition);
-        prog.setAttribute("normal", base::opengl::VertexAttrs::tagNormal);
-
-        prog.setShaderSource(base::opengl::ShaderTypes::VERTEX, vertexShader);
-        prog.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader);
-        prog.complete();
-        ResourceRef("prog1").setResource(&prog);
-
-        prog2.setAttribute("position", opengl::VertexAttrs::tagPosition);
-        prog2.setAttribute("uv", opengl::VertexAttrs::tagTexture);
-        prog2.setShaderSource(base::opengl::ShaderTypes::VERTEX, vertexShader1);
-        prog2.setShaderSource(base::opengl::ShaderTypes::PIXEL, pixelShader1);
-        prog2.complete();
-        ResourceRef("prog2").setResource(&prog2);
-
-        cam.transform.setPosition( base::math::vec3f( 0.f, 0.f, -5.f ) );
-        cam.transform.setPitch( 50 * base::math::deg_to_rad );
-        cam.transform.setHead( 180 * base::math::deg_to_rad );
+        cam.transform.setPosition( math::vec3f( 0.f, 0.f, -5.f ) );
+        cam.transform.setPitch( 50 * math::deg_to_rad );
+        cam.transform.setHead( 180 * math::deg_to_rad );
         cam.camera.setPerspective(width_ / ( f32 )height_, 45.0f, 1, 1000);
         
         ResourceRef checkers("checkers");
-        checkers.loadDefault<opengl::Texture>("checker.png");
-        ASSERT(checkers.resourceAs<opengl::Texture>() != nullptr);
-        
-        //fbo.addTarget(opengl::InternalTypes::RGBA8);
-        fbo.addTargetTexture(checkers.resourceAs<opengl::Texture>());
-        fbo.addTarget(opengl::InternalTypes::D32F);
-        fbo.resizeWindow(math::vec2i(width_, height_));
-        //fbo.complete();
-        ResourceRef("fbo").setResource(&fbo);
         ResourceRef("default_fbo").setResource(nullptr);
 
         GL_ASSERT(GL);
@@ -257,10 +173,10 @@ protected:
     void OnMotion( i32 x, i32 y, i32 dx, i32 dy ) {
         cam.transform.turnHead( math::deg_to_rad * dx);
 
-        if (fabs (cam.transform.pitch() + math::deg_to_rad * dy ) < base::math::pi/2.0f ) {
+        if (fabs (cam.transform.pitch() + math::deg_to_rad * dy ) < math::pi/2.0f ) {
             cam.transform.turnPitch( math::deg_to_rad * dy );
         } else if (dy != 0 ) {
-            cam.transform.setPitch( base::math::pi/2.0f * dy / fabs( (f32)dy ) );
+            cam.transform.setPitch( math::pi/2.0f * dy / fabs( (f32)dy ) );
         }
     }
 

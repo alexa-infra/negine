@@ -25,17 +25,6 @@ public:
 
     void unbind();
 
-    struct RenderTarget {
-        GLuint id;
-        InternalType format;
-        GLenum target;
-        GLenum textureFormat;
-        Texture* texture;
-        RenderTarget() {
-            texture = nullptr;
-        }
-    };
-
     NEGINE_API void addTarget(InternalType format);
 
     NEGINE_API void addTargetTexture(Texture* texture);
@@ -46,6 +35,17 @@ public:
 
     inline bool initialized() const { return initialized_; }
 private:
+    struct RenderTarget {
+        GLuint id;
+        InternalType format;
+        GLenum target;
+        GLenum textureFormat;
+        Texture* texture;
+        RenderTarget() {
+            texture = nullptr;
+        }
+    };
+    
     bool windowSize_;
     math::vec2i size_;
     math::vec2f scale_;

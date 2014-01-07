@@ -2,46 +2,74 @@ print("hello")
 from negine_core import *
 from negine_runtime import *
 
-a = vec4f(1.0, 0.0, 0.0, 1.0)
-print(a.x, a.y, a.z, a.w)
-print(a)
-
 vertexShader = """
 #version 150
-attribute vec3 position;
-attribute vec2 uv;
+in vec3 position;
+in vec3 normal;
 uniform mat4 mvp;
-varying vec2 texCoord;
+out vec3 n;
 void main()
 {
-    texCoord = uv;
+    n = 0.5*normalize(normal) + 0.5;
     vec4 pos = vec4(position, 1);
     gl_Position = mvp * pos;
 }
 """
 pixelShader = """
-uniform float time;
-uniform vec4 viewport;
-varying vec2 texCoord;
-void main() {
-    vec4 newColor = vec4(1.0, 0, 0, 1.0);
-    float x = texCoord.s / viewport.x;
-    float y = texCoord.t / viewport.y;
-    newColor.g = sin(x * cos(time/15.0) * 120.0) +
-                cos(y * sin(time/10.0) * 120.0) +
-                sin(sqrt(y*y + x*x) * 40.0);
-    gl_FragColor = newColor;
+#version 150
+in vec3 n;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(n, 1);
+}
+"""
+vertexShader1 = """ 
+#version 150
+in vec3 position;
+in vec2 uv;
+out vec2 tex;
+void main()
+{
+    tex = uv;
+    vec4 pos = vec4(position, 1);
+    gl_Position = pos;
+}
+"""
+pixelShader1 = """ 
+#version 150
+uniform sampler2D atexture;
+in vec2 tex;
+out vec4 fragColor;
+void main()
+{
+    fragColor = texture(atexture, tex);
 }
 """
 
+
 app = globalApp()
 print(app.context)
-prog = app.context.createProgram()
-prog.setAttribute("position", VertexAttrs.tagPosition)
-prog.setAttribute("uv", VertexAttrs.tagTexture)
-prog.setShaderSource(ShaderTypes.VERTEX, vertexShader)
-prog.setShaderSource(ShaderTypes.PIXEL, pixelShader)
-if prog.complete():
-	print("program has been compiled!")
-del(prog)
-##prog.destroy()
+
+prog1 = app.context.createProgram("prog1")
+prog1.setAttribute("position", VertexAttrs.tagPosition)
+prog1.setAttribute("normal", VertexAttrs.tagNormal)
+prog1.setShaderSource(ShaderTypes.VERTEX, vertexShader)
+prog1.setShaderSource(ShaderTypes.PIXEL, pixelShader)
+if prog1.complete():
+	print("program 1 has been compiled!")
+
+prog2 = app.context.createProgram("prog2")
+prog2.setAttribute("position", VertexAttrs.tagPosition)
+prog2.setAttribute("uv", VertexAttrs.tagTexture)
+prog2.setShaderSource(ShaderTypes.VERTEX, vertexShader1)
+prog2.setShaderSource(ShaderTypes.PIXEL, pixelShader1)
+if prog2.complete():
+    print("program 2 has been compiled!")
+
+checker = app.context.createTexture("checkers", "checker.png")
+
+fbo = app.context.createFramebuffer("fbo")
+fbo.addTargetTexture(checker)
+fbo.addTarget(InternalTypes.D32F)
+fbo.resize(640, 480)
