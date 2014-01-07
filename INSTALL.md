@@ -8,7 +8,7 @@ Tools:
 
 Create projects:
 * cmake -G"Unix Makefiles" -DSHARED=ON path-to-sources
-* cmake -G"Visual Studio 12 x64" -DSHARED=ON path-to-sources
+* cmake -G"Visual Studio 12 Win64" -DSHARED=ON path-to-sources
 * or -DSHARED=OFF for static build
 
 linux/osx should be the similar
