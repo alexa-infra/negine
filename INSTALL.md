@@ -1,21 +1,14 @@
-How to run:
+windows
 
-windows - mingw (tested on win8 x64):
+Tools:
+* cmake 2.8.12.1+ (http://www.cmake.org/cmake/resources/software.html)
+* mingw-w64 from mingw-builds http://sourceforge.net/projects/mingwbuilds/files/host-windows/releases/4.8.1/64-bit/threads-posix/seh/
+* MS Visual Studio 2013 (express/prof)
+* python 3.3.3 (also it needs correct lib-import)
 
-# install tools
-## mercurial 2.5.2+ command line tools or tortoiseHG (http://mercurial.selenic.com/downloads/)
-## cmake 2.8.10.2+ (http://www.cmake.org/cmake/resources/software.html)
-## gow (https://github.com/bmatzelle/gow)
-## make sure mercurial, cmake, gow binary folders are in your PATH variable
-# get mingw-w64
-## download mingw-w64 from mingw-builds http://sourceforge.net/projects/mingwbuilds/files/host-windows/releases/4.8.0/64-bit/threads-posix/seh/x64-4.8.0-release-posix-seh-rev2.7z/download
-## unpack to c:/devtools/mingw64
-## add mingw bin directory to your PATH environment variable, e.g. c:/devtools/mingw64/bin
-# checkout negine
-## hg or git ...
-## mkdir c:/projects/negine/_build
-## cd c:/projects/negine/_build
-## hg -G"Unix Makefiles" c:/projects/negine/
-## mingw32-make
+Create projects:
+* cmake -G"Unix Makefiles" -DSHARED=ON path-to-sources
+* cmake -G"Visual Studio 12 x64" -DSHARED=ON path-to-sources
+* or -DSHARED=OFF for static build
 
-almost similar things are needed to build for xcode and visual studio
+linux/osx should be the similar

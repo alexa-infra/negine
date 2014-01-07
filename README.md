@@ -13,13 +13,15 @@ Supported platforms:
 * macosx mountain lion
 
 Tested build with:
-* mingw32 gcc 4.7+ / mingw-w64 gcc 4.8
+* mingw32 gcc 4.8+ / mingw-w64 gcc 4.8
 * clang 3.2 (on ubuntu/macosx)
 * xcode 4+ with clang
 * vs2012/vs2013 express/prof (note: due to poor c++11 support in visual studio, build could be broken atm, and mingw+gcc is recommended to build under windows)
 
 Thirdparty libraries (everything is included to build, no need to manual install):
 * SDL
+* assimp
+* bitsquid-foundation
 * freeglut
 * boost.python
 * google-testing-framework
