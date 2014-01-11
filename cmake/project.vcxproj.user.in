@@ -4,5 +4,8 @@
   	<LocalDebuggerWorkingDirectory>@CMAKE_SOURCE_DIR@/data</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>module.py</LocalDebuggerCommandArguments>
+    <LocalDebuggerEnvironment>PATH=$(PATH);$(SolutionDir)thirdparty\assimp-3.0.1270\code\$(Configuration);$(SolutionDir)thirdparty\boost-python\$(Configuration);$(SolutionDir)thirdparty\SDL\$(Configuration);$(SolutionDir)src\$(Configuration);@PYTHON_LIB_PATH@/../DLLs
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+
   </PropertyGroup>
 </Project>

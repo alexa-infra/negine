@@ -21,6 +21,7 @@ if(NEGINE_SHARED_BUILD)
 endif()
 
 if(MSVC)
+    get_filename_component(PYTHON_LIB_PATH "${PYTHON_LIBRARY_RELEASE}" DIRECTORY)
     if(NEGINE_STATIC_BUILD)
         configure_file(${CMAKE_SOURCE_DIR}/cmake/project.vcxproj.user.in
             ${CMAKE_CURRENT_BINARY_DIR}/runtime-static.vcxproj.user @ONLY)
