@@ -7,8 +7,16 @@ Tools:
 * python 3.3.3 (also it needs correct lib-import)
 
 Create projects:
-* cmake -G"Unix Makefiles" -DSHARED=ON path-to-sources
-* cmake -G"Visual Studio 12 Win64" -DSHARED=ON path-to-sources
+* cmake -G"Unix Makefiles" path-to-sources
+* cmake -G"Visual Studio 12 Win64" path-to-sources
 * or -DSHARED=OFF for static build
 
 linux/osx should be the similar
+
+Create project with prebuild thirdparty libraries:
+* cd d:/projects/negine/_build/thirdparty
+* cmake -G"Visual Studio 12 Win64" -DTHIRDPARTY_ONLY=ON -DCMAKE_INSTALL_PREFIX=d:/projects/negine/_build/prebuild d:/projects/negine/
+* cmake --target install --config Debug --build d:/projects/negine/_build/thirdparty
+* cd d:/projects/negine/_build/
+* cmake -G"Visual Studio 12 Win64" -DPREBUILD_THIRDPARTY_PATH=d:/projects/negine/_build/prebuild d:/projects/negine/
+* cmake --target build_all --config Debug --build d:/projects/negine/_build
