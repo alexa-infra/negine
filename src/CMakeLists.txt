@@ -54,14 +54,26 @@ if(WIN32 AND MSVC)
 endif()
 set(CMAKE_DEBUG_POSTFIX "_d")
 
+if(DEFINED PREBUILD_THIRDPARTY_PATH)
+    include_directories(
+        ${PREBUILD_THIRDPARTY_PATH}/include
+        ${PREBUILD_THIRDPARTY_PATH}/include/SDL2
+    )
+    link_directories(${PREBUILD_THIRDPARTY_PATH}/lib)
+else()
+    include_directories(
+        ${SRC_PATH}
+        ${TOOLS_PATH}/boost-python
+        ${TOOLS_PATH}/SDL/include
+        ${TOOLS_PATH}/assimp-3.0.1270/include
+        ${TOOLS_PATH}/bitsquid
+    )
+endif()
+
 include_directories(
     ${TOOLS_PATH}
     ${SRC_PATH}
-    ${TOOLS_PATH}/boost-python
     ${PYTHON_INCLUDE_DIRS}
-    ${TOOLS_PATH}/SDL/include
-    ${TOOLS_PATH}/assimp-3.0.1270/include
-    ${TOOLS_PATH}/bitsquid
 )
 
 if(NEGINE_STATIC_BUILD)
@@ -74,6 +86,12 @@ if(NEGINE_STATIC_BUILD)
         )
     add_definitions(-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD -DBOOST_PYTHON_STATIC_MODULE)
     target_link_libraries(negine-static boostpython-static SDL2-static assimp-static bitsquid-foundation)
+    if(DEFINED PREBUILD_THIRDPARTY_PATH)
+        target_link_libraries(negine-static
+            debug ${PYTHON_LIBRARY_DEBUG}
+            optimized ${PYTHON_LIBRARY_RELEASE}
+        )
+    endif()
 endif()
 if(NEGINE_SHARED_BUILD)
     add_library(negine SHARED
@@ -85,6 +103,12 @@ if(NEGINE_SHARED_BUILD)
         )
     add_definitions(-DNEGINE_SHARED_BUILD -DASSIMP_DLL)
     target_link_libraries(negine boostpython SDL2 assimp bitsquid-foundation)
+    if(DEFINED PREBUILD_THIRDPARTY_PATH)
+        target_link_libraries(negine
+            debug ${PYTHON_LIBRARY_DEBUG}
+            optimized ${PYTHON_LIBRARY_RELEASE}
+        )
+    endif()
 endif()
 
 add_definitions(-DSDL_ENGINE)

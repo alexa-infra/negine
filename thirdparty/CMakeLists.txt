@@ -24,6 +24,7 @@ set(ENABLE_BOOST_WORKAROUND ON CACHE BOOL "Enable Boost in assimp" FORCE)
 set(BUILD_ASSIMP_TOOLS OFF CACHE BOOL "Assimp tools" FORCE)
 set(DEBUG_POSTFIX "" CACHE BOOL "Debug postfix" FORCE)
 set(BUILD_SHARED_LIB ${NEGINE_SHARED_BUILD})
+set(INSTALL_LIBS ON)
 
 add_subdirectory(boost-python)
 #add_subdirectory(freeglut)

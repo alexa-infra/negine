@@ -16,3 +16,9 @@ if(UNIX OR MINGW)
 endif()
 
 add_library(bitsquid-foundation STATIC ${FOUNDATION_SRC} ${FOUNDATION_HDR})
+
+install(TARGETS bitsquid-foundation RUNTIME DESTINATION bin
+		ARCHIVE DESTINATION lib
+		LIBRARY DESTINATION lib)
+
+install(FILES ${FOUNDATION_HDR} DESTINATION include/foundation)

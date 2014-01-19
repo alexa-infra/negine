@@ -50,6 +50,9 @@ if(BOOSTPYTHON_STATIC)
 	set_target_properties(boostpython-static PROPERTIES
 		OUTPUT_NAME "boostpython"
 		)
+	install(TARGETS boostpython-static RUNTIME DESTINATION bin
+		ARCHIVE DESTINATION lib
+		LIBRARY DESTINATION lib)
 endif()
 
 if(BOOSTPYTHON_SHARED)
@@ -64,7 +67,12 @@ if(BOOSTPYTHON_SHARED)
 		COMPILE_FLAGS "-DBOOST_PYTHON_DYNAMIC_LIB"
 		OUTPUT_NAME "boostpython"
 		)
+	install(TARGETS boostpython RUNTIME DESTINATION bin
+		ARCHIVE DESTINATION lib
+		LIBRARY DESTINATION lib)
 endif()
+
+install(DIRECTORY ${SRC_PATH}/boost DESTINATION include)
 
 if (NOT ${PYTHON_LIBRARY_DEBUG} STREQUAL ${PYTHON_LIBRARY_RELEASE})
 	add_definitions(-DBOOST_DEBUG_PYTHON)

@@ -22,12 +22,19 @@ endif()
 
 if(MSVC)
     get_filename_component(PYTHON_LIB_PATH "${PYTHON_LIBRARY_RELEASE}" DIRECTORY)
+    
+    if(DEFINED PREBUILD_THIRDPARTY_PATH)
+        set(CFG_NAME ${CMAKE_SOURCE_DIR}/cmake/project-prebuild.vcxproj.user.in)
+    else()
+        set(CFG_NAME ${CMAKE_SOURCE_DIR}/cmake/project.vcxproj.user.in)
+    endif()
+    
     if(NEGINE_STATIC_BUILD)
-        configure_file(${CMAKE_SOURCE_DIR}/cmake/project.vcxproj.user.in
+        configure_file(${CFG_NAME}
             ${CMAKE_CURRENT_BINARY_DIR}/runtime-static.vcxproj.user @ONLY)
     endif()
     if(NEGINE_SHARED_BUILD)
-        configure_file(${CMAKE_SOURCE_DIR}/cmake/project.vcxproj.user.in
+        configure_file(${CFG_NAME}
             ${CMAKE_CURRENT_BINARY_DIR}/runtime.vcxproj.user @ONLY)
     endif()
 endif() 

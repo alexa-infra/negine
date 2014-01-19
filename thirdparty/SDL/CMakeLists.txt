@@ -1205,6 +1205,7 @@ endif(SDL_STATIC)
 
 ##### Installation targets #####
 install(TARGETS ${_INSTALL_LIBS}
+  RUNTIME DESTINATION bin
   LIBRARY DESTINATION "lib${LIB_SUFFIX}"
   ARCHIVE DESTINATION "lib${LIB_SUFFIX}")
 
@@ -1217,14 +1218,14 @@ endforeach()
 list(APPEND INCLUDE_FILES ${BIN_INCLUDE_FILES})
 install(FILES ${INCLUDE_FILES} DESTINATION include/SDL2)
 
-if(SDL_SHARED)
-  install(CODE "
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-    \"libSDL2-2.0.so\" \"libSDL2.so\")")
-  install(FILES ${SDL2_BINARY_DIR}/libSDL2.so DESTINATION "lib${LIB_SUFFIX}")
-endif(SDL_SHARED)
-
 if(NOT WINDOWS OR CYGWIN)
+  if(SDL_SHARED)
+    install(CODE "
+      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+      \"libSDL2-2.0.so\" \"libSDL2.so\")")
+    install(FILES ${SDL2_BINARY_DIR}/libSDL2.so DESTINATION "lib${LIB_SUFFIX}")
+  endif(SDL_SHARED)
+
   if(FREEBSD)
     # FreeBSD uses ${PREFIX}/libdata/pkgconfig
     install(FILES ${SDL2_BINARY_DIR}/sdl2.pc DESTINATION "libdata/pkgconfig")
