@@ -14,7 +14,7 @@ using base::math::vec4f;
 namespace base {
 
 template<>
-ResourceType BaseResource<opengl::Model>::type_ = ResourceManager::registerResource();
+ResourceType ResourceBase<opengl::Model>::type_ = ResourceManager::registerResource();
 
 namespace opengl {
 

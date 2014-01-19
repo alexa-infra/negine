@@ -10,7 +10,7 @@
 namespace base {
 namespace opengl {
 
-class Framebuffer : public GpuResource, public BaseResource<Framebuffer>
+class Framebuffer : public GpuResource, public ResourceBase<Framebuffer>
 {
 public:
     NEGINE_API Framebuffer(DeviceContext& context);

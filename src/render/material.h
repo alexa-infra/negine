@@ -17,7 +17,7 @@ namespace opengl {
 class DeviceContext;
 class GpuProgram;
 
-struct Material : public BaseResource<Material>
+struct Material : public ResourceBase<Material>
 {
     typedef FixedMap<SmallString, ResourceRef> ProgramMap;
     ProgramMap modeMap; // mode -> gpu program

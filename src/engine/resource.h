@@ -16,9 +16,9 @@ public:
 };
 
 template<typename T>
-class BaseResource : public Resource {
+class ResourceBase : public Resource {
 public:
-    virtual ~BaseResource() {}
+    virtual ~ResourceBase() {}
     ResourceType type() const { return type_; }
     static ResourceType Type() { return type_; }
 private:

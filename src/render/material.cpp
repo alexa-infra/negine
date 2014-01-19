@@ -13,7 +13,7 @@
 namespace base {
 
 template<>
-ResourceType BaseResource<opengl::Material>::type_ = ResourceManager::registerResource();
+ResourceType ResourceBase<opengl::Material>::type_ = ResourceManager::registerResource();
 
 namespace opengl {
 

@@ -5,7 +5,7 @@
 namespace base {
 
 template<>
-ResourceType BaseResource<opengl::Framebuffer>::type_ = ResourceManager::registerResource();
+ResourceType ResourceBase<opengl::Framebuffer>::type_ = ResourceManager::registerResource();
 
 namespace opengl {
 

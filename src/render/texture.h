@@ -120,7 +120,7 @@ struct TextureInfo
 };
 
 //! Texture object
-class Texture : public GpuResource, public BaseResource<Texture>
+class Texture : public GpuResource, public ResourceBase<Texture>
 {
 public:
     Texture(DeviceContext& gl);

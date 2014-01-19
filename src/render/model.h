@@ -13,7 +13,7 @@
 namespace base {
 namespace opengl {
 
-class Model : public BaseResource<Model> {
+class Model : public ResourceBase<Model> {
 public:
     NEGINE_API Model();
     NEGINE_API ~Model();
