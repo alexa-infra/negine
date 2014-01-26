@@ -1,18 +1,17 @@
 #pragma once
 
-#include "game/component.h"
+#include "game/componentbase.h"
 #include "math/matrix.h"
 #include "game/scene.h"
 
 namespace base {
 namespace game {
 
-class Transform : public Component<Transform>
+class Transform : public ComponentBase
 {
 public:
     NEGINE_API Transform();
-
-    NEGINE_API static void updateTree(Entity* root);
+    NEGINE_API ~Transform();
 
     inline const math::vec3f& forward() const { return forward_; }
     inline const math::vec3f& right() const { return right_; }
@@ -34,15 +33,19 @@ public:
     NEGINE_API void setPosition(const math::vec3f& v );
     NEGINE_API void setPitch(f32 radians);
     NEGINE_API void setHead(f32 radians);
+
+    const char* extension() const { return ".transform"; }
+
+    NEGINE_API void setParent(Transform* parent);
+    NEGINE_API void update();
+
+    Signal signal_;
 private:
-    void update();
-    void makeDirty();
-private:
-    bool dirty_;
     math::Matrix4 world_;
     f32 pitch_, head_;
     math::vec3f forward_, right_, up_;
     math::vec3f position_;
+    Transform* parentTransform_;
 };
 
 } // namespace game

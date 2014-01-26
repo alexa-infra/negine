@@ -78,9 +78,10 @@ void Renderer::renderState(const RenderPass& rp) {
 }
 
 void Renderer::sceneRenderer(const std::string& mode, const Params& pp) {
-    game::CompList components = game::find_all(root, game::Renderable::Type());
-    for(auto c: components) {
-        game::Renderable* r = dynamic_cast<game::Renderable*>(c);
+    auto begin = foundation::hash::begin(root->renderables_);
+    auto end = foundation::hash::end(root->renderables_);
+    for (auto it = begin; it != end; ++it) {
+        game::Renderable* r = it->value;
         opengl::Model* model = r->model();
         math::Matrix4 mvp = camera->clipMatrix() * r->world();
 

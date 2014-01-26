@@ -1,16 +1,19 @@
 #pragma once
 
-#include "game/component.h"
+#include "game/componentbase.h"
 #include "math/matrix.h"
 #include "math/plane.h"
 
 namespace base {
 namespace game {
 
-class Camera : public Component<Camera>
+class Transform;
+
+class Camera : public ComponentBase
 {
 public:
     NEGINE_API Camera();
+    NEGINE_API ~Camera();
 
     inline f32 aspect() const { return aspect_; }
     inline f32 fov() const { return fov_; }
@@ -28,16 +31,16 @@ public:
     NEGINE_API void setZNear(f32 dist);
     NEGINE_API void setZFar(f32 dist);
 
-    NEGINE_API static void updateTree(Entity* root);
-private:
-    void update();
+    const char* extension() const { return ".camera"; }
 
-    bool dirty_;
+    NEGINE_API void update();
+    NEGINE_API void setParent(Transform* transform);
+private:
+    Transform* parentTransfrom_;
     math::Plane planes_[6];
     math::Matrix4 projection_;
     math::Matrix4 modelview_;
     math::Matrix4 clip_;
-    math::Matrix4 world_;
 
     f32 aspect_;
     f32 fov_;

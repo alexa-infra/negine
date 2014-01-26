@@ -1,32 +1,33 @@
 #pragma once
 
 #include "base/types.h"
+#include <string>
 
 namespace base {
 namespace game {
 
-typedef u32 CompType;
-
-class Entity;
+class Scene;
 
 //! Abstract component type
-//! Every child should implement type() method, where returned value
-//!        should be obtained once from registerType() static method
 class ComponentBase {
-    friend class Entity;
 public:
-    NEGINE_API ComponentBase();
-    NEGINE_API virtual ~ComponentBase();
+    ComponentBase() : scene_(nullptr) {}
 
-    virtual CompType type() const = 0;
+    virtual ~ComponentBase() {}
 
-    NEGINE_API static CompType registerType();
+    virtual const char* extension() const = 0;
 
-    inline Entity* parent() const { return parent_; }
+    inline std::string name() const { return name_; }
+
+    inline std::string fullname() const { return name_ + extension(); }
+
+    inline void setName(const std::string& name) { name_ = name; }
+
+    inline void setScene(Scene* scene) { scene_ = scene; }
+
 protected:
-    Entity* parent_;
-private:
-    static CompType s_counter_;
+    Scene* scene_;
+    std::string name_;
 };
 
 } // namespace game

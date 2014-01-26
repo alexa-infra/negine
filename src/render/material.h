@@ -10,7 +10,7 @@
 
 namespace base {
 
-namespace game { class Entity; class Camera; }
+namespace game { class Scene; class Camera; }
 
 namespace opengl {
 
@@ -52,7 +52,7 @@ struct Renderer {
     NEGINE_API void rendering();
 
     std::vector<RenderPass> passesList;
-    game::Entity* root;
+    game::Scene* root;
     game::Camera* camera;
 
 private:

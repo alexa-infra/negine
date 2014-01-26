@@ -14,24 +14,28 @@ using namespace base;
 
 Application& globalApp();
 
-class GameCamera {
-public:
-    game::Transform transform;
-    game::Camera camera;
-    game::Entity object;
+struct GameObject
+{
+    game::Transform* transform;
+    game::Renderable* model;
 
-    GameCamera() {
-        object.add(&transform);
-        object.add(&camera);
+    GameObject(const std::string& name, game::Scene& scene) {
+        transform = scene.attach(name, new game::Transform);
+        model = scene.attach(name, new game::Renderable);
+    }
+
+    ~GameObject() {
     }
 };
 
-class GameObject {
-public:
-    game::Renderable r;
-    game::Entity object;
-    GameObject() {
-        object.add(&r);
+struct GameCamera
+{
+    game::Transform* transform;
+    game::Camera* cam;
+
+    GameCamera(const std::string& name, game::Scene& scene) {
+        transform = scene.attach(name, new game::Transform);
+        cam = scene.attach(name, new game::Camera);
     }
 };
 
@@ -48,9 +52,7 @@ protected:
     void UpdateWorld();
 private:
     opengl::Renderer ren;
-    GameObject obj;
-    GameCamera cam;
-    game::Entity root;
+    game::Scene scene_;
     u32 keypressed_;
     Timer timer_;
     opengl::Model* umesh;

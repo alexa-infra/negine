@@ -7,11 +7,11 @@ namespace game {
 
 using namespace math;
 
-template<>
-CompType Component<Camera>::type_ = ComponentBase::registerType();
+Camera::Camera() : parentTransfrom_(nullptr) {
+}
 
-Camera::Camera() {
-    dirty_ = true;
+Camera::~Camera() {
+    setParent(nullptr);
 }
 
 void Camera::setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar) {
@@ -19,41 +19,44 @@ void Camera::setPerspective(f32 aspect, f32 fov, f32 zNear, f32 zFar) {
     fov_ = fov;
     zNear_ = zNear;
     zFar_ = zFar;
-    dirty_ = true;
 }
 
 void Camera::setAspect( f32 v ) {
     aspect_ = v;
-    dirty_ = true;
 }
 
 void Camera::setFov( f32 v ) {
     fov_ = v;
-    dirty_ = true;
 };
 
 void Camera::setZNear( f32 v ) {
     zNear_ = v;
-    dirty_ = true;
 }
     
 void Camera::setZFar( f32 v ) {
     zFar_ = v;
-    dirty_ = true;
+}
+
+void Camera::setParent(Transform* transform) {
+    if (parentTransfrom_ != nullptr)
+        parentTransfrom_->signal_.disconnect(fullname());
+    parentTransfrom_ = transform;
+    if (parentTransfrom_ != nullptr)
+        parentTransfrom_->signal_.connect(fullname(), std::bind(&Camera::update, this));
 }
 
 void Camera::update() {
-    ComponentBase* component = get_parent(parent_, Transform::Type());
-    Transform* parentTransform = dynamic_cast<Transform*>(component);
+    if (parentTransfrom_ == nullptr) {
+        Transform* transform = scene_->getTyped<Transform>(name_);
+        if (transform == nullptr)
+            return;
+        setParent(transform);
+    }
 
-    const math::Matrix4& newWorld = parentTransform->world();
-    if (!dirty_ && newWorld == world_)
-        return;
-    dirty_ = false;
-    world_ = newWorld;
+    const math::Matrix4& newWorld = parentTransfrom_->world();
 
     projection_ = Matrix4::Perspective( fov_, aspect_, zNear_, zFar_ );
-    modelview_ = OrthoInverse(world_);
+    modelview_ = OrthoInverse(newWorld);
         //Matrix4::LookAt( position, position + parentTransform->forward(), parentTransform->up() );
     clip_ = projection_ * modelview_;
 
@@ -67,14 +70,6 @@ void Camera::update() {
     planes_[3].set( v4 - v2 );
     planes_[4].set( v4 + v3 );
     planes_[5].set( v4 - v3 );
-}
-
-void Camera::updateTree(Entity* root) {
-    CompList components = find_all(root, Type());
-    for(auto c: components) {
-        Camera* cam = dynamic_cast<Camera*>(c);
-        cam->update();
-    }
 }
 
 }

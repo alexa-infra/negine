@@ -1,32 +1,27 @@
 #include "transform.h"
 #include "math/matrix-inl.h"
+#include "game/scene.h"
 
 namespace base {
 namespace game {
 
 using namespace math;
 
-template<>
-CompType Component<Transform>::type_ = ComponentBase::registerType();
-
 Transform::Transform() {
     world_ = Matrix4::Identity();
-    dirty_ = true;
+    pitch_ = head_ = 0;
+    forward_ = math::vec3f(0, 0, -1);
+    right_ = math::vec3f(1, 0, 0);
+    up_ = math::vec3f(0, 1, 0);
+    position_ = math::vec3f(0, 0, 0);
+    parentTransform_ = nullptr;
 }
 
-void Transform::updateTree(Entity* root) {
-    CompList components = find_all(root, Type());
-    for(auto c: components) {
-        Transform* tr = dynamic_cast<Transform*>(c);
-        if (tr->dirty_)
-            tr->update();
-    }
+Transform::~Transform() {
+    setParent(nullptr);
 }
 
 void Transform::update() {
-    if (!dirty_)
-        return;
-
     Matrix4 headRot  = Matrix4::RotationY( head_ );
     Matrix4 pitchRot = Matrix4::RotationX( pitch_ );
     Matrix4 orientation = headRot * pitchRot;
@@ -41,71 +36,57 @@ void Transform::update() {
 
     Matrix4 local = Matrix4::Translation( position_ ) * orientation;
 
-    ComponentBase* parent = get_parent(parent_->parent(), type());
-    if (parent == nullptr) {
+    if (parentTransform_ == nullptr) {
         world_ = local;
-        return;
+    } else {
+        world_ = parentTransform_->world_ * local;
     }
 
-    Transform* parentTransform = dynamic_cast<Transform*>(parent);
-    world_ = parentTransform->world_ * local;
-    dirty_ = false; 
-}
-
-void Transform::makeDirty() {
-    if (dirty_)
-        return;
-    dirty_ = true;
-    CompList components = find_children(parent_, Type());
-    for(auto c: components) {
-        Transform* tr = dynamic_cast<Transform*>(c);
-        tr->dirty_ = true;
-    }
+    signal_.emit();
 }
 
 void Transform::moveForward(f32 dist) {
     position_ += forward_ * dist;
-    makeDirty();
 }
 
 void Transform::moveBackward(f32 dist) {
     position_ -= forward_ * dist;
-    makeDirty();
 }
 
 void Transform::moveRight(f32 dist) {
     position_ += right_ * dist;
-    makeDirty();
 }
 
 void Transform::moveLeft(f32 dist) {
     position_ -= right_ * dist;
-    makeDirty();
 }
 
 void Transform::turnPitch(f32 v) {
     pitch_ += v;
-    makeDirty();
 }
 
 void Transform::turnHead(f32 v) {
     head_ += v;
-    makeDirty();
 }
 
 void Transform::setPosition( const vec3f& v ) {
     position_ = v;
-    makeDirty();
 }
 
 void Transform::setPitch( f32 v ) { 
     pitch_ = v;
-    makeDirty();
 }
 
 void Transform::setHead( f32 v ) {
     head_ = v;
-    makeDirty();
+}
+
+void Transform::setParent(Transform* parent) {
+    if (parentTransform_ != nullptr)
+        parentTransform_->signal_.disconnect(fullname());
+    parentTransform_ = parent;
+    if (parentTransform_ != nullptr)
+        parent->signal_.connect(fullname(), std::bind(&Transform::update, this));
 }
 
 } // namespace game

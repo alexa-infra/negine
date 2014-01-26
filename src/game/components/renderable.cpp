@@ -6,16 +6,12 @@
 namespace base {
 namespace game {
 
-template<>
-CompType Component<Renderable>::type_ = ComponentBase::registerType();
-
 opengl::Model* Renderable::model() {
     return model_.resourceAs<opengl::Model>();
 }
 
 math::Matrix4 Renderable::world() const {
-    ComponentBase* c = get_parent(parent(), Transform::Type());
-    Transform* tr = dynamic_cast<Transform*>(c);
+    Transform* tr = scene_->getTyped<Transform>(name_);
     if (tr == nullptr)
         return math::Matrix4::Identity();
     return tr->world();
