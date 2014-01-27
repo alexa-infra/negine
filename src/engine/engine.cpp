@@ -5,6 +5,7 @@
 #include "engine/texture_loader.h"
 #include "render/material.h"
 #include "foundation/memory.h"
+#include "physics/physics.h"
 
 namespace base {
 
@@ -18,6 +19,10 @@ opengl::DeviceContext& Engine::context() {
 
 opengl::Renderer& Engine::renderer() {
     return *instance_->renderer_;
+}
+
+phys::Physics& Engine::physics() {
+    return *instance_->physics_;
 }
 
 Engine::Engine(DeviceContext& context) : GL(context) {
@@ -34,9 +39,11 @@ Engine::Engine(DeviceContext& context) : GL(context) {
         return dynamic_cast<Resource*>(texture);
     });
     renderer_ = new Renderer(GL);
+    physics_ = new phys::Physics();
 }
 
 Engine::~Engine() {
+    delete physics_;
     delete renderer_;
     ResourceManager::shutdown();
     foundation::memory_globals::shutdown();

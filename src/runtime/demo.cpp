@@ -6,6 +6,7 @@
 #include "math/matrix-inl.h"
 #include "engine/resourceref.h"
 #include "engine/engine.h"
+#include "physics/physics.h"
 
 extern "C" NEGINE_EXPORT PyObject* PyInit_negine_runtime(void);
 
@@ -47,7 +48,7 @@ Demo::Demo(const std::string& filename) {
     GL_ASSERT(GL);
 
     ResourceRef model("themodel");
-    model.loadDefault<opengl::Model>("palm.obj");
+    model.loadDefault<opengl::Model>("sphere.obj");
 
     obj_ = new GameObject("theObject", scene_);
 
@@ -88,12 +89,30 @@ Demo::Demo(const std::string& filename) {
     rp2.blend = false;
     rp2.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
     Engine::renderer().passesList.push_back(rp2);
+
+    phys::Body* plane = new phys::Body(Engine::physics(), phys::Body::Plane, 0.0f, math::vec3f(0, 1, 0));
+    phys::Body* ball = new phys::Body(Engine::physics(), phys::Body::Sphere, 1.0f, math::vec3f(0, 50, 0));
+    ball->setTransform(obj_->transform);
+    phys::Body* ball2 = new phys::Body(Engine::physics(), phys::Body::Sphere, 1.0f, math::vec3f(0.5f, 20.f, 0.f));
+
+    GameObject* oo = new GameObject("theObject2", scene_);
+
+    oo->transform->setPosition(math::vec3f(0.5f, 2.0f, 0.0f));
+    oo->model->model_ = model;
+    oo->transform->update();
+    ball2->setTransform(oo->transform);
+
+    timer_.reset();
+
+    cam_->transform->update();
+    obj_->transform->update();
 }
 
 Demo::~Demo() {
 }
 
 void Demo::OnFrame() {
+    Engine::physics().simulate(timer_.reset() / 1000.f);
     UpdateWorld();
     Engine::renderer().rendering();
     GL_ASSERT(GL);
@@ -210,8 +229,8 @@ void Demo::UpdateWorld() {
     if (keypressed_ != 0)
         cam->update();
 
-    game::Transform* obj = scene_.getTyped<game::Transform>("theObject");
+    //game::Transform* obj = scene_.getTyped<game::Transform>("theObject");
 
-    obj->turnHead(0.001f);
-    obj->update();
+    //obj->turnHead(0.001f);
+    //obj->update();
 }
