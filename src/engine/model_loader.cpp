@@ -84,6 +84,8 @@ Model* loadModel(const std::string& filename)
         Model::Surface& surface = model->beginSurface();
         Mesh& m = surface.mesh;
 
+        m.material_ = ResourceRef("default_material");
+
         if (subMesh->HasPositions())
             m.addAttribute(VertexAttrs::tagPosition);
         if (subMesh->HasNormals())

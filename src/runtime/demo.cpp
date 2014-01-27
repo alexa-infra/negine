@@ -64,10 +64,7 @@ Demo::Demo(const std::string& filename) {
     render->model_ = model;
 
     material.modeMap["normal"] = ResourceRef("prog1");
-    ResourceRef maa("material");
-    maa.setResource(&material);
-    const_cast<opengl::Mesh&>(umesh->surfaceAt(0).mesh).material_ = maa;
-    const_cast<opengl::Mesh&>(umesh->surfaceAt(1).mesh).material_ = maa;
+    ResourceRef maa("default_material", &material);
 
     Engine::renderer().root = &scene_;
     Engine::renderer().camera = camera;
