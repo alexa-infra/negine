@@ -3,6 +3,7 @@
 #include "engine/resource.h"
 #include "engine/model_loader.h"
 #include "engine/texture_loader.h"
+#include "render/material.h"
 #include "foundation/memory.h"
 
 namespace base {
@@ -10,6 +11,14 @@ namespace base {
 using namespace opengl;
 
 Engine* Engine::instance_ = nullptr;
+
+opengl::DeviceContext& Engine::context() {
+    return instance_->GL;
+}
+
+opengl::Renderer& Engine::renderer() {
+    return *instance_->renderer_;
+}
 
 Engine::Engine(DeviceContext& context) : GL(context) {
     foundation::memory_globals::init();
@@ -24,9 +33,11 @@ Engine::Engine(DeviceContext& context) : GL(context) {
         Texture* texture = loadTexture(Engine::context(), defaultSettings, p);
         return dynamic_cast<Resource*>(texture);
     });
+    renderer_ = new Renderer(GL);
 }
 
 Engine::~Engine() {
+    delete renderer_;
     ResourceManager::shutdown();
     foundation::memory_globals::shutdown();
 }

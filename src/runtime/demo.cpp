@@ -5,8 +5,7 @@
 #include "base/log.h"
 #include "math/matrix-inl.h"
 #include "engine/resourceref.h"
-#include "render/renderstate.h"
-#include "render/texture.h"
+#include "engine/engine.h"
 
 extern "C" NEGINE_EXPORT PyObject* PyInit_negine_runtime(void);
 
@@ -19,8 +18,9 @@ Application& globalApp() {
     return *intstance_;
 }
 
-Demo::Demo(const std::string& filename) : ren(GL) {
+Demo::Demo(const std::string& filename) {
     intstance_ = this;
+
     PyImport_AppendInittab("negine_core", PyInit_negine_core);
     PyImport_AppendInittab("negine_runtime", PyInit_negine_runtime);
     Py_Initialize();
@@ -31,7 +31,7 @@ Demo::Demo(const std::string& filename) : ren(GL) {
 
     keypressed_ = 0;
 
-    ren.init();
+    Engine::renderer().init();
 
     game::Camera* camera = new game::Camera();
     scene_.attach("camera1", camera);
@@ -69,8 +69,8 @@ Demo::Demo(const std::string& filename) : ren(GL) {
     const_cast<opengl::Mesh&>(umesh->surfaceAt(0).mesh).material_ = maa;
     const_cast<opengl::Mesh&>(umesh->surfaceAt(1).mesh).material_ = maa;
 
-    ren.root = &scene_;
-    ren.camera = camera;
+    Engine::renderer().root = &scene_;
+    Engine::renderer().camera = camera;
 
     opengl::RenderPass rp;
     rp.target = ResourceRef("fbo");
@@ -83,7 +83,7 @@ Demo::Demo(const std::string& filename) : ren(GL) {
     rp.cullBackFace = false;
     rp.blend = false;
     rp.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-    ren.passesList.push_back(rp);
+    Engine::renderer().passesList.push_back(rp);
 
     opengl::RenderPass rp2;
     rp2.target = ResourceRef("default_fbo");
@@ -96,7 +96,7 @@ Demo::Demo(const std::string& filename) : ren(GL) {
     rp2.cullBackFace = false;
     rp2.blend = false;
     rp2.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-    ren.passesList.push_back(rp2);
+    Engine::renderer().passesList.push_back(rp2);
 }
 
 Demo::~Demo() {
@@ -104,7 +104,7 @@ Demo::~Demo() {
 
 void Demo::OnFrame() {
     UpdateWorld();
-    ren.rendering();
+    Engine::renderer().rendering();
     GL_ASSERT(GL);
     SDLApp::OnFrame();
 }

@@ -29,19 +29,6 @@ opengl::GpuProgram* Material::program(const SmallString& mode) const {
 }
 
 void Renderer::init() {
-//    RenderPass rp;
-//    rp.target = nullptr;
-//    rp.mode = "normal";
-//    rp.generator = nullptr;
-//    rp.viewport = math::vec4f(0, 0, 640, 480);
-//    rp.clear = true;
-//    rp.depthTest = true;
-//    rp.depthWrite = true;
-//    rp.cullBackFace = false;
-//    rp.blend = false;
-//    rp.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-//    passesList.push_back(rp);
-
     imp::MeshBuilder bb;
     bb.beginSurface();
     bb.addVertex(math::vec3f( 1, -1, -1), math::vec2f(0, 0));

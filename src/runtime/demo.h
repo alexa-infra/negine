@@ -51,7 +51,6 @@ protected:
     void OnMotion(i32 x, i32 y, i32 dx, i32 dy);
     void UpdateWorld();
 private:
-    opengl::Renderer ren;
     game::Scene scene_;
     u32 keypressed_;
     Timer timer_;
