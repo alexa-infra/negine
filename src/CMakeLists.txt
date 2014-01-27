@@ -35,8 +35,12 @@ file(GLOB GAME_COMP_SRC ${SRC_PATH}/game/components/*.cpp)
 file(GLOB GAME_COMP_HDR ${SRC_PATH}/game/components/*.h)
 source_group("game" FILES ${GAME_HDR} ${GAME_SRC} ${GAME_COMP_HDR} ${GAME_COMP_SRC})
 
-set(SRC ${APP_SRC} ${SDLAPP_SRC} ${BASE_SRC} ${MATH_SRC} ${RENDER_SRC} ${GAME_SRC} ${GAME_COMP_SRC} ${ENGINE_SRC})
-set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR} ${GAME_HDR} ${GAME_COMP_HDR} ${ENGINE_HDR})
+file(GLOB PHYS_SRC ${SRC_PATH}/physics/*.cpp)
+file(GLOB PHYS_HDR ${SRC_PATH}/physics/*.h)
+source_group("physics" FILES ${PHYS_HDR} ${PHYS_SRC})
+
+set(SRC ${APP_SRC} ${SDLAPP_SRC} ${BASE_SRC} ${MATH_SRC} ${RENDER_SRC} ${GAME_SRC} ${GAME_COMP_SRC} ${ENGINE_SRC} ${PHYS_SRC})
+set(HDR ${APP_HDR} ${SDLAPP_HDR} ${BASE_HDR} ${MATH_HDR} ${RENDER_HDR} ${GAME_HDR} ${GAME_COMP_HDR} ${ENGINE_HDR} ${PHYS_HDR})
 
 if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -Wno-invalid-offsetof -std=gnu++11 -fvisibility=hidden")
@@ -67,6 +71,7 @@ else()
         ${TOOLS_PATH}/SDL/include
         ${TOOLS_PATH}/assimp-3.0.1270/include
         ${TOOLS_PATH}/bitsquid
+        ${TOOLS_PATH}/bullet-2.82-r2704/src
     )
 endif()
 
@@ -85,7 +90,7 @@ if(NEGINE_STATIC_BUILD)
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DBOOST_PYTHON_STATIC_LIB -DNEGINE_STATIC_BUILD -DBOOST_PYTHON_STATIC_MODULE)
-    target_link_libraries(negine-static boostpython-static SDL2-static assimp-static bitsquid-foundation)
+    target_link_libraries(negine-static boostpython-static SDL2-static assimp-static bitsquid-foundation BulletDynamics LinearMath BulletCollision BulletSoftBody)
     if(DEFINED PREBUILD_THIRDPARTY_PATH)
         target_link_libraries(negine-static
             debug ${PYTHON_LIBRARY_DEBUG}
@@ -102,7 +107,7 @@ if(NEGINE_SHARED_BUILD)
         COMPILE_FLAGS "-DNEGINE_SOURCE"
         )
     add_definitions(-DNEGINE_SHARED_BUILD -DASSIMP_DLL)
-    target_link_libraries(negine boostpython SDL2 assimp bitsquid-foundation)
+    target_link_libraries(negine boostpython SDL2 assimp bitsquid-foundation BulletDynamics LinearMath BulletCollision BulletSoftBody)
     if(DEFINED PREBUILD_THIRDPARTY_PATH)
         target_link_libraries(negine
             debug ${PYTHON_LIBRARY_DEBUG}
