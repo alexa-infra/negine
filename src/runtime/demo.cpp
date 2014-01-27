@@ -33,16 +33,13 @@ Demo::Demo(const std::string& filename) {
 
     Engine::renderer().init();
 
-    game::Camera* camera = new game::Camera();
-    scene_.attach("camera1", camera);
-    game::Transform* cameraTr = new game::Transform;
-    scene_.attach("camera1", cameraTr);
+    cam_ = new GameCamera("camera1", scene_);
 
-    cameraTr->setPosition(math::vec3f(0.f, 0.f, -5.f));
-    cameraTr->setPitch(50 * math::deg_to_rad);
-    cameraTr->setHead(180 * math::deg_to_rad);
-    camera->setPerspective(width_ / (f32)height_, 45.0f, 1, 1000);
-    camera->update();
+    cam_->transform->setPosition(math::vec3f(0.f, 0.f, -5.f));
+    cam_->transform->setPitch(50 * math::deg_to_rad);
+    cam_->transform->setHead(180 * math::deg_to_rad);
+    cam_->camera->setPerspective(width_ / (f32)height_, 45.0f, 1, 1000);
+    cam_->camera->update();
 
     ResourceRef checkers("checkers");
     ResourceRef("default_fbo").setResource(nullptr);
@@ -51,23 +48,20 @@ Demo::Demo(const std::string& filename) {
 
     ResourceRef model("themodel");
     model.loadDefault<opengl::Model>("palm.obj");
-    umesh = model.resourceAs<opengl::Model>();
 
-    game::Transform* objTr = new game::Transform;
-    game::Renderable* render = new game::Renderable;
-    scene_.attach("theObject", objTr);
-    scene_.attach("theObject", render);
+    obj_ = new GameObject("theObject", scene_);
 
-    objTr->setPosition(math::vec3f(0, 0, 0));
-    objTr->setHead(0.0f);
-    objTr->setPitch(0.0f);
-    render->model_ = model;
+    obj_->transform->setPosition(math::vec3f(0, 0, 0));
+    obj_->transform->setHead(0.0f);
+    obj_->transform->setPitch(0.0f);
+    obj_->model->model_ = model;
 
-    material.modeMap["normal"] = ResourceRef("prog1");
-    ResourceRef maa("default_material", &material);
+    opengl::Material* material = new opengl::Material;
+    material->modeMap["normal"] = ResourceRef("prog1");
+    ResourceRef maa("default_material", material);
 
     Engine::renderer().root = &scene_;
-    Engine::renderer().camera = camera;
+    Engine::renderer().camera = cam_->camera;
 
     opengl::RenderPass rp;
     rp.target = ResourceRef("fbo");

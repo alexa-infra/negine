@@ -31,11 +31,11 @@ struct GameObject
 struct GameCamera
 {
     game::Transform* transform;
-    game::Camera* cam;
+    game::Camera* camera;
 
     GameCamera(const std::string& name, game::Scene& scene) {
         transform = scene.attach(name, new game::Transform);
-        cam = scene.attach(name, new game::Camera);
+        camera = scene.attach(name, new game::Camera);
     }
 };
 
@@ -51,9 +51,9 @@ protected:
     void OnMotion(i32 x, i32 y, i32 dx, i32 dy);
     void UpdateWorld();
 private:
+    GameObject* obj_;
+    GameCamera* cam_;
     game::Scene scene_;
     u32 keypressed_;
     Timer timer_;
-    opengl::Model* umesh;
-    opengl::Material material;
 };
