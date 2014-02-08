@@ -88,8 +88,6 @@ namespace imp {
         void createCube();
 
         void createGrid();
-
-        NEGINE_API void readOBJ(const std::string& filename);
     public:
         Array<math::vec3f> posData;
         Array<math::vec2f> uvData;

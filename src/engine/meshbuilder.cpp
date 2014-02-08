@@ -1,6 +1,5 @@
 #include "meshbuilder.h"
 #include "base/log.h"
-#include "base/lexer.h"
 #include "base/debug.h"
 #include "render/mesh.h"
 
@@ -306,71 +305,6 @@ void MeshBuilder::createGrid()
         else
             addLine(a, b, minorLineColor);
     }
-}
-
-void MeshBuilder::readOBJ(const std::string& filename)
-{
-    beginSurface();
-
-    LexerPolicy policy(LexerPolicy::POLICY_PYTHON_COMMENT);
-    policy.setWhitespaces(" \t\n\r/");
-
-    Lexer lexer(filename, policy);
-
-    while ( lexer.hasMoreData() )
-    {
-        std::string token = lexer.readToken();
-        if (token == "v") {
-            vec3f p;
-            p.x = lexer.readFloat();
-            p.y = lexer.readFloat();
-            p.z = lexer.readFloat();
-            array::push_back(posData, p);
-        } else if (token == "vt") {
-            vec2f v;
-            v.x = lexer.readFloat();
-            v.y = lexer.readFloat();
-            array::push_back(uvData, v);
-        } else if (token == "vn") {
-            vec3f n;
-            n.x = lexer.readFloat();
-            n.y = lexer.readFloat();
-            n.z = lexer.readFloat();
-            n = normalize(n);
-            array::push_back(normalData, n);
-        } else if (token == "f") {
-            u32 idx[3];
-            bool hasUV = array::any(uvData);
-            bool hasNormal = array::any(normalData);
-            for(u32 i=0; i<3; i++) {
-                i32 vertexIdx = static_cast<i32>(lexer.readFloat());
-                if ( hasUV && hasNormal ) {
-                    i32 uvIdx = static_cast<i32>(lexer.readFloat());
-                    i32 normalIdx = static_cast<i32>(lexer.readFloat());
-                    idx[i] = addVertex(vertexIdx, normalIdx, uvIdx);
-                } else if ( hasUV ) {
-                    i32 uvIdx = static_cast<i32>(lexer.readFloat());
-                    idx[i] = addVertex(vertexIdx, 0, uvIdx);
-                } else if ( hasNormal ) {
-                    i32 normalIdx = static_cast<i32>(lexer.readFloat());
-                    idx[i] = addVertex(vertexIdx, normalIdx);
-                } else {
-                    idx[i] = addVertex(vertexIdx);
-                }
-            }
-            addPolygon(idx[0], idx[1], idx[2]);
-        } else if (token == "mtllib") {
-            lexer.readToken();
-        } else if (token == "usemtl") {
-            lexer.readToken();
-        } else if (token == "g") {
-            lexer.readToken();
-        } else {
-            ERR("unknown token in OBJ: '%s'", token.c_str());
-        }
-    }
-
-    endSurface();
 }
 
 } // namespace imp

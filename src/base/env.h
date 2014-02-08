@@ -4,10 +4,8 @@
 #include <string>
 
 namespace base {
-    class Env {
-    public:
+    namespace env {
         static std::string variable(const std::string& name, const std::string& def);
-    };
-
-    bool fileExists( const std::string& name );
+        bool fileExists(const std::string& name);
+    }
 }

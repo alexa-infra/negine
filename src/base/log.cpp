@@ -59,7 +59,7 @@ ConsoleLog::ConsoleLog()
 #ifdef OS_WIN
     useColor_ = true;
 #else
-    std::string term = Env::variable("TERM", "");
+    std::string term = env::variable("TERM", "");
     useColor_ =
         term == "xterm" || term == "xterm-color" ||
         term == "xterm-256color" || term == "screen" ||
