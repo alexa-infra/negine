@@ -65,7 +65,7 @@ Demo::Demo(const std::string& filename) {
     Engine::renderer().camera = cam_->camera;
 
     opengl::RenderPass rp;
-    rp.target = ResourceRef("fbo");
+    rp.target = "fbo";
     rp.mode = "normal";
     rp.generator = "scene";
     rp.viewport = math::vec4f(0, 0, 640, 480);
@@ -78,7 +78,7 @@ Demo::Demo(const std::string& filename) {
     Engine::renderer().passesList.push_back(rp);
 
     opengl::RenderPass rp2;
-    rp2.target = ResourceRef("default_fbo");
+    rp2.target = "default_fbo";
     rp2.mode = "prog2";
     rp2.generator = "fullscreen";
     rp2.viewport = math::vec4f(0, 0, 640, 480);

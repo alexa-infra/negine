@@ -30,7 +30,7 @@ struct Material : public ResourceBase<Material>
 
 struct RenderPass
 {
-    ResourceRef target;
+    std::string target;
     std::string generator;
     std::string mode;
     math::vec4f viewport;

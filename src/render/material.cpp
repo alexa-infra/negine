@@ -44,7 +44,8 @@ void Renderer::init() {
 
 void Renderer::rendering() {
     for(auto pass: passesList) {
-        GL.setFramebuffer(pass.target.resourceAs<Framebuffer>());
+        ResourceRef target(pass.target.c_str());
+        GL.setFramebuffer(target.resourceAs<Framebuffer>());
         renderState(pass);
         if (pass.generator == "scene") {
             sceneRenderer(pass.mode.c_str(), pass.params);
