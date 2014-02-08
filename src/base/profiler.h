@@ -10,17 +10,28 @@ namespace base {
 
 class Profiler : public Singleton<Profiler>
 {
+private:
+    f32& _counter(const std::string& name);
+    void _clear();
+    void _reset();
+    void _report(std::ostream* out);
+    void _reportHeader(std::ostream* out);
 public:
-    f32& counter(const std::string& name);
-
-    void clear();
-
-    void reset();
-
-    void reportHeader(std::ostream* out);
-
-    void report(std::ostream* out);
-
+    static f32& counter(const std::string& name) {
+        return instance()._counter(name);
+    }
+    static void clear() {
+        instance()._clear();
+    }
+    static void reset() {
+        instance().reset();
+    }
+    static void report(std::ostream* out) {
+        instance().report(out);
+    }
+    static void reportHeader(std::ostream* out) {
+        instance().reportHeader(out);
+    }
 private:
     typedef std::map<std::string, f32> Map;
     Map counters_;
@@ -29,22 +40,17 @@ private:
 class ProfilerScope
 {
 public:
-    ProfilerScope(const std::string& name, Profiler* profiler);
-    
+    ProfilerScope(const std::string& name);
     ~ProfilerScope();
-    
     void stop();
-    
     void start();
-    
     void toggle();
-
 private:
     bool running_;
-    f32& counter_;
     Timer timer_;
+    std::string name_;
 };
 
-#define PROFILE_SCOPE(name) ProfilerScope scope ## __LINE__(name, Profiler::instance())
+#define PROFILER_SCOPE(name) ProfilerScope scope ## __LINE__(name)
 
 } // namespace base

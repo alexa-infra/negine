@@ -14,15 +14,15 @@ using namespace opengl;
 Engine* Engine::instance_ = nullptr;
 
 opengl::DeviceContext& Engine::context() {
-    return instance_->GL;
+    return instance().GL;
 }
 
 opengl::Renderer& Engine::renderer() {
-    return *instance_->renderer_;
+    return *(instance().renderer_);
 }
 
 phys::Physics& Engine::physics() {
-    return *instance_->physics_;
+    return *(instance().physics_);
 }
 
 Engine::Engine(DeviceContext& context) : GL(context) {
@@ -47,17 +47,6 @@ Engine::~Engine() {
     delete renderer_;
     ResourceManager::shutdown();
     foundation::memory_globals::shutdown();
-}
-
-void Engine::init(DeviceContext& context)
-{
-    instance_ = new Engine(context);
-}
-
-void Engine::shutdown()
-{
-    delete instance_;
-    instance_ = nullptr;
 }
 
 } // namespace base

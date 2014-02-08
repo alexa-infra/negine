@@ -4,23 +4,25 @@
 
 namespace base {
 
-f32& Profiler::counter(const std::string& name)
+Profiler* Profiler::instance_ = nullptr;
+
+f32& Profiler::_counter(const std::string& name)
 {
     return counters_[name];
 }
 
-void Profiler::clear()
+void Profiler::_clear()
 {
     counters_.clear();
 }
 
-void Profiler::reset()
+void Profiler::_reset()
 {
     std::for_each(counters_.begin(), counters_.end(), 
         [](Map::value_type& p) { p.second = 0.0f; });
 }
 
-void Profiler::reportHeader(std::ostream* out)
+void Profiler::_reportHeader(std::ostream* out)
 {
     auto mapFirst = [](const Map::value_type& p){ return p.first; };
     std::transform(counters_.begin(), std::prev(counters_.end()),
@@ -30,7 +32,7 @@ void Profiler::reportHeader(std::ostream* out)
         *out << mapFirst(*std::prev(counters_.end())) << std::endl;
 }
 
-void Profiler::report(std::ostream* out)
+void Profiler::_report(std::ostream* out)
 {
     auto mapSecond = [](const Map::value_type& p){ return p.second; };
     std::transform(counters_.begin(), std::prev(counters_.end()),
@@ -40,8 +42,8 @@ void Profiler::report(std::ostream* out)
         *out << mapSecond(*std::prev(counters_.end())) << std::endl;
 }
 
-ProfilerScope::ProfilerScope(const std::string& name, Profiler* profiler)
-    : counter_(profiler->counter(name))
+ProfilerScope::ProfilerScope(const std::string& name)
+: name_(name)
 {
     running_ = true;
 }
@@ -54,7 +56,7 @@ ProfilerScope::~ProfilerScope()
 void ProfilerScope::stop()
 {
     if (running_) {
-        counter_ += timer_.reset();
+        Profiler::counter(name_) += timer_.reset();
         running_ = false;
     }
 }

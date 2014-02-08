@@ -1,12 +1,12 @@
 #include "base/log.h"
-#include <cstdarg>
-#include <vector>
-#include "base/types.h"
 #include "base/env.h"
-#include <cstdio>
+#include <stdio.h>
+#include <stdarg.h>
+#include <vector>
 
 #ifdef OS_WIN
 #include <windows.h>
+#include "foundation/snprintf_msvc.h"
 #endif
 
 namespace base {

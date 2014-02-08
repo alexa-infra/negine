@@ -1,22 +1,24 @@
 #pragma once
 
+#include "base/types.h"
 #include "base/debug.h"
 
 namespace base
 {
 
-template<typename Type>
+template<class Type>
 class Singleton
 {
 protected:
     static Type* instance_;
     Singleton() {}
 public:
-    static void init() {
+    template<typename... Args>
+    NEGINE_API static void init(Args&... args) {
         ASSERT( hasInstance() == false );
-        instance_ = new Type;
+        instance_ = new Type(args...);
     }
-    static void shutdown() {
+    NEGINE_API static void shutdown() {
         ASSERT( hasInstance() == true );
         delete instance_;
         instance_ = nullptr;
@@ -25,11 +27,10 @@ protected:
     static bool hasInstance() {
         return instance_ != nullptr;
     }
-    static Type* instance() {
+    static Type& instance() {
         ASSERT( hasInstance() == true );
-        return instance_;
+        return *instance_;
     }
 };
-template<typename Type> Type* Singleton<Type>::instance_ = nullptr;
 
 } // namespace base
