@@ -31,7 +31,7 @@ class GpuProgram : public GpuResource, public ResourceBase<GpuProgram>
     {
         u32 location;
         u32 type;
-        any value;
+        Variant value;
         u32 samplerIdx;
     };
     struct AttrVar
@@ -82,10 +82,10 @@ public:
 
     NEGINE_API void setParams(const Params& params);
 
-    NEGINE_API void setParam(const std::string& paramName, const any& value);
+    NEGINE_API void setParam(const std::string& paramName, const Variant& value);
 private:
     
-    void setParam(UniformVar& uniform, const any& value);
+    void setParam(UniformVar& uniform, const Variant& value);
 
     //! Populate list of active uniforms
     void populateUniformMap();

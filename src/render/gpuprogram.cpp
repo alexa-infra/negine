@@ -83,7 +83,7 @@ void GpuProgram::setParams(const Params& params)
     }
 }
 
-void GpuProgram::setParam(const std::string& paramName, const any& value)
+void GpuProgram::setParam(const std::string& paramName, const Variant& value)
 {
     UniformVar* uniform = nullptr;
     if (uniformBinding_.tryGet(paramName.c_str(), uniform)) {
@@ -91,18 +91,15 @@ void GpuProgram::setParam(const std::string& paramName, const any& value)
     }
 }
 
-void GpuProgram::setParam(UniformVar& uniform, const any& value)
+void GpuProgram::setParam(UniformVar& uniform, const Variant& value)
 {
+    if (uniform.value == value)
+        return;
+    uniform.value = value;
     switch(uniform.type) {
         case GL_SAMPLER_2D:
         {
-            Texture* texture = any_cast<Texture*>(value);
-            if (!uniform.value.empty()) {
-                Texture* prev = any_cast<Texture*>(uniform.value);
-                if (prev == texture)
-                    return;
-            }
-            uniform.value = value;
+            Texture* texture = ResourceRef(value.asString()).resourceAs<Texture>();
             GL.setTextureUnit(uniform.samplerIdx);
             GL.setTexture(texture);
             GL.Uniform1i( uniform.location, uniform.samplerIdx );
@@ -110,37 +107,19 @@ void GpuProgram::setParam(UniformVar& uniform, const any& value)
         }
         case GL_FLOAT_MAT4:
         {
-            const Matrix4& m = any_cast<const Matrix4&>(value);
-            if (!uniform.value.empty()) {
-                const Matrix4& prev = any_cast<const Matrix4&>(uniform.value);
-                if (prev == m)
-                    return;
-            }
-            uniform.value = value;
+            const Matrix4 m = value.asMat4();
             GL.UniformMatrix4fv( uniform.location, 1, GL_FALSE, reinterpret_cast<const f32*>( &m ) );
             break;
         }
         case GL_FLOAT_VEC4:
         {
-            const vec4f& v = any_cast<const vec4f&>(value);
-            if (!uniform.value.empty()) {
-                const vec4f& prev = any_cast<const vec4f&>(uniform.value);
-                if (prev == v)
-                    return;
-            }
-            uniform.value = value;
+            const vec4f v = value.asVec4();
             GL.Uniform4f( uniform.location, v.x, v.y, v.z, v.w );
             break;
         }
         case GL_FLOAT:
         {
-            f32 v = any_cast<f32>(value);
-            if (!uniform.value.empty()) {
-                f32 prev = any_cast<f32>(uniform.value);
-                if (prev == v)
-                    return;
-            }
-            uniform.value = value;
+            f32 v = value.asFloat();
             GL.Uniform1f ( uniform.location, v );
             break;
         }
