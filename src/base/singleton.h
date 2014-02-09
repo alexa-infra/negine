@@ -14,11 +14,11 @@ protected:
     Singleton() {}
 public:
     template<typename... Args>
-    NEGINE_API static void init(Args&... args) {
+    static void init(Args&... args) {
         ASSERT( hasInstance() == false );
         instance_ = new Type(args...);
     }
-    NEGINE_API static void shutdown() {
+    static void shutdown() {
         ASSERT( hasInstance() == true );
         delete instance_;
         instance_ = nullptr;
