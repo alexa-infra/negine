@@ -5,6 +5,8 @@
 #include "math/vec4.h"
 #include "math/matrix.h"
 #include "math/matrix-inl.h"
+#include "base/debug.h"
+#include "base/smallstring.h"
 
 namespace base {
 

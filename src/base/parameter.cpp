@@ -1,4 +1,5 @@
 #include "base/parameter.h"
+#include <string.h>
 
 namespace base {
 
