@@ -6,6 +6,7 @@
 #include "render/material.h"
 #include "foundation/memory.h"
 #include "physics/physics.h"
+#include "game/scene.h"
 
 namespace base {
 
@@ -19,6 +20,10 @@ opengl::Renderer& Engine::renderer() {
 
 phys::Physics& Engine::physics() {
     return *(instance().physics_);
+}
+
+game::Scene& Engine::scene() {
+    return *(instance().scene_);
 }
 
 Engine::Engine() {
@@ -36,11 +41,13 @@ Engine::Engine() {
     //});
     renderer_ = new Renderer();
     physics_ = new phys::Physics();
+    scene_ = new game::Scene();
 }
 
 Engine::~Engine() {
     delete physics_;
     delete renderer_;
+    delete scene_;
     ResourceManager::shutdown();
     foundation::memory_globals::shutdown();
 }

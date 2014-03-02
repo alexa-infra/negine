@@ -13,13 +13,9 @@ class ComponentBase {
 public:
     ComponentBase() : scene_(nullptr) {}
 
-    virtual ~ComponentBase() {}
-
-    virtual const char* extension() const = 0;
+    ~ComponentBase() {}
 
     inline std::string name() const { return name_; }
-
-    inline std::string fullname() const { return name_ + extension(); }
 
     inline void setName(const std::string& name) { name_ = name; }
 

@@ -14,7 +14,7 @@ public:
     ResourceRef model_;
     opengl::Model* model();
     math::Matrix4 world() const;
-    const char* extension() const { return ".model"; }
+    static const char* extension() { return ".model"; }
 };
 
 } // namespace game

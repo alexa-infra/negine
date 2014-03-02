@@ -83,10 +83,10 @@ void Transform::setHead( f32 v ) {
 
 void Transform::setParent(Transform* parent) {
     if (parentTransform_ != nullptr)
-        parentTransform_->signal_.disconnect(fullname());
+        parentTransform_->signal_.disconnect(name_ + Transform::extension());
     parentTransform_ = parent;
     if (parentTransform_ != nullptr)
-        parent->signal_.connect(fullname(), std::bind(&Transform::update, this));
+        parent->signal_.connect(name_ + Transform::extension(), std::bind(&Transform::update, this));
 }
 
 } // namespace game

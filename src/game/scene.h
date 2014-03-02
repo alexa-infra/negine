@@ -52,30 +52,20 @@ public:
 
     template<class T>
     T* attach(const std::string& name, T* aspect) {
-        aspect->setName(name);
-        aspect->setScene(this);
-        std::string fullname = name + aspect->extension();
-        foundation::hash::set(componentByName_, hash_(fullname), (ComponentBase*)aspect);
-        foundation::multi_hash::insert(componentByObject_, hash_(name), (ComponentBase*)aspect);
+        attachNamed(name, name + T::extension(), aspect);
         attachTyped<T>(name, aspect);
         return aspect;
     }
 
     template<class T>
     void detach(const std::string& name, T* aspect) {
-        aspect->setScene(nullptr);
-        std::string fullname = name + aspect->extension();
-        foundation::hash::remove(componentByName_, hash_(fullname));
-        const foundation::Hash<void*>::Entry* it = foundation::multi_hash::find_first(componentByObject_, hash_(name));
-        while (it != nullptr) {
-            if (it->value == aspect) {
-                foundation::multi_hash::remove(componentByObject_, it);
-                break;
-            }
-            it = foundation::multi_hash::find_next(componentByObject_, it);
-        }
+        detachNamed(name, name + T::extension(), aspect);
         detachTyped<T>(name, aspect);
     }
+
+    NEGINE_API void attachNamed(const std::string& name, const std::string& fullname, ComponentBase* aspect);
+
+    NEGINE_API void detachNamed(const std::string& name, const std::string& fullname, ComponentBase* aspect);
 
     template<class T>
     T* getTyped(const std::string& name);

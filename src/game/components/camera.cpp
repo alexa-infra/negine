@@ -39,10 +39,10 @@ void Camera::setZFar( f32 v ) {
 
 void Camera::setParent(Transform* transform) {
     if (parentTransfrom_ != nullptr)
-        parentTransfrom_->signal_.disconnect(fullname());
+        parentTransfrom_->signal_.disconnect(name_ + Transform::extension());
     parentTransfrom_ = transform;
     if (parentTransfrom_ != nullptr)
-        parentTransfrom_->signal_.connect(fullname(), std::bind(&Camera::update, this));
+        parentTransfrom_->signal_.connect(name_ + Transform::extension(), std::bind(&Camera::update, this));
 }
 
 void Camera::update() {

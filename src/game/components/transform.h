@@ -34,7 +34,7 @@ public:
     NEGINE_API void setPitch(f32 radians);
     NEGINE_API void setHead(f32 radians);
 
-    const char* extension() const { return ".transform"; }
+    static const char* extension() { return ".transform"; }
 
     NEGINE_API void setParent(Transform* parent);
     NEGINE_API void update();

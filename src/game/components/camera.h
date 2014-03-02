@@ -31,7 +31,7 @@ public:
     NEGINE_API void setZNear(f32 dist);
     NEGINE_API void setZFar(f32 dist);
 
-    const char* extension() const { return ".camera"; }
+    static const char* extension() { return ".camera"; }
 
     NEGINE_API void update();
     NEGINE_API void setParent(Transform* transform);

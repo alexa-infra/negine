@@ -21,5 +21,25 @@ Scene::Scene()
 Scene::~Scene() {
 }
 
+void Scene::attachNamed(const std::string& name, const std::string& fullname, ComponentBase* aspect) {
+    aspect->setName(name);
+    aspect->setScene(this);
+    foundation::hash::set(componentByName_, hash_(fullname), aspect);
+    foundation::multi_hash::insert(componentByObject_, hash_(name), aspect);
+}
+
+void Scene::detachNamed(const std::string& name, const std::string& fullname, ComponentBase* aspect) {
+    aspect->setScene(nullptr);
+    foundation::hash::remove(componentByName_, hash_(fullname));
+    const foundation::Hash<ComponentBase*>::Entry* it = foundation::multi_hash::find_first(componentByObject_, hash_(name));
+    while (it != nullptr) {
+        if (it->value == aspect) {
+            foundation::multi_hash::remove(componentByObject_, it);
+            break;
+        }
+        it = foundation::multi_hash::find_next(componentByObject_, it);
+    }
+}
+
 } // namespace game
 } // namespace base

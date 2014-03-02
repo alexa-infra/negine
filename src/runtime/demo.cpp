@@ -32,7 +32,7 @@ Demo::Demo(const std::string& filename) {
 
     keypressed_ = 0;
 
-    cam_ = new GameCamera("camera1", scene_);
+    cam_ = new GameCamera("camera1", Engine::scene());
 
     cam_->transform->setPosition(math::vec3f(0.f, 0.f, -5.f));
     cam_->transform->setPitch(50 * math::deg_to_rad);
@@ -48,7 +48,7 @@ Demo::Demo(const std::string& filename) {
     ResourceRef model("themodel");
     model.loadDefault<opengl::Model>("sphere.obj");
 
-    obj_ = new GameObject("theObject", scene_);
+    obj_ = new GameObject("theObject", Engine::scene());
 
     obj_->transform->setPosition(math::vec3f(0, 0, 0));
     obj_->transform->setHead(0.0f);
@@ -90,7 +90,7 @@ Demo::Demo(const std::string& filename) {
     ball->setTransform(obj_->transform);
     phys::Body* ball2 = new phys::Body(Engine::physics(), phys::Body::Sphere, 1.0f, math::vec3f(0.5f, 20.f, 0.f));
 
-    GameObject* oo = new GameObject("theObject2", scene_);
+    GameObject* oo = new GameObject("theObject2", Engine::scene());
 
     oo->transform->setPosition(math::vec3f(0.5f, 2.0f, 0.0f));
     oo->model->model_ = model;
@@ -169,7 +169,7 @@ void Demo::OnKeyboardUp(u8 key) {
 }
 
 void Demo::OnMotion(i32 x, i32 y, i32 dx, i32 dy) {
-    game::Transform* cam = scene_.getTyped<game::Transform>("camera1");
+    game::Transform* cam = Engine::scene().getTyped<game::Transform>("camera1");
     cam->turnHead(math::deg_to_rad * dx);
 
     if (fabs(cam->pitch() + math::deg_to_rad * dy) < math::pi / 2.0f) {
@@ -185,7 +185,7 @@ void Demo::OnMotion(i32 x, i32 y, i32 dx, i32 dy) {
 void Demo::UpdateWorld() {
     const f32 speed = 0.001f;
 
-    game::Transform* cam = scene_.getTyped<game::Transform>("camera1");
+    game::Transform* cam = Engine::scene().getTyped<game::Transform>("camera1");
 
     if (keypressed_ & 1) {
         cam->moveForward(speed);
