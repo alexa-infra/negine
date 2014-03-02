@@ -25,6 +25,8 @@ public:
 
     inline void setScene(Scene* scene) { scene_ = scene; }
 
+    inline const Scene* scene() const { return scene_; }
+
 protected:
     Scene* scene_;
     std::string name_;

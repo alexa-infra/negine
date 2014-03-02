@@ -32,8 +32,6 @@ Demo::Demo(const std::string& filename) {
 
     keypressed_ = 0;
 
-    Engine::renderer().init();
-
     cam_ = new GameCamera("camera1", scene_);
 
     cam_->transform->setPosition(math::vec3f(0.f, 0.f, -5.f));
@@ -61,9 +59,6 @@ Demo::Demo(const std::string& filename) {
     material->modeMap["normal"] = ResourceRef("prog1");
     ResourceRef maa("default_material", material);
 
-    Engine::renderer().root = &scene_;
-    Engine::renderer().camera = cam_->camera;
-
     opengl::RenderPass rp;
     rp.target = "fbo";
     rp.mode = "normal";
@@ -75,7 +70,7 @@ Demo::Demo(const std::string& filename) {
     rp.cullBackFace = false;
     rp.blend = false;
     rp.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-    Engine::renderer().passesList.push_back(rp);
+    pipeline_.push_back(rp);
 
     opengl::RenderPass rp2;
     rp2.target = "default_fbo";
@@ -88,7 +83,7 @@ Demo::Demo(const std::string& filename) {
     rp2.cullBackFace = false;
     rp2.blend = false;
     rp2.clearColor = math::vec4f(1.0f, 0.0f, 0.0f, 1.0f);
-    Engine::renderer().passesList.push_back(rp2);
+    pipeline_.push_back(rp2);
 
     phys::Body* plane = new phys::Body(Engine::physics(), phys::Body::Plane, 0.0f, math::vec3f(0, 1, 0));
     phys::Body* ball = new phys::Body(Engine::physics(), phys::Body::Sphere, 1.0f, math::vec3f(0, 50, 0));
@@ -114,7 +109,7 @@ Demo::~Demo() {
 void Demo::OnFrame() {
     Engine::physics().simulate(timer_.reset() / 1000.f);
     UpdateWorld();
-    Engine::renderer().rendering();
+    Engine::renderer().render(GL, pipeline_, cam_->camera);
     GL_ASSERT(GL);
     SDLApp::OnFrame();
 }

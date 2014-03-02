@@ -51,8 +51,6 @@ public:
     void setWorldTransform(const btTransform& worldTrans) {
         position_ = worldTrans;
 
-        std::cout << "sphere height: " << worldTrans.getOrigin().getY() << std::endl;
-
         if (transform_ != nullptr) {
             const btVector3& pos = worldTrans.getOrigin();
             transform_->setPosition(math::vec3f(pos.x(), pos.y(), pos.z()));

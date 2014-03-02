@@ -34,6 +34,9 @@ public:
         value = const_cast<T*>(&v);
         return true;
     }
+    bool operator==(const SelfT& other) const {
+        return map_ == other.map_;
+    }
     size_t size() const {
         return map_.size();
     }

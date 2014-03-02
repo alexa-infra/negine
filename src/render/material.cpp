@@ -28,7 +28,7 @@ opengl::GpuProgram* Material::program(const SmallString& mode) const {
     return ref->resourceAs<opengl::GpuProgram>();
 }
 
-void Renderer::init() {
+Renderer::Renderer() {
     imp::MeshBuilder bb;
     bb.beginSurface();
     bb.addVertex(math::vec3f( 1, -1, -1), math::vec2f(0, 0));
@@ -42,20 +42,20 @@ void Renderer::init() {
     bb.getDrawingList(fullscreenQuad);
 }
 
-void Renderer::rendering() {
-    for(auto pass: passesList) {
+void Renderer::render(DeviceContext& GL, const RenderPipeline& pipeline, const game::Camera* camera) {
+    for (auto pass : pipeline) {
         ResourceRef target(pass.target.c_str());
         GL.setFramebuffer(target.resourceAs<Framebuffer>());
-        renderState(pass);
+        renderState(GL, pass);
         if (pass.generator == "scene") {
-            sceneRenderer(pass.mode.c_str(), pass.params);
+            sceneRenderer(GL, pass.mode.c_str(), pass.params, camera);
         } else if (pass.generator == "fullscreen") {
-            fullscreenRenderer(pass.mode.c_str(), pass.params);
+            fullscreenRenderer(GL, pass.mode.c_str(), pass.params);
         }
     }
 }
 
-void Renderer::renderState(const RenderPass& rp) {
+void Renderer::renderState(DeviceContext& GL, const RenderPass& rp) {
     GL.setViewport(rp.viewport);
     GL.setDepthTest(rp.depthTest);
     GL.setDepthWrite(rp.depthWrite);
@@ -65,7 +65,8 @@ void Renderer::renderState(const RenderPass& rp) {
     }
 }
 
-void Renderer::sceneRenderer(const std::string& mode, const Params& pp) {
+void Renderer::sceneRenderer(DeviceContext& GL, const std::string& mode, const Params& pp, const game::Camera* camera) {
+    const game::Scene* root = camera->scene();
     auto begin = foundation::hash::begin(root->renderables_);
     auto end = foundation::hash::end(root->renderables_);
     for (auto it = begin; it != end; ++it) {
@@ -91,7 +92,7 @@ void Renderer::sceneRenderer(const std::string& mode, const Params& pp) {
     }
 }
     
-void Renderer::fullscreenRenderer(const std::string& mode, const Params& pp) {
+void Renderer::fullscreenRenderer(DeviceContext& GL, const std::string& mode, const Params& pp) {
     ResourceRef progRef(mode);
     opengl::GpuProgram* prog = progRef.resourceAs<GpuProgram>();
     GL.setProgram(prog);

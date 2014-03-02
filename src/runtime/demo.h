@@ -53,6 +53,7 @@ protected:
 private:
     GameObject* obj_;
     GameCamera* cam_;
+    opengl::RenderPipeline pipeline_;
     game::Scene scene_;
     u32 keypressed_;
     Timer timer_;

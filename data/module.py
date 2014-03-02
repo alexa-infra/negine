@@ -1,4 +1,3 @@
-print("hello")
 from negine_core import *
 from negine_runtime import *
 
@@ -56,7 +55,8 @@ prog1.setAttribute("position", VertexAttrs.tagPosition)
 prog1.setAttribute("normal", VertexAttrs.tagNormal)
 prog1.setShaderSource(ShaderTypes.VERTEX, vertexShader)
 prog1.setShaderSource(ShaderTypes.PIXEL, pixelShader)
-if prog1.complete():
+complete = prog1.complete()
+if complete:
 	print("program 1 has been compiled!")
 
 prog2 = app.context.createProgram("prog2")
@@ -64,7 +64,8 @@ prog2.setAttribute("position", VertexAttrs.tagPosition)
 prog2.setAttribute("uv", VertexAttrs.tagTexture)
 prog2.setShaderSource(ShaderTypes.VERTEX, vertexShader1)
 prog2.setShaderSource(ShaderTypes.PIXEL, pixelShader1)
-if prog2.complete():
+complete = prog2.complete()
+if complete:
     print("program 2 has been compiled!")
 
 checker = app.context.createTexture("checkers", "checker.png")
@@ -73,3 +74,33 @@ fbo = app.context.createFramebuffer("fbo")
 fbo.addTargetTexture(checker)
 fbo.addTarget(InternalTypes.D32F)
 fbo.resize(640, 480)
+
+rp = RenderPass()
+rp.target = "fbo"
+rp.mode = "normal"
+rp.generator = "scene"
+rp.viewport = vec4f(0, 0, 640, 480)
+rp.clear = True
+rp.depthTest = True
+rp.depthWrite = True
+rp.cullBackFace = False
+rp.blend = False
+rp.clearColor = vec4f(1.0, 0.0, 0.0, 1.0)
+#pipeline_.push_back(rp);
+
+rp2 = RenderPass()
+rp2.target = "default_fbo"
+rp2.mode = "prog2"
+rp2.generator = "fullscreen"
+rp2.viewport = vec4f(0, 0, 640, 480)
+rp2.clear = True
+rp2.depthTest = False
+rp2.depthWrite = False
+rp2.cullBackFace = False
+rp2.blend = False
+rp2.clearColor = vec4f(1.0, 0.0, 0.0, 1.0)
+#pipeline_.push_back(rp2);
+
+pipeline = RenderPipeline()
+pipeline.append(rp)
+pipeline.append(rp2)

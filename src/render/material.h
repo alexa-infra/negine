@@ -42,26 +42,34 @@ struct RenderPass
     bool cullBackFace;
     bool blend;
     math::vec4f clearColor;
+
+    bool operator==(const RenderPass& rp) const {
+        return target == rp.target &&
+            generator == rp.generator &&
+            mode == rp.mode &&
+            viewport == rp.viewport &&
+            clear == rp.clear &&
+            depthTest == rp.depthTest &&
+            depthWrite == rp.depthWrite &&
+            cullBackFace == rp.cullBackFace && 
+            blend == rp.blend &&
+            clearColor == rp.clearColor &&
+            params == rp.params;
+    }
 };
+typedef std::vector<RenderPass> RenderPipeline;
 
 struct Renderer {
 
-    Renderer(DeviceContext& gl) : GL(gl) {}
-
-    NEGINE_API void init();
-    NEGINE_API void rendering();
-
-    std::vector<RenderPass> passesList;
-    game::Scene* root;
-    game::Camera* camera;
+    Renderer();
+    NEGINE_API void render(DeviceContext& context, const RenderPipeline& pipeline, const game::Camera* camera);
 
 private:
-    void renderState(const RenderPass& rp);
-    void sceneRenderer(const std::string& mode, const Params& pp);
-    void fullscreenRenderer(const std::string& mode, const Params& pp);
+    void renderState(DeviceContext& context, const RenderPass& rp);
+    void sceneRenderer(DeviceContext& context, const std::string& mode, const Params& pp, const game::Camera* camera);
+    void fullscreenRenderer(DeviceContext& context, const std::string& mode, const Params& pp);
 
     Mesh fullscreenQuad;
-    DeviceContext& GL;
 };
 
 }

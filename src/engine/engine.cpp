@@ -13,10 +13,6 @@ using namespace opengl;
 
 Engine* Engine::instance_ = nullptr;
 
-opengl::DeviceContext& Engine::context() {
-    return instance().GL;
-}
-
 opengl::Renderer& Engine::renderer() {
     return *(instance().renderer_);
 }
@@ -25,20 +21,20 @@ phys::Physics& Engine::physics() {
     return *(instance().physics_);
 }
 
-Engine::Engine(DeviceContext& context) : GL(context) {
+Engine::Engine() {
     foundation::memory_globals::init();
     ResourceManager::addFactory(Model::Type(), [](const std::string& p) { 
         Model* model = loadModel(p);
         return dynamic_cast<Resource*>(model);
     });
-    ResourceManager::addFactory(Texture::Type(), [](const std::string& p) { 
-        TextureInfo defaultSettings;
-        defaultSettings.Filtering = TextureFilters::Anisotropic;
-        defaultSettings.GenerateMipmap = true;
-        Texture* texture = loadTexture(Engine::context(), defaultSettings, p);
-        return dynamic_cast<Resource*>(texture);
-    });
-    renderer_ = new Renderer(GL);
+    //ResourceManager::addFactory(Texture::Type(), [](const std::string& p) { 
+    //    TextureInfo defaultSettings;
+    //    defaultSettings.Filtering = TextureFilters::Anisotropic;
+    //    defaultSettings.GenerateMipmap = true;
+    //    Texture* texture = loadTexture(Engine::context(), defaultSettings, p);
+    //    return dynamic_cast<Resource*>(texture);
+    //});
+    renderer_ = new Renderer();
     physics_ = new phys::Physics();
 }
 

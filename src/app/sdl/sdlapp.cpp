@@ -30,7 +30,7 @@ SDLApp::SDLApp()
     , width_( 640 )
     , height_( 480 )
 {
-    Engine::init(GL);
+    Engine::init();
 
     LOG("start");
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {

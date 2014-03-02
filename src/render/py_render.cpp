@@ -6,6 +6,10 @@
 #include "render/framebuffer.h"
 #include "render/texture.h"
 #include "engine/resourceref.h"
+#include "render/material.h"
+#include "engine/texture_loader.h"
+
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 using namespace base;
 using namespace base::opengl;
@@ -20,7 +24,11 @@ GpuProgram* createProgram(DeviceContext& gl, const char* name) {
 }
 Texture* createTexture(DeviceContext& gl, const char* name, const char* filename) {
     ResourceRef ref(name);
-    ref.loadDefault<Texture>(filename);
+    TextureInfo defaultSettings;
+    defaultSettings.Filtering = TextureFilters::Anisotropic;
+    defaultSettings.GenerateMipmap = true;
+    Texture* texture = loadTexture(gl, defaultSettings, filename);
+    ref.setResource(texture);
     return ref.resourceAs<opengl::Texture>();
 }
 Framebuffer* createFramebuffer(DeviceContext& gl, const char* name) {
@@ -32,7 +40,6 @@ Framebuffer* createFramebuffer(DeviceContext& gl, const char* name) {
 void resizeFramebuffer(Framebuffer* fbo, i32 width, i32 height) {
     fbo->resizeWindow(math::vec2i(width, height));
 }
-
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GpuProgram_overloads, setAttribute, 2, 3);
 
@@ -77,6 +84,20 @@ void init_py_render()
         .def( "destroy", &Framebuffer::destroy )
         .def( "resize", &resizeFramebuffer )
         ;
+    class_<RenderPass>("RenderPass")
+        .def_readwrite("target", &RenderPass::target)
+        .def_readwrite("generator", &RenderPass::generator)
+        .def_readwrite("mode", &RenderPass::mode)
+        .def_readwrite("viewport", &RenderPass::viewport)
+        .def_readwrite("clear", &RenderPass::clear)
+        .def_readwrite("depthTest", &RenderPass::depthTest)
+        .def_readwrite("depthWrite", &RenderPass::depthWrite)
+        .def_readwrite("cullBackFace", &RenderPass::cullBackFace)
+        .def_readwrite("blend", &RenderPass::blend)
+        .def_readwrite("clearColor", &RenderPass::clearColor)
+        ;
+    class_<RenderPipeline>("RenderPipeline")
+        .def(vector_indexing_suite<RenderPipeline>());
 }
 
 std::string gl_tostr(const DeviceContext& gl)
