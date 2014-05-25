@@ -15,14 +15,10 @@ namespace base
 namespace opengl
 {
 
-namespace ShaderTypes
-{
-enum ShaderType {
+enum class ShaderType {
     VERTEX = GL_VERTEX_SHADER,
     PIXEL = GL_FRAGMENT_SHADER
 };
-}
-typedef ShaderTypes::ShaderType ShaderType;
 
 //! Shader program object
 class GpuProgram : public GpuResource, public ResourceBase<GpuProgram>

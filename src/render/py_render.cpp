@@ -59,9 +59,9 @@ void init_py_render()
         .value("tagTangent", VertexAttrs::tagTangent)
         .value("tagBitangent", VertexAttrs::tagBitangent)
         ;
-    enum_<ShaderType>("ShaderTypes")
-        .value("VERTEX", ShaderTypes::VERTEX)
-        .value("PIXEL", ShaderTypes::PIXEL)
+    enum_<ShaderType>("ShaderType")
+        .value("VERTEX", ShaderType::VERTEX)
+        .value("PIXEL", ShaderType::PIXEL)
         ;
     class_<Texture, boost::noncopyable>("Texture", no_init)
         .def( "destroy", &Texture::destroy )

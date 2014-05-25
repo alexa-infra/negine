@@ -189,15 +189,15 @@ bool GpuProgram::setShaderSource(ShaderType type, const std::string& source)
     ASSERT(id_ == 0);
     const char* sources[1];
     sources[0] = source.c_str();
-    if (type == ShaderTypes::VERTEX) {
+    if (type == ShaderType::VERTEX) {
         vertexShader_.destroy();
-        bool res = vertexShader_.create(ShaderTypes::VERTEX, sources, 1);
+        bool res = vertexShader_.create(ShaderType::VERTEX, sources, 1);
         WARN(vertexShader_.status().c_str());
         if (!res) ERR("errors during compilation of shader");
         return res;
-    } else if (type == ShaderTypes::PIXEL) {
+    } else if (type == ShaderType::PIXEL) {
         pixelShader_.destroy();
-        bool res = pixelShader_.create(ShaderTypes::PIXEL, sources, 1);
+        bool res = pixelShader_.create(ShaderType::PIXEL, sources, 1);
         WARN(pixelShader_.status().c_str());
         if (!res) ERR("errors during compilation of shader");
         return res;
@@ -260,7 +260,7 @@ void GpuProgram::Shader::destroy()
 bool GpuProgram::Shader::create( ShaderType type, const char* const* source, u32 len )
 {
     if ( id_ == 0 ) {
-        id_ = GL.CreateShader( type );
+        id_ = GL.CreateShader( static_cast<GLenum>( type ) );
         ASSERT( id_ != 0 );
     }
 

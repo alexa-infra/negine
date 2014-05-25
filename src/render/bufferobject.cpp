@@ -13,8 +13,8 @@ namespace opengl
 
 BufferObject::BufferObject(DeviceContext& gl, BufferTarget target, BufferUsage usage)
     : GpuResource(gl)
-    , target_( target )
-    , usage_( usage )
+    , target_(static_cast<GLenum>(target))
+    , usage_(static_cast<GLenum>(usage))
 {
     GL.GenBuffers( 1, &id_ );
     ASSERT(id_ != 0);

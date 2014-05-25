@@ -14,22 +14,16 @@ namespace base
 namespace opengl
 {
 
-namespace BufferTargets
-{
 //! the target to which the buffer object is bound
-enum BufferTarget {
+enum class BufferTarget {
     Array = GL_ARRAY_BUFFER,
     ElementArray = GL_ELEMENT_ARRAY_BUFFER,
     Uniform = GL_UNIFORM_BUFFER,
     Texture = GL_TEXTURE_BUFFER
 };
-}
-typedef BufferTargets::BufferTarget BufferTarget;
 
-namespace BufferUsages
-{
 //! expected usage of buffer. Stream - once, Static - not often, Dynamic - often
-enum BufferUsage {
+enum class BufferUsage {
     StreamDraw = GL_STREAM_DRAW,
     StreamRead = GL_STREAM_READ,
     StreamCopy = GL_STREAM_COPY,
@@ -40,8 +34,6 @@ enum BufferUsage {
     DynamicRead = GL_DYNAMIC_READ,
     DynamicCopy = GL_DYNAMIC_COPY
 };
-}
-typedef BufferUsages::BufferUsage BufferUsage;
 
 //! Wraps Buffer Object
 class BufferObject : public GpuResource

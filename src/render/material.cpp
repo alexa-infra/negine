@@ -78,12 +78,12 @@ void Renderer::sceneRenderer(DeviceContext& GL, const std::string& mode, const P
         for(size_t i=0; i<meshCount; i++) {
             opengl::Mesh& m = const_cast<opengl::Mesh&>(model->surfaceAt(i).mesh);
             Material* material = m.material_.resourceAs<Material>(); // m.material();
-            Params* meshParams = &m.params_;
+            Params& meshParams = m.params_;
             if (material->hasMode(mode.c_str())) {
                 opengl::GpuProgram* prog = material->program(mode.c_str());
                 GL.setProgram(prog);
                 prog->setParams(material->defaultParams);
-                prog->setParams(*meshParams);
+                prog->setParams(meshParams);
                 prog->setParams(pp);
                 prog->setParam("mvp", mvp);
                 GL.renderState().render(m, 0, m.numIndexes());
